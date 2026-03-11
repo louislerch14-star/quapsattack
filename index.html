@@ -125,5 +125,41 @@
             if(activeLink) activeLink.classList.add('active');
         }
     </script>
+    <script>
+    // DER TÜRSTEHER (Prüft beim Laden der Seite)
+    window.onload = function() {
+        const user = localStorage.getItem('loggedInUser');
+
+        // Falls KEIN Nutzer im Speicher ist -> Zurück zum Login
+        if (!user || user === "undefined") {
+            window.location.href = "login.html";
+            return; // Stoppt das restliche Script
+        }
+
+        // Falls ein Nutzer da ist -> Begrüßung anzeigen
+        const welcomeTitle = document.querySelector('.welcome-header h1');
+        if (welcomeTitle) {
+            welcomeTitle.innerText = "Willkommen im Hub, " + user + "! 🐲";
+        }
+    }
+
+    // DIE LOGOUT-FUNKTION (Wichtig!)
+    function logout() {
+        // Löscht den Namen aus dem Speicher
+        localStorage.removeItem('loggedInUser');
+        // Schickt den User zum Login
+        window.location.href = "login.html";
+    }
+
+    // Deine Navigations-Funktion
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+        
+        document.getElementById(sectionId).classList.add('active');
+        const activeLink = document.getElementById('link-' + sectionId);
+        if(activeLink) activeLink.classList.add('active');
+    }
+</script>
 </body>
 </html>
