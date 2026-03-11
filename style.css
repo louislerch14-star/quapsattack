@@ -453,3 +453,22 @@ body, html {
     color: #444;
     font-style: italic;
 }
+/* Spezielles Styling für die Musik-Karte */
+.music-card {
+    border: 1px solid #4fb9ff; /* Blauer Rahmen passend zum Thema */
+    background: rgba(79, 185, 255, 0.05);
+}
+
+.music-container {
+    margin-top: 15px;
+    border-radius: 12px;
+    overflow: hidden; /* Rundet die Ecken des Players ab */
+    background: white; /* Manche Player brauchen einen hellen Hintergrund, um lesbar zu sein */
+}
+
+/* Damit die Musik-Karte auf Handys nicht zu riesig wird */
+@media (max-width: 600px) {
+    .music-container iframe {
+        height: 250px;
+    }
+}

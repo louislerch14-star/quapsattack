@@ -9,14 +9,14 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     // Ändere die Namen und Passwörter hier einfach ab:
     const users = [
         { name: "admin", pass: "louis06.12.2011" }, // Spieler 1 (Du)
-        { name: "Lukas", pass: "quaps123" },        // Spieler 2
-        { name: "Jonas", pass: "pass3" },       // Spieler 3
-        { name: "Giorgio", pass: "pass4" },       // Spieler 4
+        { name: "Lukas", pass: "quaps2" },        // Spieler 2
+        { name: "Jonas", pass: "quaps3" },       // Spieler 3
+        { name: "Giorgio", pass: "quaps4" },       // Spieler 4
         { name: "Mika", pass: "quaps5" },       // Spieler 5
         { name: "Nils", pass: "quaps6" },       // Spieler 6
-        { name: "Spieler7", pass: "pass7" },       // Spieler 7
-        { name: "Spieler8", pass: "pass8" },       // Spieler 8
-        { name: "Spieler9", pass: "pass9" }        // Spieler 9
+        { name: "Spieler7", pass: "quaps7" },       // Spieler 7
+        { name: "Spieler8", pass: "quaps8" },       // Spieler 8
+        { name: "Spieler9", pass: "quaps9" }        // Spieler 9
     ];
 
     // Suchen, ob die Kombination aus Name und Passwort stimmt
