@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quaps Attack - Community Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="background-image"></div>
+
+    <nav class="navbar">
+        <div class="nav-logo">QUAPS ATTACK</div>
+        <div class="nav-links">
+            <a href="#" onclick="showSection('home')" id="link-home" class="active">News</a>
+            <a href="#" onclick="showSection('worlds')" id="link-worlds">Worlds</a>
+            <a href="#" onclick="showSection('stats')" id="link-stats">Server-Info</a>
+            <a href="#" onclick="showSection('clips')" id="link-clips">Clips</a>
+            <a href="login.html" class="logout-link">Abmelden</a>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <div class="content">
+            
+            <div id="home" class="section active">
+                <div class="welcome-header">
+                    <h1>Willkommen im Hub von Quaps Attack! </h1>
+                    <p>Deine Zentrale für Welten, Regeln und Informationen.</p>
+                </div>
+
+                <div class="home-grid">
+                    <div class="home-card clip-card">
+    <h3>🎬 Highlight des Gooners</h3>
+    <div class="medal-container">
+        <iframe 
+            src="https://medal.tv/clip/m3iK02mDVMGqjX28X?autoplay=0&muted=0&loop=1" 
+            frameborder="0" 
+            allowfullscreen 
+            allow="autoplay; fullscreen">
+        </iframe>
+    </div>
+</div>
+                    </div>
+
+                    <div class="home-card rules">
+                        <div class="rules-header">
+                            <h3>📜 Unsere Regeln</h3>
+                            <img src="https://cdn.discordapp.com/attachments/1453882854659588329/1453883873237667964/image0.gif?ex=69b29b9f&is=69b14a1f&hm=75c1ec42c52f2cb8e18a13caeeb2dd47232f5e134813752c8b0d827b16a66a85&" class="rules-sticker" alt="Sticker">
+                        </div>
+                        <p>1. Kein X-Ray oder ähnliche Cheats/Hacks (dazu zählen auch Mods wie Xaeros Minimap/Worldmap und Freecam).</p>
+                        <p>2. Den Spawn in einem Radius von 100 Blöcken nicht griefen.</p>
+                        <p>3. Keine Griefing-Tools wie WorldEdit oder ähnliche Mods verwenden.</p>
+                    </div>
+                </div>
+            </div> <div id="worlds" class="section">
+                <h1>Welt-Downloads 🌍</h1>
+                <p>Hier kannst du die offiziellen Maps herunterladen und im Singleplayer erkunden:</p>
+            
+                    
+            </div> <div id="stats" class="section">
+                
+                
+                </div>
+            </div> </div> </div> 
+            
+            
+<div id="clips" class="section">
+    <div class="section-header">
+        <h1>Community Highlights 🎬</h1>
+        <p>Die epischsten Momente von Quaps Attack!</p>
+    </div>
+    
+    <div class="clips-grid">
+        
+        <div class="clip-card-premium">
+            <div class="medal-container">
+                <iframe src="https://medal.tv/clip/m3iK02mDVMGqjX28X?autoplay=0&muted=0&loop=1" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>
+            </div>
+            <div class="clip-info">
+                <h3>Joschis Goon Clip</h3>
+                <div class="clip-meta">
+                    <span>👤 Erstellt von: <strong>Louis</strong></span>
+                    
+                </div>
+                <p>Hier haben wir endlich Joschis Goon Clip!</p>
+            </div>
+        </div>
+
+        <div class="clip-card-premium">
+    <div class="medal-container">
+        <iframe 
+            src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0&muted=0&loop=1" 
+            frameborder="0" 
+            allowfullscreen 
+            allow="autoplay; fullscreen">
+        </iframe>
+    </div>
+    
+    <div class="clip-info">
+        <h3>Krasser Mace Hit 🔨</h3>
+        <div class="clip-meta">
+            <span>👤 Erstellt von: <strong>Louis</strong></span>
+            <span>📅 Datum: 11.03.2026</span>
+        </div>
+        <p>Krasser Hit Lukas! </p>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+
+
+            
+            <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            const activeLink = document.getElementById('link-' + sectionId);
+            if(activeLink) activeLink.classList.add('active');
+        }
+    </script>
+</body>
+</html>
