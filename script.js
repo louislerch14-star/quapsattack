@@ -14,7 +14,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         { name: "Giorgio", pass: "quaps4" },       // Spieler 4
         { name: "Mika", pass: "quaps5" },       // Spieler 5
         { name: "Nils", pass: "quaps6" },       // Spieler 6
-        { name: "Spieler7", pass: "quaps7" },       // Spieler 7
+        { name: "Joschi", pass: "676767" },       // Spieler 7
         { name: "Spieler8", pass: "quaps8" },       // Spieler 8
         { name: "Spieler9", pass: "quaps9" }        // Spieler 9
     ];
@@ -40,4 +40,5 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         // Optional: Eingabefelder leeren bei Fehler
         document.getElementById('password').value = "";
     }
+
 });
