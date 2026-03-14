@@ -218,5 +218,56 @@
         if(activeLink) activeLink.classList.add('active');
     }
 </script>
+<script>
+    // Diese Funktion steuert den Musik-Player
+    function togglePlay() {
+        console.log("Play-Button wurde aktiviert!");
+        
+        var audio = document.getElementById('communitySong');
+        var visualizer = document.getElementById('visualizer');
+        var btn = document.getElementById('playBtn');
+        var card = document.querySelector('.music-card-premium');
+
+        if (!audio) {
+            console.error("HTML-Fehler: Das Element mit ID 'communitySong' fehlt!");
+            return;
+        }
+
+        if (audio.paused) {
+            audio.play().then(() => {
+                visualizer.classList.add('playing');
+                if(card) card.classList.add('playing');
+                btn.innerText = "⏸ Pause";
+            }).catch(error => {
+                console.error("Audio-Fehler:", error);
+                alert("Konnte Datei nicht laden. Prüfe, ob 'quaps-hymne.mp3' im Ordner liegt!");
+            });
+        } else {
+            audio.pause();
+            visualizer.classList.remove('playing');
+            if(card) card.classList.remove('playing');
+            btn.innerText = "▶ Song abspielen";
+        }
+    }
+
+    // Die Lautstärke-Funktion
+    function changeVolume(val) {
+        var audio = document.getElementById('communitySong');
+        if (audio) {
+            audio.volume = val;
+        }
+    }
+
+    // Deine restliche Navigation (damit die auch wieder geht)
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+        const target = document.getElementById(sectionId);
+        if (target) target.style.display = 'block';
+        
+        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+        const link = document.getElementById('link-' + sectionId);
+        if (link) link.classList.add('active');
+    }
+</script>
 </body>
 </html>

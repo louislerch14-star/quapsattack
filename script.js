@@ -42,31 +42,3 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     }
 });
 
-function togglePlay() {
-    const audio = document.getElementById('communitySong');
-    const visualizer = document.getElementById('visualizer');
-    const btn = document.getElementById('playBtn');
-    const card = document.querySelector('.music-card-premium');
-
-    if (!audio) return;
-
-    if (audio.paused) {
-        audio.play().then(() => {
-            visualizer.classList.add('playing');
-            card.classList.add('playing');
-            btn.innerText = "⏸ Pause";
-        }).catch(err => {
-            alert("Datei 'quaps-hymne.mp3' nicht gefunden! Prüfe den Dateinamen.");
-        });
-    } else {
-        audio.pause();
-        visualizer.classList.remove('playing');
-        card.classList.remove('playing');
-        btn.innerText = "▶ Song abspielen";
-    }
-}
-
-function changeVolume(val) {
-    const audio = document.getElementById('communitySong');
-    if(audio) audio.volume = val;
-}
