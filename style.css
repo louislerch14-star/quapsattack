@@ -472,3 +472,134 @@ body, html {
         height: 250px;
     }
 }
+
+.clip-actions {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.download-btn-clip {
+    display: inline-block;
+    padding: 10px 25px;
+    background: #1a4a8e; /* Dunkelblau */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    border: 2px solid #4fb9ff; /* Hellblauer Rand */
+    transition: all 0.3s ease;
+}
+
+.download-btn-clip:hover {
+    background: #4fb9ff;
+    color: #111;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(79, 185, 255, 0.5);
+}
+
+.download-btn-clip span {
+    margin-right: 10px;
+}
+/* Container für den kleinen Button */
+.clip-mini-actions {
+    padding: 10px 20px 0 20px; /* Abstand zu den Seiten */
+}
+
+/* Der eigentliche kleine Button */
+.mini-download-btn {
+    display: inline-block;
+    background: rgba(79, 185, 255, 0.1);
+    color: #4fb9ff;
+    text-decoration: none;
+    font-size: 0.75rem; /* Schön klein */
+    font-weight: bold;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid rgba(79, 185, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.mini-download-btn:hover {
+    background: #4fb9ff;
+    color: #111;
+    border-color: #4fb9ff;
+    box-shadow: 0 0 10px rgba(79, 185, 255, 0.3);
+}
+/* Container für die Zentrierung */
+.song-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.music-card-premium {
+    background: rgba(13, 25, 43, 0.8);
+    border: 2px solid #4fb9ff;
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+.song-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.disc-icon { font-size: 2.5rem; animation: spin 4s linear infinite; animation-play-state: paused; }
+.playing .disc-icon { animation-play-state: running; }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.song-titles h3 { color: #4fb9ff; margin: 0; font-size: 1.4rem; }
+.song-titles span { color: #888; font-size: 0.9rem; }
+
+/* Visualizer */
+.visualizer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 50px;
+    gap: 6px;
+    margin: 25px 0;
+}
+
+.bar { width: 8px; height: 10px; background: #4fb9ff; border-radius: 4px; transition: 0.2s; }
+
+/* Animation wenn aktiv */
+.playing .bar { animation: bounce 0.6s ease-in-out infinite alternate; }
+.playing .bar:nth-child(2n) { animation-delay: 0.2s; }
+.playing .bar:nth-child(3n) { animation-delay: 0.4s; }
+
+@keyframes bounce { from { height: 10px; } to { height: 50px; box-shadow: 0 0 10px #4fb9ff; } }
+
+/* Controls */
+.main-play-btn {
+    background: #4fb9ff;
+    color: #0d192b;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.main-play-btn:hover { transform: scale(1.05); background: white; }
+
+.volume-box {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #888;
+}
+
+#volumeSlider { accent-color: #4fb9ff; cursor: pointer; }

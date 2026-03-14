@@ -12,12 +12,14 @@
 
     <nav class="navbar">
         <div class="nav-logo">QUAPS ATTACK</div>
-        <div class="nav-links">
-            <a href="#" onclick="showSection('home')" id="link-home" class="active">News</a>
-            <a href="#" onclick="showSection('worlds')" id="link-worlds">Worlds</a>
-            <a href="#" onclick="showSection('stats')" id="link-stats">Server-Info</a>
-            <a href="#" onclick="showSection('clips')" id="link-clips">Clips</a>
-            <a href="login.html" class="logout-link">Abmelden</a>
+        
+            <div class="nav-links">
+    <a href="#" onclick="showSection('home')" id="link-home" class="active">Home</a>
+    <a href="#" onclick="showSection('worlds')" id="link-worlds">Welten</a>
+    <a href="#" onclick="showSection('clips')" id="link-clips">Clips</a>
+    <a href="#" onclick="showSection('song-section')" id="link-song-section">Song</a>
+    <a href="#" onclick="logout()" class="logout-link">Abmelden</a>
+</div>
         </div>
     </nav>
 
@@ -40,6 +42,12 @@
             allowfullscreen 
             allow="autoplay; fullscreen">
         </iframe>
+    </div>
+    
+    <div class="clip-actions">
+        <a href="https://cloud.airbusfan.de/s/n5ZKtCXpQqPy79g/download" class="download-btn-clip">
+            <span>💾</span> Video herunterladen (Cloud)
+        </a>
     </div>
 </div>
                     </div>
@@ -65,6 +73,46 @@
                 </div>
             </div> </div> </div> 
             
+    <div id="song-section" class="section">
+    <div class="welcome-header">
+        <h1>Die Quaps Hymne 🎧</h1>
+        <p>Unser offizieller Community-Song, generiert mit KI.</p>
+    </div>
+
+    <div class="song-container">
+        <div class="music-card-premium">
+            <div class="song-header">
+                <div class="disc-icon" id="discIcon">💿</div>
+                <div class="song-titles">
+                    <h3>Quaps Attack Anthem</h3>
+                    <span>By AI Generator</span>
+                </div>
+            </div>
+
+            <div class="visualizer" id="visualizer">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+
+            <audio id="communitySong">
+                <source src="quaps-hymne.mp3" type="audio/mpeg">
+                Dein Browser unterstützt kein Audio.
+            </audio>
+
+            <div class="music-controls">
+                <button onclick="togglePlay()" id="playBtn" class="main-play-btn">▶ Song abspielen</button>
+                
+                <div class="volume-box">
+                    <span>🔈</span>
+                    <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)">
+                    <span>🔊</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            
             
 <div id="clips" class="section">
     <div class="section-header">
@@ -75,18 +123,25 @@
     <div class="clips-grid">
         
         <div class="clip-card-premium">
-            <div class="medal-container">
-                <iframe src="https://medal.tv/clip/m3iK02mDVMGqjX28X?autoplay=0&muted=0&loop=1" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>
-            </div>
-            <div class="clip-info">
-                <h3>Joschis Goon Clip</h3>
-                <div class="clip-meta">
-                    <span>👤 Erstellt von: <strong>Louis</strong></span>
-                    
-                </div>
-                <p>Hier haben wir endlich Joschis Goon Clip!</p>
-            </div>
+    <div class="medal-container">
+        <iframe src="https://medal.tv/clip/m3iK02mDVMGqjX28X?autoplay=0&muted=0&loop=1" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>
+    </div>
+
+    <div class="clip-mini-actions">
+        <a href="https://cloud.airbusfan.de/s/n5ZKtCXpQqPy79g/download" class="mini-download-btn">
+            📥 Download Clip
+        </a>
+    </div>
+
+    <div class="clip-info">
+        <h3>Joschis Goon Clip</h3>
+        <div class="clip-meta">
+            <span>👤 Erstellt von: <strong>Louis</strong></span>
         </div>
+        <p>Hier haben wir endlich Joschis Goon Clip!</p>
+    </div>
+</div>
+        
 
         <div class="clip-card-premium">
     <div class="medal-container">
@@ -108,21 +163,11 @@
     </div>
 </div>
 
+
+
     </div>
 </div>
-<div class="home-card music-card">
-    <h3>🎵 Unsere Hymne</h3>
-    <p>KI-generiert für Quaps Attack</p>
-    <div class="music-container">
-        <iframe 
-            src="https://musicgeneratorai.com/music/d700917b-2200-419a-baba-67ec2d2b28f7" 
-            width="100%" 
-            height="300px" 
-            frameborder="0" 
-            style="border-radius: 10px;">
-        </iframe>
-    </div>
-</div>
+
 
 
 

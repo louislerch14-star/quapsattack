@@ -14,7 +14,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         { name: "Giorgio", pass: "quaps4" },       // Spieler 4
         { name: "Mika", pass: "quaps5" },       // Spieler 5
         { name: "Nils", pass: "quaps6" },       // Spieler 6
-        { name: "Joschi", pass: "676767" },       // Spieler 7
+        { name: "Spieler7", pass: "quaps7" },       // Spieler 7
         { name: "Spieler8", pass: "quaps8" },       // Spieler 8
         { name: "Spieler9", pass: "quaps9" }        // Spieler 9
     ];
@@ -40,5 +40,33 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         // Optional: Eingabefelder leeren bei Fehler
         document.getElementById('password').value = "";
     }
-
 });
+
+function togglePlay() {
+    const audio = document.getElementById('communitySong');
+    const visualizer = document.getElementById('visualizer');
+    const btn = document.getElementById('playBtn');
+    const card = document.querySelector('.music-card-premium');
+
+    if (!audio) return;
+
+    if (audio.paused) {
+        audio.play().then(() => {
+            visualizer.classList.add('playing');
+            card.classList.add('playing');
+            btn.innerText = "⏸ Pause";
+        }).catch(err => {
+            alert("Datei 'quaps-hymne.mp3' nicht gefunden! Prüfe den Dateinamen.");
+        });
+    } else {
+        audio.pause();
+        visualizer.classList.remove('playing');
+        card.classList.remove('playing');
+        btn.innerText = "▶ Song abspielen";
+    }
+}
+
+function changeVolume(val) {
+    const audio = document.getElementById('communitySong');
+    if(audio) audio.volume = val;
+}
