@@ -627,3 +627,26 @@ body, html {
     box-shadow: 0 0 15px rgba(79, 185, 255, 0.3);
     transform: translateY(-2px);
 }
+.main-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.secondary-btn {
+    background: rgba(79, 185, 255, 0.1);
+    color: #4fb9ff;
+    border: 1px solid #4fb9ff;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.3s;
+}
+
+.secondary-btn:hover {
+    background: rgba(79, 185, 255, 0.3);
+    transform: scale(1.1);
+}
