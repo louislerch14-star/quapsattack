@@ -102,12 +102,20 @@
                 Dein Browser unterstützt kein Audio.
             </audio>
             <div class="music-controls">
-    <button onclick="togglePlay()" id="playBtn" class="main-play-btn">▶ Song abspielen</button>
+    <div class="main-controls">
+        <button onclick="rewind()" class="control-btn secondary-btn">⏪ 10s</button>
+        
+        <button onclick="togglePlay()" id="playBtn" class="main-play-btn">▶ Song abspielen</button>
+        
+        <button onclick="forward()" class="control-btn secondary-btn">10s ⏩</button>
+    </div>
     
     <div class="volume-box">
         <span>🔈</span>
         <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)">
         <span>🔊</span>
+    </div>
+    
     </div>
 
     <div class="song-download-wrapper">
