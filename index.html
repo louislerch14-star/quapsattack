@@ -289,6 +289,21 @@
         const link = document.getElementById('link-' + sectionId);
         if (link) link.classList.add('active');
     }
+    // 10 Sekunden zurückspringen
+function rewind() {
+    const audio = document.getElementById('communitySong');
+    if (audio) {
+        audio.currentTime = Math.max(0, audio.currentTime - 10);
+    }
+}
+
+// 10 Sekunden vorspringen
+function forward() {
+    const audio = document.getElementById('communitySong');
+    if (audio) {
+        audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+    }
+}
 </script>
 </body>
 </html>
