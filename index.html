@@ -46,8 +46,8 @@
     </div>
     
     <div class="clip-actions">
-        <a href="https://cloud.airbusfan.de/s/n5ZKtCXpQqPy79g/download" class="download-btn-clip">
-            <span>💾</span> Video herunterladen (Cloud)
+        <a href="https://drive.google.com/uc?export=download&id=19bJk9G61reyn_sW1YVxUx31k_TiegOlX" class="download-btn-clip">
+            <span>💾</span> Video von Drive laden
         </a>
     </div>
 </div>
@@ -102,27 +102,21 @@
                 Dein Browser unterstützt kein Audio.
             </audio>
             <div class="music-controls">
-    <div class="main-controls">
-        <button onclick="rewind()" class="control-btn secondary-btn">⏪ 10s</button>
-        
-        <button onclick="togglePlay()" id="playBtn" class="main-play-btn">▶ Song abspielen</button>
-        
-        <button onclick="forward()" class="control-btn secondary-btn">10s ⏩</button>
-    </div>
+    <button onclick="togglePlay()" id="playBtn" class="main-play-btn">▶ Song abspielen</button>
     
     <div class="volume-box">
         <span>🔈</span>
         <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)">
         <span>🔊</span>
     </div>
-    
-    </div>
 
     <div class="song-download-wrapper">
-        <a href="https://cloud.airbusfan.de/s/dPLFGrPpMH6g4Lr/download" class="song-download-btn">
-            📥 Song herunterladen (.mp3)
-        </a>
-    </div>
+    <a href="https://drive.google.com/uc?export=download&id=1ZTeVOHoeNGkNS6dgjhnlyjdD3g8hgC2_" 
+       class="song-download-btn" 
+       target="_blank">
+        📥 Song von Drive herunterladen
+    </a>
+</div>
 </div>
 
             
@@ -149,7 +143,7 @@
     </div>
 
     <div class="clip-mini-actions">
-        <a href="https://cloud.airbusfan.de/s/n5ZKtCXpQqPy79g/download" class="mini-download-btn">
+        <a href="https://drive.google.com/uc?export=download&id=19bJk9G61reyn_sW1YVxUx31k_TiegOlX" class="download-btn-clip">
             📥 Download Clip
         </a>
     </div>
@@ -289,21 +283,6 @@
         const link = document.getElementById('link-' + sectionId);
         if (link) link.classList.add('active');
     }
-    // 10 Sekunden zurückspringen
-function rewind() {
-    const audio = document.getElementById('communitySong');
-    if (audio) {
-        audio.currentTime = Math.max(0, audio.currentTime - 10);
-    }
-}
-
-// 10 Sekunden vorspringen
-function forward() {
-    const audio = document.getElementById('communitySong');
-    if (audio) {
-        audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
-    }
-}
 </script>
 </body>
 </html>
