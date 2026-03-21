@@ -6,6 +6,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quaps Attack - Community Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Zusätzliches Styling für die Welt-Downloads, falls noch nicht in style.css */
+        .worlds-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .world-card-premium {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            max-width: 550px;
+            transition: all 0.3s ease;
+        }
+
+        .world-card-premium:hover {
+            transform: translateY(-8px);
+            border-color: #00d4ff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .world-icon { font-size: 50px; }
+
+        .world-info h3 { margin: 0 0 8px 0; color: #00d4ff; font-size: 22px; }
+
+        .world-meta {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+            font-size: 0.85em;
+            color: #ccc;
+        }
+
+        .download-btn-world {
+            display: inline-block;
+            background: linear-gradient(45deg, #00d4ff, #0055ff);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .download-btn-world:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+        }
+    </style>
 </head>
 <body>
 
@@ -13,14 +71,12 @@
 
     <nav class="navbar">
         <div class="nav-logo">QUAPS ATTACK</div>
-        
-            <div class="nav-links">
-    <a href="#" onclick="showSection('home')" id="link-home" class="active">Home</a>
-    <a href="#" onclick="showSection('worlds')" id="link-worlds">Welten</a>
-    <a href="#" onclick="showSection('clips')" id="link-clips">Clips</a>
-    <a href="#" onclick="showSection('song-section')" id="link-song-section">Song</a>
-    <a href="#" onclick="logout()" class="logout-link">Abmelden</a>
-</div>
+        <div class="nav-links">
+            <a href="#" onclick="showSection('home')" id="link-home" class="active">Home</a>
+            <a href="#" onclick="showSection('worlds')" id="link-worlds">Downloads</a>
+            <a href="#" onclick="showSection('clips')" id="link-clips">Clips</a>
+            <a href="#" onclick="showSection('song-section')" id="link-song-section">Song</a>
+            <a href="#" onclick="logout()" class="logout-link">Abmelden</a>
         </div>
     </nav>
 
@@ -29,260 +85,174 @@
             
             <div id="home" class="section active">
                 <div class="welcome-header">
-                    <h1>Willkommen im Hub von Quaps Attack! </h1>
+                    <h1>Willkommen im Hub, <span id="user-name-display">Gamer</span>! 🐲</h1>
                     <p>Deine Zentrale für Welten, Regeln und Informationen.</p>
                 </div>
 
                 <div class="home-grid">
                     <div class="home-card clip-card">
-    <h3>🎬 Highlight des Gooners</h3>
-    <div class="medal-container">
-        <iframe 
-            src="https://medal.tv/clip/m3iK02mDVMGqjX28X?autoplay=0&muted=0&loop=1" 
-            frameborder="0" 
-            allowfullscreen 
-            allow="autoplay; fullscreen">
-        </iframe>
-    </div>
-    
-    <div class="clip-actions">
-        <a href="https://drive.google.com/uc?export=download&id=19bJk9G61reyn_sW1YVxUx31k_TiegOlX" class="download-btn-clip">
-            <span>💾</span> Video von Drive laden
-        </a>
-    </div>
-</div>
+                        <h3>🎬 Highlight des Gooners</h3>
+                        <div class="medal-container">
+                            <iframe 
+                                src="https://medal.tv/clip/m3iK02mDVMGqjX28X?autoplay=0&muted=0&loop=1" 
+                                frameborder="0" allowfullscreen allow="autoplay; fullscreen">
+                            </iframe>
+                        </div>
+                        <div class="clip-actions">
+                            <a href="https://drive.google.com/uc?export=download&id=19bJk9G61reyn_sW1YVxUx31k_TiegOlX" class="download-btn-clip">
+                                <span>💾</span> Video von Drive laden
+                            </a>
+                        </div>
                     </div>
 
                     <div class="home-card rules">
                         <div class="rules-header">
                             <h3>📜 Unsere Regeln</h3>
-                            <img src="https://cdn.discordapp.com/attachments/1453882854659588329/1453883873237667964/image0.gif?ex=69b29b9f&is=69b14a1f&hm=75c1ec42c52f2cb8e18a13caeeb2dd47232f5e134813752c8b0d827b16a66a85&" class="rules-sticker" alt="Sticker">
+                            <img src="https://cdn.discordapp.com/attachments/1453882854659588329/1453883873237667964/image0.gif" class="rules-sticker" alt="Sticker">
                         </div>
-                        <p>1. Kein X-Ray oder ähnliche Cheats/Hacks (dazu zählen auch Mods wie Xaeros Minimap/Worldmap und Freecam).</p>
-                        <p>2. Den Spawn in einem Radius von 100 Blöcken nicht griefen.</p>
-                        <p>3. Keine Griefing-Tools wie WorldEdit oder ähnliche Mods verwenden.</p>
+                        <p>1. Kein X-Ray oder ähnliche Cheats/Hacks.</p>
+                        <p>2. Den Spawn (Radius 100 Blöcke) nicht griefen.</p>
+                        <p>3. Keine Griefing-Tools wie WorldEdit verwenden.</p>
                     </div>
                 </div>
-            </div> <div id="worlds" class="section">
-                <h1>Welt-Downloads 🌍</h1>
-                <p>Hier kannst du die offiziellen Maps herunterladen und im Singleplayer erkunden:</p>
-            
-                    
-            </div> <div id="stats" class="section">
-                
-                
-                </div>
-            </div> </div> </div> 
-            
-    <div id="song-section" class="section">
-    <div class="welcome-header">
-        <h1>Die Quaps Hymne 🎧</h1>
-        <p>Unser offizieller Community-Song, generiert mit KI.</p>
-    </div>
+            </div>
 
-    <div class="song-container">
-        <div class="music-card-premium">
-            <div class="song-header">
-                <div class="disc-icon" id="discIcon">💿</div>
-                <div class="song-titles">
-                    <h3>Quaps Attack Anthem</h3>
-                    <span>By AI Generator</span>
+            <div id="worlds" class="section">
+                <div class="section-header">
+                    <h1>Downloads </h1>
+                    <p>Hier kannst du die offizielle App laden:</p>
+                </div>
+                
+                <div class="worlds-grid">
+                    <div class="world-card-premium">
+                        <div class="world-icon">🗺️</div>
+                        <div class="world-info">
+                            <h3>Offizielle Quaps App</h3>
+                            <p>Die komplette App mit allen Funktionen der Community.</p>
+                            <div class="world-meta">
+                                <span>📦 Format: .exe</span>
+                                <span>💾 Größe: ca. 250 MB</span>
+                            </div>
+                            <a href="https://drive.google.com/uc?export=download&id=1b7asBaC2K0hLraWxGXL592KaAVDtQgVD" 
+                               class="download-btn-world" target="_blank">
+                                📥 App herunterladen
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="song-section" class="section">
+                <div class="welcome-header">
+                    <h1>Die Quaps Hymne 🎧</h1>
+                    <p>Unser offizieller Community-Song, generiert mit KI.</p>
+                </div>
+
+                <div class="song-container">
+                    <div class="music-card-premium">
+                        <div class="song-header">
+                            <div class="disc-icon" id="discIcon">💿</div>
+                            <div class="song-titles">
+                                <h3>Quaps Attack Anthem</h3>
+                                <span>By AI Generator</span>
+                            </div>
+                        </div>
+                        <div class="visualizer" id="visualizer">
+                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                        </div>
+                        <audio id="communitySong">
+                            <source src="quaps-hymne.mp3" type="audio/mpeg">
+                        </audio>
+                        <div class="music-controls">
+                            <button onclick="togglePlay()" id="playBtn" class="main-play-btn">▶ Song abspielen</button>
+                            <div class="volume-box">
+                                <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)">
+                            </div>
+                            <div class="song-download-wrapper">
+                                <a href="https://drive.google.com/uc?export=download&id=1ZTeVOHoeNGkNS6dgjhnlyjdD3g8hgC2_" class="song-download-btn">📥 Download MP3</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="visualizer" id="visualizer">
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            </div>
-            
-
-            <audio id="communitySong">
-                <source src="quaps-hymne.mp3" type="audio/mpeg">
-                Dein Browser unterstützt kein Audio.
-            </audio>
-            <div class="music-controls">
-    <button onclick="togglePlay()" id="playBtn" class="main-play-btn">▶ Song abspielen</button>
-    
-    <div class="volume-box">
-        <span>🔈</span>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)">
-        <span>🔊</span>
-    </div>
-
-    <div class="song-download-wrapper">
-    <a href="https://drive.google.com/uc?export=download&id=1ZTeVOHoeNGkNS6dgjhnlyjdD3g8hgC2_" 
-       class="song-download-btn" 
-       target="_blank">
-        📥 Song von Drive herunterladen
-    </a>
-</div>
-</div>
-
-            
-                
-                
+            <div id="clips" class="section">
+                <div class="section-header">
+                    <h1>Community Highlights 🎬</h1>
+                </div>
+                <div class="clips-grid">
+                    <div class="clip-card-premium">
+                        <div class="medal-container">
+                            <iframe src="https://medal.tv/clip/m3iK02mDVMGqjX28X?autoplay=0&muted=0&loop=1" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div class="clip-info">
+                            <h3>Joschis Goon Clip</h3>
+                            <p>👤 Erstellt von: Louis</p>
+                        </div>
+                    </div>
+                    <div class="clip-card-premium">
+                        <div class="medal-container">
+                            <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0&muted=0&loop=1" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div class="clip-info">
+                            <h3>Krasser Mace Hit 🔨</h3>
+                            <p>👤 Erstellt von: Louis</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-            
-            
-<div id="clips" class="section">
-    <div class="section-header">
-        <h1>Community Highlights 🎬</h1>
-        <p>Die epischsten Momente von Quaps Attack!</p>
-    </div>
-    
-    <div class="clips-grid">
-        
-        <div class="clip-card-premium">
-    <div class="medal-container">
-        <iframe src="https://medal.tv/clip/m3iK02mDVMGqjX28X?autoplay=0&muted=0&loop=1" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>
-    </div>
 
-    <div class="clip-mini-actions">
-        <a href="https://drive.google.com/uc?export=download&id=19bJk9G61reyn_sW1YVxUx31k_TiegOlX" class="download-btn-clip">
-            📥 Download Clip
-        </a>
-    </div>
-
-    <div class="clip-info">
-        <h3>Joschis Goon Clip</h3>
-        <div class="clip-meta">
-            <span>👤 Erstellt von: <strong>Louis</strong></span>
-        </div>
-        <p>Hier haben wir endlich Joschis Goon Clip!</p>
-    </div>
-</div>
-        
-
-        <div class="clip-card-premium">
-    <div class="medal-container">
-        <iframe 
-            src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0&muted=0&loop=1" 
-            frameborder="0" 
-            allowfullscreen 
-            allow="autoplay; fullscreen">
-        </iframe>
-    </div>
-    
-    <div class="clip-info">
-        <h3>Krasser Mace Hit 🔨</h3>
-        <div class="clip-meta">
-            <span>👤 Erstellt von: <strong>Louis</strong></span>
-            <span>📅 Datum: 11.03.2026</span>
-        </div>
-        <p>Krasser Hit Lukas! </p>
-    </div>
-</div>
-
-
-
-    </div>
-</div>
-
-
-
-
-            
-            <script>
+        </div> </div> <script>
+        // NAVIGATION
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
             
-            document.getElementById(sectionId).classList.add('active');
-            const activeLink = document.getElementById('link-' + sectionId);
-            if(activeLink) activeLink.classList.add('active');
+            const target = document.getElementById(sectionId);
+            if(target) target.classList.add('active');
+            
+            const link = document.getElementById('link-' + sectionId);
+            if(link) link.classList.add('active');
+        }
+
+        // LOGIN CHECK
+        window.onload = function() {
+            const user = localStorage.getItem('loggedInUser');
+            if (!user || user === "undefined") {
+                window.location.href = "login.html";
+            } else {
+                const nameDisplay = document.getElementById('user-name-display');
+                if(nameDisplay) nameDisplay.innerText = user;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = "login.html";
+        }
+
+        // AUDIO PLAYER
+        function togglePlay() {
+            var audio = document.getElementById('communitySong');
+            var btn = document.getElementById('playBtn');
+            var visualizer = document.getElementById('visualizer');
+
+            if (audio.paused) {
+                audio.play();
+                btn.innerText = "⏸ Pause";
+                visualizer.classList.add('playing');
+            } else {
+                audio.pause();
+                btn.innerText = "▶ Song abspielen";
+                visualizer.classList.remove('playing');
+            }
+        }
+
+        function changeVolume(val) {
+            document.getElementById('communitySong').volume = val;
         }
     </script>
-    <script>
-    // DER TÜRSTEHER (Prüft beim Laden der Seite)
-    window.onload = function() {
-        const user = localStorage.getItem('loggedInUser');
-
-        // Falls KEIN Nutzer im Speicher ist -> Zurück zum Login
-        if (!user || user === "undefined") {
-            window.location.href = "login.html";
-            return; // Stoppt das restliche Script
-        }
-
-        // Falls ein Nutzer da ist -> Begrüßung anzeigen
-        const welcomeTitle = document.querySelector('.welcome-header h1');
-        if (welcomeTitle) {
-            welcomeTitle.innerText = "Willkommen im Hub, " + user + "! 🐲";
-        }
-    }
-
-    // DIE LOGOUT-FUNKTION (Wichtig!)
-    function logout() {
-        // Löscht den Namen aus dem Speicher
-        localStorage.removeItem('loggedInUser');
-        // Schickt den User zum Login
-        window.location.href = "login.html";
-    }
-
-    // Deine Navigations-Funktion
-    function showSection(sectionId) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        
-        document.getElementById(sectionId).classList.add('active');
-        const activeLink = document.getElementById('link-' + sectionId);
-        if(activeLink) activeLink.classList.add('active');
-    }
-</script>
-<script>
-    // Diese Funktion steuert den Musik-Player
-    function togglePlay() {
-        console.log("Play-Button wurde aktiviert!");
-        
-        var audio = document.getElementById('communitySong');
-        var visualizer = document.getElementById('visualizer');
-        var btn = document.getElementById('playBtn');
-        var card = document.querySelector('.music-card-premium');
-
-        if (!audio) {
-            console.error("HTML-Fehler: Das Element mit ID 'communitySong' fehlt!");
-            return;
-        }
-
-        if (audio.paused) {
-            audio.play().then(() => {
-                visualizer.classList.add('playing');
-                if(card) card.classList.add('playing');
-                btn.innerText = "⏸ Pause";
-            }).catch(error => {
-                console.error("Audio-Fehler:", error);
-                alert("Konnte Datei nicht laden. Prüfe, ob 'quaps-hymne.mp3' im Ordner liegt!");
-            });
-        } else {
-            audio.pause();
-            visualizer.classList.remove('playing');
-            if(card) card.classList.remove('playing');
-            btn.innerText = "▶ Song abspielen";
-        }
-    }
-
-    // Die Lautstärke-Funktion
-    function changeVolume(val) {
-        var audio = document.getElementById('communitySong');
-        if (audio) {
-            audio.volume = val;
-        }
-    }
-
-    // Deine restliche Navigation (damit die auch wieder geht)
-    function showSection(sectionId) {
-        document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-        const target = document.getElementById(sectionId);
-        if (target) target.style.display = 'block';
-        
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        const link = document.getElementById('link-' + sectionId);
-        if (link) link.classList.add('active');
-    }
-</script>
 </body>
 </html>
