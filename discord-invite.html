@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Invite | Quaps Evolved</title>
+    <link rel="icon" type="image/x-icon" href="quaps-evoluted.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --accent: #00d4ff; 
+            --card-bg: rgba(12, 12, 14, 0.92);
+        }
+
+        body {
+            margin: 0; 
+            font-family: 'Outfit', sans-serif;
+            background: #050507; 
+            color: white;
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(5, 5, 7, 0.5), rgba(5, 5, 7, 0.8)), 
+                        url('quaps-evoluted.jpg') center/cover no-repeat;
+            z-index: -1;
+            filter: brightness(1.1);
+        }
+
+        .main-flex { flex: 1; display: flex; justify-content: center; align-items: center; padding: 60px 20px; }
+        
+        .form-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            padding: 50px; 
+            border-radius: 24px; 
+            width: 100%; 
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+        }
+
+        .discord-badge {
+            background: #5865F2; /* Discord Blau */
+            color: white;
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        h1 { font-size: 2.5rem; font-weight: 900; margin: 0; letter-spacing: -1.5px; line-height: 1.1; }
+        h1 span { color: var(--accent); }
+        
+        .welcome-text { color: #aaa; margin: 15px 0 35px; font-size: 0.95rem; line-height: 1.5; }
+
+        label { display: block; font-size: 0.7rem; color: #666; text-transform: uppercase; margin-bottom: 8px; font-weight: 900; letter-spacing: 1px; }
+        label span { color: var(--accent); }
+
+        input, textarea, select {
+            width: 100%; padding: 16px; background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; box-sizing: border-box;
+            margin-bottom: 25px; transition: 0.3s; font-family: inherit;
+        }
+
+        input:focus, textarea:focus { border-color: var(--accent); outline: none; background: rgba(0, 0, 0, 0.5); }
+        
+        .mod-section {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 3px solid var(--accent);
+            margin-bottom: 25px;
+        }
+
+        button {
+            width: 100%; padding: 20px; background: #fff; color: #000;
+            border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer;
+            transition: 0.4s; letter-spacing: 1px; font-size: 1rem;
+        }
+
+        button:hover { background: var(--accent); color: #fff; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3); }
+
+        footer { 
+            padding: 40px; text-align: center; 
+            background: rgba(0,0,0,0.5);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .footer-logo { font-weight: 900; color: #333; letter-spacing: 2px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay"></div>
+
+    <div class="main-flex">
+        <div class="form-card">
+            <div class="discord-badge">Discord Verified Access</div>
+            <h1>Evolved <span>Registration</span></h1>
+            <p class="welcome-text">
+                Du bist über Discord hier? Perfekt. Melde dich jetzt für <b>Quaps Evolved</b> an und reiche direkt deinen Mod-Wunsch ein.
+            </p>
+            
+            <form action="https://formspree.io/f/xdabgyro" method="POST">
+                <!-- Verstecktes Feld, damit du in der Email siehst, dass es von dieser Seite kommt -->
+                <input type="hidden" name="Source" value="Discord-Direct-Invite">
+                <input type="hidden" name="Project" value="Quaps-Evolved">
+
+                <label>Dein Username <span>*</span></label>
+                <input type="text" name="username" placeholder="Steve123" required>
+
+                <div class="mod-section">
+                    <label>Mod-Wunsch (Titel / Link) <span>*</span></label>
+                    <textarea name="mod_request" placeholder="Welche Mod hättest du gerne? (Oder schreibe 'Keine')" required style="min-height: 80px;"></textarea>
+                </div>
+
+                <label>Warum willst du dabei sein?</label>
+                <textarea name="motivation" placeholder="Kurze Info genügt..." style="min-height: 80px;"></textarea>
+                
+                <button type="submit">Eintritt beantragen</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-logo">QUAPS ATTACK // EVOLVED DIVISION 2026</div>
+    </footer>
+
+</body>
+</html>
