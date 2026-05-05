@@ -1,230 +1,229 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <link rel="icon" type="image/png" href="unnamed.jpg">
+    <!-- SEO Meta Tags -->
+<meta name="description" content="Quaps Attack Elite Hub - Die offizielle Zentrale für Agents. Downloads, Media Intel und Community Codex.">
+<meta name="keywords" content="Quaps Attack, Gaming Hub, Minecraft Mod, Elite Hub">
+<meta name="robots" content="index, follow">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quaps Attack - Community Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Quaps Attack | Elite Hub</title>
+    <link rel="icon" type="image/png" href="unnamed.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
-        /* Zusätzliches Styling für die Welt-Downloads, falls noch nicht in style.css */
-        .worlds-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            padding: 20px;
+        :root {
+            --primary: #00d4ff;
+            --secondary: #0055ff;
+            --bg-dark: #050506; /* Tiefes Schwarz-Grau */
+            --card-glass: rgba(20, 20, 25, 0.7);
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-dim: #888888;
         }
 
-        .world-card-premium {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Dunklerer Hintergrund mit Bild-Vignette */
+        .bg-system {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(5,5,6,0.5) 0%, rgba(5,5,6,1) 90%), 
+                        url('unnamed.jpg') center/cover no-repeat;
+            z-index: -1;
+            opacity: 0.9;
+        }
+
+        /* Schwebende Navigation */
+        .nav-wrapper {
+            position: fixed;
+            top: 20px; left: 50%;
+            transform: translateX(-50%);
+            width: 90%; max-width: 900px;
+            z-index: 1000;
+        }
+
+        .navbar {
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border-glass);
             border-radius: 20px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            max-width: 550px;
-            transition: all 0.3s ease;
+            padding: 12px 30px;
+            display: flex; align-items: center; justify-content: space-between;
         }
 
-        .world-card-premium:hover {
-            transform: translateY(-8px);
-            border-color: #00d4ff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        .nav-logo { font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; }
+        .nav-logo span { color: var(--primary); }
+
+        .nav-links { display: flex; gap: 5px; }
+        .nav-links a {
+            color: var(--text-dim); text-decoration: none;
+            padding: 8px 16px; border-radius: 12px;
+            font-weight: 600; font-size: 0.85rem;
         }
 
-        .world-icon { font-size: 50px; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); background: rgba(255,255,255,0.03); }
 
-        .world-info h3 { margin: 0 0 8px 0; color: #00d4ff; font-size: 22px; }
+        .evoluted-btn { border: 1px solid var(--primary); color: var(--primary) !important; }
 
-        .world-meta {
-            display: flex;
-            gap: 15px;
-            margin: 10px 0;
-            font-size: 0.85em;
-            color: #ccc;
+        /* Container */
+        .container { padding: 140px 20px 60px; max-width: 1100px; margin: 0 auto; }
+
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+        .hero h1 { font-size: 3.5rem; font-weight: 900; margin: 0; letter-spacing: -2px; }
+        .hero p { color: var(--primary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 40px; }
+
+        /* Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+        .glass-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 35px;
         }
 
-        .download-btn-world {
-            display: inline-block;
-            background: linear-gradient(45deg, #00d4ff, #0055ff);
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: 0.3s;
-            margin-top: 10px;
+        .glass-card:hover { border-color: rgba(0, 212, 255, 0.3); transform: translateY(-3px); }
+
+        .glass-card h3 { font-size: 1.4rem; margin-top: 0; color: #fff; }
+
+        /* Buttons */
+        .action-btn {
+            display: inline-block; background: #fff; color: #000;
+            padding: 14px 28px; border-radius: 12px;
+            text-decoration: none; font-weight: 900; font-size: 0.75rem;
+            text-transform: uppercase; margin-top: 20px;
         }
 
-        .download-btn-world:hover {
-            filter: brightness(1.2);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
-        }
+        .action-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 0 20px var(--primary); }
+
+        /* Music Visualizer */
+        .visualizer { display: flex; gap: 4px; height: 30px; align-items: center; margin: 20px 0; }
+        .bar { width: 4px; height: 8px; background: var(--primary); border-radius: 4px; }
+        .playing .bar { animation: pulse 0.7s infinite alternate; }
+        @keyframes pulse { from { height: 8px; } to { height: 30px; } }
+
+        footer { text-align: center; padding: 40px; color: #333; font-size: 0.7rem; font-weight: 900; }
     </style>
 </head>
 <body>
 
-    <div class="background-image"></div>
+    <div class="bg-system"></div>
 
-    <nav class="navbar">
-        <div class="nav-logo">QUAPS ATTACK</div>
-        <div class="nav-links">
-            <a href="#" onclick="showSection('home')" id="link-home" class="active">Home</a>
-            <a href="#" onclick="showSection('worlds')" id="link-worlds">Downloads</a>
-            <a href="#" onclick="showSection('clips')" id="link-clips">Clips</a>
-            <a href="#" onclick="showSection('song-section')" id="link-song-section">Song</a>
-            <a href="#" onclick="logout()" class="logout-link">Abmelden</a>
-        </div>
-    </nav>
+    <div class="nav-wrapper">
+        <nav class="navbar">
+            <div class="nav-logo">QUAPS<span>HUB</span></div>
+            <div class="nav-links">
+                <a href="#" onclick="showSection('home')" id="link-home" class="active">Main</a>
+                <a href="#" onclick="showSection('worlds')" id="link-worlds">App</a>
+                <a href="#" onclick="showSection('intel')" id="link-intel">Clip</a>
+                <a href="evoluted.html" class="evoluted-btn">Evoluted</a>
+                <a href="#" onclick="logout()" style="color: #666;">Exit</a>
+            </div>
+        </nav>
+    </div>
 
-    <div class="content-wrapper">
-        <div class="content">
+    <div class="container">
+        
+        <!-- HOME SECTION -->
+        <div id="home" class="section active">
+            <div class="hero">
+                <h1>Hi, <span id="user-name-display">Agent</span>.</h1>
+                
+            </div>
             
-            <div id="home" class="section active">
-                <div class="welcome-header">
-                    <h1>Willkommen im Hub, <span id="user-name-display">Gamer</span>! 🐲</h1>
-                    <p>Deine Zentrale für Welten, Regeln und Informationen.</p>
+            <div class="grid">
+                <div class="glass-card">
+                    <h3>📜 Codex</h3>
+                    <p style="color: var(--text-dim); line-height: 1.8;">
+                        • Fairplay Pflicht<br>
+                        • Keine Hacks / X-Ray<br>
+                        • Spawn-Griefing verboten
+                    </p>
+                    <img src="https://cdn.discordapp.com/attachments/1453882854659588329/1453883873237667964/image0.gif" 
+                         style="width: 70px; margin-top: 20px; border-radius: 12px;">
                 </div>
 
-                <div class="home-grid">
-                    <div class="home-card clip-card">
-                        <h3>🎬 Highlight des Gooners</h3>
-                        <div class="medal-container">
-                            <iframe 
-                                src="https://medal.tv/clip/m3iK02mDVMGqjX28X?autoplay=0&muted=0&loop=1" 
-                                frameborder="0" allowfullscreen allow="autoplay; fullscreen">
-                            </iframe>
-                        </div>
-                        <div class="clip-actions">
-                            <a href="https://drive.google.com/uc?export=download&id=19bJk9G61reyn_sW1YVxUx31k_TiegOlX" class="download-btn-clip">
-                                <span>💾</span> Video von Drive laden
-                            </a>
-                        </div>
+                <div class="glass-card">
+                    <h3>🔊 Die Hymne</h3>
+                    <div class="visualizer" id="visualizer">
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
                     </div>
-
-                    <div class="home-card rules">
-                        <div class="rules-header">
-                            <h3>📜 Unsere Regeln</h3>
-                            <img src="https://cdn.discordapp.com/attachments/1453882854659588329/1453883873237667964/image0.gif" class="rules-sticker" alt="Sticker">
-                        </div>
-                        <p>1. Kein X-Ray oder ähnliche Cheats/Hacks.</p>
-                        <p>2. Den Spawn (Radius 100 Blöcke) nicht griefen.</p>
-                        <p>3. Keine Griefing-Tools wie WorldEdit verwenden.</p>
-                    </div>
+                    <audio id="communitySong">
+                        <source src="quaps-hymne.mp3" type="audio/mpeg">
+                    </audio>
+                    <button onclick="togglePlay()" id="playBtn" class="action-btn">Play Track</button>
                 </div>
-            </div>
-
-            <div id="worlds" class="section">
-    <div class="section-header">
-        <h1>Downloads 📥</h1>
-        <p>Hier kannst du die offizielle Quaps App für deinen PC herunterladen.</p>
-    </div>
-    
-    <div class="worlds-grid">
-        <div class="world-card-premium">
-            <div class="world-icon">💻</div>
-            <div class="world-info">
-                <h3>Offizielle Quaps App (Installer)</h3>
-                <p>Die Zentrale für alle Agenten. Inklusive Hub, Hymne und Clips.</p>
-                <div class="world-meta">
-                    <span>📦 Typ: Windows Setup (.exe)</span>
-                    <span>💾 Größe: ca. 80 MB</span>
-                </div>
-                <a href="https://drive.google.com/uc?export=download&id=14ARaZOmka_90e4-Npnk63FfKgMxOIsdW" 
-                   class="download-btn-world" target="_blank">
-                    📥 Jetzt Installieren
-                </a>
             </div>
         </div>
+
+        <!-- SOFTWARE SECTION -->
+        <div id="worlds" class="section">
+            <div class="hero">
+                <h1>Deployment</h1>
+                <p>Download Hub</p>
+            </div>
+            <div class="glass-card" style="max-width: 500px;">
+                <h3>Quaps App v1.0</h3>
+                <p style="color: var(--text-dim);">Vollständiger Zugriff auf alle Community Features per Desktop App.</p>
+                <a href="https://drive.google.com/uc?export=download&id=14ARaZOmka_90e4-Npnk63FfKgMxOIsdW" class="action-btn">Download .exe</a>
+            </div>
+        </div>
+
+        <!-- INTEL SECTION (Hier ist der funktionierende Clip) -->
+        <div id="intel" class="section">
+            <div class="hero">
+                <h1>Media</h1>
+                
+            </div>
+            <div class="grid">
+                <div class="glass-card">
+                    <h3>Mace Hit Showcase</h3>
+                    <div style="width:100%; height:200px; border-radius:15px; overflow:hidden; border:1px solid var(--border-glass);">
+                        <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" width="100%" height="100%" frameborder="0"></iframe>
+                    </div>
+                    <p style="margin-top:15px; color:var(--text-dim); font-size:0.8rem;">Operator: Louis</p>
+                </div>
+            </div>
+        </div>
+
     </div>
-</div>
 
-            <div id="song-section" class="section">
-                <div class="welcome-header">
-                    <h1>Die Quaps Hymne 🎧</h1>
-                    <p>Unser offizieller Community-Song, generiert mit KI.</p>
-                </div>
+    <footer>
+        QUAPS ATTACK // 2026 OFFICIAL ENCRYPTED PORTAL
+    </footer>
 
-                <div class="song-container">
-                    <div class="music-card-premium">
-                        <div class="song-header">
-                            <div class="disc-icon" id="discIcon">💿</div>
-                            <div class="song-titles">
-                                <h3>Quaps Attack Hymne</h3>
-                                <span>By AI Generator</span>
-                            </div>
-                        </div>
-                        <div class="visualizer" id="visualizer">
-                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                        </div>
-                        <audio id="communitySong">
-                            <source src="quaps-hymne.mp3" type="audio/mpeg">
-                        </audio>
-                        <div class="music-controls">
-                            <button onclick="togglePlay()" id="playBtn" class="main-play-btn">▶ Song abspielen</button>
-                            <div class="volume-box">
-                                <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)">
-                            </div>
-                            <div class="song-download-wrapper">
-                                <a href="https://drive.google.com/uc?export=download&id=1ZTeVOHoeNGkNS6dgjhnlyjdD3g8hgC2_" class="song-download-btn">📥 Download MP3</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="clips" class="section">
-                <div class="section-header">
-                    <h1>Community Highlights 🎬</h1>
-                </div>
-                <div class="clips-grid">
-                    <div class="clip-card-premium">
-                        <div class="medal-container">
-                            <iframe src="https://medal.tv/clip/m3iK02mDVMGqjX28X?autoplay=0&muted=0&loop=1" frameborder="0" allowfullscreen></iframe>
-                        </div>
-                        <div class="clip-info">
-                            <h3>Joschis Goon Clip</h3>
-                            <p>👤 Erstellt von: Louis</p>
-                        </div>
-                    </div>
-                    <div class="clip-card-premium">
-                        <div class="medal-container">
-                            <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0&muted=0&loop=1" frameborder="0" allowfullscreen></iframe>
-                        </div>
-                        <div class="clip-info">
-                            <h3>Krasser Mace Hit 🔨</h3>
-                            <p>👤 Erstellt von: Louis</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div> </div> <script>
-        // NAVIGATION
+    <script>
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
             
             const target = document.getElementById(sectionId);
             if(target) target.classList.add('active');
-            
             const link = document.getElementById('link-' + sectionId);
             if(link) link.classList.add('active');
         }
 
-        // LOGIN CHECK
         window.onload = function() {
             const user = localStorage.getItem('loggedInUser');
-            if (!user || user === "undefined") {
+            if (!user) {
                 window.location.href = "login.html";
             } else {
-                const nameDisplay = document.getElementById('user-name-display');
-                if(nameDisplay) nameDisplay.innerText = user;
+                document.getElementById('user-name-display').innerText = user;
             }
         }
 
@@ -233,25 +232,19 @@
             window.location.href = "login.html";
         }
 
-        // AUDIO PLAYER
         function togglePlay() {
             var audio = document.getElementById('communitySong');
             var btn = document.getElementById('playBtn');
-            var visualizer = document.getElementById('visualizer');
-
+            var visual = document.getElementById('visualizer');
             if (audio.paused) {
                 audio.play();
-                btn.innerText = "⏸ Pause";
-                visualizer.classList.add('playing');
+                btn.innerText = "Pause";
+                visual.classList.add('playing');
             } else {
                 audio.pause();
-                btn.innerText = "▶ Song abspielen";
-                visualizer.classList.remove('playing');
+                btn.innerText = "Play Track";
+                visual.classList.remove('playing');
             }
-        }
-
-        function changeVolume(val) {
-            document.getElementById('communitySong').volume = val;
         }
     </script>
 </body>

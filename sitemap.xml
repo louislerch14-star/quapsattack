@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Deine Hauptseite -->
   <url>
-    <loc>https://quapsattack.airbusfan.de/login.html</loc>
-    <lastmod>2024-03-24</lastmod>
+    <loc>https://quapsattack.airbusfan.de/</loc>
     <priority>1.0</priority>
+  </url>
+  <!-- Deine Evoluted-Seite -->
+  <url>
+    <loc>https://quapsattack.airbusfan.de/evolved.html</loc>
+    <priority>0.8</priority>
   </url>
 </urlset>
