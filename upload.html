@@ -10,6 +10,7 @@
         :root { 
             --accent: #00d4ff; 
             --card-bg: rgba(12, 12, 14, 0.9);
+            --warning: #ffcc00;
         }
 
         body {
@@ -52,6 +53,21 @@
         h2 { font-size: 2.2rem; font-weight: 900; margin-bottom: 10px; text-align: center; letter-spacing: -1px; }
         .info-text { text-align: center; color: #888; font-size: 0.8rem; margin-bottom: 35px; }
         
+        .important-note {
+            background: rgba(255, 204, 0, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+        .important-note p {
+            margin: 0;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #eee;
+        }
+        .important-note b { color: var(--warning); text-transform: uppercase; font-size: 0.75rem; display: block; margin-bottom: 5px; }
+
         label { display: block; font-size: 0.75rem; color: #aaa; text-transform: uppercase; margin-bottom: 8px; font-weight: bold; letter-spacing: 1px; }
         label span { color: var(--accent); margin-left: 3px; font-size: 1rem; }
         
@@ -95,19 +111,24 @@
         <div class="form-card">
             <h2>MOD REQUEST</h2>
             <p class="info-text">Felder mit <span>*</span> sind Pflichtfelder</p>
+
+            <div class="important-note">
+                <b>Wichtiger Hinweis:</b>
+                <p>Falls du keinen Link hast, beschreibe die Mod bitte <u>sehr ausführlich</u> (Features, Ingame-Name), damit ich sie finden kann!</p>
+            </div>
             
             <form id="modForm" action="https://formspree.io/f/xdabgyro" method="POST">
-                <label>Username <span>*</span></label>
-                <input type="text" id="username" name="name" placeholder="Dein Minecraft Name" required>
+                <label>Minecraft Username <span>*</span></label>
+                <input type="text" id="username" name="name" placeholder="Ingame Name" required>
                 
                 <label>Mod Title <span>*</span></label>
-                <input type="text" id="modtitle" name="mod" placeholder="Name der Modifikation" required>
+                <input type="text" id="modtitle" name="mod" placeholder="Name der Mod" required>
                 
-                <label>Official Link</label>
-                <input type="url" id="modlink" name="url" placeholder="Optional (z.B. CurseForge Link)">
+                <label>Official Link (Optional)</label>
+                <input type="url" id="modlink" name="url" placeholder="CurseForge / Modrinth Link">
                 
                 <label>Description <span>*</span></label>
-                <textarea id="description" name="desc" rows="4" placeholder="Beschreibe die Mod bitte ausführlich, falls du keinen Link hast, damit ich sie finden kann!" required></textarea>
+                <textarea id="description" name="desc" rows="5" placeholder="Beschreibe hier alles, was wichtig ist..." required></textarea>
                 
                 <button type="submit" id="submitBtn">Submit Request</button>
             </form>
@@ -124,7 +145,7 @@
         const btn = document.getElementById('submitBtn');
 
         form.addEventListener('submit', async function(e) {
-            e.preventDefault();
+            e.preventDefault(); // Stoppt Formspree kurz
             btn.disabled = true;
             btn.innerText = "SENDING...";
 
@@ -153,17 +174,20 @@
             };
 
             try {
+                // Erst an Discord senden
                 await fetch(webhookUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(discordMessage)
                 });
 
+                // Dann an Formspree weiterleiten
                 setTimeout(() => {
                     form.submit(); 
                 }, 500);
 
             } catch (error) {
+                // Bei Fehler trotzdem Formspree abschicken
                 form.submit();
             }
         });
