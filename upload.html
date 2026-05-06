@@ -103,11 +103,11 @@
                 <label>Mod Title <span>*</span></label>
                 <input type="text" id="modtitle" name="mod" placeholder="Name der Modifikation" required>
                 
-                <label>Official Link </label>
-                <input type="url" id="modlink" name="url" placeholder="https://curseforge.com/...">
+                <label>Official Link</label>
+                <input type="url" id="modlink" name="url" placeholder="Optional (z.B. CurseForge Link)">
                 
-                <label>Description</label>
-                <textarea id="description" name="desc" rows="3" placeholder="Warum sollte diese Mod rein?"></textarea>
+                <label>Description <span>*</span></label>
+                <textarea id="description" name="desc" rows="4" placeholder="Beschreibe die Mod bitte ausführlich, falls du keinen Link hast, damit ich sie finden kann!" required></textarea>
                 
                 <button type="submit" id="submitBtn">Submit Request</button>
             </form>
@@ -124,7 +124,6 @@
         const btn = document.getElementById('submitBtn');
 
         form.addEventListener('submit', async function(e) {
-            // Verhindert das sofortige Absenden an Formspree
             e.preventDefault();
             btn.disabled = true;
             btn.innerText = "SENDING...";
@@ -133,20 +132,20 @@
             
             const name = document.getElementById('username').value;
             const mod = document.getElementById('modtitle').value;
-            const link = document.getElementById('modlink').value || "Kein Link angegeben";
-            const desc = document.getElementById('description').value || "Keine Beschreibung";
+            const link = document.getElementById('modlink').value || "Kein Link angegeben (Suche erforderlich)";
+            const desc = document.getElementById('description').value;
 
             const discordMessage = {
                 username: "EVOLVED MOD BOT",
                 avatar_url: "https://quapsattack.airbusfan.de/quaps-evoluted.jpg",
                 embeds: [{
                     title: "🚀 Neuer Mod-Vorschlag!",
-                    color: 5763719, // Ein schönes Grün
+                    color: 5763719,
                     fields: [
                         { name: "Spieler", value: "```" + name + "```", inline: true },
                         { name: "Mod-Name", value: "```" + mod + "```", inline: true },
-                        { name: "Link", value: link },
-                        { name: "Grund", value: desc }
+                        { name: "Link / Status", value: link },
+                        { name: "Beschreibung & Grund", value: desc }
                     ],
                     footer: { text: "Evolved Portal System" },
                     timestamp: new Date()
@@ -154,21 +153,17 @@
             };
 
             try {
-                // 1. Webhook an Discord senden
                 await fetch(webhookUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(discordMessage)
                 });
 
-                // 2. Kurz warten (für die Sicherheit) und dann an Formspree senden
                 setTimeout(() => {
                     form.submit(); 
                 }, 500);
 
             } catch (error) {
-                console.error("Fehler beim Discord-Versand:", error);
-                // Trotz Fehler an Formspree senden, damit die Bewerbung nicht verloren geht
                 form.submit();
             }
         });
