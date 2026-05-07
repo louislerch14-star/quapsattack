@@ -369,10 +369,9 @@
 
     <script>
         function updateCountdown() {
-            // ZIEL: 08. Juli 2026 um 17:00 Uhr
-            // Wir nutzen das Format YYYY, MM (0-indexed), DD, HH, MM
-            // 2026, 6 (Juli), 8, 17, 0
-            const targetDate = new Date(2026, 6, 8, 17, 0, 0).getTime();
+            // ZIEL: 08. Mai 2026 um 17:00 Uhr
+            // (Jahr, Monat [4=Mai], Tag, Stunde, Minute, Sekunde)
+            const targetDate = new Date(2026, 4, 8, 17, 0, 0).getTime();
             const now = new Date().getTime();
             const distance = targetDate - now;
 
