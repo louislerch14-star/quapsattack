@@ -370,7 +370,9 @@
     <script>
         function updateCountdown() {
             // ZIEL: 08. Juli 2026 um 17:00 Uhr
-            const targetDate = new Date("July 8, 2026 17:00:00").getTime();
+            // Wir nutzen das Format YYYY, MM (0-indexed), DD, HH, MM
+            // 2026, 6 (Juli), 8, 17, 0
+            const targetDate = new Date(2026, 6, 8, 17, 0, 0).getTime();
             const now = new Date().getTime();
             const distance = targetDate - now;
 
@@ -387,13 +389,13 @@
                 return;
             }
 
-            // BERECHNUNG DER ZEIT
+            // BERECHNUNG
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // ANZEIGE FORMATIEREN
+            // ANZEIGE
             counterElement.innerHTML = 
                 (days < 10 ? "0" + days : days) + "d " + 
                 (hours < 10 ? "0" + hours : hours) + "h " + 
@@ -401,7 +403,6 @@
                 (seconds < 10 ? "0" + seconds : seconds) + "s";
         }
 
-        // Jede Sekunde aktualisieren
         setInterval(updateCountdown, 1000);
         updateCountdown();
     </script>
