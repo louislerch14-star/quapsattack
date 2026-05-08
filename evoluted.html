@@ -151,6 +151,38 @@
             filter: brightness(1.1);
         }
 
+        /* RULES SECTION */
+        .rules-container {
+            background: rgba(20, 20, 25, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+            text-align: left;
+            backdrop-filter: blur(10px);
+        }
+
+        .rules-container h2 {
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 0;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .rule-item {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .rule-emoji { font-size: 1.2rem; min-width: 30px; }
+        .rule-text b { color: #fff; display: block; margin-bottom: 4px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        .rule-text p { margin: 0; color: #aaa; font-size: 0.95rem; line-height: 1.5; }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -303,6 +335,66 @@
                 </a>
             </div>
         </div>
+
+        <div class="rules-container">
+            <h2>📜 Evoluted – Das Regelwerk</h2>
+            
+            <div class="rule-item">
+                <div class="rule-emoji">⚠️</div>
+                <div class="rule-text">
+                    <b>Strukturen & Looting</b>
+                    <p>In der Steinzeit ist das Betreten, Nutzen oder Looten von Dörfern (Villages) und generierten Strukturen (Tempel, Ruinen etc.) strengstens verboten. Wir starten bei Null!</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-emoji">🤝</div>
+                <div class="rule-text">
+                    <b>Fairplay</b>
+                    <p>Behandelt andere Spieler mit Respekt. Kein böswilliges Griefing oder sinnloses Zerstören von fremdem Eigentum.</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-emoji">🎭</div>
+                <div class="rule-text">
+                    <b>Roleplay (Sometimes)</b>
+                    <p>Ein bisschen RP ist erwünscht! Versetzt euch in eure Epoche hinein – von Höhlenmenschen bis zu High-Tech-Pionieren.</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-emoji">🚫</div>
+                <div class="rule-text">
+                    <b>Kein X-Ray</b>
+                    <p>Die Nutzung von X-Ray-Texturepacks oder Modifikationen ist untersagt. Lasst es direkt bleiben.</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-emoji">📦</div>
+                <div class="rule-text">
+                    <b>Stauraum-Ehrlichkeit</b>
+                    <p>Klaut nicht aus fremden Kisten. Jedes Item ist hart erarbeitet.</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-emoji">🏗️</div>
+                <div class="rule-text">
+                    <b>Bau-Stil</b>
+                    <p>Gebäude dem Zeitalter anpassen. Ein Wolkenkratzer passt nicht in die Steinzeit.</p>
+                </div>
+            </div>
+
+            <div class="rule-item">
+                <div class="rule-emoji">🗣️</div>
+                <div class="rule-text">
+                    <b>Voice Chat</b>
+                    <p>Nutzt das Voice-Chat-Plugin für bessere Immersion. Ohne Mikro bitte den Text-Chat für Absprachen nutzen.</p>
+                </div>
+            </div>
+        </div>
         
         <div class="grid">
             <div class="card">
@@ -387,7 +479,6 @@
 
     <script>
         function updateCountdown() {
-            // ZIEL: 08. MAI 2026, 17:00 UHR
             const targetDate = new Date(2026, 4, 8, 17, 0, 0).getTime();
             const now = new Date().getTime();
             const distance = targetDate - now;
