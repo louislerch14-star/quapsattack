@@ -2,9 +2,9 @@
 <html lang="de">
 <head>
     <!-- SEO Meta Tags -->
-<meta name="description" content="Quaps Attack Elite Hub - Die offizielle Zentrale für Agents. Downloads, Media Intel und Community Codex.">
-<meta name="keywords" content="Quaps Attack, Gaming Hub, Minecraft Mod, Elite Hub">
-<meta name="robots" content="index, follow">
+    <meta name="description" content="Quaps Attack Elite Hub - Die offizielle Zentrale für Agents. Downloads, Media Intel und Community Codex.">
+    <meta name="keywords" content="Quaps Attack, Gaming Hub, Minecraft Mod, Elite Hub">
+    <meta name="robots" content="index, follow">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quaps Attack | Elite Hub</title>
@@ -14,11 +14,12 @@
         :root {
             --primary: #00d4ff;
             --secondary: #0055ff;
-            --bg-dark: #050506; /* Tiefes Schwarz-Grau */
+            --bg-dark: #050506; 
             --card-glass: rgba(20, 20, 25, 0.7);
             --border-glass: rgba(255, 255, 255, 0.05);
             --text-main: #ffffff;
             --text-dim: #888888;
+            --success: #00ff88;
         }
 
         * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -32,7 +33,6 @@
             min-height: 100vh;
         }
 
-        /* Dunklerer Hintergrund mit Bild-Vignette */
         .bg-system {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -42,12 +42,11 @@
             opacity: 0.9;
         }
 
-        /* Schwebende Navigation */
         .nav-wrapper {
             position: fixed;
             top: 20px; left: 50%;
             transform: translateX(-50%);
-            width: 90%; max-width: 900px;
+            width: 95%; max-width: 1000px;
             z-index: 1000;
         }
 
@@ -56,26 +55,25 @@
             backdrop-filter: blur(25px);
             border: 1px solid var(--border-glass);
             border-radius: 20px;
-            padding: 12px 30px;
+            padding: 12px 25px;
             display: flex; align-items: center; justify-content: space-between;
         }
 
         .nav-logo { font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; }
         .nav-logo span { color: var(--primary); }
 
-        .nav-links { display: flex; gap: 5px; }
+        .nav-links { display: flex; gap: 5px; flex-wrap: wrap; }
         .nav-links a {
             color: var(--text-dim); text-decoration: none;
-            padding: 8px 16px; border-radius: 12px;
-            font-weight: 600; font-size: 0.85rem;
+            padding: 8px 14px; border-radius: 12px;
+            font-weight: 600; font-size: 0.8rem;
         }
 
         .nav-links a:hover, .nav-links a.active { color: var(--primary); background: rgba(255,255,255,0.03); }
 
         .evoluted-btn { border: 1px solid var(--primary); color: var(--primary) !important; }
 
-        /* Container */
-        .container { padding: 140px 20px 60px; max-width: 1100px; margin: 0 auto; }
+        .container { padding: 160px 20px 60px; max-width: 1100px; margin: 0 auto; }
 
         .section { display: none; }
         .section.active { display: block; animation: fadeIn 0.5s ease; }
@@ -85,7 +83,6 @@
         .hero h1 { font-size: 3.5rem; font-weight: 900; margin: 0; letter-spacing: -2px; }
         .hero p { color: var(--primary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 40px; }
 
-        /* Cards */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
 
         .glass-card {
@@ -94,23 +91,64 @@
             border: 1px solid var(--border-glass);
             border-radius: 24px;
             padding: 35px;
+            position: relative;
+            overflow: hidden;
         }
 
         .glass-card:hover { border-color: rgba(0, 212, 255, 0.3); transform: translateY(-3px); }
+        .glass-card h3 { font-size: 1.4rem; margin-top: 0; color: #fff; display: flex; align-items: center; gap: 10px; }
 
-        .glass-card h3 { font-size: 1.4rem; margin-top: 0; color: #fff; }
+        /* UPLOAD STYLES */
+        .upload-area {
+            border: 2px dashed rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-        /* Buttons */
+        .upload-area:hover {
+            background: rgba(0, 212, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .upload-area input { display: none; }
+        
+        .upload-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+
+        .file-info {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: var(--success);
+            display: none;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            padding: 12px;
+            border-radius: 8px;
+            color: #fff;
+            margin-top: 10px;
+            font-family: inherit;
+        }
+
         .action-btn {
             display: inline-block; background: #fff; color: #000;
             padding: 14px 28px; border-radius: 12px;
+            border: none;
             text-decoration: none; font-weight: 900; font-size: 0.75rem;
             text-transform: uppercase; margin-top: 20px;
+            cursor: pointer;
+            width: 100%;
         }
 
         .action-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 0 20px var(--primary); }
 
-        /* Music Visualizer */
+        /* Visualizer */
         .visualizer { display: flex; gap: 4px; height: 30px; align-items: center; margin: 20px 0; }
         .bar { width: 4px; height: 8px; background: var(--primary); border-radius: 4px; }
         .playing .bar { animation: pulse 0.7s infinite alternate; }
@@ -130,8 +168,8 @@
                 <a href="#" onclick="showSection('home')" id="link-home" class="active">Main</a>
                 <a href="#" onclick="showSection('worlds')" id="link-worlds">App</a>
                 <a href="#" onclick="showSection('intel')" id="link-intel">Clip</a>
+                <a href="#" onclick="showSection('upload')" id="link-upload">Upload</a>
                 <a href="evoluted.html" class="evoluted-btn">Evoluted</a>
-                <a href="apply.html" class="evoluted-btn">Bewerbung für Projekte</a>
                 <a href="#" onclick="logout()" style="color: #666;">Exit</a>
             </div>
         </nav>
@@ -143,8 +181,7 @@
         <div id="home" class="section active">
             <div class="hero">
                 <h1>Hi, <span id="user-name-display">Agent</span>.</h1>
-                <p>Willkommen im Quaps Attack Elite Hub. <a href="apply.html">Bewerbe dich jetzt für das nächste Projekt!</a></p>
-                
+                <p>Willkommen im Quaps Attack Elite Hub.</p>
             </div>
             
             <div class="grid">
@@ -155,8 +192,6 @@
                         • Keine Hacks / X-Ray<br>
                         • Spawn-Griefing verboten
                     </p>
-                    <img src="https://cdn.discordapp.com/attachments/1453882854659588329/1453883873237667964/image0.gif" 
-                         style="width: 70px; margin-top: 20px; border-radius: 12px;">
                 </div>
 
                 <div class="glass-card">
@@ -173,7 +208,7 @@
             </div>
         </div>
 
-        <!-- SOFTWARE SECTION -->
+        <!-- APP SECTION -->
         <div id="worlds" class="section">
             <div class="hero">
                 <h1>Deployment</h1>
@@ -186,11 +221,11 @@
             </div>
         </div>
 
-        <!-- INTEL SECTION (Hier ist der funktionierende Clip) -->
+        <!-- CLIP VIEW SECTION -->
         <div id="intel" class="section">
             <div class="hero">
                 <h1>Media</h1>
-                
+                <p>Intel Intel Intel</p>
             </div>
             <div class="grid">
                 <div class="glass-card">
@@ -200,6 +235,33 @@
                     </div>
                     <p style="margin-top:15px; color:var(--text-dim); font-size:0.8rem;">Operator: Louis</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- NEW UPLOAD SECTION -->
+        <div id="upload" class="section">
+            <div class="hero">
+                <h1>Upload</h1>
+                <p>Sende deine Clips an das HQ</p>
+            </div>
+            
+            <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+                <h3>🎥 Clip Einreichen</h3>
+                <p style="color: var(--text-dim); font-size: 0.9rem;">Wähle einen Clip aus. Er wird zur Überprüfung an die Admins gesendet.</p>
+                
+                <form id="clipForm">
+                    <input type="text" id="uploaderName" placeholder="Dein Agenten-Name" required>
+                    <input type="text" id="clipTitle" placeholder="Titel des Clips (z.B. Krasser MLG)" required>
+                    
+                    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                        <span class="upload-icon">📁</span>
+                        <span id="upload-text">Datei auswählen oder hierher ziehen</span>
+                        <input type="file" id="fileInput" accept="video/*" onchange="displayFileName()">
+                    </div>
+                    <div id="fileInfo" class="file-info">✔ Datei bereit zum Upload</div>
+
+                    <button type="button" onclick="handleUpload()" class="action-btn">Clip Senden</button>
+                </form>
             </div>
         </div>
 
@@ -226,7 +288,45 @@
                 window.location.href = "login.html";
             } else {
                 document.getElementById('user-name-display').innerText = user;
+                document.getElementById('uploaderName').value = user;
             }
+        }
+
+        function displayFileName() {
+            const input = document.getElementById('fileInput');
+            const text = document.getElementById('upload-text');
+            const info = document.getElementById('fileInfo');
+            if (input.files.length > 0) {
+                text.innerText = input.files[0].name;
+                info.style.display = "block";
+            }
+        }
+
+        function handleUpload() {
+            const name = document.getElementById('uploaderName').value;
+            const title = document.getElementById('clipTitle').value;
+            const file = document.getElementById('fileInput').files[0];
+
+            if(!file || !title) {
+                alert("Bitte fülle alle Felder aus und wähle einen Clip!");
+                return;
+            }
+
+            // Da reines HTML keine Dateien speichern kann, simulieren wir den Upload
+            // In einer echten Umgebung würdest du hier 'fetch' zu einer API nutzen.
+            const btn = document.querySelector('#upload .action-btn');
+            btn.innerText = "UPLOADING...";
+            btn.style.background = "#ff9800";
+
+            setTimeout(() => {
+                alert("ERFOLG! Agent " + name + ", dein Clip '" + title + "' wurde erfolgreich an das HQ übertragen.");
+                btn.innerText = "CLIP SENDEN";
+                btn.style.background = "#fff";
+                document.getElementById('clipForm').reset();
+                document.getElementById('upload-text').innerText = "Datei auswählen oder hierher ziehen";
+                document.getElementById('fileInfo').style.display = "none";
+                showSection('intel');
+            }, 2000);
         }
 
         function logout() {
