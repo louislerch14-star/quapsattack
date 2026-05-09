@@ -80,6 +80,22 @@
             margin-bottom: 50px;
         }
 
+        /* SERVER STATUS BOX */
+        .server-status-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--accent-blue);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            display: inline-block;
+            min-width: 300px;
+        }
+        .status-online { color: #00ff88; font-weight: bold; }
+        .status-offline { color: #ff4444; font-weight: bold; }
+        .player-count-text { font-size: 1.1rem; margin: 10px 0; font-weight: 600; }
+        .live-players-list { font-size: 0.85rem; color: #aaa; font-style: italic; }
+
         .download-box {
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid var(--accent-blue);
@@ -319,6 +335,12 @@
     <div class="content">
         <h1>QUAPS EVOLVED</h1>
 
+        <div class="server-status-box">
+            <div id="server-status-text">LADE SERVER STATUS...</div>
+            <div class="player-count-text" id="server-player-count"></div>
+            <div class="live-players-list" id="server-player-names"></div>
+        </div>
+
         <div class="download-box">
             <span id="dl-status" class="download-status">System Lock // Release Countdown</span>
             <div id="countdown">00d 00h 00m 00s</div>
@@ -478,6 +500,35 @@
     </footer>
 
     <script>
+        const SERVER_IP = '152.53.143.169:25567';
+
+        async function updateServerStatus() {
+            try {
+                const response = await fetch(`https://api.mcsrvstat.us/2/${SERVER_IP}`);
+                const data = await response.json();
+                
+                const statusText = document.getElementById('server-status-text');
+                const playerCount = document.getElementById('server-player-count');
+                const playerNames = document.getElementById('server-player-names');
+
+                if (data.online) {
+                    statusText.innerHTML = `STATUS: <span class="status-online">ONLINE</span>`;
+                    playerCount.innerText = `Spieler: ${data.players.online} / ${data.players.max}`;
+                    if (data.players.list) {
+                        playerNames.innerText = `Online: ${data.players.list.join(', ')}`;
+                    } else {
+                        playerNames.innerText = data.players.online > 0 ? "Spieler aktiv" : "Keiner online";
+                    }
+                } else {
+                    statusText.innerHTML = `STATUS: <span class="status-offline">OFFLINE</span>`;
+                    playerCount.innerText = "Server nicht erreichbar";
+                    playerNames.innerText = "";
+                }
+            } catch (e) {
+                console.error("Fehler beim Laden des Server-Status");
+            }
+        }
+
         function updateCountdown() {
             const targetDate = new Date(2026, 4, 8, 17, 0, 0).getTime();
             const now = new Date().getTime();
@@ -510,7 +561,9 @@
         }
 
         setInterval(updateCountdown, 1000);
+        setInterval(updateServerStatus, 30000); // Alle 30 Sekunden aktualisieren
         updateCountdown();
+        updateServerStatus();
     </script>
 </body>
 </html>
