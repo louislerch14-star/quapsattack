@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <!-- SEO Meta Tags -->
     <meta name="description" content="Quaps Attack Elite Hub - Die offizielle Zentrale für Agents. Downloads, Media Intel und Community Codex.">
     <meta name="keywords" content="Quaps Attack, Gaming Hub, Minecraft Mod, Elite Hub">
     <meta name="robots" content="index, follow">
@@ -15,10 +14,10 @@
             --primary: #00d4ff;
             --secondary: #0055ff;
             --bg-dark: #050506;
-            --card-glass: rgba(20, 20, 25, 0.7);
-            --border-glass: rgba(255, 255, 255, 0.05);
+            --card-glass: rgba(10, 10, 12, 0.8);
+            --border-glass: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff;
-            --text-dim: #888888;
+            --text-dim: #bbbbbb;
             --success: #00ff88;
         }
 
@@ -27,19 +26,38 @@
         body {
             margin: 0;
             font-family: 'Outfit', sans-serif;
-            background: var(--bg-dark);
+            background: #000;
             color: var(--text-main);
             overflow-x: hidden;
             min-height: 100vh;
         }
 
-        .bg-system {
+        /* --- VIDEO BACKGROUND SYSTEM --- */
+        .video-bg-wrapper {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(5,5,6,0.5) 0%, rgba(5,5,6,1) 90%), 
-                        url('unnamed.jpg') center/cover no-repeat;
             z-index: -1;
-            opacity: 0.9;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .video-bg-wrapper iframe {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100vw;
+            height: 56.25vw; /* 16:9 ratio */
+            min-height: 100vh;
+            min-width: 177.77vh;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            filter: brightness(0.4) blur(2px);
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: -1;
         }
 
         .nav-wrapper {
@@ -51,7 +69,7 @@
         }
 
         .navbar {
-            background: rgba(10, 10, 12, 0.85);
+            background: rgba(10, 10, 12, 0.7);
             backdrop-filter: blur(25px);
             border: 1px solid var(--border-glass);
             border-radius: 20px;
@@ -70,16 +88,16 @@
             cursor: pointer;
         }
 
-        .nav-links a:hover, .nav-links a.active { color: var(--primary); background: rgba(255,255,255,0.03); }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); background: rgba(255,255,255,0.05); }
 
         .evoluted-btn { border: 1px solid var(--primary); color: var(--primary) !important; }
 
-        .container { padding: 140px 20px 60px; max-width: 1100px; margin: 0 auto; }
+        .container { padding: 140px 20px 60px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 10; }
 
         .section { display: none; }
         .section.active { display: block; animation: fadeIn 0.5s ease; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .hero h1 { font-size: 3.5rem; font-weight: 900; margin: 0; letter-spacing: -2px; }
         .hero p { color: var(--primary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 40px; }
@@ -88,19 +106,18 @@
 
         .glass-card {
             background: var(--card-glass);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border-glass);
             border-radius: 24px;
             padding: 35px;
             height: 100%;
         }
 
-        .glass-card:hover { border-color: rgba(0, 212, 255, 0.3); transform: translateY(-3px); }
+        .glass-card:hover { border-color: rgba(0, 212, 255, 0.4); transform: translateY(-5px); }
 
-        /* Input Styles */
         input, textarea {
             width: 100%;
-            background: rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.3);
             border: 1px solid var(--border-glass);
             padding: 15px;
             border-radius: 12px;
@@ -117,14 +134,14 @@
             border: none; cursor: pointer; width: 100%;
         }
 
-        .action-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 0 20px var(--primary); }
+        .action-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 0 25px var(--primary); }
 
         .visualizer { display: flex; gap: 4px; height: 30px; align-items: center; margin: 20px 0; }
         .bar { width: 4px; height: 8px; background: var(--primary); border-radius: 4px; }
         .playing .bar { animation: pulse 0.7s infinite alternate; }
         @keyframes pulse { from { height: 8px; } to { height: 30px; } }
 
-        footer { text-align: center; padding: 40px; color: #333; font-size: 0.7rem; font-weight: 900; }
+        footer { text-align: center; padding: 40px; color: #444; font-size: 0.7rem; font-weight: 900; letter-spacing: 2px; }
         
         .video-container {
             width:100%; 
@@ -138,7 +155,10 @@
 </head>
 <body>
 
-    <div class="bg-system"></div>
+    <div class="video-bg-wrapper">
+        <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay"></iframe>
+        <div class="video-overlay"></div>
+    </div>
 
     <div class="nav-wrapper">
         <nav class="navbar">
@@ -149,18 +169,17 @@
                 <a onclick="showSection('intel')" id="link-intel">Clip</a>
                 <a onclick="showSection('upload')" id="link-upload">Upload</a>
                 <a href="evoluted.html" class="evoluted-btn">Evoluted</a>
-                <a onclick="logout()" style="color: #666;">Exit</a>
+                <a onclick="logout()" style="color: #ff4444;">Exit</a>
             </div>
         </nav>
     </div>
 
     <div class="container">
         
-        <!-- HOME SECTION -->
         <div id="home" class="section active">
             <div class="hero">
                 <h1>Hi, <span id="user-name-display">Agent</span>.</h1>
-                <p>Willkommen im Quaps Attack Elite Hub. <a href="apply.html" style="color: var(--primary);">Bewerbe dich jetzt!</a></p>
+                <p>Willkommen im Quaps Attack Elite Hub. <a href="apply.html" style="color: var(--primary); text-decoration: none;">Bewerbe dich jetzt!</a></p>
             </div>
             <div class="grid">
                 <div class="glass-card">
@@ -185,7 +204,6 @@
             </div>
         </div>
 
-        <!-- APP SECTION -->
         <div id="worlds" class="section">
             <div class="hero">
                 <h1>Deployment</h1>
@@ -198,8 +216,7 @@
             </div>
         </div>
 
-        <!-- INTEL SECTION (REPARIERT) -->
-       <div id="intel" class="section">
+        <div id="intel" class="section">
             <div class="hero">
                 <h1>Media</h1>
                 <p>Aktuelle Intel Intel Intel</p>
@@ -223,11 +240,6 @@
             </div>
         </div>
 
-
-
-      
-
-        <!-- UPLOAD SECTION -->
         <div id="upload" class="section">
             <div class="hero">
                 <h1>Upload</h1>
