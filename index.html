@@ -32,6 +32,39 @@
             min-height: 100vh;
         }
 
+        /* --- WATERMARK SYSTEM --- */
+        .global-watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 9999;
+            letter-spacing: 10px;
+            text-transform: uppercase;
+        }
+
+        .corner-watermark {
+            position: fixed;
+            font-size: 0.65rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 0, 0, 0.05);
+            padding: 4px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            pointer-events: none;
+            z-index: 9999;
+            text-transform: uppercase;
+        }
+        .wm-tl { top: 90px; left: 20px; }
+        .wm-br { bottom: 20px; right: 20px; }
+
         /* --- VIDEO BACKGROUND SYSTEM MIT GRAUSCHLEIER --- */
         .video-bg-wrapper {
             position: fixed;
@@ -50,7 +83,7 @@
             min-width: 177.77vh;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            filter: brightness(0.25) blur(4px) grayscale(100%); /* Stark abgedunkelt und grau */
+            filter: brightness(0.2) blur(5px) grayscale(100%);
         }
 
         .video-overlay {
@@ -77,7 +110,7 @@
             display: flex; align-items: center; justify-content: space-between;
         }
 
-        .nav-logo { font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; color: #666; }
+        .nav-logo { font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; color: #555; }
         .nav-logo span { color: var(--primary); }
 
         .nav-links { display: flex; gap: 5px; align-items: center; }
@@ -90,8 +123,7 @@
 
         .nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(255,255,255,0.05); }
 
-        /* Deaktivierter/Grauer quapsSMP Button */
-        .evoluted-btn { border: 1px solid #555; color: #aaa !important; }
+        .evoluted-btn { border: 1px solid #444; color: #888 !important; }
         .evoluted-btn:hover { border-color: #ff3e3e; color: #ff3e3e !important; text-shadow: 0 0 10px rgba(255,62,62,0.3); }
 
         .container { padding: 140px 20px 60px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 10; }
@@ -101,7 +133,7 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .hero h1 { font-size: 3.5rem; font-weight: 900; margin: 0; letter-spacing: -2px; color: #eee; }
+        .hero h1 { font-size: 3.5rem; font-weight: 900; margin: 0; letter-spacing: -2px; color: #ccc; }
         .hero p { color: var(--primary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 40px; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
@@ -113,9 +145,22 @@
             border-radius: 24px;
             padding: 35px;
             height: 100%;
+            position: relative;
+            overflow: hidden;
         }
 
-        .glass-card:hover { border-color: rgba(255, 255, 255, 0.15); transform: translateY(-2px); }
+        /* Subtiles Karten-Watermark */
+        .glass-card::before {
+            content: "ARCHIV // GESTOPPT";
+            position: absolute;
+            bottom: 10px; right: 15px;
+            font-size: 0.55rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.04);
+            letter-spacing: 1px;
+        }
+
+        .glass-card:hover { border-color: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
 
         input, textarea {
             width: 100%;
@@ -129,22 +174,21 @@
         }
 
         .action-btn {
-            display: inline-block; background: #222; color: #aaa;
+            display: inline-block; background: #1a1a1a; color: #888;
             padding: 14px 28px; border-radius: 12px;
             text-decoration: none; font-weight: 900; font-size: 0.75rem;
             text-transform: uppercase; margin-top: 10px;
-            border: 1px solid #333; cursor: pointer; width: 100%;
+            border: 1px solid #2a2a2a; cursor: pointer; width: 100%;
         }
 
-        .action-btn:hover { background: #444; color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.1); }
+        .action-btn:hover { background: #333; color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.05); }
 
-        /* Hymnen-Visualizer in Grau gehalten */
         .visualizer { display: flex; gap: 4px; height: 30px; align-items: center; margin: 20px 0; }
-        .bar { width: 4px; height: 8px; background: #666; border-radius: 4px; }
-        .playing .bar { animation: pulse 0.7s infinite alternate; background: #aaa; }
+        .bar { width: 4px; height: 8px; background: #555; border-radius: 4px; }
+        .playing .bar { animation: pulse 0.7s infinite alternate; background: #888; }
         @keyframes pulse { from { height: 8px; } to { height: 30px; } }
 
-        footer { text-align: center; padding: 40px; color: #333; font-size: 0.7rem; font-weight: 900; letter-spacing: 2px; }
+        footer { text-align: center; padding: 40px; color: #252525; font-size: 0.7rem; font-weight: 900; letter-spacing: 2px; }
         
         .video-container {
             width:100%; 
@@ -153,11 +197,16 @@
             overflow:hidden; 
             border:1px solid var(--border-glass);
             background: #000;
-            filter: grayscale(40%);
+            filter: grayscale(80%) brightness(0.7);
+            position: relative;
         }
     </style>
 </head>
 <body>
+
+    <div class="global-watermark">GESTOPPT</div>
+    <div class="corner-watermark wm-tl">STATUS: GESTOPPT // SYSTEM OFF</div>
+    <div class="corner-watermark wm-br">ARCHIV MODUS</div>
 
     <div class="video-bg-wrapper">
         <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay"></iframe>
@@ -172,7 +221,7 @@
                 <a onclick="showSection('intel')" id="link-intel">Clip-Archiv</a>
                 <a onclick="showSection('upload')" id="link-upload">Upload</a>
                 <a href="evoluted.html" class="evoluted-btn">quapsSMP</a>
-                <a onclick="logout()" style="color: #666;">Exit</a>
+                <a onclick="logout()" style="color: #444;">Exit</a>
             </div>
         </nav>
     </div>
