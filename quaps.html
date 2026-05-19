@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta name="description" content="Quaps Attack Elite Hub - Die offizielle Zentrale für Agents. Downloads, Media Intel und Community Codex.">
+    <meta name="keywords" content="Quaps Attack, Gaming Hub, Minecraft Mod, Elite Hub">
+    <meta name="robots" content="index, follow">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quaps Attack | Elite Hub</title>
+    <link rel="icon" type="image/png" href="unnamed.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #0055ff;
+            --bg-dark: #050506;
+            --card-glass: rgba(10, 10, 12, 0.8);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-dim: #bbbbbb;
+            --success: #00ff88;
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background: #000;
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- VIDEO BACKGROUND SYSTEM --- */
+        .video-bg-wrapper {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .video-bg-wrapper iframe {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100vw;
+            height: 56.25vw; /* 16:9 ratio */
+            min-height: 100vh;
+            min-width: 177.77vh;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            filter: brightness(0.4) blur(2px);
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: -1;
+        }
+
+        .nav-wrapper {
+            position: fixed;
+            top: 20px; left: 50%;
+            transform: translateX(-50%);
+            width: 90%; max-width: 1000px;
+            z-index: 1000;
+        }
+
+        .navbar {
+            background: rgba(10, 10, 12, 0.7);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 12px 30px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .nav-logo { font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; }
+        .nav-logo span { color: var(--primary); }
+
+        .nav-links { display: flex; gap: 5px; align-items: center; }
+        .nav-links a {
+            color: var(--text-dim); text-decoration: none;
+            padding: 8px 16px; border-radius: 12px;
+            font-weight: 600; font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); background: rgba(255,255,255,0.05); }
+
+        .evoluted-btn { border: 1px solid var(--primary); color: var(--primary) !important; }
+
+        .container { padding: 140px 20px 60px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 10; }
+
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero h1 { font-size: 3.5rem; font-weight: 900; margin: 0; letter-spacing: -2px; }
+        .hero p { color: var(--primary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 40px; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+        .glass-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 35px;
+            height: 100%;
+        }
+
+        .glass-card:hover { border-color: rgba(0, 212, 255, 0.4); transform: translateY(-5px); }
+
+        input, textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-glass);
+            padding: 15px;
+            border-radius: 12px;
+            color: #fff;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        .action-btn {
+            display: inline-block; background: #fff; color: #000;
+            padding: 14px 28px; border-radius: 12px;
+            text-decoration: none; font-weight: 900; font-size: 0.75rem;
+            text-transform: uppercase; margin-top: 10px;
+            border: none; cursor: pointer; width: 100%;
+        }
+
+        .action-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 0 25px var(--primary); }
+
+        .visualizer { display: flex; gap: 4px; height: 30px; align-items: center; margin: 20px 0; }
+        .bar { width: 4px; height: 8px; background: var(--primary); border-radius: 4px; }
+        .playing .bar { animation: pulse 0.7s infinite alternate; }
+        @keyframes pulse { from { height: 8px; } to { height: 30px; } }
+
+        footer { text-align: center; padding: 40px; color: #444; font-size: 0.7rem; font-weight: 900; letter-spacing: 2px; }
+        
+        .video-container {
+            width:100%; 
+            height:220px; 
+            border-radius:15px; 
+            overflow:hidden; 
+            border:1px solid var(--border-glass);
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-bg-wrapper">
+        <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay"></iframe>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="nav-wrapper">
+        <nav class="navbar">
+            <div class="nav-logo">QUAPS<span>HUB</span></div>
+            <div class="nav-links">
+                <a onclick="showSection('home')" id="link-home" class="active">Main</a>
+                <a onclick="showSection('worlds')" id="link-worlds">App</a>
+                <a onclick="showSection('intel')" id="link-intel">Clip</a>
+                <a onclick="showSection('upload')" id="link-upload">Upload</a>
+                <a href="evoluted.html" class="evoluted-btn">Evoluted</a>
+                <a onclick="logout()" style="color: #ff4444;">Exit</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container">
+        
+        <div id="home" class="section active">
+            <div class="hero">
+                <h1>Hi, <span id="user-name-display">Agent</span>.</h1>
+                <p>Willkommen im Quaps Attack Elite Hub. <a href="apply.html" style="color: var(--primary); text-decoration: none;">Bewerbe dich jetzt!</a></p>
+            </div>
+            <div class="grid">
+                <div class="glass-card">
+                    <h3>📜 Codex</h3>
+                    <p style="color: var(--text-dim); line-height: 1.8;">
+                        • Fairplay Pflicht<br>
+                        • Keine Hacks / X-Ray<br>
+                        • Spawn-Griefing verboten
+                    </p>
+                </div>
+                <div class="glass-card">
+                    <h3>🔊 Die Hymne</h3>
+                    <div class="visualizer" id="visualizer">
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    </div>
+                    <audio id="communitySong">
+                        <source src="quaps-hymne.mp3" type="audio/mpeg">
+                    </audio>
+                    <button onclick="togglePlay()" id="playBtn" class="action-btn" style="width: auto;">Play Track</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="worlds" class="section">
+            <div class="hero">
+                <h1>Deployment</h1>
+                <p>Download Hub</p>
+            </div>
+            <div class="glass-card" style="max-width: 500px;">
+                <h3>Quaps App v1.0</h3>
+                <p style="color: var(--text-dim);">Vollständiger Zugriff auf alle Community Features per Desktop App.</p>
+                <a href="https://drive.google.com/uc?export=download&id=14ARaZOmka_90e4-Npnk63FfKgMxOIsdW" class="action-btn">Download .exe</a>
+            </div>
+        </div>
+
+        <div id="intel" class="section">
+            <div class="hero">
+                <h1>Media</h1>
+                <p>Aktuelle Intel Intel Intel</p>
+            </div>
+            <div class="grid">
+                <div class="glass-card">
+                    <h3>Mace Hit Showcase</h3>
+                    <div class="video-container">
+                        <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <p style="margin-top:15px; color:var(--text-dim); font-size:0.8rem;">Operator: Louis</p>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Uganana</h3>
+                    <div class="video-container">
+                        <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <p style="margin-top:15px; color:var(--text-dim); font-size:0.8rem;">Operator: Nils/Giorgio</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="upload" class="section">
+            <div class="hero">
+                <h1>Upload</h1>
+                <p>Sende deine Clips an das HQ</p>
+            </div>
+            <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+                <h3>🎥 Intel Submission</h3>
+                <p style="color: var(--text-dim); margin-bottom: 20px;">Füge einen Link zum Clip (Medal/YouTube) ein.</p>
+                
+                <input type="text" id="uploaderName" placeholder="Dein Name" readonly>
+                <input type="text" id="clipTitle" placeholder="Titel des Clips">
+                <textarea id="clipLink" placeholder="Link zum Video oder Nachricht an Admins..." rows="4"></textarea>
+                
+                <button onclick="sendToDiscord()" id="submitBtn" class="action-btn">An Discord Senden</button>
+                <p id="statusMsg" style="text-align: center; margin-top: 15px; display: none; color: var(--success); font-weight: bold;">✔ Erfolgreich gesendet!</p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>QUAPS ATTACK // 2026 OFFICIAL ENCRYPTED PORTAL</footer>
+
+    <script>
+        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            
+            const target = document.getElementById(sectionId);
+            if(target) {
+                target.classList.add('active');
+            }
+            
+            const link = document.getElementById('link-' + sectionId);
+            if(link) link.classList.add('active');
+        }
+
+        window.onload = function() {
+            const user = localStorage.getItem('loggedInUser') || "Agent";
+            document.getElementById('user-name-display').innerText = user;
+            document.getElementById('uploaderName').value = user;
+        }
+
+        async function sendToDiscord() {
+            const name = document.getElementById('uploaderName').value;
+            const title = document.getElementById('clipTitle').value;
+            const link = document.getElementById('clipLink').value;
+            const btn = document.getElementById('submitBtn');
+            const status = document.getElementById('statusMsg');
+
+            if(!title || !link) { alert("Bitte fülle alle Felder aus!"); return; }
+
+            btn.innerText = "Sende Daten...";
+            btn.disabled = true;
+
+            const payload = {
+                username: "Elite Hub Monitor",
+                embeds: [{
+                    title: "🚀 Neuer Clip-Submission",
+                    color: 52479,
+                    fields: [
+                        { name: "Agent", value: name, inline: true },
+                        { name: "Betreff", value: title, inline: true },
+                        { name: "Link/Info", value: link }
+                    ],
+                    timestamp: new Date()
+                }]
+            };
+
+            try {
+                await fetch(DISCORD_WEBHOOK, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                status.style.display = "block";
+                setTimeout(() => { 
+                    status.style.display = "none"; 
+                    btn.disabled = false;
+                    btn.innerText = "An Discord Senden";
+                    showSection('home');
+                }, 3000);
+            } catch (e) {
+                alert("Fehler bei der Übertragung.");
+                btn.disabled = false;
+            }
+        }
+
+        function togglePlay() {
+            var audio = document.getElementById('communitySong');
+            var btn = document.getElementById('playBtn');
+            var visual = document.getElementById('visualizer');
+            if (audio.paused) {
+                audio.play();
+                btn.innerText = "Pause";
+                visual.classList.add('playing');
+            } else {
+                audio.pause();
+                btn.innerText = "Play Track";
+                visual.classList.remove('playing');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>
