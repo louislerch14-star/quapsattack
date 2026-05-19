@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>quapsSMP | Unstable Realm</title>
+    <title>quapsSMP | Unstable Realm Portal</title>
     <link rel="icon" type="image/x-icon" href="quaps-smp.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
@@ -12,7 +12,6 @@
             --accent-glitch: #00ff66;   /* Matrix/Radioaktiv-Grün */
             --bg-dark: #030305;
             --card-bg: rgba(15, 10, 10, 0.75);
-            --locked: #222;
         }
 
         body {
@@ -91,72 +90,47 @@
             font-weight: 600;
         }
 
-        /* --- AUDIO PLAYER (UNSTABLE THEME) --- */
-        .audio-player {
-            background: rgba(15, 5, 5, 0.9);
-            border: 1px solid var(--accent-unstable);
-            border-radius: 50px;
-            padding: 10px 20px;
-            margin: 0 auto 40px;
-            max-width: 340px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 0 25px rgba(255, 62, 62, 0.15);
-        }
-
-        .play-btn {
-            background: var(--accent-unstable);
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            color: black;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* --- FEATURED VIDEO --- */
-        .featured-video {
-            max-width: 800px;
-            margin: 0 auto 50px;
-            border: 2px solid #222;
-            border-radius: 20px;
-            overflow: hidden;
-            aspect-ratio: 16/9;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-            transition: 0.5s;
-        }
-        .featured-video:hover { border-color: var(--accent-unstable); }
-
-        /* --- DATA / LINK BOX --- */
+        /* --- DATA / UPLOAD BOX --- */
         .download-box { 
-            background: rgba(5, 5, 5, 0.8); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
+            background: rgba(5, 5, 5, 0.9); 
+            border: 1px solid var(--accent-unstable); 
             border-radius: 20px; 
-            padding: 40px; 
-            margin-bottom: 50px; 
+            padding: 50px 40px; 
+            margin: 40px 0 60px; 
             backdrop-filter: blur(10px); 
+            box-shadow: 0 0 30px rgba(255, 62, 62, 0.15);
         }
-        #countdown { font-size: 2.2rem; font-weight: 900; color: var(--accent-unstable); letter-spacing: 2px; margin: 15px 0; text-shadow: 0 0 10px rgba(255,62,62,0.2); }
         
-        .dl-btn { 
-            display: inline-block; padding: 18px 30px; border-radius: 8px; font-weight: 900; 
-            text-decoration: none; text-transform: uppercase; background: var(--locked); color: #555; 
-            pointer-events: none; transition: 0.4s; min-width: 200px; letter-spacing: 1px;
+        .upload-instruction {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 600;
+            line-height: 1.4;
+            color: #eee;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .dl-btn.active { background: var(--accent-unstable); color: #000; pointer-events: auto; cursor: pointer; box-shadow: 0 0 15px rgba(255,62,62,0.4); }
-        .dl-btn.active.alt { background: transparent; border: 1px solid var(--accent-glitch); color: var(--accent-glitch); pointer-events: auto; cursor: pointer; }
 
-        /* --- UNSTABLE GRID --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 60px; }
-        .card { background: var(--card-bg); padding: 35px; border-radius: 20px; border: 1px solid rgba(255, 62, 62, 0.05); text-align: left; transition: 0.3s; }
-        .card:hover { border-color: rgba(255, 62, 62, 0.3); transform: translateY(-2px); }
-        .card h3 { color: var(--accent-unstable); margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .upload-instruction .highlight-must {
+            color: var(--accent-unstable);
+            font-weight: 900;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255, 62, 62, 0.5);
+        }
+
+        .dl-btn { 
+            display: inline-block; padding: 18px 40px; border-radius: 8px; font-weight: 900; 
+            text-decoration: none; text-transform: uppercase; 
+            background: var(--accent-unstable); color: #000; 
+            transition: 0.4s; min-width: 200px; letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(255,62,62,0.4);
+            cursor: pointer;
+        }
+        .dl-btn:hover {
+            box-shadow: 0 0 30px rgba(255,62,62,0.6);
+            transform: translateY(-2px);
+        }
 
         /* --- CREW / TARGETS --- */
         .crew-section { background: var(--card-bg); border-radius: 20px; padding: 50px 20px; margin-bottom: 60px; border: 1px solid rgba(255, 255, 255, 0.02); }
@@ -177,46 +151,19 @@
     <nav>
         <a href="index.html">Server-IP</a>
         <a href="evoluted.html" style="color: white; text-shadow: 0 0 8px var(--accent-unstable);">quapsSMP</a>
-        <a href="upload.html">Upload Link</a>
         <a href="discord-invite.html">Discord</a>
     </nav>
 
     <div class="content">
         <h1>quapsSMP</h1>
-        <div class="subtitle">// Anarchie trifft Ordnung. Instabiles Ökosystem.</div>
-
-        <div class="audio-player">
-            <audio id="bg-audio" loop>
-                <source src="unstable.mp3" type="audio/mpeg">
-            </audio>
-            <button class="play-btn" id="audio-toggle">▶</button>
-            <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: #eee;">Static Audio // unstable_pulse.mp3</div>
-        </div>
-
-        <div class="featured-video">
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/44MX1avl9JI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
+        <div class="subtitle">// Data Submission Portal</div>
 
         <div class="download-box">
-            <div id="countdown">INITIALISIERUNG...</div>
+            <p class="upload-instruction">
+                Um Teil der kommenden Videos zu sein, <span class="highlight-must">MÜSSEN</span> alle relevanten Szenen und Clips hier hochgeladen werden. Ohne Upload kein Feature.
+            </p>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
-                <a href="#" id="download-btn-1" class="dl-btn">Weltkarte Sperre</a>
-                <a href="https://152.53.143.169" class="dl-btn active alt" target="_blank">Cloud Access</a>
-            </div>
-        </div>
-
-        <div class="grid">
-            <div class="card">
-                <h3>Unstable Rules</h3>
-                <p>Keine sicheren Zonen. Vertrauen ist eine Ressource, die hier extrem schnell verfällt. Sei bereit für alles.</p>
-            </div>
-            <div class="card">
-                <h3>20k Pre-Loaded</h3>
-                <p>Die gesamte Welt wurde mit Chunky auf 20.000 × 20.000 Blöcken vorgeladen, um null Lags beim Erkunden zu garantieren.</p>
-            </div>
-            <div class="card">
-                <h3>Enhanced Vanilla</h3>
-                <p>Volle Integration von Axiom, Proximity Voicechat und Profi-Build-Tools direkt auf dem Paper-Server.</p>
+                <a href="http://152.53.143.169/s/dein_upload_pfad" class="dl-btn" target="_blank">Clip Hochladen</a>
             </div>
         </div>
 
@@ -235,40 +182,7 @@
         </div>
     </div>
 
-    <footer>QUAPS SMP // UNSTABLE GRID MANAGEMENT &copy; 2026</footer>
+    <footer>QUAPS SMP // CLIPS SUBMISSION GRID &copy; 2026</footer>
 
-    <script>
-        // AUDIO LOGIC
-        const audio = document.getElementById('bg-audio');
-        const audioBtn = document.getElementById('audio-toggle');
-        audioBtn.addEventListener('click', () => {
-            if (audio.paused) { audio.play(); audioBtn.innerText = "II"; audioBtn.style.background = "#00ff66"; } 
-            else { audio.pause(); audioBtn.innerText = "▶"; audioBtn.style.background = "#ff3e3e"; }
-        });
-
-        // COUNTDOWN LOGIC (Setzt den Status direkt auf Online)
-        function updateCountdown() {
-            // Hier das Startdatum des Projekts eintragen (Jahr, Monat-1, Tag, Stunde, Minute)
-            const target = new Date(2026, 4, 20, 18, 0, 0).getTime();
-            const now = new Date().getTime();
-            const diff = target - now;
-            const btn = document.getElementById('download-btn-1');
-
-            if (diff < 0) {
-                document.getElementById('countdown').innerText = "PROJEKT GESTARTET";
-                document.getElementById('countdown').style.color = "var(--accent-glitch)";
-                btn.classList.add('active');
-                btn.innerText = "Map ansehen";
-                return;
-            }
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
-            document.getElementById('countdown').innerHTML = `SYSTEM TIMEOUT: ${d}D ${h}H ${m}M ${s}S`;
-        }
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
-    </script>
 </body>
 </html>
