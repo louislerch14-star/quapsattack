@@ -8,16 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent-unstable: #9d4edd; /* Mystisches Enderman-Violett */
-            --accent-glitch: #00f5d4;   /* Leuchtendes Neon-Cyan */
-            --bg-dark: #020105;
-            --card-bg: rgba(12, 8, 20, 0.75);
+            --accent-unstable: #ffb703; /* Edles Gold / Amber */
+            --accent-glitch: #8ecae6;   /* Klares Eisblau */
+            --bg-dark: #020813;         /* Tiefes Marineblau */
+            --card-bg: rgba(3, 12, 30, 0.75);
         }
 
         body {
             margin: 0;
             font-family: 'Outfit', sans-serif;
-            background: #000;
+            background: var(--bg-dark);
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -25,11 +25,11 @@
             overflow-x: hidden;
         }
 
-        /* --- UNSTABLE HINTERGRUND --- */
+        /* --- DEEP OCEAN HINTERGRUND --- */
         .bg-wrapper {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(2, 1, 5, 0.75), rgba(2, 1, 5, 0.98)), 
+            background: linear-gradient(rgba(2, 8, 19, 0.8), rgba(2, 8, 19, 0.98)), 
                         url('quaps-smp.jpg') center/cover no-repeat fixed;
             z-index: -1;
         }
@@ -37,17 +37,17 @@
         nav {
             position: fixed;
             top: 0; width: 100%;
-            background: rgba(2, 1, 5, 0.7);
+            background: rgba(2, 8, 19, 0.75);
             backdrop-filter: blur(15px);
             display: flex;
             justify-content: center;
             padding: 20px 0;
             z-index: 100;
-            border-bottom: 1px solid var(--accent-unstable);
+            border-bottom: 1px solid rgba(142, 202, 230, 0.15);
         }
 
         nav a {
-            color: #666;
+            color: #5b708a;
             text-decoration: none;
             margin: 0 20px;
             font-size: 0.75rem;
@@ -57,7 +57,7 @@
             transition: 0.3s;
         }
 
-        nav a:hover { color: var(--accent-glitch); text-shadow: 0 0 10px var(--accent-glitch); }
+        nav a:hover { color: var(--accent-unstable); text-shadow: 0 0 10px var(--accent-unstable); }
 
         .content {
             position: relative;
@@ -78,7 +78,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
-            filter: drop-shadow(0 0 15px rgba(157, 78, 221, 0.4));
+            filter: drop-shadow(0 0 15px rgba(255, 183, 3, 0.3));
         }
 
         .subtitle {
@@ -88,13 +88,13 @@
             color: var(--accent-glitch);
             margin-bottom: 40px;
             font-weight: 600;
-            text-shadow: 0 0 5px rgba(0, 245, 212, 0.2);
+            text-shadow: 0 0 5px rgba(142, 202, 230, 0.2);
         }
 
         /* --- MINECRAFT SERVER LIVE STATUS --- */
         .server-status-card {
-            background: rgba(4, 2, 8, 0.85);
-            border: 1px solid var(--accent-unstable);
+            background: rgba(3, 14, 33, 0.85);
+            border: 1px solid rgba(142, 202, 230, 0.2);
             border-radius: 20px;
             padding: 30px;
             max-width: 880px;
@@ -102,7 +102,7 @@
             backdrop-filter: blur(10px);
             box-sizing: border-box;
             text-align: left;
-            box-shadow: 0 0 20px rgba(157, 78, 221, 0.1);
+            box-shadow: 0 0 20px rgba(3, 14, 33, 0.5);
         }
 
         .status-header {
@@ -138,15 +138,15 @@
             display: inline-block;
         }
 
-        .status-online { background: rgba(0, 245, 212, 0.1); color: var(--accent-glitch); border: 1px solid rgba(0, 245, 212, 0.2); text-shadow: 0 0 8px var(--accent-glitch); }
-        .status-offline { background: rgba(157, 78, 221, 0.1); color: #d4a373; border: 1px solid rgba(157, 78, 221, 0.2); }
-        .status-loading { background: rgba(255, 255, 255, 0.05); color: #888; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .status-online { background: rgba(142, 202, 230, 0.1); color: var(--accent-glitch); border: 1px solid rgba(142, 202, 230, 0.3); text-shadow: 0 0 8px var(--accent-glitch); }
+        .status-offline { background: rgba(255, 183, 3, 0.05); color: #a4b3c6; border: 1px solid rgba(255, 183, 3, 0.15); }
+        .status-loading { background: rgba(255, 255, 255, 0.05); color: #6b7a8f; border: 1px solid rgba(255, 255, 255, 0.1); }
 
         .server-meta {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            color: #aaa;
+            color: #a4b3c6;
             font-size: 0.9rem;
         }
 
@@ -155,14 +155,14 @@
         .live-players-wrapper {
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px dashed rgba(157, 78, 221, 0.2);
+            border-top: 1px dashed rgba(142, 202, 230, 0.15);
         }
 
         .live-players-title {
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #776e80;
+            color: #5b708a;
             margin-bottom: 10px;
             font-weight: 900;
         }
@@ -177,8 +177,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(0, 245, 212, 0.02);
-            border: 1px solid rgba(0, 245, 212, 0.08);
+            background: rgba(142, 202, 230, 0.03);
+            border: 1px solid rgba(142, 202, 230, 0.1);
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 0.8rem;
@@ -188,7 +188,7 @@
         }
         .live-player-tag:hover {
             border-color: var(--accent-glitch);
-            background: rgba(0, 245, 212, 0.05);
+            background: rgba(142, 202, 230, 0.08);
         }
 
         .live-player-tag img {
@@ -199,8 +199,8 @@
 
         .refresh-status-btn {
             background: none;
-            border: 1px solid rgba(157, 78, 221, 0.3);
-            color: #999;
+            border: 1px solid rgba(142, 202, 230, 0.25);
+            color: #a4b3c6;
             padding: 6px 12px;
             border-radius: 6px;
             cursor: pointer;
@@ -209,18 +209,18 @@
             text-transform: uppercase;
             transition: 0.2s;
         }
-        .refresh-status-btn:hover { background: rgba(157, 78, 221, 0.1); color: #fff; border-color: var(--accent-unstable); }
+        .refresh-status-btn:hover { background: rgba(142, 202, 230, 0.1); color: #fff; border-color: var(--accent-glitch); }
 
         /* --- DATA / UPLOAD BOX --- */
         .download-box { 
-            background: rgba(4, 2, 6, 0.9); 
+            background: rgba(2, 10, 26, 0.9); 
             border: 1px solid var(--accent-unstable); 
             border-radius: 20px; 
             padding: 50px 40px; 
             margin: 0 auto 60px; 
             max-width: 880px;
             backdrop-filter: blur(10px); 
-            box-shadow: 0 0 30px rgba(157, 78, 221, 0.15);
+            box-shadow: 0 0 30px rgba(255, 183, 3, 0.1);
             box-sizing: border-box;
         }
         
@@ -236,34 +236,34 @@
         }
 
         .upload-instruction .highlight-must {
-            color: var(--accent-glitch);
+            color: var(--accent-unstable);
             font-weight: 900;
             text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(0, 245, 212, 0.4);
+            text-shadow: 0 0 10px rgba(255, 183, 3, 0.3);
         }
 
         .dl-btn { 
             display: inline-block; padding: 18px 40px; border-radius: 8px; font-weight: 900; 
             text-decoration: none; text-transform: uppercase; 
-            background: var(--accent-unstable); color: #fff; 
+            background: var(--accent-unstable); color: #020813; 
             transition: 0.4s; min-width: 200px; letter-spacing: 1px;
-            box-shadow: 0 0 20px rgba(157, 78, 221, 0.4);
+            box-shadow: 0 0 20px rgba(255, 183, 3, 0.3);
             cursor: pointer;
         }
         .dl-btn:hover {
-            box-shadow: 0 0 30px rgba(157, 78, 221, 0.7);
-            background: #b5179e;
+            box-shadow: 0 0 30px rgba(255, 183, 3, 0.5);
+            background: #ffca3a;
             transform: translateY(-2px);
         }
 
         /* --- CREW / TARGETS --- */
-        .crew-section { background: var(--card-bg); border-radius: 20px; padding: 50px 20px; margin-bottom: 60px; border: 1px solid rgba(157, 78, 221, 0.05); }
+        .crew-section { background: var(--card-bg); border-radius: 20px; padding: 50px 20px; margin-bottom: 60px; border: 1px solid rgba(142, 202, 230, 0.05); }
         .player-table { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
         .player-cell { text-align: center; }
-        .avatar-box { width: 75px; height: 75px; border: 2px solid #221a30; border-radius: 12px; padding: 5px; margin-bottom: 10px; background: #000; transition: 0.3s; }
-        .player-cell:hover .avatar-box { border-color: var(--accent-glitch); box-shadow: 0 0 15px rgba(0, 245, 212, 0.2); }
+        .avatar-box { width: 75px; height: 75px; border: 2px solid #132238; border-radius: 12px; padding: 5px; margin-bottom: 10px; background: #01040a; transition: 0.3s; }
+        .player-cell:hover .avatar-box { border-color: var(--accent-unstable); box-shadow: 0 0 15px rgba(255, 183, 3, 0.2); }
         .avatar-box img { width: 100%; height: 100%; image-rendering: pixelated; }
-        .username { font-weight: 900; font-size: 0.75rem; text-transform: uppercase; color: #8a8194; letter-spacing: 1px; }
+        .username { font-weight: 900; font-size: 0.75rem; text-transform: uppercase; color: #768ba5; letter-spacing: 1px; }
 
         /* --- SCROLL ANIMATION CLASS --- */
         .animate-on-scroll {
@@ -280,15 +280,15 @@
         .ad-banner {
             margin: 40px auto 20px;
             max-width: 600px;
-            border: 1px dashed rgba(157, 78, 221, 0.3);
+            border: 1px dashed rgba(142, 202, 230, 0.25);
             border-radius: 10px;
             padding: 15px;
-            background: rgba(157, 78, 221, 0.02);
+            background: rgba(142, 202, 230, 0.01);
             transition: 0.3s;
         }
         .ad-banner:hover {
-            border-color: var(--accent-glitch);
-            background: rgba(0, 245, 212, 0.02);
+            border-color: var(--accent-unstable);
+            background: rgba(255, 183, 3, 0.02);
         }
         .ad-link {
             color: #fff;
@@ -303,10 +303,10 @@
             gap: 10px;
             transition: 0.3s;
         }
-        .ad-link span { color: var(--accent-glitch); }
-        .ad-link:hover { color: var(--accent-glitch); text-shadow: 0 0 10px rgba(0, 245, 212, 0.4); }
+        .ad-link span { color: var(--accent-unstable); }
+        .ad-link:hover { color: var(--accent-unstable); text-shadow: 0 0 10px rgba(255, 183, 3, 0.3); }
 
-        footer { padding: 20px 20px 40px; text-align: center; color: #443c4d; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
+        footer { padding: 20px 20px 40px; text-align: center; color: #43546a; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
     </style>
 </head>
 <body>
@@ -332,7 +332,7 @@
                 </div>
             </div>
             <div class="server-meta">
-                <div class="meta-item">IP-Adresse: <strong style="color: var(--accent-glitch);">152.53.143.169:25569</strong></div>
+                <div class="meta-item">IP-Adresse: <strong style="color: var(--accent-unstable);">152.53.143.169:25569</strong></div>
                 <div class="meta-item">Aktivität: <strong id="player-count">0 / 0 Spieler</strong></div>
                 <div class="meta-item">Version: <strong id="server-version">-</strong></div>
             </div>
