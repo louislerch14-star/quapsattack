@@ -3,364 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>quapsSMP | Unstable Realm Portal</title>
+    <title>quapsSMP | Submission Hub</title>
     <link rel="icon" type="image/x-icon" href="logo.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Cosmic Nebula Farbmischung */
-            --gradient-nebula: linear-gradient(135deg, #03045e 0%, #c77dff 60%, #e0aaff 100%);
-            --accent-blue: #03045e;
-            --accent-magenta: #c77dff;
-            --accent-lavender: #e0aaff;
-            --bg-dark: #020205; /* Reines Weltraum-Schwarz */
-            --card-bg: rgba(10, 7, 20, 0.75);
+            --bg-light: #f4f7fa;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --accent-primary: #06b6d4; /* Frisches Cyan */
+            --accent-secondary: #7c3aed; /* Modernes Violett */
+            --glass-card: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.6);
         }
 
         body {
             margin: 0;
-            font-family: 'Outfit', sans-serif;
-            background: var(--bg-dark);
-            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* --- BACKGROUND --- */
-        .bg-wrapper {
+        /* --- RADIKAL NEUER MESH-GLOW HINTERGRUND --- */
+        .bg-glow-1 {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(2, 2, 5, 0.82), rgba(2, 2, 5, 0.98)), 
-                        url('quaps-smp.jpg') center/cover no-repeat fixed;
+            top: -20%; right: -10%; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, rgba(255,255,255,0) 70%);
             z-index: -1;
+            filter: blur(40px);
+        }
+        .bg-glow-2 {
+            position: fixed;
+            bottom: -10%; left: -10%; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, rgba(255,255,255,0) 70%);
+            z-index: -1;
+            filter: blur(40px);
         }
 
+        /* --- MINIMALISTISCHE NAV --- */
         nav {
             position: fixed;
             top: 0; width: 100%;
-            background: rgba(2, 2, 5, 0.8);
-            backdrop-filter: blur(15px);
+            background: rgba(244, 247, 250, 0.7);
+            backdrop-filter: blur(20px);
             display: flex;
-            justify-content: center;
-            padding: 20px 0;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            box-sizing: border-box;
             z-index: 100;
-            border-bottom: 1px solid rgba(199, 125, 255, 0.2);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-logo {
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         nav a {
-            color: #615a70;
+            color: var(--text-muted);
             text-decoration: none;
-            margin: 0 20px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 0.85rem;
             font-weight: 600;
-            transition: 0.3s;
+            transition: color 0.2s;
         }
-
-        nav a:hover { color: var(--accent-lavender); text-shadow: 0 0 10px var(--accent-lavender); }
+        nav a:hover { color: var(--text-main); }
 
         .content {
             position: relative;
             z-index: 10;
             padding: 140px 20px 60px;
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             text-align: center;
         }
 
         h1 {
-            font-size: clamp(2.5rem, 8vw, 5.5rem);
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
             margin: 0;
-            font-weight: 900;
-            letter-spacing: -3px;
-            text-transform: uppercase;
-            background: var(--gradient-nebula);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-            filter: drop-shadow(0 0 20px rgba(199, 125, 255, 0.35));
+            font-weight: 800;
+            letter-spacing: -2px;
+            color: var(--text-main);
         }
 
         .subtitle {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            color: var(--accent-lavender);
-            margin-bottom: 40px;
-            font-weight: 600;
-            text-shadow: 0 0 5px rgba(224, 170, 255, 0.3);
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+            margin-bottom: 50px;
+            font-weight: 400;
         }
 
-        /* --- MINECRAFT SERVER LIVE STATUS --- */
-        .server-status-card {
-            background: rgba(8, 5, 18, 0.9);
-            border: 1px solid rgba(199, 125, 255, 0.25);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 880px;
-            margin: 0 auto 30px;
-            backdrop-filter: blur(10px);
+        /* --- CLEAN GLASS CARDS --- */
+        .glass-card {
+            background: var(--glass-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 35px;
+            backdrop-filter: blur(16px);
             box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(148, 163, 184, 0.12), 
+                        0 1px 3px rgba(148, 163, 184, 0.05);
+            margin-bottom: 35px;
             text-align: left;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(148, 163, 184, 0.18);
         }
 
+        /* --- SERVER STATUS INTERFACE --- */
         .status-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 15px;
-            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
         }
 
         .status-title {
             font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 900;
-            margin: 0;
+            font-weight: 600;
+            color: var(--text-main);
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: #fff;
+            gap: 8px;
         }
 
         .status-badge {
             padding: 6px 14px;
-            border-radius: 6px;
+            border-radius: 99px;
             font-size: 0.75rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: inline-block;
+            font-weight: 600;
         }
 
-        .status-online { background: rgba(199, 125, 255, 0.15); color: var(--accent-lavender); border: 1px solid rgba(199, 125, 255, 0.3); text-shadow: 0 0 8px var(--accent-lavender); }
-        .status-offline { background: rgba(255, 255, 255, 0.05); color: #666; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .status-loading { background: rgba(255, 255, 255, 0.05); color: #444; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .status-online { background: #ecfdf5; color: #10b981; }
+        .status-offline { background: #fef2f2; color: #ef4444; }
+        .status-loading { background: #f1f5f9; color: #64748b; }
 
         .server-meta {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            color: #c4bdcf;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
-
-        .meta-item strong { color: #fff; }
+        .server-meta strong { color: var(--text-main); font-weight: 600; }
 
         .live-players-wrapper {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed rgba(199, 125, 255, 0.2);
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .live-players-title {
             font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 12px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #8c829e;
-            margin-bottom: 10px;
-            font-weight: 900;
+            letter-spacing: 0.5px;
         }
 
-        .live-player-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        .live-player-list { display: flex; flex-wrap: wrap; gap: 8px; }
 
         .live-player-tag {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(199, 125, 255, 0.03);
-            border: 1px solid rgba(199, 125, 255, 0.15);
-            padding: 4px 10px;
-            border-radius: 6px;
+            gap: 6px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 6px 12px;
+            border-radius: 99px;
             font-size: 0.8rem;
-            font-weight: 600;
-            color: #eee;
-            transition: 0.2s;
+            font-weight: 500;
+            color: var(--text-main);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
-        .live-player-tag:hover {
-            border-color: var(--accent-magenta);
-            background: rgba(199, 125, 255, 0.08);
-            box-shadow: 0 0 8px rgba(199, 125, 255, 0.2);
-        }
-
-        .live-player-tag img {
-            width: 16px;
-            height: 16px;
-            image-rendering: pixelated;
-        }
+        .live-player-tag img { width: 16px; height: 16px; border-radius: 3px; }
 
         .refresh-status-btn {
-            background: none;
-            border: 1px solid rgba(199, 125, 255, 0.25);
-            color: #c4bdcf;
-            padding: 6px 12px;
-            border-radius: 6px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 99px;
             cursor: pointer;
             font-size: 0.75rem;
             font-weight: 600;
-            text-transform: uppercase;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
-        .refresh-status-btn:hover { background: rgba(199, 125, 255, 0.1); color: #fff; border-color: var(--accent-magenta); }
+        .refresh-status-btn:hover { border-color: var(--text-main); color: var(--text-main); }
 
-        /* --- DATA / UPLOAD BOX --- */
-        .download-box { 
-            background: rgba(6, 4, 13, 0.95); 
-            border: 1px solid rgba(199, 125, 255, 0.4); 
-            border-radius: 20px; 
-            padding: 50px 40px; 
-            margin: 0 auto 60px; 
-            max-width: 880px;
-            backdrop-filter: blur(10px); 
-            box-shadow: 0 0 30px rgba(199, 125, 255, 0.15);
-            box-sizing: border-box;
+        /* --- PREMIUM SUBMISSION BOX --- */
+        .download-box {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         }
-        
+
         .upload-instruction {
-            font-size: clamp(1.2rem, 3vw, 1.8rem);
-            font-weight: 600;
-            line-height: 1.4;
-            color: #eee;
-            margin-bottom: 30px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            font-size: 1.25rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--text-main);
+            max-width: 650px;
+            margin: 0 auto 30px;
         }
-
         .upload-instruction .highlight-must {
-            background: var(--gradient-nebula);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
-            text-transform: uppercase;
-            display: inline-block;
-            filter: drop-shadow(0 0 5px rgba(199, 125, 255, 0.5));
+            font-weight: 800;
+            color: var(--accent-secondary);
         }
 
-        .dl-btn { 
-            display: inline-block; padding: 18px 40px; border-radius: 8px; font-weight: 900; 
-            text-decoration: none; text-transform: uppercase; 
-            background: var(--gradient-nebula); color: #020205; 
-            transition: 0.4s; min-width: 200px; letter-spacing: 1px;
-            box-shadow: 0 0 25px rgba(199, 125, 255, 0.4);
-            cursor: pointer;
+        .dl-btn {
+            display: inline-block;
+            padding: 16px 36px;
+            border-radius: 99px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.95rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: #ffffff;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.25);
         }
         .dl-btn:hover {
-            box-shadow: 0 0 35px rgba(224, 170, 255, 0.6);
             transform: translateY(-2px);
-            color: #020205;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
         }
 
-        /* --- CREW / TARGETS --- */
-        .crew-section { background: var(--card-bg); border-radius: 20px; padding: 50px 20px; margin-bottom: 60px; border: 1px solid rgba(199, 125, 255, 0.08); }
-        .player-table { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
+        /* --- MINIMAL PLAYER CELL GRID --- */
+        .crew-section h2 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        
+        .player-table { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
         .player-cell { text-align: center; }
-        .avatar-box { width: 75px; height: 75px; border: 2px solid #1a1429; border-radius: 12px; padding: 5px; margin-bottom: 10px; background: #000; transition: 0.3s; }
-        .player-cell:hover .avatar-box { border-color: var(--accent-magenta); box-shadow: 0 0 15px rgba(199, 125, 255, 0.3); }
-        .avatar-box img { width: 100%; height: 100%; image-rendering: pixelated; }
-        .username { font-weight: 900; font-size: 0.75rem; text-transform: uppercase; color: #948b9c; letter-spacing: 1px; }
+        
+        .avatar-box {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            padding: 4px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            margin-bottom: 12px;
+            transition: transform 0.3s, border-color 0.3s;
+            overflow: hidden;
+        }
+        .player-cell:hover .avatar-box {
+            transform: scale(1.05);
+            border-color: var(--accent-primary);
+        }
+        .avatar-box img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; image-rendering: pixelated; }
+        .username { font-weight: 600; font-size: 0.8rem; color: var(--text-main); }
 
-        /* --- SCROLL ANIMATION CLASS --- */
+        /* --- PARTNER BANNER --- */
+        .ad-banner {
+            margin: 40px auto 20px;
+            max-width: 500px;
+            border-radius: 16px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px dashed rgba(0, 0, 0, 0.08);
+        }
+        .ad-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+        .ad-link span { color: var(--accent-primary); }
+        .ad-link:hover { color: var(--text-main); }
+
+        /* --- SCROLL ANIMATIONS --- */
         .animate-on-scroll {
             opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(25px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
         .animate-on-scroll.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* --- ADVERTISEMENT BANNER --- */
-        .ad-banner {
-            margin: 40px auto 20px;
-            max-width: 600px;
-            border: 1px dashed rgba(199, 125, 255, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            background: rgba(199, 125, 255, 0.01);
-            transition: 0.3s;
-        }
-        .ad-banner:hover {
-            border-color: var(--accent-lavender);
-            background: rgba(224, 170, 255, 0.03);
-        }
-        .ad-link {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 900;
-            font-size: 0.9rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: 0.3s;
-        }
-        .ad-link span { color: var(--accent-lavender); }
-        .ad-link:hover { color: var(--accent-lavender); text-shadow: 0 0 10px rgba(224, 170, 255, 0.4); }
-
-        footer { padding: 20px 20px 40px; text-align: center; color: #514a59; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
+        footer { padding: 40px 20px; text-align: center; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-    <div class="bg-wrapper"></div>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
 
     <nav>
-        <a href="evoluted.html" style="color: white; text-shadow: 0 0 8px var(--accent-magenta);">quapsSMP</a>
+        <div class="nav-logo">quapsSMP</div>
+        <a href="evoluted.html">Portal Registry</a>
     </nav>
 
     <div class="content">
         <h1>quapsSMP</h1>
-        <div class="subtitle">// Data Submission Portal</div>
+        <div class="subtitle">Content Submission & System Monitor</div>
 
-        <div class="server-status-card animate-on-scroll">
+        <div class="glass-card animate-on-scroll">
             <div class="status-header">
                 <div class="status-title">
-                    <span>🎮</span> Server-Terminal
+                    <span>⚡</span> System-Zentrale
                 </div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <button class="refresh-status-btn" onclick="checkServerStatus()">Update ↻</button>
-                    <span id="server-badge" class="status-badge status-loading">Prüfe...</span>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <button class="refresh-status-btn" onclick="checkServerStatus()">Aktualisieren</button>
+                    <span id="server-badge" class="status-badge status-loading">Verbindung...</span>
                 </div>
             </div>
             <div class="server-meta">
-                <div class="meta-item">IP-Adresse: <strong style="color: var(--accent-lavender);">152.53.143.169:25569</strong></div>
-                <div class="meta-item">Aktivität: <strong id="player-count">0 / 0 Spieler</strong></div>
-                <div class="meta-item">Version: <strong id="server-version">-</strong></div>
+                <div class="meta-item">Netzwerk-IP: <strong style="color: var(--accent-primary);">152.53.143.169:25569</strong></div>
+                <div class="meta-item">Auslastung: <strong id="player-count">0 / 0 Subjekte</strong></div>
+                <div class="meta-item">Laufzeit-Version: <strong id="server-version">-</strong></div>
             </div>
             <div id="live-players-section" class="live-players-wrapper" style="display: none;">
-                <div class="live-players-title">Subjekte im Matrix-Grid:</div>
+                <div class="live-players-title">Aktive Entities im Grid:</div>
                 <div id="live-player-list" class="live-player-list">
                     </div>
             </div>
         </div>
 
-        <div class="download-box animate-on-scroll">
+        <div class="glass-card download-box animate-on-scroll">
             <p class="upload-instruction">
-                Um Teil der kommenden Videos zu sein, <span class="highlight-must">MÜSSEN</span> alle relevanten Szenen und Clips hier hochgeladen werden. Ohne Upload kein Feature.
+                Um in den kommenden Produktionen berücksichtigt zu werden, <span class="highlight-must">müssen</span> alle Aufzeichnungen hier hinterlegt werden.
             </p>
-            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
-                <a href="http://152.53.143.169:7580/s/tRCZE3pBj7AjNby" class="dl-btn" target="_blank">Clip Hochladen</a>
-            </div>
+            <a href="http://152.53.143.169:7580/s/tRCZE3pBj7AjNby" class="dl-btn" target="_blank">Clip einreichen</a>
         </div>
 
-        <div class="crew-section animate-on-scroll">
-            <h2 style="font-size:0.75rem; color:var(--accent-lavender); letter-spacing:5px; margin-bottom:40px; text-transform:uppercase;">Involvierte Subjekte</h2>
+        <div class="glass-card crew-section animate-on-scroll">
+            <h2>Registrierte Operator</h2>
             <div class="player-table">
                 <div class="player-cell"><div class="avatar-box"><img src="https://mc-heads.net/avatar/Lois_7"></div><div class="username">Louis</div></div>
                 <div class="player-cell"><div class="avatar-box"><img src="https://mc-heads.net/avatar/UltimateRobot"></div><div class="username">Giorgio</div></div>
@@ -374,12 +369,12 @@
 
         <div class="ad-banner animate-on-scroll">
             <a href="https://airbusfan.de" class="ad-link" target="_blank">
-                ✈️ Check out our Partner Website: <span>airbusfan.de</span>
+                🌐 Partner-Netzwerk: <span>airbusfan.de</span>
             </a>
         </div>
     </div>
 
-    <footer>QUAPS SMP // CLIPS SUBMISSION GRID &copy; 2026</footer>
+    <footer>QUAPS SMP // ARCHITECTURE DATA GRID &copy; 2026</footer>
 
     <script>
         // SCROLL-ANIMATIONS LOGIC
@@ -428,7 +423,7 @@
                     badge.className = "status-badge status-online";
                     badge.innerText = "Online";
                     
-                    playerCount.innerText = `${data.players.online} / ${data.players.max} Online`;
+                    playerCount.innerText = `${data.players.online} / ${data.players.max} Aktiv`;
                     serverVersion.innerText = data.version || "Java Edition";
 
                     if (data.players.online > 0 && data.players.list) {
@@ -451,7 +446,7 @@
                 } else {
                     badge.className = "status-badge status-offline";
                     badge.innerText = "Offline";
-                    playerCount.innerText = "0 / 0 Spieler";
+                    playerCount.innerText = "0 / 0 Aktiv";
                     serverVersion.innerText = "-";
                     playersSection.style.display = "none";
                 }
