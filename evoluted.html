@@ -3,70 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>quapsSMP | Sunshine Terminal</title>
+    <title>quapsSMP | Dashboard</title>
     <link rel="icon" type="image/x-icon" href="logo.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400;500;700&f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            /* Die düstere Sunshine-Glitch Kombination */
+            /* Die geliebten Sunshine-Farben */
             --gradient-sunshine: linear-gradient(135deg, #ff007f 0%, #ff7b00 50%, #ffb703 100%);
             --color-pink: #ff007f;
             --color-orange: #ff7b00;
             --color-gold: #ffb703;
-            --bg-dark: #060506; /* Extrem düsteres Schwarz mit leichtem Rotstich */
-            --terminal-bg: rgba(15, 11, 14, 0.88);
-            --border-glow: rgba(255, 123, 0, 0.25);
+            
+            /* Hintergrund einen Tick heller (Edles Space-Anthrazit) */
+            --bg-dark: #0f0e12; 
+            --card-bg: rgba(24, 22, 28, 0.7);
+            --border-glow: rgba(255, 123, 0, 0.15);
         }
 
         body {
             margin: 0;
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             background: var(--bg-dark);
-            color: #f1f5f9;
+            color: #f8fafc;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* --- DÜSTERER BACKGROUND MIT SUNSHINE GLOW --- */
+        /* --- BACKGROUND GRADIENT GLOW --- */
         .bg-wrapper {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(6, 5, 6, 0.88), rgba(6, 5, 6, 0.99)), 
+            background: linear-gradient(rgba(15, 14, 18, 0.85), rgba(15, 14, 18, 0.98)), 
                         url('quaps-smp.jpg') center/cover no-repeat fixed;
             z-index: -1;
         }
 
-        .sunshine-pulse {
+        .sunshine-glow {
             position: fixed;
-            top: 20%; right: 10%; width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(255, 123, 0, 0.05) 0%, rgba(0,0,0,0) 70%);
+            top: -10%; left: 30%; width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(255, 0, 127, 0.06) 0%, rgba(255, 123, 0, 0.03) 50%, rgba(0,0,0,0) 70%);
             z-index: -1;
-            filter: blur(60px);
+            filter: blur(80px);
             pointer-events: none;
         }
 
-        /* --- ULTRA MODERN NAV --- */
+        /* --- PREMIUM MINIMAL NAV --- */
         nav {
             position: fixed;
             top: 0; width: 100%;
-            background: rgba(6, 5, 6, 0.9);
+            background: rgba(15, 14, 18, 0.8);
             backdrop-filter: blur(20px);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
+            padding: 20px 50px;
             box-sizing: border-box;
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 0, 127, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .nav-brand {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Cabinet Grotesk', sans-serif;
             font-weight: 800;
-            font-size: 1.2rem;
-            color: #fff;
+            font-size: 1.3rem;
             letter-spacing: -0.5px;
         }
         .nav-brand span {
@@ -76,242 +79,236 @@
         }
 
         nav a {
-            font-family: 'Space Grotesk', sans-serif;
             color: #94a3b8;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: 0.2s;
-            padding: 6px 16px;
-            border-radius: 4px;
+            transition: color 0.2s;
         }
-        nav a:hover { 
-            color: #fff;
-            background: rgba(255, 123, 0, 0.08);
-        }
+        nav a:hover { color: #fff; }
 
+        /* --- LAYOUT CONTAINER --- */
         .content {
             position: relative;
             z-index: 10;
-            padding: 160px 20px 60px;
-            max-width: 1050px;
+            padding: 140px 24px 60px;
+            max-width: 1200px;
             margin: 0 auto;
-            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        /* --- SYNE FONT OVERHAUL TITLE --- */
-        .title-wrapper {
-            margin-bottom: 60px;
+        /* --- NEUE SCHRIFT FÜR DEN TITEL --- */
+        .title-area {
+            text-align: left;
+            margin-bottom: 50px;
         }
 
         h1 {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(3rem, 9vw, 5.8rem);
+            font-family: 'Cabinet Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 7vw, 4.8rem);
             margin: 0;
             font-weight: 800;
-            letter-spacing: -3px;
-            text-transform: lowercase; /* Macht den Look extrem artsy/modern */
+            letter-spacing: -2px;
+            line-height: 1.05;
             background: var(--gradient-sunshine);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(255, 123, 0, 0.2));
         }
 
         .subtitle {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 5px;
+            font-size: 0.95rem;
             color: #64748b;
             margin-top: 10px;
             font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
-        .subtitle span { color: var(--color-gold); }
 
-        /* --- TERMINAL GLASS CARDS --- */
-        .terminal-card {
-            background: var(--terminal-bg);
-            border: 1px solid var(--border-glow);
-            border-radius: 16px;
+        /* --- NEUE WIDGET ANORDNUNG (GRID) --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 850px) {
+            .dashboard-grid {
+                grid-template-columns: 1.3fr 1fr; /* Server-Status breiter, Upload kompakter daneben */
+            }
+        }
+
+        /* --- MODERN CLEAN CARDS --- */
+        .widget-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
             padding: 35px;
-            margin-bottom: 35px;
             box-sizing: border-box;
-            text-align: left;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
-            position: relative;
-            transition: border-color 0.3s;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: border-color 0.3s, transform 0.3s;
         }
-        .terminal-card:hover {
-            border-color: rgba(255, 0, 127, 0.4);
-        }
-
-        /* --- SERVER MONITOR INTERFACE --- */
-        .monitor-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            padding-bottom: 18px;
-            margin-bottom: 22px;
+        .widget-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-2px);
         }
 
-        .monitor-title {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #fff;
+        .card-title {
+            font-family: 'Cabinet Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-top: 0;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
+        /* --- SERVER MONITOR INTERFACE --- */
         .status-badge {
-            padding: 5px 14px;
-            border-radius: 6px;
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 99px;
             font-size: 0.8rem;
-            font-weight: 500;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: auto;
         }
-        .status-online { background: rgba(255, 123, 0, 0.12); color: var(--color-gold); border: 1px solid rgba(255, 183, 3, 0.3); text-shadow: 0 0 8px var(--color-gold); }
-        .status-offline { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
+        .status-online { background: rgba(255, 123, 0, 0.1); color: var(--color-gold); border: 1px solid rgba(255, 183, 3, 0.2); }
+        .status-offline { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
         .status-loading { background: rgba(255,255,255,0.05); color: #64748b; }
 
-        .system-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
+        .meta-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            padding-bottom: 10px;
             font-size: 0.95rem;
+            color: #94a3b8;
         }
-        .grid-item { color: #94a3b8; }
-        .grid-item strong { color: #fff; font-weight: 500; }
+        .meta-row strong { color: #fff; font-weight: 500; }
 
-        .live-panel {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.04);
-        }
         .live-panel-title {
             font-size: 0.8rem;
-            color: var(--color-pink);
+            font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 14px;
-            letter-spacing: 1.5px;
-            font-weight: 500;
+            color: var(--color-pink);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
         }
 
-        .player-tags-flex { display: flex; flex-wrap: wrap; gap: 10px; }
-        .player-chip {
+        .player-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .player-tag {
             display: flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 6px 14px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 0.85rem;
             color: #cbd5e1;
-            transition: 0.2s;
         }
-        .player-chip:hover {
-            border-color: var(--color-orange);
-            background: rgba(255, 123, 0, 0.05);
-        }
-        .player-chip img { width: 16px; height: 16px; image-rendering: pixelated; border-radius: 2px; }
+        .player-tag img { width: 18px; height: 18px; image-rendering: pixelated; border-radius: 4px; }
 
         .btn-refresh {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #94a3b8;
-            padding: 6px 14px;
-            border-radius: 6px;
+            color: #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
             transition: 0.2s;
         }
-        .btn-refresh:hover { border-color: var(--color-gold); color: #fff; }
+        .btn-refresh:hover { background: #fff; color: var(--bg-dark); border-color: #fff; }
 
         /* --- TRANSMISSION UPLOAD BOX --- */
-        .upload-center {
-            text-align: center;
-            padding: 50px 35px;
+        .upload-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-
+        
         .instruction-text {
-            font-size: clamp(1.1rem, 3vw, 1.35rem);
+            font-size: 1.05rem;
             line-height: 1.6;
             color: #cbd5e1;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
-        .instruction-text .highlight {
+        .instruction-text span {
             color: #fff;
-            font-weight: 500;
-            border-bottom: 2px solid var(--color-pink);
-            padding-bottom: 2px;
+            font-weight: 700;
+            border-bottom: 2px solid var(--color-orange);
         }
 
         .action-btn {
-            display: inline-block;
-            padding: 16px 45px;
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
+            display: block;
+            text-align: center;
+            padding: 16px;
+            font-family: 'Cabinet Grotesk', sans-serif;
+            font-weight: 800;
             font-size: 1rem;
             text-transform: uppercase;
             text-decoration: none;
             letter-spacing: 0.5px;
             background: var(--gradient-sunshine);
-            color: #060506;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(255, 123, 0, 0.3);
-            transition: all 0.3s;
+            color: #0f0e12;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(255, 123, 0, 0.2);
+            transition: all 0.2s;
         }
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 35px rgba(255, 0, 127, 0.5);
+            box-shadow: 0 12px 25px rgba(255, 0, 127, 0.4);
         }
 
-        /* --- SQUAD CONFIGURATION ROSTER --- */
-        .squad-title {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--color-gold);
-            letter-spacing: 1px;
-            margin-bottom: 35px;
-            text-align: center;
+        /* --- OPERATOR ROSTER (UNTERER BEREICH) --- */
+        .roster-card {
+            width: 100%;
         }
 
         .squad-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 16px;
         }
 
         .operator-box {
-            background: rgba(255,255,255,0.01);
-            border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 12px;
-            padding: 18px;
-            width: 105px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 20px 10px;
             text-align: center;
             transition: all 0.3s;
         }
         .operator-box:hover {
-            background: rgba(255, 0, 127, 0.03);
-            border-color: rgba(255, 0, 127, 0.3);
+            background: rgba(255, 123, 0, 0.04);
+            border-color: rgba(255, 123, 0, 0.25);
             transform: translateY(-4px);
         }
 
         .avatar-frame {
-            width: 64px;
-            height: 64px;
+            width: 56px;
+            height: 56px;
             margin: 0 auto 12px;
+            border-radius: 12px;
+            overflow: hidden;
             background: #000;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             padding: 4px;
-            transition: 0.3s;
+            transition: border-color 0.3s;
         }
-        .operator-box:hover .avatar-frame { border-color: var(--color-orange); box-shadow: 0 0 12px rgba(255, 123, 0, 0.25); }
-        .avatar-frame img { width: 100%; height: 100%; image-rendering: pixelated; border-radius: 4px; }
+        .operator-box:hover .avatar-frame { border-color: var(--color-gold); }
+        .avatar-frame img { width: 100%; height: 100%; image-rendering: pixelated; border-radius: 8px; }
         
         .op-name {
             font-size: 0.85rem;
@@ -320,14 +317,14 @@
         }
         .operator-box:hover .op-name { color: #fff; }
 
-        /* --- PARTNER AD BANNER --- */
+        /* --- PARTNER BANNER --- */
         .partner-banner {
-            margin: 50px auto 10px;
-            max-width: 550px;
-            border-radius: 12px;
-            border: 1px dashed rgba(255, 183, 3, 0.3);
-            padding: 14px;
-            background: rgba(6,5,6,0.6);
+            margin: 40px auto 0;
+            border-radius: 16px;
+            border: 1px dashed rgba(255, 183, 3, 0.2);
+            padding: 16px;
+            background: rgba(24, 22, 28, 0.4);
+            max-width: 400px;
         }
         .partner-link {
             color: #94a3b8;
@@ -337,17 +334,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            transition: 0.2s;
+            gap: 8px;
+            transition: color 0.2s;
         }
-        .partner-link span { color: var(--color-gold); }
+        .partner-link span { color: var(--color-gold); font-weight: 700; }
         .partner-link:hover { color: #fff; }
 
         /* --- SCROLL ANIMATIONS --- */
         .animate-on-scroll {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
         .animate-on-scroll.visible {
             opacity: 1;
@@ -355,59 +352,69 @@
         }
 
         footer {
-            padding: 50px 20px;
+            padding: 60px 24px 30px;
             text-align: center;
             color: #475569;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
 <body>
 
     <div class="bg-wrapper"></div>
-    <div class="sunshine-pulse"></div>
+    <div class="sunshine-glow"></div>
 
     <nav>
         <div class="nav-brand">quaps<span>smp</span></div>
-        <a href="evoluted.html">Dashboard</a>
+        <a href="evoluted.html">System-Portal</a>
     </nav>
 
     <div class="content">
-        <div class="title-wrapper">
+        <div class="title-area">
             <h1>quapsSMP</h1>
-            <div class="subtitle">Mainframe <span>//</span> Sunshine Core</div>
+            <div class="subtitle">Mainframe Control Core</div>
         </div>
 
-        <div class="terminal-card animate-on-scroll">
-            <div class="monitor-header">
-                <div class="monitor-title">⚡ Server-Terminal</div>
-                <div style="display: flex; gap: 12px; align-items: center;">
-                    <button class="btn-refresh" onclick="checkServerStatus()">Update ↻</button>
+        <div class="dashboard-grid">
+            
+            <div class="widget-card animate-on-scroll">
+                <div style="display: flex; align-items: center; margin-bottom: 25px;">
+                    <h2 class="card-title" style="margin: 0;">🛰️ Server Monitor</h2>
                     <span id="server-badge" class="status-badge status-loading">Syncing...</span>
                 </div>
+                
+                <div class="meta-list">
+                    <div class="meta-row"><span>Netzwerk-IP</span> <strong style="color: var(--color-gold);">152.53.143.169:25569</strong></div>
+                    <div class="meta-row"><span>Auslastung</span> <strong id="player-count">0 / 0 Spieler</strong></div>
+                    <div class="meta-row"><span>Core-Version</span> <strong id="server-version">-</strong></div>
+                </div>
+
+                <div id="live-players-section" class="live-panel" style="display: none;">
+                    <div class="live-panel-title">Aktive Entities online:</div>
+                    <div id="live-player-list" class="player-chips">
+                        </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn-refresh" onclick="checkServerStatus()">Daten abrufen ↻</button>
+                </div>
             </div>
-            <div class="system-grid">
-                <div class="grid-item">IP-Adresse: <strong style="color: var(--color-gold);">152.53.143.169:25569</strong></div>
-                <div class="grid-item">Spieler aktiv: <strong id="player-count">0 / 0 Entities</strong></div>
-                <div class="grid-item">Version: <strong id="server-version">-</strong></div>
+
+            <div class="widget-card upload-card animate-on-scroll">
+                <div>
+                    <h2 class="card-title">📤 Clip Submission</h2>
+                    <p class="instruction-text">
+                        Um in den kommenden Community-Videos dabei zu sein, <span>müssen</span> alle Aufzeichnungen hier eingereicht werden.
+                    </p>
+                </div>
+                <a href="http://152.53.143.169:7580/s/tRCZE3pBj7AjNby" class="action-btn" target="_blank">Clip einsenden</a>
             </div>
-            <div id="live-players-section" class="live-panel" style="display: none;">
-                <div class="live-panel-title">Aktive Spieler im Grid:</div>
-                <div id="live-player-list" class="player-tags-flex">
-                    </div>
-            </div>
+
         </div>
 
-        <div class="terminal-card upload-center animate-on-scroll">
-            <p class="instruction-text">
-                Um in den kommenden Zusammenschnitten gefeatured zu werden, <span class="highlight">MÜSSEN</span> alle wichtigen Szenen und Clips über diesen Hub eingereicht werden.
-            </p>
-            <a href="http://152.53.143.169:7580/s/tRCZE3pBj7AjNby" class="action-btn" target="_blank">Clip hochladen</a>
-        </div>
-
-        <div class="animate-on-scroll" style="margin-bottom: 40px;">
-            <div class="squad-title">Registrierte Operator</div>
+        <div class="widget-card roster-card animate-on-scroll">
+            <h2 class="card-title" style="color: var(--color-gold); margin-bottom: 30px;">👥 Registrierte Operator</h2>
             <div class="squad-grid">
                 <div class="operator-box"><div class="avatar-frame"><img src="https://mc-heads.net/avatar/Lois_7"></div><div class="op-name">Louis</div></div>
                 <div class="operator-box"><div class="avatar-frame"><img src="https://mc-heads.net/avatar/UltimateRobot"></div><div class="op-name">Giorgio</div></div>
@@ -421,12 +428,12 @@
 
         <div class="partner-banner animate-on-scroll">
             <a href="https://airbusfan.de" class="partner-link" target="_blank">
-                ✈️ Partner-Schnittstelle: <span>airbusfan.de</span>
+                ✈️ Schnittstelle: <span>airbusfan.de</span>
             </a>
         </div>
     </div>
 
-    <footer>SUNSHINE CORE INTERFACE v5.0 &copy; 2026</footer>
+    <footer>SUNSHINE SYSTEM COMPONENT &copy; 2026</footer>
 
     <script>
         // SCROLL-ANIMATIONS LOGIC
@@ -475,7 +482,7 @@
                     badge.className = "status-badge status-online";
                     badge.innerText = "Online";
                     
-                    playerCount.innerText = `${data.players.online} / ${data.players.max} Entities`;
+                    playerCount.innerText = `${data.players.online} / ${data.players.max} Spieler`;
                     serverVersion.innerText = data.version || "Java Edition";
 
                     if (data.players.online > 0 && data.players.list) {
@@ -484,7 +491,7 @@
                         
                         data.players.list.forEach(player => {
                             const playerTag = document.createElement('div');
-                            playerTag.className = 'player-chip';
+                            playerTag.className = 'player-tag';
                             playerTag.innerHTML = `
                                 <img src="https://mc-heads.net/avatar/${player.name}">
                                 <span>${player.name}</span>
@@ -498,7 +505,7 @@
                 } else {
                     badge.className = "status-badge status-offline";
                     badge.innerText = "Offline";
-                    playerCount.innerText = "0 / 0 Entities";
+                    playerCount.innerText = "0 / 0 Spieler";
                     serverVersion.innerText = "-";
                     playersSection.style.display = "none";
                 }
