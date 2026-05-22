@@ -8,13 +8,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Sunset Glitch Farbmischung */
-            --gradient-sunset: linear-gradient(135deg, #ff007f 0%, #ff7b00 50%, #ffb703 100%);
-            --accent-pink: #ff007f;
-            --accent-orange: #ff7b00;
-            --accent-gold: #ffb703;
-            --bg-dark: #0b090a; /* Tiefes Geister-Grau/Schwarz */
-            --card-bg: rgba(26, 18, 19, 0.75);
+            /* Cosmic Nebula Farbmischung */
+            --gradient-nebula: linear-gradient(135deg, #03045e 0%, #c77dff 60%, #e0aaff 100%);
+            --accent-blue: #03045e;
+            --accent-magenta: #c77dff;
+            --accent-lavender: #e0aaff;
+            --bg-dark: #020205; /* Reines Weltraum-Schwarz */
+            --card-bg: rgba(10, 7, 20, 0.75);
         }
 
         body {
@@ -32,7 +32,7 @@
         .bg-wrapper {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(11, 9, 10, 0.8), rgba(11, 9, 10, 0.98)), 
+            background: linear-gradient(rgba(2, 2, 5, 0.82), rgba(2, 2, 5, 0.98)), 
                         url('quaps-smp.jpg') center/cover no-repeat fixed;
             z-index: -1;
         }
@@ -40,17 +40,17 @@
         nav {
             position: fixed;
             top: 0; width: 100%;
-            background: rgba(11, 9, 10, 0.8);
+            background: rgba(2, 2, 5, 0.8);
             backdrop-filter: blur(15px);
             display: flex;
             justify-content: center;
             padding: 20px 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 123, 0, 0.2);
+            border-bottom: 1px solid rgba(199, 125, 255, 0.2);
         }
 
         nav a {
-            color: #7a6869;
+            color: #615a70;
             text-decoration: none;
             margin: 0 20px;
             font-size: 0.75rem;
@@ -60,7 +60,7 @@
             transition: 0.3s;
         }
 
-        nav a:hover { color: var(--accent-gold); text-shadow: 0 0 10px var(--accent-gold); }
+        nav a:hover { color: var(--accent-lavender); text-shadow: 0 0 10px var(--accent-lavender); }
 
         .content {
             position: relative;
@@ -77,27 +77,27 @@
             font-weight: 900;
             letter-spacing: -3px;
             text-transform: uppercase;
-            background: var(--gradient-sunset);
+            background: var(--gradient-nebula);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
-            filter: drop-shadow(0 0 20px rgba(255, 123, 0, 0.35));
+            filter: drop-shadow(0 0 20px rgba(199, 125, 255, 0.35));
         }
 
         .subtitle {
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 6px;
-            color: var(--accent-gold);
+            color: var(--accent-lavender);
             margin-bottom: 40px;
             font-weight: 600;
-            text-shadow: 0 0 5px rgba(255, 183, 3, 0.3);
+            text-shadow: 0 0 5px rgba(224, 170, 255, 0.3);
         }
 
         /* --- MINECRAFT SERVER LIVE STATUS --- */
         .server-status-card {
-            background: rgba(18, 12, 13, 0.9);
-            border: 1px solid rgba(255, 123, 0, 0.25);
+            background: rgba(8, 5, 18, 0.9);
+            border: 1px solid rgba(199, 125, 255, 0.25);
             border-radius: 20px;
             padding: 30px;
             max-width: 880px;
@@ -105,7 +105,7 @@
             backdrop-filter: blur(10px);
             box-sizing: border-box;
             text-align: left;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
         }
 
         .status-header {
@@ -141,15 +141,15 @@
             display: inline-block;
         }
 
-        .status-online { background: rgba(255, 123, 0, 0.15); color: var(--accent-gold); border: 1px solid rgba(255, 123, 0, 0.3); text-shadow: 0 0 8px var(--accent-gold); }
+        .status-online { background: rgba(199, 125, 255, 0.15); color: var(--accent-lavender); border: 1px solid rgba(199, 125, 255, 0.3); text-shadow: 0 0 8px var(--accent-lavender); }
         .status-offline { background: rgba(255, 255, 255, 0.05); color: #666; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .status-loading { background: rgba(255, 255, 255, 0.05); color: #555; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .status-loading { background: rgba(255, 255, 255, 0.05); color: #444; border: 1px solid rgba(255, 255, 255, 0.1); }
 
         .server-meta {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            color: #cfc5c5;
+            color: #c4bdcf;
             font-size: 0.9rem;
         }
 
@@ -158,14 +158,14 @@
         .live-players-wrapper {
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px dashed rgba(255, 123, 0, 0.2);
+            border-top: 1px dashed rgba(199, 125, 255, 0.2);
         }
 
         .live-players-title {
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #9c8a8b;
+            color: #8c829e;
             margin-bottom: 10px;
             font-weight: 900;
         }
@@ -180,8 +180,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 123, 0, 0.03);
-            border: 1px solid rgba(255, 123, 0, 0.15);
+            background: rgba(199, 125, 255, 0.03);
+            border: 1px solid rgba(199, 125, 255, 0.15);
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 0.8rem;
@@ -190,9 +190,9 @@
             transition: 0.2s;
         }
         .live-player-tag:hover {
-            border-color: var(--accent-orange);
-            background: rgba(255, 123, 0, 0.08);
-            box-shadow: 0 0 8px rgba(255, 123, 0, 0.2);
+            border-color: var(--accent-magenta);
+            background: rgba(199, 125, 255, 0.08);
+            box-shadow: 0 0 8px rgba(199, 125, 255, 0.2);
         }
 
         .live-player-tag img {
@@ -203,8 +203,8 @@
 
         .refresh-status-btn {
             background: none;
-            border: 1px solid rgba(255, 123, 0, 0.25);
-            color: #cfc5c5;
+            border: 1px solid rgba(199, 125, 255, 0.25);
+            color: #c4bdcf;
             padding: 6px 12px;
             border-radius: 6px;
             cursor: pointer;
@@ -213,18 +213,18 @@
             text-transform: uppercase;
             transition: 0.2s;
         }
-        .refresh-status-btn:hover { background: rgba(255, 123, 0, 0.1); color: #fff; border-color: var(--accent-orange); }
+        .refresh-status-btn:hover { background: rgba(199, 125, 255, 0.1); color: #fff; border-color: var(--accent-magenta); }
 
         /* --- DATA / UPLOAD BOX --- */
         .download-box { 
-            background: rgba(14, 10, 11, 0.95); 
-            border: 1px solid rgba(255, 123, 0, 0.4); 
+            background: rgba(6, 4, 13, 0.95); 
+            border: 1px solid rgba(199, 125, 255, 0.4); 
             border-radius: 20px; 
             padding: 50px 40px; 
             margin: 0 auto 60px; 
             max-width: 880px;
             backdrop-filter: blur(10px); 
-            box-shadow: 0 0 30px rgba(255, 123, 0, 0.15);
+            box-shadow: 0 0 30px rgba(199, 125, 255, 0.15);
             box-sizing: border-box;
         }
         
@@ -240,36 +240,37 @@
         }
 
         .upload-instruction .highlight-must {
-            background: var(--gradient-sunset);
+            background: var(--gradient-nebula);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 900;
             text-transform: uppercase;
             display: inline-block;
-            filter: drop-shadow(0 0 5px rgba(255, 123, 0, 0.5));
+            filter: drop-shadow(0 0 5px rgba(199, 125, 255, 0.5));
         }
 
         .dl-btn { 
             display: inline-block; padding: 18px 40px; border-radius: 8px; font-weight: 900; 
             text-decoration: none; text-transform: uppercase; 
-            background: var(--gradient-sunset); color: #0b090a; 
+            background: var(--gradient-nebula); color: #020205; 
             transition: 0.4s; min-width: 200px; letter-spacing: 1px;
-            box-shadow: 0 0 25px rgba(255, 123, 0, 0.4);
+            box-shadow: 0 0 25px rgba(199, 125, 255, 0.4);
             cursor: pointer;
         }
         .dl-btn:hover {
-            box-shadow: 0 0 35px rgba(255, 0, 127, 0.6);
+            box-shadow: 0 0 35px rgba(224, 170, 255, 0.6);
             transform: translateY(-2px);
+            color: #020205;
         }
 
         /* --- CREW / TARGETS --- */
-        .crew-section { background: var(--card-bg); border-radius: 20px; padding: 50px 20px; margin-bottom: 60px; border: 1px solid rgba(255, 123, 0, 0.08); }
+        .crew-section { background: var(--card-bg); border-radius: 20px; padding: 50px 20px; margin-bottom: 60px; border: 1px solid rgba(199, 125, 255, 0.08); }
         .player-table { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
         .player-cell { text-align: center; }
-        .avatar-box { width: 75px; height: 75px; border: 2px solid #2d1a1c; border-radius: 12px; padding: 5px; margin-bottom: 10px; background: #000; transition: 0.3s; }
-        .player-cell:hover .avatar-box { border-color: var(--accent-orange); box-shadow: 0 0 15px rgba(255, 123, 0, 0.3); }
+        .avatar-box { width: 75px; height: 75px; border: 2px solid #1a1429; border-radius: 12px; padding: 5px; margin-bottom: 10px; background: #000; transition: 0.3s; }
+        .player-cell:hover .avatar-box { border-color: var(--accent-magenta); box-shadow: 0 0 15px rgba(199, 125, 255, 0.3); }
         .avatar-box img { width: 100%; height: 100%; image-rendering: pixelated; }
-        .username { font-weight: 900; font-size: 0.75rem; text-transform: uppercase; color: #a39091; letter-spacing: 1px; }
+        .username { font-weight: 900; font-size: 0.75rem; text-transform: uppercase; color: #948b9c; letter-spacing: 1px; }
 
         /* --- SCROLL ANIMATION CLASS --- */
         .animate-on-scroll {
@@ -286,15 +287,15 @@
         .ad-banner {
             margin: 40px auto 20px;
             max-width: 600px;
-            border: 1px dashed rgba(255, 123, 0, 0.3);
+            border: 1px dashed rgba(199, 125, 255, 0.3);
             border-radius: 10px;
             padding: 15px;
-            background: rgba(255, 123, 0, 0.01);
+            background: rgba(199, 125, 255, 0.01);
             transition: 0.3s;
         }
         .ad-banner:hover {
-            border-color: var(--accent-gold);
-            background: rgba(255, 183, 3, 0.03);
+            border-color: var(--accent-lavender);
+            background: rgba(224, 170, 255, 0.03);
         }
         .ad-link {
             color: #fff;
@@ -309,10 +310,10 @@
             gap: 10px;
             transition: 0.3s;
         }
-        .ad-link span { color: var(--accent-gold); }
-        .ad-link:hover { color: var(--accent-gold); text-shadow: 0 0 10px rgba(255, 183, 3, 0.4); }
+        .ad-link span { color: var(--accent-lavender); }
+        .ad-link:hover { color: var(--accent-lavender); text-shadow: 0 0 10px rgba(224, 170, 255, 0.4); }
 
-        footer { padding: 20px 20px 40px; text-align: center; color: #5c4e4f; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
+        footer { padding: 20px 20px 40px; text-align: center; color: #514a59; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
     </style>
 </head>
 <body>
@@ -320,7 +321,7 @@
     <div class="bg-wrapper"></div>
 
     <nav>
-        <a href="evoluted.html" style="color: white; text-shadow: 0 0 8px var(--accent-orange);">quapsSMP</a>
+        <a href="evoluted.html" style="color: white; text-shadow: 0 0 8px var(--accent-magenta);">quapsSMP</a>
     </nav>
 
     <div class="content">
@@ -338,7 +339,7 @@
                 </div>
             </div>
             <div class="server-meta">
-                <div class="meta-item">IP-Adresse: <strong style="color: var(--accent-gold);">152.53.143.169:25569</strong></div>
+                <div class="meta-item">IP-Adresse: <strong style="color: var(--accent-lavender);">152.53.143.169:25569</strong></div>
                 <div class="meta-item">Aktivität: <strong id="player-count">0 / 0 Spieler</strong></div>
                 <div class="meta-item">Version: <strong id="server-version">-</strong></div>
             </div>
@@ -359,7 +360,7 @@
         </div>
 
         <div class="crew-section animate-on-scroll">
-            <h2 style="font-size:0.75rem; color:var(--accent-gold); letter-spacing:5px; margin-bottom:40px; text-transform:uppercase;">Involvierte Subjekte</h2>
+            <h2 style="font-size:0.75rem; color:var(--accent-lavender); letter-spacing:5px; margin-bottom:40px; text-transform:uppercase;">Involvierte Subjekte</h2>
             <div class="player-table">
                 <div class="player-cell"><div class="avatar-box"><img src="https://mc-heads.net/avatar/Lois_7"></div><div class="username">Louis</div></div>
                 <div class="player-cell"><div class="avatar-box"><img src="https://mc-heads.net/avatar/UltimateRobot"></div><div class="username">Giorgio</div></div>
