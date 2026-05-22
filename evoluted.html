@@ -8,10 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent-unstable: #ff3e3e; /* Instabiles Warn-Rot */
-            --accent-glitch: #00ff66;   /* Matrix/Radioaktiv-Grün */
-            --bg-dark: #030305;
-            --card-bg: rgba(15, 10, 10, 0.75);
+            --accent-unstable: #9d4edd; /* Mystisches Enderman-Violett */
+            --accent-glitch: #00f5d4;   /* Leuchtendes Neon-Cyan */
+            --bg-dark: #020105;
+            --card-bg: rgba(12, 8, 20, 0.75);
         }
 
         body {
@@ -29,7 +29,7 @@
         .bg-wrapper {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(3, 3, 5, 0.7), rgba(3, 3, 5, 0.95)), 
+            background: linear-gradient(rgba(2, 1, 5, 0.75), rgba(2, 1, 5, 0.98)), 
                         url('quaps-smp.jpg') center/cover no-repeat fixed;
             z-index: -1;
         }
@@ -37,17 +37,17 @@
         nav {
             position: fixed;
             top: 0; width: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(2, 1, 5, 0.7);
             backdrop-filter: blur(15px);
             display: flex;
             justify-content: center;
             padding: 20px 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 62, 62, 0.15);
+            border-bottom: 1px solid var(--accent-unstable);
         }
 
         nav a {
-            color: #777;
+            color: #666;
             text-decoration: none;
             margin: 0 20px;
             font-size: 0.75rem;
@@ -57,7 +57,7 @@
             transition: 0.3s;
         }
 
-        nav a:hover { color: var(--accent-unstable); text-shadow: 0 0 10px var(--accent-unstable); }
+        nav a:hover { color: var(--accent-glitch); text-shadow: 0 0 10px var(--accent-glitch); }
 
         .content {
             position: relative;
@@ -78,7 +78,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
-            filter: drop-shadow(0 0 15px rgba(255, 62, 62, 0.3));
+            filter: drop-shadow(0 0 15px rgba(157, 78, 221, 0.4));
         }
 
         .subtitle {
@@ -88,49 +88,13 @@
             color: var(--accent-glitch);
             margin-bottom: 40px;
             font-weight: 600;
-        }
-
-        /* --- EDITIERBARER INFO TEXT --- */
-        .info-text-box {
-            background: rgba(0, 0, 0, 0.5);
-            border-left: 3px solid var(--accent-glitch);
-            padding: 15px 40px 15px 20px;
-            max-width: 800px;
-            margin: 0 auto 30px;
-            text-align: left;
-            position: relative;
-            border-radius: 0 10px 10px 0;
-        }
-
-        .info-text-box p {
-            margin: 0;
-            font-size: 0.95rem;
-            color: #ccc;
-            line-height: 1.5;
-            letter-spacing: 0.5px;
-        }
-
-        .edit-btn {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: #666;
-            font-size: 1rem;
-            transition: 0.3s;
-        }
-        .edit-btn:hover {
-            color: var(--accent-glitch);
-            text-shadow: 0 0 8px var(--accent-glitch);
+            text-shadow: 0 0 5px rgba(0, 245, 212, 0.2);
         }
 
         /* --- MINECRAFT SERVER LIVE STATUS --- */
         .server-status-card {
-            background: rgba(5, 5, 8, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(4, 2, 8, 0.85);
+            border: 1px solid var(--accent-unstable);
             border-radius: 20px;
             padding: 30px;
             max-width: 880px;
@@ -138,6 +102,7 @@
             backdrop-filter: blur(10px);
             box-sizing: border-box;
             text-align: left;
+            box-shadow: 0 0 20px rgba(157, 78, 221, 0.1);
         }
 
         .status-header {
@@ -160,6 +125,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            color: #fff;
         }
 
         .status-badge {
@@ -172,8 +138,8 @@
             display: inline-block;
         }
 
-        .status-online { background: rgba(0, 255, 102, 0.1); color: var(--accent-glitch); border: 1px solid rgba(0, 255, 102, 0.2); }
-        .status-offline { background: rgba(255, 62, 62, 0.1); color: var(--accent-unstable); border: 1px solid rgba(255, 62, 62, 0.2); }
+        .status-online { background: rgba(0, 245, 212, 0.1); color: var(--accent-glitch); border: 1px solid rgba(0, 245, 212, 0.2); text-shadow: 0 0 8px var(--accent-glitch); }
+        .status-offline { background: rgba(157, 78, 221, 0.1); color: #d4a373; border: 1px solid rgba(157, 78, 221, 0.2); }
         .status-loading { background: rgba(255, 255, 255, 0.05); color: #888; border: 1px solid rgba(255, 255, 255, 0.1); }
 
         .server-meta {
@@ -189,14 +155,14 @@
         .live-players-wrapper {
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px dashed rgba(255, 255, 255, 0.05);
+            border-top: 1px dashed rgba(157, 78, 221, 0.2);
         }
 
         .live-players-title {
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #666;
+            color: #776e80;
             margin-bottom: 10px;
             font-weight: 900;
         }
@@ -211,12 +177,18 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 245, 212, 0.02);
+            border: 1px solid rgba(0, 245, 212, 0.08);
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 0.8rem;
             font-weight: 600;
+            color: #eee;
+            transition: 0.2s;
+        }
+        .live-player-tag:hover {
+            border-color: var(--accent-glitch);
+            background: rgba(0, 245, 212, 0.05);
         }
 
         .live-player-tag img {
@@ -227,8 +199,8 @@
 
         .refresh-status-btn {
             background: none;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #aaa;
+            border: 1px solid rgba(157, 78, 221, 0.3);
+            color: #999;
             padding: 6px 12px;
             border-radius: 6px;
             cursor: pointer;
@@ -237,18 +209,18 @@
             text-transform: uppercase;
             transition: 0.2s;
         }
-        .refresh-status-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .refresh-status-btn:hover { background: rgba(157, 78, 221, 0.1); color: #fff; border-color: var(--accent-unstable); }
 
         /* --- DATA / UPLOAD BOX --- */
         .download-box { 
-            background: rgba(5, 5, 5, 0.9); 
+            background: rgba(4, 2, 6, 0.9); 
             border: 1px solid var(--accent-unstable); 
             border-radius: 20px; 
             padding: 50px 40px; 
             margin: 0 auto 60px; 
             max-width: 880px;
             backdrop-filter: blur(10px); 
-            box-shadow: 0 0 30px rgba(255, 62, 62, 0.15);
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.15);
             box-sizing: border-box;
         }
         
@@ -264,33 +236,34 @@
         }
 
         .upload-instruction .highlight-must {
-            color: var(--accent-unstable);
+            color: var(--accent-glitch);
             font-weight: 900;
             text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(255, 62, 62, 0.5);
+            text-shadow: 0 0 10px rgba(0, 245, 212, 0.4);
         }
 
         .dl-btn { 
             display: inline-block; padding: 18px 40px; border-radius: 8px; font-weight: 900; 
             text-decoration: none; text-transform: uppercase; 
-            background: var(--accent-unstable); color: #000; 
+            background: var(--accent-unstable); color: #fff; 
             transition: 0.4s; min-width: 200px; letter-spacing: 1px;
-            box-shadow: 0 0 20px rgba(255,62,62,0.4);
+            box-shadow: 0 0 20px rgba(157, 78, 221, 0.4);
             cursor: pointer;
         }
         .dl-btn:hover {
-            box-shadow: 0 0 30px rgba(255,62,62,0.6);
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.7);
+            background: #b5179e;
             transform: translateY(-2px);
         }
 
         /* --- CREW / TARGETS --- */
-        .crew-section { background: var(--card-bg); border-radius: 20px; padding: 50px 20px; margin-bottom: 60px; border: 1px solid rgba(255, 255, 255, 0.02); }
+        .crew-section { background: var(--card-bg); border-radius: 20px; padding: 50px 20px; margin-bottom: 60px; border: 1px solid rgba(157, 78, 221, 0.05); }
         .player-table { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
         .player-cell { text-align: center; }
-        .avatar-box { width: 75px; height: 75px; border: 2px solid #333; border-radius: 12px; padding: 5px; margin-bottom: 10px; background: #000; transition: 0.3s; }
-        .player-cell:hover .avatar-box { border-color: var(--accent-glitch); box-shadow: 0 0 15px rgba(0, 255, 102, 0.2); }
+        .avatar-box { width: 75px; height: 75px; border: 2px solid #221a30; border-radius: 12px; padding: 5px; margin-bottom: 10px; background: #000; transition: 0.3s; }
+        .player-cell:hover .avatar-box { border-color: var(--accent-glitch); box-shadow: 0 0 15px rgba(0, 245, 212, 0.2); }
         .avatar-box img { width: 100%; height: 100%; image-rendering: pixelated; }
-        .username { font-weight: 900; font-size: 0.75rem; text-transform: uppercase; color: #aaa; letter-spacing: 1px; }
+        .username { font-weight: 900; font-size: 0.75rem; text-transform: uppercase; color: #8a8194; letter-spacing: 1px; }
 
         /* --- SCROLL ANIMATION CLASS --- */
         .animate-on-scroll {
@@ -307,19 +280,15 @@
         .ad-banner {
             margin: 40px auto 20px;
             max-width: 600px;
-            border: 1px dashed rgba(255, 62, 62, 0.3);
+            border: 1px dashed rgba(157, 78, 221, 0.3);
             border-radius: 10px;
             padding: 15px;
-            background: rgba(255, 62, 62, 0.02);
+            background: rgba(157, 78, 221, 0.02);
             transition: 0.3s;
         }
         .ad-banner:hover {
-            border-color: var(--accent-unstable);
-            background: rgba(255, 62, 62, 0.05);
-        }
-        .ad-banner:hover {
-            border-color: var(--accent-unstable);
-            background: rgba(255, 62, 62, 0.05);
+            border-color: var(--accent-glitch);
+            background: rgba(0, 245, 212, 0.02);
         }
         .ad-link {
             color: #fff;
@@ -334,10 +303,10 @@
             gap: 10px;
             transition: 0.3s;
         }
-        .ad-link span { color: var(--accent-unstable); }
-        .ad-link:hover { color: var(--accent-unstable); text-shadow: 0 0 10px rgba(255, 62, 62, 0.4); }
+        .ad-link span { color: var(--accent-glitch); }
+        .ad-link:hover { color: var(--accent-glitch); text-shadow: 0 0 10px rgba(0, 245, 212, 0.4); }
 
-        footer { padding: 20px 20px 40px; text-align: center; color: #444; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
+        footer { padding: 20px 20px 40px; text-align: center; color: #443c4d; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
     </style>
 </head>
 <body>
@@ -352,11 +321,6 @@
         <h1>quapsSMP</h1>
         <div class="subtitle">// Data Submission Portal</div>
 
-        <div class="info-text-box animate-on-scroll">
-            <p id="info-text">WICHTIG: Das Projekt läuft im Unstable-Modus. Griefing außerhalb von angemeldeten Events wird streng getrackt. Haltet eure Logs sauber.</p>
-            <button class="edit-btn" onclick="editInfoText()" title="Text bearbeiten">✏️</button>
-        </div>
-
         <div class="server-status-card animate-on-scroll">
             <div class="status-header">
                 <div class="status-title">
@@ -368,7 +332,7 @@
                 </div>
             </div>
             <div class="server-meta">
-                <div class="meta-item">IP-Adresse: <strong style="color: var(--accent-unstable);">152.53.143.169:25569</strong></div>
+                <div class="meta-item">IP-Adresse: <strong style="color: var(--accent-glitch);">152.53.143.169:25569</strong></div>
                 <div class="meta-item">Aktivität: <strong id="player-count">0 / 0 Spieler</strong></div>
                 <div class="meta-item">Version: <strong id="server-version">-</strong></div>
             </div>
@@ -434,30 +398,9 @@
         window.addEventListener('scroll', handleScrollAnimation);
         window.addEventListener('load', handleScrollAnimation);
 
-        // INFO-TEXT EDIT LOGIC WITH PASSWORD
         window.addEventListener('DOMContentLoaded', () => {
-            const savedText = localStorage.getItem('quaps_smp_infotext');
-            if (savedText) {
-                document.getElementById('info-text').innerText = savedText;
-            }
-            // Initiale Serverabfrage beim Laden der Seite
             checkServerStatus();
         });
-
-        function editInfoText() {
-            const password = prompt("Bitte Admin-Passwort eingeben, um den Text zu ändern:");
-            if (password === "quaps123") {
-                const currentText = document.getElementById('info-text').innerText;
-                const newText = prompt("Neuen Info-Text eingeben:", currentText);
-                if (newText !== null && newText.trim() !== "") {
-                    document.getElementById('info-text').innerText = newText;
-                    localStorage.setItem('quaps_smp_infotext', newText);
-                    alert("Text erfolgreich aktualisiert!");
-                }
-            } else if (password !== null) {
-                alert("Falsches Passwort! Zugriff verweigert.");
-            }
-        }
 
         // MINECRAFT SERVER STATUS FETCH ENGINE
         async function checkServerStatus() {
@@ -467,12 +410,10 @@
             const playersSection = document.getElementById('live-players-section');
             const playerListContainer = document.getElementById('live-player-list');
 
-            // Reset auf Ladestatus
             badge.className = "status-badge status-loading";
             badge.innerText = "Prüfe...";
 
             try {
-                // Nutzung der mcsrvstat API für detaillierte Spielerlisten
                 const response = await fetch('https://api.mcsrvstat.us/3/152.53.143.169:25569');
                 const data = await response.json();
 
@@ -483,15 +424,13 @@
                     playerCount.innerText = `${data.players.online} / ${data.players.max} Online`;
                     serverVersion.innerText = data.version || "Java Edition";
 
-                    // Prüfen, ob Spieler online sind und Namen übertragen wurden
                     if (data.players.online > 0 && data.players.list) {
                         playersSection.style.display = "block";
-                        playerListContainer.innerHTML = ""; // Altes löschen
+                        playerListContainer.innerHTML = "";
                         
                         data.players.list.forEach(player => {
                             const playerTag = document.createElement('div');
                             playerTag.className = 'live-player-tag';
-                            // Nutzt mc-heads für kleine Avatare im Live-Tracker
                             playerTag.innerHTML = `
                                 <img src="https://mc-heads.net/avatar/${player.name}">
                                 <span>${player.name}</span>
@@ -503,7 +442,6 @@
                         playerListContainer.innerHTML = "";
                     }
                 } else {
-                    // Server wird als Offline erkannt
                     badge.className = "status-badge status-offline";
                     badge.innerText = "Offline";
                     playerCount.innerText = "0 / 0 Spieler";
