@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuapsHub</title>
+<link rel="icon" type="image/jpeg" href="logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
@@ -23,7 +24,6 @@
 html { scroll-behavior: smooth; }
 
 body {
-  /* Basis-Schrift ist die extrem gut lesbare, aber verpixelte VT323 */
   font-family: 'VT323', monospace;
   background: var(--bg);
   color: var(--text);
@@ -33,7 +33,6 @@ body {
   line-height: 1.6;
 }
 
-/* ── Überschriften & Buttons nutzen die blockigere Minecraft-Schrift ── */
 h1, h2, h3, .mc-font, .mc-btn, .mc-action {
   font-family: 'Press Start 2P', monospace;
   text-transform: uppercase;
@@ -62,7 +61,7 @@ h1, h2, h3, .mc-font, .mc-btn, .mc-action {
   background: linear-gradient(to bottom, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,0.9) 100%);
 }
 
-/* ── SIDEBAR NAVBAR (Vertikal angeordnet) ── */
+/* ── SIDEBAR NAVBAR ── */
 .sidebar {
   position: fixed;
   top: 0; left: 0;
@@ -101,10 +100,9 @@ h1, h2, h3, .mc-font, .mc-btn, .mc-action {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Vertikaler Abstand */
+  gap: 10px;
 }
 
-/* ── CLEAN SIDEBAR LINKS ── */
 .mc-btn {
   display: block;
   width: 100%;
@@ -132,26 +130,56 @@ h1, h2, h3, .mc-font, .mc-btn, .mc-action {
 
 .logout-btn {
   margin-top: auto;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   color: #ff5555 !important;
 }
 .logout-btn:hover { background: rgba(255, 85, 85, 0.08); border-left-color: #ff5555; }
 
-.sidebar-status {
-  padding: 20px;
+/* ── PROFILE AREA IN SIDEBAR ── */
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 20px;
   border-top: 2px solid var(--border);
-  background: var(--panel);
+  background: #151515;
+}
+.profile-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  object-fit: cover;
+  background: var(--panel2);
+}
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.profile-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
 }
 .status-dot {
-  display: inline-block;
-  width: 8px; height: 8px;
+  width: 6px;
+  height: 6px;
   background: var(--primary);
   border-radius: 50%;
-  margin-right: 8px;
-  box-shadow: 0 0 10px var(--primary);
+  box-shadow: 0 0 8px var(--primary);
 }
 .status-text {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: var(--primary);
   font-weight: bold;
 }
@@ -167,19 +195,20 @@ main {
 .page { display: none; }
 .page.active { display: block; }
 
-/* ── MODERN SCROLL REVEAL (Clean) ── */
+/* ── MODERN SCROLL REVEAL ── */
 [data-reveal] {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
+[data-reveal="2"] { transition-delay: 0.1s; }
+[data-reveal="3"] { transition-delay: 0.2s; }
+[data-reveal="4"] { transition-delay: 0.3s; }
+
 [data-reveal].revealed {
   opacity: 1;
   transform: translateY(0);
 }
-[data-reveal="2"] { transition-delay: 0.1s; }
-[data-reveal="3"] { transition-delay: 0.2s; }
-[data-reveal="4"] { transition-delay: 0.3s; }
 
 /* ── HERO ── */
 .hero { margin-bottom: 50px; }
@@ -221,20 +250,6 @@ main {
 .panel-body .line:last-child { border-bottom: none; }
 .panel-body .line span { color: var(--primary); margin-right: 10px; }
 
-/* ── HOTBAR / ITEM SLOTS ── */
-.hotbar { display: flex; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
-.slot {
-  width: 50px; height: 50px;
-  background: var(--panel2);
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem;
-  transition: 0.1s;
-}
-.slot.active-slot { border-color: #fff; background: var(--panel); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
-.slot:hover { filter: brightness(1.3); }
-
 /* ── AUDIO VISUALIZER ── */
 .visualizer { display: flex; gap: 4px; height: 35px; align-items: center; margin: 20px 0; }
 .vis-bar { width: 5px; height: 10px; background: #333; border-radius: 2px; }
@@ -242,7 +257,7 @@ main {
 .playing .vis-bar:nth-child(2n) { animation-duration: 0.4s; background: var(--diamond); }
 @keyframes modernVis { from { height: 10px; } to { height: 35px; } }
 
-/* ── MODERN ACTION BUTTON (INLINE) ── */
+/* ── MODERN ACTION BUTTON ── */
 .mc-action {
   display: inline-block;
   background: var(--panel2);
@@ -306,18 +321,14 @@ main {
   color: var(--primary);
 }
 
-.px-divider {
-  height: 2px;
-  background: var(--border);
-  margin: 40px 0;
-}
-
 /* ── RESPONSIVE ── */
 @media (max-width: 800px) {
   .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid var(--border); }
   .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; }
   .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; }
   .mc-btn:hover, .mc-btn.active { border-left-color: transparent; border-bottom-color: var(--primary); }
+  .logout-btn { margin-top: 0; margin-bottom: 0; }
+  .sidebar-profile { border-top: none; border-left: 2px solid var(--border); padding: 10px; }
   main { margin-left: 0; padding: 30px 20px; }
 }
 </style>
@@ -351,9 +362,15 @@ main {
     </button>
   </div>
 
-  <div class="sidebar-status">
-    <span class="status-dot"></span>
-    <span class="status-text">SECURE SESSION</span>
+  <div class="sidebar-profile">
+    <img src="" id="user-avatar" class="profile-avatar" alt="M">
+    <div class="profile-info">
+      <span class="profile-name" id="sidebar-user-name">AGENT</span>
+      <div class="profile-status-wrapper">
+        <span class="status-dot"></span>
+        <span class="status-text">ONLINE</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -377,18 +394,6 @@ main {
     </div>
 
     <div class="glass-card mc-panel" data-reveal="3">
-      <div class="mc-panel-title">🎒 INVENTAR</div>
-      <div class="hotbar">
-        <div class="slot active-slot" title="Diamantschwert">⚔️</div>
-        <div class="slot" title="Bogen">🏹</div>
-        <div class="slot" title="Goldapfel">🍎</div>
-        <div class="slot" title="TNT">💥</div>
-        <div class="slot" title="Ender Perle">🔮</div>
-        <div class="slot" title="Kompass">🧭</div>
-      </div>
-    </div>
-
-    <div class="glass-card mc-panel" data-reveal="4">
       <div class="mc-panel-title">🎵 JUKEBOX // HYMNE</div>
       <div class="visualizer" id="visualizer">
         <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
@@ -456,36 +461,37 @@ main {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// Supabase Verbindungsdaten (Jetzt mit deinem echten, langen Anon-Key)
 const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
 
-// Session-Check direkt beim Laden der Seite
 window.addEventListener('DOMContentLoaded', async () => {
   const { data: { session }, error } = await supabaseClient.auth.getSession();
 
   if (error || !session) {
-    // Nicht eingeloggt? Kaltgestellt und zurück zum Login!
     window.location.href = 'login.html';
     return;
   }
 
-  // Benutzerdaten auswerten (Google Name oder E-Mail)
   const user = session.user;
   const userName = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
+  
+  // Profilbild auswerten (Google-Bild holen, sonst Minecraft-Steves Kopf generieren)
+  const avatarUrl = user.user_metadata.avatar_url || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${userName}`;
 
-  // UI mit echten User-Daten befüllen
+  // UI mit User-Daten befüllen
   document.getElementById('user-name-display').textContent = userName;
   document.getElementById('uploaderName').value = userName;
+  
+  // Sidebar Profil-Elemente befüllen
+  document.getElementById('sidebar-user-name').textContent = userName;
+  document.getElementById('user-avatar').src = avatarUrl;
 
-  // Animationen triggern
   setTimeout(initReveal, 100);
 });
 
-/* ── SUPABASE LOGOUT ── */
 async function logout() {
   await supabaseClient.auth.signOut();
   window.location.href = 'login.html';
@@ -499,7 +505,6 @@ function showPage(id) {
   setTimeout(initReveal, 50);
 }
 
-/* ── SCROLL REVEAL ── */
 function initReveal() {
   const els = document.querySelectorAll('.page.active [data-reveal]');
   const obs = new IntersectionObserver(entries => {
@@ -513,7 +518,6 @@ function initReveal() {
   });
 }
 
-/* ── AUDIO ── */
 function togglePlay() {
   const audio = document.getElementById('communitySong');
   const btn   = document.getElementById('playBtn');
@@ -529,7 +533,6 @@ function togglePlay() {
   }
 }
 
-/* ── DISCORD SUBMIT ── */
 async function sendToDiscord() {
   const name  = document.getElementById('uploaderName').value;
   const title = document.getElementById('clipTitle').value;
