@@ -1,623 +1,559 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuapsHub | Minecraft Edition</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            /* Originalgetreue Minecraft Farbpalette */
-            --mc-bg: #141414;
-            --mc-panel: #2c2c2c;
-            --mc-panel-top: #4a4a4a;
-            --mc-panel-shadow: #121212;
-            
-            --mc-diamond: #55ffff;
-            --mc-gold: #ffaa00;
-            --mc-xp: #55ff55;
-            --mc-red: #ff5555;
-            --mc-text: #ffffff;
-            --mc-text-dim: #aaaaaa;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuapsHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #a8ff78; /* Frisches XP-Grün */
+  --diamond: #44d4d4;
+  --gold:    #f5c518;
+  --bg:      #0a0a0a;
+  --panel:   #1a1a1a;
+  --panel2:  #222222;
+  --border:  #333333;
+  --text:    #f0f0f0;
+  --muted:   #aaaaaa;
+}
 
-        *, *::before, *::after { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            /* Verhindert weiche Übergänge für den harten Pixel-Look */
-            image-rendering: pixelated;
-        }
-        
-        html { scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
-        body {
-            font-family: 'Press Start 2P', monospace;
-            background: var(--mc-bg);
-            color: var(--mc-text);
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
+body {
+  /* Basis-Schrift ist die extrem gut lesbare, aber verpixelte VT323 */
+  font-family: 'VT323', monospace;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  min-height: 100vh;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
 
-        /* --- CRT-SCANLINES FÜR RETRO-EFFEKT --- */
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 6px);
-            pointer-events: none;
-            z-index: 9999;
-        }
+/* ── Überschriften & Buttons nutzen die blockigere Minecraft-Schrift ── */
+h1, h2, h3, .mc-font, .mc-btn, .mc-action {
+  font-family: 'Press Start 2P', monospace;
+  text-transform: uppercase;
+}
 
-        /* --- HINTERGRUND-VIDEO --- */
-        .video-bg {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            background: #000;
-        }
-        .video-bg iframe {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 100vw; height: 56.25vw;
-            min-height: 100vh; min-width: 177.77vh;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            filter: brightness(0.15) contrast(1.2) saturate(0.5);
-        }
+/* ── VIDEO BACKGROUND ── */
+.video-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #0d1117;
+}
+.video-bg iframe {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 100vw; height: 56.25vw;
+  min-height: 100vh; min-width: 177.77vh;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: brightness(0.12) saturate(0.3);
+}
+.video-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,0.9) 100%);
+}
 
-        /* --- SIDEBAR NAVBAR (UNTEREINANDER) --- */
-        .sidebar {
-            position: fixed;
-            top: 0; left: 0;
-            width: 260px;
-            height: 100vh;
-            background: #1e1e1e;
-            border-right: 6px solid var(--mc-panel-shadow);
-            box-shadow: inset -4px 0 0 #3c3c3c;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-        }
+/* ── SIDEBAR NAVBAR (Vertikal angeordnet) ── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 240px;
+  height: 100vh;
+  background: var(--panel2);
+  border-right: 2px solid var(--border);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
 
-        .sidebar-logo {
-            padding: 30px 20px;
-            background: #111111;
-            border-bottom: 6px solid var(--mc-panel-shadow);
-            text-align: center;
-        }
-        .sidebar-logo .logo-text {
-            font-size: 1.1rem;
-            color: var(--mc-diamond);
-            text-shadow: 3px 3px 0 #00aaaa;
-            letter-spacing: -1px;
-            display: block;
-        }
-        .sidebar-logo .logo-sub {
-            font-size: 0.5rem;
-            color: var(--mc-gold);
-            margin-top: 8px;
-            display: block;
-        }
+.sidebar-logo {
+  padding: 30px 20px;
+  border-bottom: 2px solid var(--border);
+  background: var(--panel);
+  text-align: center;
+}
+.sidebar-logo .logo-text {
+  font-size: 1rem;
+  color: var(--primary);
+  display: block;
+}
+.sidebar-logo .logo-sub {
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  color: var(--muted);
+  margin-top: 8px;
+  display: block;
+  letter-spacing: 1px;
+}
 
-        .nav-links {
-            padding: 20px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px; /* Perfekter Abstand untereinander */
-        }
+.sidebar-section {
+  padding: 20px 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Vertikaler Abstand */
+}
 
-        /* --- MINECRAFT BLOCK BUTTON STYLE --- */
-        .mc-btn {
-            background: #4a4a4a;
-            color: #e0e0e0;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.65rem;
-            padding: 16px;
-            border: none;
-            cursor: pointer;
-            text-align: left;
-            position: relative;
-            
-            /* Legendärer Minecraft Button 3D-Rand */
-            border-top: 4px solid #8b8b8b;
-            border-left: 4px solid #8b8b8b;
-            border-bottom: 4px solid #212121;
-            border-right: 4px solid #212121;
-            
-            box-shadow: inset -2px -2px 0 #3a3a3a;
-        }
-        
-        .mc-btn:hover {
-            background: #557a3a;
-            color: #ffffff;
-            border-top-color: #77a855;
-            border-left-color: #77a855;
-            border-bottom-color: #2a3d1d;
-            border-right-color: #2a3d1d;
-        }
+/* ── CLEAN SIDEBAR LINKS ── */
+.mc-btn {
+  display: block;
+  width: 100%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.2s;
+  border-left: 3px solid transparent;
+}
+.mc-btn:hover {
+  background: rgba(168, 255, 120, 0.05);
+  color: #fff;
+  border-left-color: var(--primary);
+}
+.mc-btn.active {
+  background: rgba(168, 255, 120, 0.08);
+  color: #fff;
+  border-left-color: var(--primary);
+}
 
-        .mc-btn:active, .mc-btn.active {
-            border-top: 4px solid #212121;
-            border-left: 4px solid #212121;
-            border-bottom: 4px solid #8b8b8b;
-            border-right: 4px solid #8b8b8b;
-            background: #43642b;
-            color: var(--mc-xp);
-            padding-top: 18px;
-            padding-bottom: 14px;
-        }
+.logout-btn {
+  margin-top: auto;
+  margin-bottom: 20px;
+  color: #ff5555 !important;
+}
+.logout-btn:hover { background: rgba(255, 85, 85, 0.08); border-left-color: #ff5555; }
 
-        .exit-btn {
-            margin-top: auto;
-            margin-bottom: 20px;
-            background: #3a1a1a;
-            border-top-color: #6e3333;
-            border-left-color: #6e3333;
-            border-bottom-color: #1a0a0a;
-            border-right-color: #1a0a0a;
-            color: var(--mc-red);
-        }
-        .exit-btn:hover { background: #552525; color: #fff; }
+.sidebar-status {
+  padding: 20px;
+  border-top: 2px solid var(--border);
+  background: var(--panel);
+}
+.status-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  margin-right: 8px;
+  box-shadow: 0 0 10px var(--primary);
+}
+.status-text {
+  font-size: 0.9rem;
+  color: var(--primary);
+  font-weight: bold;
+}
 
-        /* --- XP STATUSBAR UNTEN --- */
-        .sidebar-status {
-            padding: 20px;
-            background: #111111;
-            border-top: 6px solid var(--mc-panel-shadow);
-        }
-        .xp-bar-wrap {
-            height: 12px;
-            background: #2c2c2c;
-            border: 3px solid #000;
-            margin-top: 8px;
-            position: relative;
-        }
-        .xp-bar {
-            height: 100%;
-            background: var(--mc-xp);
-            width: 0%;
-            /* Gestufter Lade-Effekt */
-            transition: width 1.2s steps(10); 
-        }
-        .xp-label {
-            font-size: 0.5rem;
-            color: var(--mc-xp);
-            text-align: center;
-            margin-top: 6px;
-        }
+/* ── MAIN CONTENT ── */
+main {
+  margin-left: 240px;
+  padding: 60px 50px 80px;
+  position: relative;
+  z-index: 1;
+}
 
-        /* --- MAIN AREA --- */
-        main {
-            margin-left: 260px;
-            padding: 50px;
-            position: relative;
-            z-index: 1;
-        }
+.page { display: none; }
+.page.active { display: block; }
 
-        .page { display: none; }
-        .page.active { display: block; }
+/* ── MODERN SCROLL REVEAL (Clean) ── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+[data-reveal="2"] { transition-delay: 0.1s; }
+[data-reveal="3"] { transition-delay: 0.2s; }
+[data-reveal="4"] { transition-delay: 0.3s; }
 
-        /* --- PIXEL-ANIME SCROLL REVEAL EFFECT --- */
-        [data-reveal] {
-            opacity: 0;
-            transform: translateY(30px);
-            /* steps(5) sorgt dafür, dass die Animation ruckelig/pixelig einfährt */
-            transition: opacity 0.4s steps(5), transform 0.4s steps(5);
-        }
-        
-        [data-reveal].revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Gestaffeltes Erscheinen der Boxen */
-        [data-reveal="2"] { transition-delay: 0.15s; }
-        [data-reveal="3"] { transition-delay: 0.3s; }
+/* ── HERO ── */
+.hero { margin-bottom: 50px; }
+.hero-tag {
+  display: inline-block;
+  font-size: 0.45rem;
+  color: var(--primary);
+  background: rgba(168,255,120,0.1);
+  padding: 6px 12px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+.hero h1 { font-size: 2.2rem; color: #fff; margin: 0; letter-spacing: -1px; }
+.hero h1 span { color: var(--gold); }
+.hero-sub { font-size: 1.1rem; color: var(--muted); margin-top: 10px; }
 
-        /* --- MINECRAFT IN-GAME INVENTAR PANEL --- */
-        .mc-panel {
-            background: var(--mc-panel);
-            border-top: 5px solid #6b6b6b;
-            border-left: 5px solid #6b6b6b;
-            border-bottom: 5px solid #151515;
-            border-right: 5px solid #151515;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 16px 0 rgba(0,0,0,0.4);
-        }
+/* ── CLEAN GLASS PANEL ── */
+.mc-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  transition: 0.3s;
+}
+.mc-panel:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
 
-        .mc-panel-title {
-            font-size: 0.8rem;
-            color: var(--mc-gold);
-            text-shadow: 2px 2px 0 #553300;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+.mc-panel-title {
+  font-size: 0.65rem;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
 
-        .panel-body {
-            font-family: 'VT323', monospace;
-            font-size: 1.4rem;
-            color: var(--mc-text-dim);
-            line-height: 1.8;
-        }
-        .panel-body .line {
-            padding: 8px 0;
-            border-bottom: 3px dashed #3a3a3a;
-        }
-        .panel-body .line:last-child { border-bottom: none; }
+.panel-body .line {
+  padding: 10px 0;
+  border-bottom: 1px solid #2a2a2a;
+}
+.panel-body .line:last-child { border-bottom: none; }
+.panel-body .line span { color: var(--primary); margin-right: 10px; }
 
-        /* --- ITEM HOTBAR --- */
-        .hotbar {
-            display: flex;
-            gap: 6px;
-            background: #8f8f8f;
-            padding: 6px;
-            border: 4px solid #3c3c3c;
-            display: inline-flex;
-        }
-        .slot {
-            width: 54px; height: 54px;
-            background: #8b8b8b;
-            border-top: 4px solid #373737;
-            border-left: 4px solid #373737;
-            border-bottom: 4px solid #ffffff;
-            border-right: 4px solid #ffffff;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem;
-        }
-        .slot.active-slot {
-            border: 4px solid #ffffff;
-            background: #a1a1a1;
-            box-shadow: 0 0 0 4px #000000;
-        }
+/* ── HOTBAR / ITEM SLOTS ── */
+.hotbar { display: flex; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
+.slot {
+  width: 50px; height: 50px;
+  background: var(--panel2);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  transition: 0.1s;
+}
+.slot.active-slot { border-color: #fff; background: var(--panel); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+.slot:hover { filter: brightness(1.3); }
 
-        /* --- AUDIO VISUALIZER (PIXEL PULSE) --- */
-        .visualizer {
-            display: flex;
-            align-items: flex-end;
-            gap: 4px;
-            height: 35px;
-            margin: 20px 0;
-        }
-        .vis-bar {
-            width: 10px;
-            height: 6px;
-            background: #444;
-        }
-        .playing .vis-bar {
-            background: var(--mc-xp);
-            animation: mcVis 0.4s steps(3) infinite alternate;
-        }
-        .playing .vis-bar:nth-child(even) { background: var(--mc-diamond); animation-duration: 0.3s; }
-        @keyframes mcVis {
-            from { height: 6px; }
-            to   { height: 35px; }
-        }
+/* ── AUDIO VISUALIZER ── */
+.visualizer { display: flex; gap: 4px; height: 35px; align-items: center; margin: 20px 0; }
+.vis-bar { width: 5px; height: 10px; background: #333; border-radius: 2px; }
+.playing .vis-bar { animation: modernVis 0.6s infinite alternate; background: var(--primary); }
+.playing .vis-bar:nth-child(2n) { animation-duration: 0.4s; background: var(--diamond); }
+@keyframes modernVis { from { height: 10px; } to { height: 35px; } }
 
-        /* --- ACTION BTNS INLINE --- */
-        .mc-action {
-            display: inline-block;
-            background: #4a4a4a;
-            color: #fff;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.65rem;
-            padding: 14px 24px;
-            border-top: 4px solid #8b8b8b;
-            border-left: 4px solid #8b8b8b;
-            border-bottom: 4px solid #212121;
-            border-right: 4px solid #212121;
-            cursor: pointer;
-        }
-        .mc-action:hover { background: #557a3a; var(--mc-xp); }
-        .mc-action.full { width: 100%; text-align: center; }
+/* ── MODERN ACTION BUTTON (INLINE) ── */
+.mc-action {
+  display: inline-block;
+  background: var(--panel2);
+  color: var(--primary);
+  font-size: 0.55rem;
+  padding: 14px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.2s;
+  border: 1px solid var(--border);
+}
+.mc-action:hover { background: #fff; color: #000; border-color: #fff; transform: translateY(-1px); }
+.mc-action:disabled { opacity: 0.5; cursor: not-allowed; }
+.mc-action.full { width: 100%; text-align: center; display: block; }
 
-        /* --- MEDAL CLIP FRAMES --- */
-        .clip-frame {
-            aspect-ratio: 16/9;
-            background: #000;
-            border: 4px solid #111;
-            margin-bottom: 15px;
-        }
-        .clip-frame iframe { width: 100%; height: 100%; border: none; }
-        .op-tag {
-            background: #111;
-            color: var(--mc-diamond);
-            padding: 4px 8px;
-            font-size: 0.6rem;
-            border: 2px solid #333;
-        }
+/* ── VIDEO EMBED ── */
+.clip-frame {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.clip-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.op-tag { color: var(--diamond); font-size: 0.9rem; margin-right: 15px; }
 
-        /* --- INPUT FIELD STYLES --- */
-        .mc-input {
-            display: block;
-            width: 100%;
-            background: #000000;
-            color: var(--mc-xp);
-            font-family: 'VT323', monospace;
-            font-size: 1.5rem;
-            padding: 12px;
-            border: 3px solid #555555;
-            margin-bottom: 16px;
-            outline: none;
-        }
-        .mc-input:focus { border-color: var(--mc-diamond); }
-        .mc-input[readonly] { color: var(--mc-text-dim); background: #222; }
+/* ── CLEAN FORM ── */
+.mc-input {
+  display: block;
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 12px;
+  color: #fff;
+  margin-bottom: 15px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+.mc-input:focus { border-color: var(--primary); outline: none; background: rgba(0,0,0,0.7); }
+.mc-input[readonly] { opacity: 0.5; cursor: not-allowed; }
 
-        .mc-label {
-            font-size: 0.55rem;
-            color: var(--mc-gold);
-            margin-bottom: 8px;
-            display: block;
-        }
+.mc-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+  display: block;
+}
 
-        .mc-success {
-            display: none;
-            border: 4px solid var(--mc-xp);
-            background: #112211;
-            color: var(--mc-xp);
-            padding: 15px;
-            margin-top: 15px;
-            font-size: 0.7rem;
-        }
+.mc-success {
+  display: none;
+  border: 2px solid var(--primary);
+  background: rgba(168,255,120,0.05);
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 12px;
+  color: var(--primary);
+}
 
-        .px-divider {
-            height: 6px;
-            background: repeating-linear-gradient(90deg, #444 0px, #444 10px, transparent 10px, transparent 20px);
-            margin: 40px 0;
-        }
+.px-divider {
+  height: 2px;
+  background: var(--border);
+  margin: 40px 0;
+}
 
-        footer {
-            margin-left: 260px;
-            text-align: center;
-            padding: 40px;
-            font-size: 0.5rem;
-            color: #555;
-        }
-
-        @media (max-width: 800px) {
-            .sidebar { width: 100%; height: auto; position: relative; }
-            main, footer { margin-left: 0; padding: 20px; }
-        }
-    </style>
+/* ── RESPONSIVE ── */
+@media (max-width: 800px) {
+  .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid var(--border); }
+  .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; }
+  .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; }
+  .mc-btn:hover, .mc-btn.active { border-left-color: transparent; border-bottom-color: var(--primary); }
+  main { margin-left: 0; padding: 30px 20px; }
+}
+</style>
 </head>
 <body>
 
 <div class="video-bg">
-    <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay"></iframe>
+  <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1"
+          frameborder="0" allow="autoplay"></iframe>
 </div>
 
 <div class="sidebar">
-    <div class="sidebar-logo">
-        <span class="logo-text">QUAPS<br>HUB</span>
-        <span class="logo-sub">v2.6 // LIVE MODE</span>
-    </div>
+  <div class="sidebar-logo">
+    <span class="logo-text">QUAPS<br>HUB</span>
+    <span class="logo-sub">ATTACK EDITION // v2.6</span>
+  </div>
 
-    <div class="nav-links">
-        <button class="mc-btn active" onclick="showPage('home')" id="btn-home">🏠 HOME</button>
-        <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">🎬 CLIPS</button>
-        <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">📤 UPLOAD</button>
-        
-        <button class="mc-btn exit-btn" onclick="logout()">✖ LOGOUT</button>
-    </div>
+  <div class="sidebar-section">
+    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">
+      &nbsp; HOME
+    </button>
+    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">
+      &nbsp; CLIP-ARCHIV
+    </button>
+    <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">
+      &nbsp; CLIP UPLOAD
+    </button>
 
-    <div class="sidebar-status">
-        <div class="xp-label">LEVEL <span id="xpLevel">0</span></div>
-        <div class="xp-bar-wrap">
-            <div class="xp-bar" id="xpBar"></div>
-        </div>
-    </div>
+    <button class="mc-btn logout-btn" onclick="logout()">
+      &nbsp; EXIT / LOGOUT
+    </button>
+  </div>
+
+  <div class="sidebar-status">
+    <span class="status-dot"></span>
+    <span class="status-text">SYSTEM ONLINE</span>
+  </div>
 </div>
 
 <main>
 
-    <div id="home" class="page active">
-        <div class="mc-panel" data-reveal="1">
-            <div class="mc-panel-title">👋 SYSTEM-MELDUNG</div>
-            <h1 style="font-size: 1.1rem; line-height: 1.6;">
-                Willkommen, <span style="color: var(--mc-gold);" id="user-name-display">Agent</span>.<br>
-                <span style="color: var(--mc-xp); font-size: 0.65rem;">> Alle Cluster laufen stabil._</span>
-            </h1>
-        </div>
+  <div id="home" class="page active">
 
-        <div class="mc-panel" data-reveal="2">
-            <div class="mc-panel-title">📜 SERVER CODEX</div>
-            <div class="panel-body">
-                <div class="line">• Cluster aktiv geschaltet am 27. Mai 2026</div>
-                <div class="line">• Infrastruktur läuft über gesicherte Node</div>
-                <div class="line">• Core-Regeln sind permanent bindend</div>
-            </div>
-        </div>
-
-        <div class="mc-panel" data-reveal="3">
-            <div class="mc-panel-title">🎒 ADMIN INVENTAR</div>
-            <div class="hotbar">
-                <div class="slot active-slot">⚔️</div>
-                <div class="slot">🏹</div>
-                <div class="slot">🍎</div>
-                <div class="slot">💥</div>
-                <div class="slot">🔮</div>
-                <div class="slot">⛏️</div>
-            </div>
-        </div>
-
-        <div class="mc-panel" data-reveal="3">
-            <div class="mc-panel-title">🎵 JUKEBOX // HYMNE</div>
-            <div class="visualizer" id="visualizer">
-                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
-                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
-            </div>
-            <audio id="communitySong">
-                <source src="quaps-hymne.mp3" type="audio/mpeg">
-            </audio>
-            <button onclick="togglePlay()" id="playBtn" class="mc-action">▶ PLAY DISC</button>
-        </div>
+    <div class="hero" data-reveal="1">
+      <div class="hero-tag">// STATUS: ACTIVE</div>
+      <h1>Willkommen zurück, <br><span>Agent</span>.</h1>
+      <p class="hero-sub">&gt; Alle Systeme laufen im Live-Betrieb._</p>
     </div>
 
-    <div id="clips" class="page">
-        <div class="mc-panel" data-reveal="1">
-            <div class="mc-panel-title">⚔️ LAUTESTE SCHLACHTEN</div>
-            <div class="clip-frame">
-                <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
-            </div>
-            <span class="op-tag">OPERATOR: LOUIS</span>
-        </div>
-
-        <div class="mc-panel" data-reveal="2">
-            <div class="mc-panel-title">🌍 ARCHIV-RECORDS</div>
-            <div class="clip-frame">
-                <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
-            </div>
-            <span class="op-tag">OPERATOR: NILS / GIORGIO</span>
-        </div>
+    <div class="glass-card mc-panel" data-reveal="2">
+      <div class="mc-panel-title">📜 AKTUELLER CODEX</div>
+      <div class="panel-body">
+        <div class="line"><span>▶</span> Cluster reaktiviert am 27. Mai 2026</div>
+        <div class="line"><span>▶</span> Infrastruktur im Normalbetrieb</div>
+        <div class="line"><span>▶</span> Ehren-Codex bleibt aktiv bestehen</div>
+      </div>
     </div>
 
-    <div id="upload" class="page">
-        <div class="mc-panel" data-reveal="1" style="max-width: 580px;">
-            <div class="mc-panel-title">📥 TRICHTER // LINK SUBMIT</div>
-            
-            <label class="mc-label">SENDER</label>
-            <input class="mc-input" id="uploaderName" type="text" readonly>
-
-            <label class="mc-label">TITEL DER AKTE</label>
-            <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. MEGA PULL">
-
-            <label class="mc-label">DATEN-LINK (MEDAL/YOUTUBE)</label>
-            <textarea class="mc-input" id="clipLink" rows="4" placeholder="https://..."></textarea>
-
-            <button onclick="sendToDiscord()" id="submitBtn" class="mc-action full">▶ DISCORD DROP</button>
-
-            <div class="mc-success" id="statusMsg">✔ ITEM ERFOLGREICH IN TRICHTER GEWORFEN!</div>
-        </div>
+    <div class="glass-card mc-panel" data-reveal="3">
+      <div class="mc-panel-title">🎒 INVENTAR</div>
+      <div class="hotbar">
+        <div class="slot active-slot" title="Diamantschwert">⚔️</div>
+        <div class="slot" title="Bogen">🏹</div>
+        <div class="slot" title="Goldapfel">🍎</div>
+        <div class="slot" title="TNT">💥</div>
+        <div class="slot" title="Ender Perle">🔮</div>
+        <div class="slot" title="Kompass">🧭</div>
+      </div>
     </div>
+
+    <div class="glass-card mc-panel" data-reveal="4">
+      <div class="mc-panel-title">🎵 JUKEBOX // HYMNE</div>
+      <div class="visualizer" id="visualizer">
+        <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+        <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+      </div>
+      <audio id="communitySong">
+        <source src="quaps-hymne.mp3" type="audio/mpeg">
+      </audio>
+      <button onclick="togglePlay()" id="playBtn" class="mc-action">▶ PLAY TRACK</button>
+    </div>
+
+  </div>
+
+  <div id="clips" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Media <span>Vault</span></h1>
+      <p class="hero-sub">&gt; Gesicherte Einsätze und Clips._</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2">
+      <div class="mc-panel-title">Mace Hit Showcase</div>
+      <div class="clip-frame">
+        <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0"
+                frameborder="0" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div>Operator: <span class="op-tag">LOUIS</span></div>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="3">
+      <div class="mc-panel-title">Uganana</div>
+      <div class="clip-frame">
+        <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0"
+                frameborder="0" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div>Operator: <span class="op-tag">NILS</span><span class="op-tag">GIORGIO</span></div>
+    </div>
+  </div>
+
+  <div id="upload" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Clip <span>Submission</span></h1>
+      <p class="hero-sub">&gt; Sende deine besten Szenen direkt ins HQ._</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2" style="max-width: 600px; margin: 0 auto;">
+      <div class="mc-panel-title">Submission Form</div>
+      
+      <label class="mc-label">AGENT NAME</label>
+      <input class="mc-input" id="uploaderName" type="text" readonly>
+
+      <label class="mc-label">TITEL DES CLIPS</label>
+      <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. MEGA PVP CLUTCH">
+
+      <label class="mc-label">LINK (MEDAL/YOUTUBE)</label>
+      <textarea class="mc-input" id="clipLink" rows="4" placeholder="https://..."></textarea>
+      
+      <button onclick="sendToDiscord()" id="submitBtn" class="mc-action full">▶ DISCORD DROP</button>
+
+      <div class="mc-success" id="statusMsg">Erfolgreich übertragen!</div>
+    </div>
+  </div>
 
 </main>
-
-<footer>QUAPS ATTACK // VERSION 2.6 &copy; 2026</footer>
 
 <script>
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
 
 function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
-    
-    document.getElementById(id).classList.add('active');
-    document.getElementById('btn-' + id).classList.add('active');
-    
-    // Trigger Animationen neu beim Tab-Wechsel
-    setTimeout(initMinecraftReveal, 40);
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('btn-' + id).classList.add('active');
+  setTimeout(initReveal, 50);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    const user = localStorage.getItem('loggedInUser') || 'Agent';
-    document.getElementById('user-name-display').textContent = user;
-    document.getElementById('uploaderName').value = user;
-    triggerXPBar();
-    setTimeout(initMinecraftReveal, 100);
+  const user = localStorage.getItem('loggedInUser') || 'Agent';
+  document.getElementById('user-name-display').textContent = user;
+  document.getElementById('uploaderName').value = user;
+  setTimeout(initReveal, 100);
 });
 
-/* --- MINECRAFT SCROLL REVEAL (STEPPED) --- */
-function initMinecraftReveal() {
-    const targets = document.querySelectorAll('.page.active [data-reveal]');
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('revealed');
-            }
-        });
-    }, { threshold: 0.05 });
-    
-    targets.forEach(t => {
-        t.classList.remove('revealed');
-        observer.observe(t);
+/* ── SCROLL REVEAL ── */
+function initReveal() {
+  const els = document.querySelectorAll('.page.active [data-reveal]');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('revealed');
     });
+  }, { threshold: 0.1 });
+  els.forEach(el => {
+    el.classList.remove('revealed');
+    obs.observe(el);
+  });
 }
 
-/* --- XP BAR TICKER --- */
-function triggerXPBar() {
-    const bar = document.getElementById('xpBar');
-    const lvl = document.getElementById('xpLevel');
-    let progress = 0;
-    const targetLevel = 26; 
-    
-    bar.style.width = '85%';
-    lvl.textContent = targetLevel;
-}
-
-/* --- JUKEBOX CONTROLLER --- */
+/* ── AUDIO ── */
 function togglePlay() {
-    const audio = document.getElementById('communitySong');
-    const btn = document.getElementById('playBtn');
-    const vis = document.getElementById('visualizer');
-    if (audio.paused) {
-        audio.play();
-        btn.textContent = '⏸ PAUSE DISC';
-        vis.classList.add('playing');
-    } else {
-        audio.pause();
-        btn.textContent = '▶ PLAY DISC';
-        vis.classList.remove('playing');
-    }
+  const audio = document.getElementById('communitySong');
+  const btn   = document.getElementById('playBtn');
+  const vis   = document.getElementById('visualizer');
+  if (audio.paused) {
+    audio.play();
+    btn.textContent = '⏸ PAUSE DISC';
+    vis.classList.add('playing');
+  } else {
+    audio.pause();
+    btn.textContent = '▶ PLAY TRACK';
+    vis.classList.remove('playing');
+  }
 }
 
-/* --- DISCORD WEBHOOK PIPELINE --- */
+/* ── DISCORD SUBMIT ── */
 async function sendToDiscord() {
-    const name = document.getElementById('uploaderName').value;
-    const title = document.getElementById('clipTitle').value;
-    const link = document.getElementById('clipLink').value;
-    const btn = document.getElementById('submitBtn');
-    const msg = document.getElementById('statusMsg');
+  const name  = document.getElementById('uploaderName').value;
+  const title = document.getElementById('clipTitle').value;
+  const link  = document.getElementById('clipLink').value;
+  const btn   = document.getElementById('submitBtn');
+  const msg   = document.getElementById('statusMsg');
 
-    if (!title || !link) { alert('[ERROR] Trichter ist leer! Bitte Felder ausfüllen.'); return; }
+  if (!title || !link) { alert('Bitte Felder ausfüllen!'); return; }
 
-    btn.textContent = '... ÜBERTRAGE DATEN';
-    btn.disabled = true;
+  btn.textContent = '... ÜBERTRAGE DATEN';
+  btn.disabled = true;
 
-    const payload = {
-        username: 'QuapsHub Minecraft System',
-        embeds: [{
-            title: '📦 Block-Intel eingetroffen!',
-            color: 5635925,
-            fields: [
-                { name: 'Spieler', value: name, inline: true },
-                { name: 'Akte', value: title, inline: true },
-                { name: 'Koordinaten/Link', value: link }
-            ],
-            timestamp: new Date().toISOString()
-        }]
-    };
+  const payload = {
+    username: 'QuapsHub Monitor',
+    embeds: [{
+      title: '📹 Neuer Clip eingereicht',
+      color: 0xa8ff78,
+      fields: [
+        { name: 'Agent', value: name,  inline: true },
+        { name: 'Titel', value: title, inline: true },
+        { name: 'Link',  value: link }
+      ],
+      timestamp: new Date().toISOString()
+    }]
+  };
 
-    try {
-        await fetch(DISCORD_WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        msg.style.display = 'block';
-        setTimeout(() => {
-            msg.style.display = 'none';
-            btn.textContent = '▶ DISCORD DROP';
-            btn.disabled = false;
-            document.getElementById('clipTitle').value = '';
-            document.getElementById('clipLink').value = '';
-            showPage('home');
-        }, 3000);
-    } catch {
-        alert('[ERROR] Redstone-Leitung unterbrochen. Fehlgeschlagen.');
-        btn.textContent = '▶ DISCORD DROP';
-        btn.disabled = false;
-    }
+  try {
+    await fetch(DISCORD_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    msg.style.display = 'block';
+    setTimeout(() => {
+      msg.style.display = 'none';
+      btn.textContent = '▶ DISCORD DROP';
+      btn.disabled = false;
+      document.getElementById('clipTitle').value = '';
+      document.getElementById('clipLink').value  = '';
+      showPage('home');
+    }, 3000);
+  } catch {
+    alert('Übertragung fehlgeschlagen.');
+    btn.textContent = '▶ DISCORD DROP';
+    btn.disabled = false;
+  }
 }
 
+/* ── LOGOUT ── */
 function logout() {
-    localStorage.removeItem('loggedInUser');
-    window.location.href = 'login.html';
+  localStorage.removeItem('loggedInUser');
+  window.location.href = 'login.html';
 }
 </script>
 </body>
