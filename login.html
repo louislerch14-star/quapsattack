@@ -181,7 +181,6 @@
             line-height: 1.4;
         }
 
-        /* CSS Klassen zum Verstecken von Elementen */
         .hidden {
             display: none !important;
         }
@@ -193,6 +192,7 @@
 
     <div class="login-overlay">
         <div class="login-card">
+            
             <h1 class="logo-text" id="formTitle">QUAPS LOGIN!</h1>
             
             <form id="authForm">
@@ -203,7 +203,7 @@
                 <input type="password" id="password" placeholder="••••••••" required>
                 
                 <button type="submit" id="loginBtn">LOGIN // MAIL</button>
-                <button type="button" id="signUpSubmitBtn" class="hidden">CREATE ACCOUNT</button>
+                <button type="button" id="signUpSubmitBtn" class="hidden">REGISTER ACCOUNT</button>
             </form>
 
             <button class="secondary-btn" id="switchToRegisterBtn">Noch kein Account? Registrieren</button>
@@ -228,7 +228,6 @@
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Elemente holen
         const authForm = document.getElementById('authForm');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
@@ -248,37 +247,37 @@
             messageDiv.textContent = text;
         }
 
-        // ── ANSICHT WECHSELN: ZU REGISTRIEREN ──
+        // ── KLICK AUF "REGISTRIEREN" (ANSICHT WECHSELN) ──
         switchToRegisterBtn.addEventListener('click', () => {
             showMessage("");
             formTitle.textContent = "QUAPS REGISTRATION!";
             
-            // Buttons und Google verstecken
+            // Login & Google weg
             loginBtn.classList.add('hidden');
             googleSection.classList.add('hidden');
             switchToRegisterBtn.classList.add('hidden');
             
-            // Registrierungs-Buttons einblenden
+            // Registrierungs-Button da
             signUpSubmitBtn.classList.remove('hidden');
             switchToLoginBtn.classList.remove('hidden');
         });
 
-        // ── ANSICHT WECHSELN: ZURÜCK ZUM LOGIN ──
+        // ── KLICK AUF "ZUM LOGIN" (ANSICHT WECHSELN) ──
         switchToLoginBtn.addEventListener('click', () => {
             showMessage("");
             formTitle.textContent = "QUAPS LOGIN!";
             
-            // Registrierungs-Buttons verstecken
+            // Registrierungs-Button weg
             signUpSubmitBtn.classList.add('hidden');
             switchToLoginBtn.classList.add('hidden');
             
-            // Login und Google einblenden
+            // Login & Google wieder da
             loginBtn.classList.remove('hidden');
             googleSection.classList.remove('hidden');
             switchToRegisterBtn.classList.remove('hidden');
         });
 
-        // ── 1. E-MAIL LOGIN EXECUTE ──
+        // ── 1. LOGIN AUSFÜHREN ──
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             showMessage("");
@@ -302,11 +301,11 @@
             }
         });
 
-        // ── 2. E-MAIL REGISTRIERUNG EXECUTE ──
+        // ── 2. REGISTRIERUNG AUSFÜHREN ──
         signUpSubmitBtn.addEventListener('click', async () => {
             showMessage("");
 
-            const email = emailInput.value;
+            const email = emailInput.value.trim();
             const password = passwordInput.value;
 
             if (!email || !password) {
@@ -338,7 +337,7 @@
             }
         });
 
-        // ── 3. GOOGLE OAUTH LOGIN ──
+        // ── 3. GOOGLE LOGIN AUSFÜHREN ──
         googleBtn.addEventListener('click', async () => {
             showMessage("");
             const { data, error } = await supabaseClient.auth.signInWithOAuth({
@@ -347,7 +346,7 @@
                     redirectTo: window.location.origin + '/index.html'
                 }
             });
-            if (error) showMessage("Google Login fehlgeschlagen: " + error.message);
+            if (error) showMessage("Google Login Fehler: " + error.message);
         });
     </script>
 </body>
