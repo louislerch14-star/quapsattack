@@ -3,403 +3,622 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Quaps Attack Elite Hub - Aktive Zentrale.">
-    <meta name="keywords" content="Quaps Attack, Gaming Hub, Minecraft Mod, Elite Hub">
-    <meta name="robots" content="index, follow">
-    <title>Quaps Attack | Elite Hub</title>
-    <link rel="icon" type="image/png" href="unnamed.jpg">
+    <title>QuapsHub | Minecraft Edition</title>
     
-    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400;500;700&f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Frische, reaktivierte Neon-Cyber-Farben statt des alten Grauschleiers */
-            --primary: #ff7b00; 
-            --secondary: #ff007f;
-            --bg-dark: #0f0e12; /* Edles Space-Anthrazit */
-            --card-glass: rgba(24, 22, 28, 0.75);
-            --border-glass: rgba(255, 255, 255, 0.06);
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-            --success: #00f5d4;
+            /* Originalgetreue Minecraft Farbpalette */
+            --mc-bg: #141414;
+            --mc-panel: #2c2c2c;
+            --mc-panel-top: #4a4a4a;
+            --mc-panel-shadow: #121212;
+            
+            --mc-diamond: #55ffff;
+            --mc-gold: #ffaa00;
+            --mc-xp: #55ff55;
+            --mc-red: #ff5555;
+            --mc-text: #ffffff;
+            --mc-text-dim: #aaaaaa;
         }
 
-        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            /* Verhindert weiche Übergänge für den harten Pixel-Look */
+            image-rendering: pixelated;
+        }
+        
+        html { scroll-behavior: smooth; }
 
         body {
-            margin: 0;
-            font-family: 'Satoshi', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-main);
+            font-family: 'Press Start 2P', monospace;
+            background: var(--mc-bg);
+            color: var(--mc-text);
             overflow-x: hidden;
             min-height: 100vh;
         }
 
-        /* --- WATERMARK SYSTEM (REACTIVATED) --- */
-        .global-watermark {
+        /* --- CRT-SCANLINES FÜR RETRO-EFFEKT --- */
+        body::after {
+            content: '';
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            font-size: clamp(3rem, 10vw, 8rem);
-            font-family: 'Cabinet Grotesk', sans-serif;
-            font-weight: 800;
-            color: rgba(255, 123, 0, 0.03);
-            white-space: nowrap;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 6px);
             pointer-events: none;
             z-index: 9999;
-            letter-spacing: 10px;
-            text-transform: uppercase;
         }
 
-        .corner-watermark {
+        /* --- HINTERGRUND-VIDEO --- */
+        .video-bg {
             position: fixed;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #fff;
-            background: rgba(0, 245, 212, 0.1);
-            padding: 5px 12px;
-            border: 1px solid rgba(0, 245, 212, 0.2);
-            border-radius: 6px;
-            pointer-events: none;
-            z-index: 9999;
-            text-transform: uppercase;
-        }
-        .wm-tl { top: 100px; left: 30px; border-color: rgba(0, 245, 212, 0.3); color: var(--success); }
-        .wm-br { bottom: 20px; right: 30px; background: rgba(255, 123, 0, 0.1); border-color: rgba(255, 123, 0, 0.2); color: var(--primary); }
-
-        /* --- LIVE VIDEO BACKGROUND --- */
-        .video-bg-wrapper {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            inset: 0;
             z-index: -1;
             background: #000;
-            overflow: hidden;
         }
-
-        .video-bg-wrapper iframe {
+        .video-bg iframe {
             position: absolute;
             top: 50%; left: 50%;
-            width: 100vw;
-            height: 56.25vw;
-            min-height: 100vh;
-            min-width: 177.77vh;
+            width: 100vw; height: 56.25vw;
+            min-height: 100vh; min-width: 177.77vh;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            filter: brightness(0.3) blur(3px); /* Grauschleier entfernt */
+            filter: brightness(0.15) contrast(1.2) saturate(0.5);
         }
 
-        .video-overlay {
+        /* --- SIDEBAR NAVBAR (UNTEREINANDER) --- */
+        .sidebar {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(15, 14, 18, 0.2) 0%, rgba(15, 14, 18, 0.95) 100%);
-            z-index: -1;
+            top: 0; left: 0;
+            width: 260px;
+            height: 100vh;
+            background: #1e1e1e;
+            border-right: 6px solid var(--mc-panel-shadow);
+            box-shadow: inset -4px 0 0 #3c3c3c;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- CLEAN NAVBAR WITHOUT SMP --- */
-        .nav-wrapper {
-            position: fixed;
-            top: 20px; left: 50%;
-            transform: translateX(-50%);
-            width: 90%; max-width: 1000px;
-            z-index: 1000;
+        .sidebar-logo {
+            padding: 30px 20px;
+            background: #111111;
+            border-bottom: 6px solid var(--mc-panel-shadow);
+            text-align: center;
+        }
+        .sidebar-logo .logo-text {
+            font-size: 1.1rem;
+            color: var(--mc-diamond);
+            text-shadow: 3px 3px 0 #00aaaa;
+            letter-spacing: -1px;
+            display: block;
+        }
+        .sidebar-logo .logo-sub {
+            font-size: 0.5rem;
+            color: var(--mc-gold);
+            margin-top: 8px;
+            display: block;
         }
 
-        .navbar {
-            background: rgba(24, 22, 28, 0.75);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--border-glass);
-            border-radius: 20px;
-            padding: 14px 35px;
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        .nav-links {
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* Perfekter Abstand untereinander */
         }
 
-        .nav-logo { font-family: 'Cabinet Grotesk', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.5px; color: #fff; }
-        .nav-logo span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* --- MINECRAFT BLOCK BUTTON STYLE --- */
+        .mc-btn {
+            background: #4a4a4a;
+            color: #e0e0e0;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.65rem;
+            padding: 16px;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            position: relative;
+            
+            /* Legendärer Minecraft Button 3D-Rand */
+            border-top: 4px solid #8b8b8b;
+            border-left: 4px solid #8b8b8b;
+            border-bottom: 4px solid #212121;
+            border-right: 4px solid #212121;
+            
+            box-shadow: inset -2px -2px 0 #3a3a3a;
+        }
+        
+        .mc-btn:hover {
+            background: #557a3a;
+            color: #ffffff;
+            border-top-color: #77a855;
+            border-left-color: #77a855;
+            border-bottom-color: #2a3d1d;
+            border-right-color: #2a3d1d;
+        }
 
-        .nav-links { display: flex; gap: 8px; align-items: center; }
-        .nav-links a {
-            color: var(--text-dim); text-decoration: none;
-            padding: 8px 16px; border-radius: 12px;
-            font-weight: 500; font-size: 0.9rem;
+        .mc-btn:active, .mc-btn.active {
+            border-top: 4px solid #212121;
+            border-left: 4px solid #212121;
+            border-bottom: 4px solid #8b8b8b;
+            border-right: 4px solid #8b8b8b;
+            background: #43642b;
+            color: var(--mc-xp);
+            padding-top: 18px;
+            padding-bottom: 14px;
+        }
+
+        .exit-btn {
+            margin-top: auto;
+            margin-bottom: 20px;
+            background: #3a1a1a;
+            border-top-color: #6e3333;
+            border-left-color: #6e3333;
+            border-bottom-color: #1a0a0a;
+            border-right-color: #1a0a0a;
+            color: var(--mc-red);
+        }
+        .exit-btn:hover { background: #552525; color: #fff; }
+
+        /* --- XP STATUSBAR UNTEN --- */
+        .sidebar-status {
+            padding: 20px;
+            background: #111111;
+            border-top: 6px solid var(--mc-panel-shadow);
+        }
+        .xp-bar-wrap {
+            height: 12px;
+            background: #2c2c2c;
+            border: 3px solid #000;
+            margin-top: 8px;
+            position: relative;
+        }
+        .xp-bar {
+            height: 100%;
+            background: var(--mc-xp);
+            width: 0%;
+            /* Gestufter Lade-Effekt */
+            transition: width 1.2s steps(10); 
+        }
+        .xp-label {
+            font-size: 0.5rem;
+            color: var(--mc-xp);
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        /* --- MAIN AREA --- */
+        main {
+            margin-left: 260px;
+            padding: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* --- PIXEL-ANIME SCROLL REVEAL EFFECT --- */
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(30px);
+            /* steps(5) sorgt dafür, dass die Animation ruckelig/pixelig einfährt */
+            transition: opacity 0.4s steps(5), transform 0.4s steps(5);
+        }
+        
+        [data-reveal].revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Gestaffeltes Erscheinen der Boxen */
+        [data-reveal="2"] { transition-delay: 0.15s; }
+        [data-reveal="3"] { transition-delay: 0.3s; }
+
+        /* --- MINECRAFT IN-GAME INVENTAR PANEL --- */
+        .mc-panel {
+            background: var(--mc-panel);
+            border-top: 5px solid #6b6b6b;
+            border-left: 5px solid #6b6b6b;
+            border-bottom: 5px solid #151515;
+            border-right: 5px solid #151515;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 16px 0 rgba(0,0,0,0.4);
+        }
+
+        .mc-panel-title {
+            font-size: 0.8rem;
+            color: var(--mc-gold);
+            text-shadow: 2px 2px 0 #553300;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-body {
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+            color: var(--mc-text-dim);
+            line-height: 1.8;
+        }
+        .panel-body .line {
+            padding: 8px 0;
+            border-bottom: 3px dashed #3a3a3a;
+        }
+        .panel-body .line:last-child { border-bottom: none; }
+
+        /* --- ITEM HOTBAR --- */
+        .hotbar {
+            display: flex;
+            gap: 6px;
+            background: #8f8f8f;
+            padding: 6px;
+            border: 4px solid #3c3c3c;
+            display: inline-flex;
+        }
+        .slot {
+            width: 54px; height: 54px;
+            background: #8b8b8b;
+            border-top: 4px solid #373737;
+            border-left: 4px solid #373737;
+            border-bottom: 4px solid #ffffff;
+            border-right: 4px solid #ffffff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem;
+        }
+        .slot.active-slot {
+            border: 4px solid #ffffff;
+            background: #a1a1a1;
+            box-shadow: 0 0 0 4px #000000;
+        }
+
+        /* --- AUDIO VISUALIZER (PIXEL PULSE) --- */
+        .visualizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 35px;
+            margin: 20px 0;
+        }
+        .vis-bar {
+            width: 10px;
+            height: 6px;
+            background: #444;
+        }
+        .playing .vis-bar {
+            background: var(--mc-xp);
+            animation: mcVis 0.4s steps(3) infinite alternate;
+        }
+        .playing .vis-bar:nth-child(even) { background: var(--mc-diamond); animation-duration: 0.3s; }
+        @keyframes mcVis {
+            from { height: 6px; }
+            to   { height: 35px; }
+        }
+
+        /* --- ACTION BTNS INLINE --- */
+        .mc-action {
+            display: inline-block;
+            background: #4a4a4a;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.65rem;
+            padding: 14px 24px;
+            border-top: 4px solid #8b8b8b;
+            border-left: 4px solid #8b8b8b;
+            border-bottom: 4px solid #212121;
+            border-right: 4px solid #212121;
             cursor: pointer;
         }
-        .nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(255,255,255,0.05); }
-        
-        .exit-btn { border: 1px solid rgba(255, 255, 255, 0.05); color: #ef4444 !important; }
-        .exit-btn:hover { background: rgba(239, 68, 68, 0.1) !important; border-color: rgba(239, 68, 68, 0.2) !important; }
+        .mc-action:hover { background: #557a3a; var(--mc-xp); }
+        .mc-action.full { width: 100%; text-align: center; }
 
-        .container { padding: 160px 20px 60px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 10; }
-
-        .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.5s ease; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .hero h1 { font-family: 'Cabinet Grotesk', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800; margin: 0; letter-spacing: -1.5px; color: #fff; }
-        .hero p { color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; margin-bottom: 40px; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
-
-        /* --- CARD STYLE UPDATE --- */
-        .glass-card {
-            background: var(--card-glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: 24px;
-            padding: 35px;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-        }
-
-        .glass-card h3 { font-family: 'Cabinet Grotesk', sans-serif; font-weight: 800; font-size: 1.4rem; margin-top: 0; margin-bottom: 15px; }
-
-        .glass-card::before {
-            content: "QUAPS ATTACK // LIVE";
-            position: absolute;
-            bottom: 12px; right: 18px;
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.05);
-            letter-spacing: 1px;
-        }
-
-        .glass-card:hover { border-color: rgba(255, 123, 0, 0.25); transform: translateY(-3px); }
-
-        input, textarea {
-            width: 100%;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 16px;
-            border-radius: 14px;
-            color: #fff;
-            margin-bottom: 16px;
-            font-family: inherit;
-            font-size: 0.95rem;
-        }
-        input:focus, textarea:focus { border-color: var(--primary); outline: none; background: rgba(0,0,0,0.6); }
-
-        .action-btn {
-            display: inline-block; 
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); 
-            color: #0f0e12;
-            padding: 16px 30px; border-radius: 14px;
-            text-decoration: none; font-family: 'Cabinet Grotesk', sans-serif; font-weight: 800; font-size: 0.9rem;
-            text-transform: uppercase; margin-top: 10px;
-            border: none; cursor: pointer; width: 100%;
-            box-shadow: 0 8px 20px rgba(255, 123, 0, 0.2);
-        }
-
-        .action-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(255,0,127,0.4); color: #fff; }
-
-        .visualizer { display: flex; gap: 5px; height: 35px; align-items: center; margin: 25px 0; }
-        .bar { width: 5px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; }
-        .playing .bar { animation: pulse 0.7s infinite alternate; background: var(--primary); }
-        .playing .bar:nth-child(even) { animation-duration: 0.4s; background: var(--secondary); }
-        @keyframes pulse { from { height: 8px; } to { height: 35px; } }
-
-        footer { text-align: center; padding: 60px 20px 40px; color: #334155; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; }
-        
-        .video-container {
-            width:100%; 
-            height:220px; 
-            border-radius:16px; 
-            overflow:hidden; 
-            border:1px solid rgba(255,255,255,0.05);
+        /* --- MEDAL CLIP FRAMES --- */
+        .clip-frame {
+            aspect-ratio: 16/9;
             background: #000;
-            position: relative;
+            border: 4px solid #111;
+            margin-bottom: 15px;
+        }
+        .clip-frame iframe { width: 100%; height: 100%; border: none; }
+        .op-tag {
+            background: #111;
+            color: var(--mc-diamond);
+            padding: 4px 8px;
+            font-size: 0.6rem;
+            border: 2px solid #333;
+        }
+
+        /* --- INPUT FIELD STYLES --- */
+        .mc-input {
+            display: block;
+            width: 100%;
+            background: #000000;
+            color: var(--mc-xp);
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            padding: 12px;
+            border: 3px solid #555555;
+            margin-bottom: 16px;
+            outline: none;
+        }
+        .mc-input:focus { border-color: var(--mc-diamond); }
+        .mc-input[readonly] { color: var(--mc-text-dim); background: #222; }
+
+        .mc-label {
+            font-size: 0.55rem;
+            color: var(--mc-gold);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .mc-success {
+            display: none;
+            border: 4px solid var(--mc-xp);
+            background: #112211;
+            color: var(--mc-xp);
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.7rem;
+        }
+
+        .px-divider {
+            height: 6px;
+            background: repeating-linear-gradient(90deg, #444 0px, #444 10px, transparent 10px, transparent 20px);
+            margin: 40px 0;
+        }
+
+        footer {
+            margin-left: 260px;
+            text-align: center;
+            padding: 40px;
+            font-size: 0.5rem;
+            color: #555;
+        }
+
+        @media (max-width: 800px) {
+            .sidebar { width: 100%; height: auto; position: relative; }
+            main, footer { margin-left: 0; padding: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="global-watermark">ONLINE</div>
-    <div class="corner-watermark wm-tl">STATUS: ACTIVE // CLUSTER RUNNING</div>
-    <div class="corner-watermark wm-br">LIVE MODUS</div>
+<div class="video-bg">
+    <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay"></iframe>
+</div>
 
-    <div class="video-bg-wrapper">
-        <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay"></iframe>
-        <div class="video-overlay"></div>
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <span class="logo-text">QUAPS<br>HUB</span>
+        <span class="logo-sub">v2.6 // LIVE MODE</span>
     </div>
 
-    <div class="nav-wrapper">
-        <nav class="navbar">
-            <div class="nav-logo">QUAPS<span>HUB</span></div>
-            <div class="nav-links">
-                <a onclick="showSection('home')" id="link-home" class="active">Main</a>
-                <a onclick="showSection('intel')" id="link-intel">Clip-Archiv</a>
-                <a onclick="showSection('upload')" id="link-upload">Upload</a>
-                <a onclick="logout()" class="exit-btn">Exit</a>
-            </div>
-        </nav>
-    </div>
-
-    <div class="container">
+    <div class="nav-links">
+        <button class="mc-btn active" onclick="showPage('home')" id="btn-home">🏠 HOME</button>
+        <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">🎬 CLIPS</button>
+        <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">📤 UPLOAD</button>
         
-        <div id="home" class="section active">
-            <div class="hero">
-                <h1>Protokoll: <span id="user-name-display">Agent</span>.</h1>
-                <p>Das System läuft im Live-Betrieb. Bereit für Daten-Schnittstellen.</p>
-            </div>
-            <div class="grid">
-                <div class="glass-card">
-                    <h3>📜 Aktueller Codex</h3>
-                    <p style="color: var(--text-dim); line-height: 1.8; margin: 0;">
-                        • Cluster reaktiviert am 27. Mai 2026<br>
-                        • Server-Infrastruktur im Normalbetrieb<br>
-                        • Ehren-Codex bleibt aktiv bestehen
-                    </p>
-                </div>
-                <div class="glass-card">
-                    <h3>🔊 Die Hymne</h3>
-                    <div class="visualizer" id="visualizer">
-                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                    </div>
-                    <audio id="communitySong">
-                        <source src="quaps-hymne.mp3" type="audio/mpeg">
-                    </audio>
-                    <button onclick="togglePlay()" id="playBtn" class="action-btn" style="width: auto;">Play Track</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="intel" class="section">
-            <div class="hero">
-                <h1>Media Vault</h1>
-                <p>Gesicherte Einsätze und Clips</p>
-            </div>
-            <div class="grid">
-                <div class="glass-card">
-                    <h3>Mace Hit Showcase</h3>
-                    <div class="video-container">
-                        <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <p style="margin-top:15px; color:var(--text-dim); font-size:0.8rem; font-weight:500;">Operator: Louis</p>
-                </div>
-
-                <div class="glass-card">
-                    <h3>Uganana</h3>
-                    <div class="video-container">
-                        <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <p style="margin-top:15px; color:var(--text-dim); font-size:0.8rem; font-weight:500;">Operator: Nils/Giorgio</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="upload" class="section">
-            <div class="hero">
-                <h1>Clip Upload</h1>
-                <p>Sende deine besten Szenen direkt ins Hauptquartier</p>
-            </div>
-            <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
-                <h3>🎥 Intel Submission</h3>
-                <p style="color: var(--text-dim); margin-bottom: 20px;">Füge einen Link zum Clip (Medal/YouTube) ein.</p>
-                
-                <input type="text" id="uploaderName" placeholder="Dein Name" readonly>
-                <input type="text" id="clipTitle" placeholder="Titel des Clips">
-                <textarea id="clipLink" placeholder="Link zum Video oder Nachricht an Admins..." rows="4"></textarea>
-                
-                <button onclick="sendToDiscord()" id="submitBtn" class="action-btn">An Discord Senden</button>
-                <p id="statusMsg" style="text-align: center; margin-top: 15px; display: none; color: var(--success); font-weight: bold;">✔ Erfolgreich gesendet!</p>
-            </div>
-        </div>
-
+        <button class="mc-btn exit-btn" onclick="logout()">✖ LOGOUT</button>
     </div>
 
-    <footer>QUAPS ATTACK // ACTIVE COMMUNITY HUB &copy; 2026</footer>
+    <div class="sidebar-status">
+        <div class="xp-label">LEVEL <span id="xpLevel">0</span></div>
+        <div class="xp-bar-wrap">
+            <div class="xp-bar" id="xpBar"></div>
+        </div>
+    </div>
+</div>
 
-    <script>
-        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
+<main>
 
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    <div id="home" class="page active">
+        <div class="mc-panel" data-reveal="1">
+            <div class="mc-panel-title">👋 SYSTEM-MELDUNG</div>
+            <h1 style="font-size: 1.1rem; line-height: 1.6;">
+                Willkommen, <span style="color: var(--mc-gold);" id="user-name-display">Agent</span>.<br>
+                <span style="color: var(--mc-xp); font-size: 0.65rem;">> Alle Cluster laufen stabil._</span>
+            </h1>
+        </div>
+
+        <div class="mc-panel" data-reveal="2">
+            <div class="mc-panel-title">📜 SERVER CODEX</div>
+            <div class="panel-body">
+                <div class="line">• Cluster aktiv geschaltet am 27. Mai 2026</div>
+                <div class="line">• Infrastruktur läuft über gesicherte Node</div>
+                <div class="line">• Core-Regeln sind permanent bindend</div>
+            </div>
+        </div>
+
+        <div class="mc-panel" data-reveal="3">
+            <div class="mc-panel-title">🎒 ADMIN INVENTAR</div>
+            <div class="hotbar">
+                <div class="slot active-slot">⚔️</div>
+                <div class="slot">🏹</div>
+                <div class="slot">🍎</div>
+                <div class="slot">💥</div>
+                <div class="slot">🔮</div>
+                <div class="slot">⛏️</div>
+            </div>
+        </div>
+
+        <div class="mc-panel" data-reveal="3">
+            <div class="mc-panel-title">🎵 JUKEBOX // HYMNE</div>
+            <div class="visualizer" id="visualizer">
+                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+            </div>
+            <audio id="communitySong">
+                <source src="quaps-hymne.mp3" type="audio/mpeg">
+            </audio>
+            <button onclick="togglePlay()" id="playBtn" class="mc-action">▶ PLAY DISC</button>
+        </div>
+    </div>
+
+    <div id="clips" class="page">
+        <div class="mc-panel" data-reveal="1">
+            <div class="mc-panel-title">⚔️ LAUTESTE SCHLACHTEN</div>
+            <div class="clip-frame">
+                <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <span class="op-tag">OPERATOR: LOUIS</span>
+        </div>
+
+        <div class="mc-panel" data-reveal="2">
+            <div class="mc-panel-title">🌍 ARCHIV-RECORDS</div>
+            <div class="clip-frame">
+                <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <span class="op-tag">OPERATOR: NILS / GIORGIO</span>
+        </div>
+    </div>
+
+    <div id="upload" class="page">
+        <div class="mc-panel" data-reveal="1" style="max-width: 580px;">
+            <div class="mc-panel-title">📥 TRICHTER // LINK SUBMIT</div>
             
-            const target = document.getElementById(sectionId);
-            if(target) {
-                target.classList.add('active');
+            <label class="mc-label">SENDER</label>
+            <input class="mc-input" id="uploaderName" type="text" readonly>
+
+            <label class="mc-label">TITEL DER AKTE</label>
+            <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. MEGA PULL">
+
+            <label class="mc-label">DATEN-LINK (MEDAL/YOUTUBE)</label>
+            <textarea class="mc-input" id="clipLink" rows="4" placeholder="https://..."></textarea>
+
+            <button onclick="sendToDiscord()" id="submitBtn" class="mc-action full">▶ DISCORD DROP</button>
+
+            <div class="mc-success" id="statusMsg">✔ ITEM ERFOLGREICH IN TRICHTER GEWORFEN!</div>
+        </div>
+    </div>
+
+</main>
+
+<footer>QUAPS ATTACK // VERSION 2.6 &copy; 2026</footer>
+
+<script>
+const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
+
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
+    
+    document.getElementById(id).classList.add('active');
+    document.getElementById('btn-' + id).classList.add('active');
+    
+    // Trigger Animationen neu beim Tab-Wechsel
+    setTimeout(initMinecraftReveal, 40);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const user = localStorage.getItem('loggedInUser') || 'Agent';
+    document.getElementById('user-name-display').textContent = user;
+    document.getElementById('uploaderName').value = user;
+    triggerXPBar();
+    setTimeout(initMinecraftReveal, 100);
+});
+
+/* --- MINECRAFT SCROLL REVEAL (STEPPED) --- */
+function initMinecraftReveal() {
+    const targets = document.querySelectorAll('.page.active [data-reveal]');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
             }
-            
-            const link = document.getElementById('link-' + sectionId);
-            if(link) link.classList.add('active');
-        }
+        });
+    }, { threshold: 0.05 });
+    
+    targets.forEach(t => {
+        t.classList.remove('revealed');
+        observer.observe(t);
+    });
+}
 
-        window.onload = function() {
-            const user = localStorage.getItem('loggedInUser') || "Agent";
-            document.getElementById('user-name-display').innerText = user;
-            document.getElementById('uploaderName').value = user;
-        }
+/* --- XP BAR TICKER --- */
+function triggerXPBar() {
+    const bar = document.getElementById('xpBar');
+    const lvl = document.getElementById('xpLevel');
+    let progress = 0;
+    const targetLevel = 26; 
+    
+    bar.style.width = '85%';
+    lvl.textContent = targetLevel;
+}
 
-        async function sendToDiscord() {
-            const name = document.getElementById('uploaderName').value;
-            const title = document.getElementById('clipTitle').value;
-            const link = document.getElementById('clipLink').value;
-            const btn = document.getElementById('submitBtn');
-            const status = document.getElementById('statusMsg');
+/* --- JUKEBOX CONTROLLER --- */
+function togglePlay() {
+    const audio = document.getElementById('communitySong');
+    const btn = document.getElementById('playBtn');
+    const vis = document.getElementById('visualizer');
+    if (audio.paused) {
+        audio.play();
+        btn.textContent = '⏸ PAUSE DISC';
+        vis.classList.add('playing');
+    } else {
+        audio.pause();
+        btn.textContent = '▶ PLAY DISC';
+        vis.classList.remove('playing');
+    }
+}
 
-            if(!title || !link) { alert("Bitte fülle alle Felder aus!"); return; }
+/* --- DISCORD WEBHOOK PIPELINE --- */
+async function sendToDiscord() {
+    const name = document.getElementById('uploaderName').value;
+    const title = document.getElementById('clipTitle').value;
+    const link = document.getElementById('clipLink').value;
+    const btn = document.getElementById('submitBtn');
+    const msg = document.getElementById('statusMsg');
 
-            btn.innerText = "Sende Daten...";
-            btn.disabled = true;
+    if (!title || !link) { alert('[ERROR] Trichter ist leer! Bitte Felder ausfüllen.'); return; }
 
-            const payload = {
-                username: "Elite Hub Monitor [Live]",
-                embeds: [{
-                    title: "📹 Neuer Clip eingereicht!",
-                    color: 16743424,
-                    fields: [
-                        { name: "Agent", value: name, inline: true },
-                        { name: "Betreff", value: title, inline: true },
-                        { name: "Link/Info", value: link }
-                    ],
-                    timestamp: new Date()
-                }]
-            };
+    btn.textContent = '... ÜBERTRAGE DATEN';
+    btn.disabled = true;
 
-            try {
-                await fetch(DISCORD_WEBHOOK, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                status.style.display = "block";
-                setTimeout(() => { 
-                    status.style.display = "none"; 
-                    btn.disabled = false;
-                    btn.innerText = "An Discord Senden";
-                    showSection('home');
-                }, 3000);
-            } catch (e) {
-                alert("Fehler bei der Übertragung.");
-                btn.disabled = false;
-            }
-        }
+    const payload = {
+        username: 'QuapsHub Minecraft System',
+        embeds: [{
+            title: '📦 Block-Intel eingetroffen!',
+            color: 5635925,
+            fields: [
+                { name: 'Spieler', value: name, inline: true },
+                { name: 'Akte', value: title, inline: true },
+                { name: 'Koordinaten/Link', value: link }
+            ],
+            timestamp: new Date().toISOString()
+        }]
+    };
 
-        function togglePlay() {
-            var audio = document.getElementById('communitySong');
-            var btn = document.getElementById('playBtn');
-            var visual = document.getElementById('visualizer');
-            if (audio.paused) {
-                audio.play();
-                btn.innerText = "Pause";
-                visual.classList.add('playing');
-            } else {
-                audio.pause();
-                btn.innerText = "Play Track";
-                visual.classList.remove('playing');
-            }
-        }
+    try {
+        await fetch(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        msg.style.display = 'block';
+        setTimeout(() => {
+            msg.style.display = 'none';
+            btn.textContent = '▶ DISCORD DROP';
+            btn.disabled = false;
+            document.getElementById('clipTitle').value = '';
+            document.getElementById('clipLink').value = '';
+            showPage('home');
+        }, 3000);
+    } catch {
+        alert('[ERROR] Redstone-Leitung unterbrochen. Fehlgeschlagen.');
+        btn.textContent = '▶ DISCORD DROP';
+        btn.disabled = false;
+    }
+}
 
-        function logout() {
-            localStorage.removeItem('loggedInUser');
-            window.location.href = "login.html";
-        }
-    </script>
+function logout() {
+    localStorage.removeItem('loggedInUser');
+    window.location.href = 'login.html';
+}
+</script>
 </body>
 </html>
