@@ -212,15 +212,6 @@ main {
 
 /* ── HERO ── */
 .hero { margin-bottom: 50px; }
-.hero-tag {
-  display: inline-block;
-  font-size: 0.45rem;
-  color: var(--primary);
-  background: rgba(168,255,120,0.1);
-  padding: 6px 12px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-}
 .hero h1 { font-size: 2.2rem; color: #fff; margin: 0; letter-spacing: -1px; }
 .hero h1 span { color: var(--gold); }
 .hero-sub { font-size: 1.1rem; color: var(--muted); margin-top: 10px; }
@@ -262,6 +253,7 @@ main {
   display: inline-block;
   background: var(--panel2);
   color: var(--primary);
+  font-family: 'Press Start 2P', monospace;
   font-size: 0.55rem;
   padding: 14px 28px;
   border-radius: 10px;
@@ -365,7 +357,7 @@ main {
   <div class="sidebar-profile">
     <img src="" id="user-avatar" class="profile-avatar" alt="M">
     <div class="profile-info">
-      <span class="profile-name" id="sidebar-user-name">AGENT</span>
+      <span class="profile-name" id="sidebar-user-name">SPIELER</span>
       <div class="profile-status-wrapper">
         <span class="status-dot"></span>
         <span class="status-text">ONLINE</span>
@@ -379,17 +371,16 @@ main {
   <div id="home" class="page active">
 
     <div class="hero" data-reveal="1">
-      <div class="hero-tag">// STATUS: AUTHENTICATED</div>
-      <h1>Willkommen zurück, <br><span id="user-name-display">Agent</span>.</h1>
-      <p class="hero-sub">&gt; Alle Systeme laufen im verifizierten Live-Betrieb._</p>
+      <h1>Moin, <br><span id="user-name-display">Spieler</span>.</h1>
+      <p class="hero-sub">Willkommen im Quaps Attack Dashboard.</p>
     </div>
 
     <div class="glass-card mc-panel" data-reveal="2">
-      <div class="mc-panel-title">📜 AKTUELLER CODEX</div>
+      <div class="mc-panel-title">📜 AKTUELLE INFOS</div>
       <div class="panel-body">
-        <div class="line"><span>▶</span> Cluster reaktiviert am 27. Mai 2026</div>
-        <div class="line"><span>▶</span> Infrastruktur im Normalbetrieb</div>
-        <div class="line"><span>▶</span> Ehren-Codex bleibt aktiv bestehen</div>
+        <div class="line"><span>▶</span> Website-Update erfolgreich durchgeführt</div>
+        <div class="line"><span>▶</span> Alle Server laufen stabil</div>
+        <div class="line"><span>▶</span> Ladet eure neuesten Clips hoch!</div>
       </div>
     </div>
 
@@ -402,15 +393,15 @@ main {
       <audio id="communitySong">
         <source src="quaps-hymne.mp3" type="audio/mpeg">
       </audio>
-      <button onclick="togglePlay()" id="playBtn" class="mc-action">▶ PLAY TRACK</button>
+      <button onclick="togglePlay()" id="playBtn" class="mc-action">▶ SONG ABSPIELEN</button>
     </div>
 
   </div>
 
   <div id="clips" class="page">
     <div class="hero" data-reveal="1">
-      <h1>Media <span>Vault</span></h1>
-      <p class="hero-sub">&gt; Gesicherte Einsätze und Clips._</p>
+      <h1>Clip <span>Archiv</span></h1>
+      <p class="hero-sub">Die besten Szenen und Fail-Clips aus der Community.</p>
     </div>
 
     <div class="glass-card mc-panel" data-reveal="2">
@@ -419,7 +410,7 @@ main {
         <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0"
                 frameborder="0" allowfullscreen loading="lazy"></iframe>
       </div>
-      <div>Operator: <span class="op-tag">LOUIS</span></div>
+      <div>Eingesendet von: <span class="op-tag">LOUIS</span></div>
     </div>
 
     <div class="glass-card mc-panel" data-reveal="3">
@@ -428,31 +419,31 @@ main {
         <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0"
                 frameborder="0" allowfullscreen loading="lazy"></iframe>
       </div>
-      <div>Operator: <span class="op-tag">NILS</span><span class="op-tag">GIORGIO</span></div>
+      <div>Eingesendet von: <span class="op-tag">NILS</span><span class="op-tag">GIORGIO</span></div>
     </div>
   </div>
 
   <div id="upload" class="page">
     <div class="hero" data-reveal="1">
-      <h1>Clip <span>Submission</span></h1>
-      <p class="hero-sub">&gt; Sende deine besten Szenen direkt ins HQ._</p>
+      <h1>Clip <span>einsenden</span></h1>
+      <p class="hero-sub">Teile deine Highlights direkt mit der gesamten Truppe.</p>
     </div>
 
     <div class="glass-card mc-panel" data-reveal="2" style="max-width: 600px; margin: 0 auto;">
-      <div class="mc-panel-title">Submission Form</div>
+      <div class="mc-panel-title">Einsende-Formular</div>
       
-      <label class="mc-label">AGENT NAME</label>
+      <label class="mc-label">DEIN NAME</label>
       <input class="mc-input" id="uploaderName" type="text" readonly>
 
       <label class="mc-label">TITEL DES CLIPS</label>
-      <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. MEGA PVP CLUTCH">
+      <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. Epic PvP Clutch">
 
-      <label class="mc-label">LINK (MEDAL/YOUTUBE)</label>
+      <label class="mc-label">LINK (MEDAL ODER YOUTUBE)</label>
       <textarea class="mc-input" id="clipLink" rows="4" placeholder="https://..."></textarea>
       
-      <button onclick="sendToDiscord()" id="submitBtn" class="mc-action full">▶ DISCORD DROP</button>
+      <button onclick="sendToDiscord()" id="submitBtn" class="mc-action full">▶ AN DISCORD SENDEN</button>
 
-      <div class="mc-success" id="statusMsg">Erfolgreich übertragen!</div>
+      <div class="mc-success" id="statusMsg">Erfolgreich an Discord übertragen!</div>
     </div>
   </div>
 
@@ -478,14 +469,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   const user = session.user;
   const userName = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
   
-  // Profilbild auswerten (Google-Bild holen, sonst Minecraft-Steves Kopf generieren)
   const avatarUrl = user.user_metadata.avatar_url || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${userName}`;
 
-  // UI mit User-Daten befüllen
   document.getElementById('user-name-display').textContent = userName;
   document.getElementById('uploaderName').value = userName;
   
-  // Sidebar Profil-Elemente befüllen
   document.getElementById('sidebar-user-name').textContent = userName;
   document.getElementById('user-avatar').src = avatarUrl;
 
@@ -524,11 +512,11 @@ function togglePlay() {
   const vis   = document.getElementById('visualizer');
   if (audio.paused) {
     audio.play();
-    btn.textContent = '⏸ PAUSE DISC';
+    btn.textContent = '⏸ SONG PAUSIEREN';
     vis.classList.add('playing');
   } else {
     audio.pause();
-    btn.textContent = '▶ PLAY TRACK';
+    btn.textContent = '▶ SONG ABSPIELEN';
     vis.classList.remove('playing');
   }
 }
@@ -551,7 +539,7 @@ async function sendToDiscord() {
       title: '📹 Neuer Clip eingereicht',
       color: 0xa8ff78,
       fields: [
-        { name: 'Agent', value: name,  inline: true },
+        { name: 'Spieler', value: name,  inline: true },
         { name: 'Titel', value: title, inline: true },
         { name: 'Link',  value: link }
       ],
@@ -568,7 +556,7 @@ async function sendToDiscord() {
     msg.style.display = 'block';
     setTimeout(() => {
       msg.style.display = 'none';
-      btn.textContent = '▶ DISCORD DROP';
+      btn.textContent = '▶ AN DISCORD SENDEN';
       btn.disabled = false;
       document.getElementById('clipTitle').value = '';
       document.getElementById('clipLink').value  = '';
@@ -576,7 +564,7 @@ async function sendToDiscord() {
     }, 3000);
   } catch {
     alert('Übertragung fehlgeschlagen.');
-    btn.textContent = '▶ DISCORD DROP';
+    btn.textContent = '▶ AN DISCORD SENDEN';
     btn.disabled = false;
   }
 }
