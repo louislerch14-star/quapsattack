@@ -615,12 +615,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 /* ── MINECRAFT COOKIE LOGIK & SOUNDS ── */
+/* ── MINECRAFT COOKIE LOGIK & SOUNDS (LOKAL) ── */
 function triggerCookieBanner() {
   if (!localStorage.getItem('mc_cookie_choice')) {
     const banner = document.getElementById('cookie-banner');
     banner.classList.add('show');
-    // Lila Epic Achievement Sound (Retro Challenge Fanfare)
-    playSound("https://files.catbox.moe/k37604.mp3");
+    // Spielt deine lokale Datei ab
+    playSound("achievement.mp3");
   }
 }
 
@@ -631,11 +632,27 @@ function handleCookie(accepted) {
   localStorage.setItem('mc_cookie_choice', accepted ? 'accepted' : 'declined');
 
   if (accepted) {
-    // Minecraft XP Level Up Sound
-    playSound("https://files.catbox.moe/6f9isj.mp3");
+    // Spielt deinen lokalen XP Sound ab
+    playSound("xp.mp3");
   } else {
-    // Creeper Zischen & Explosion
-    playSound("https://files.catbox.moe/qg7z6q.mp3");
+    // Spielt deinen lokalen Creeper Sound ab
+    playSound("creeper.mp3");
+  }
+}
+
+function playSound(file) {
+  try {
+    const audio = new Audio(file);
+    audio.volume = 0.4; // Lautstärke auf 40%, damit es nicht die Ohren weghaut
+    
+    let playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(error => {
+        console.log("Autoplay von Browser blockiert. Erst einmal auf die Seite klicken!");
+      });
+    }
+  } catch (e) {
+    console.log("Audio-Fehler: ", e);
   }
 }
 
