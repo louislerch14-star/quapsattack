@@ -343,6 +343,79 @@ main {
   color: var(--primary);
 }
 
+/* ── MINECRAFT COOKIE BANNER STYLE ── */
+.mc-cookie-banner {
+  position: fixed;
+  bottom: 20px;
+  right: -420px; /* Unsichtbar rechts starten */
+  width: 380px;
+  background: #212121;
+  border: 4px solid #000000;
+  padding: 15px;
+  z-index: 1000;
+  box-shadow: 0 10px 0 rgba(0,0,0,0.5);
+  font-family: 'VT323', monospace;
+  font-size: 1.3rem;
+  transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.mc-cookie-banner.show {
+  right: 20px; /* Reinfliegen */
+}
+.mc-advancement-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.mc-advancement-icon {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+.mc-advancement-text {
+  display: flex;
+  flex-direction: column;
+}
+.mc-advancement-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: #cc55ff; /* Lila Achievement Farbe */
+  text-transform: uppercase;
+}
+.mc-advancement-name {
+  font-size: 1.5rem;
+  color: #ffffff;
+  font-weight: bold;
+}
+.mc-cookie-desc {
+  color: #aaaaaa;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  line-height: 1.3;
+}
+.mc-cookie-buttons {
+  display: flex;
+  gap: 10px;
+}
+.mc-cookie-btn {
+  flex: 1;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid #555;
+  background: #555555;
+  color: #fff;
+  box-shadow: inset -2px -2px 0 #222, inset 2px 2px 0 #aaa;
+}
+.mc-cookie-btn:hover {
+  background: #777777;
+  border-color: #777;
+}
+.mc-cookie-btn.accept { color: var(--primary); }
+.mc-cookie-btn.decline { color: #ff5555; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 800px) {
   .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid var(--border); }
@@ -490,6 +563,23 @@ main {
 
 </main>
 
+<div class="mc-cookie-banner" id="cookie-banner">
+  <div class="mc-advancement-header">
+    <img src="https://minecraft.wiki/images/Cookie_JE1_BE1.png" class="mc-advancement-icon" alt="Cookie">
+    <div class="mc-advancement-text">
+      <span class="mc-advancement-title">Challenge Complete!</span>
+      <span class="mc-advancement-name">Kekse gefressen?</span>
+    </div>
+  </div>
+  <div class="mc-cookie-desc">
+    Diese Website nutzt Kekse, um dein Erlebnis fetter zu machen. Akzeptierst du die Bedingungen oder bist du ein Noob?
+  </div>
+  <div class="mc-cookie-buttons">
+    <div class="mc-cookie-btn accept" onclick="handleCookie(true)">AKZEPTIEREN</div>
+    <div class="mc-cookie-btn decline" onclick="handleCookie(false)">ABLEHNEN</div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -518,8 +608,46 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   loadPinnwand();
 
+  // Trigger das Cookie-Banner nach 2 Sekunden
+  setTimeout(triggerCookieBanner, 2000);
+
   setTimeout(initReveal, 100);
 });
+
+/* ── MINECRAFT COOKIE LOGIK & SOUNDS ── */
+function triggerCookieBanner() {
+  if (!localStorage.getItem('mc_cookie_choice')) {
+    const banner = document.getElementById('cookie-banner');
+    banner.classList.add('show');
+    // Lila Epic Achievement Sound (Retro Challenge Fanfare)
+    playSound("https://files.catbox.moe/k37604.mp3");
+  }
+}
+
+function handleCookie(accepted) {
+  const banner = document.getElementById('cookie-banner');
+  banner.classList.remove('show');
+  
+  localStorage.setItem('mc_cookie_choice', accepted ? 'accepted' : 'declined');
+
+  if (accepted) {
+    // Minecraft XP Level Up Sound
+    playSound("https://files.catbox.moe/6f9isj.mp3");
+  } else {
+    // Creeper Zischen & Explosion
+    playSound("https://files.catbox.moe/qg7z6q.mp3");
+  }
+}
+
+function playSound(url) {
+  try {
+    const audio = new Audio(url);
+    audio.volume = 0.4;
+    audio.play();
+  } catch (e) {
+    console.log("Audio-Wiedergabe blockiert. Erst mit der Seite interagieren!");
+  }
+}
 
 /* ── PINNWAND FUNKTIONEN ── */
 async function loadPinnwand() {
@@ -562,7 +690,6 @@ async function postToPinnwand() {
   btn.disabled = true;
   input.disabled = true;
 
-  // 1. In Supabase speichern
   const { error } = await supabaseClient
     .from('pinnwand')
     .insert([{ name: currentGlobalUser, nachricht: text }]);
@@ -574,7 +701,6 @@ async function postToPinnwand() {
     return;
   }
 
-  // 2. Schickes Discord-Embed-Payload absenden
   const payload = {
     username: 'QuapsHub Pinnwand',
     avatar_url: 'https://quapsattack.airbusfan.de/unnamed.jpg',
