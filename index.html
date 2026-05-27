@@ -516,7 +516,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('uploaderName').value = currentGlobalUser;
   document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
-  // Lädt die alten Nachrichten von der Pinnwand
   loadPinnwand();
 
   setTimeout(initReveal, 100);
@@ -541,7 +540,6 @@ async function loadPinnwand() {
     return;
   }
 
-  // Dreht die Sortierung um, damit die neuste Nachricht optisch unten steht
   const sortedData = data.reverse();
 
   box.innerHTML = sortedData.map(msg => `
@@ -576,10 +574,32 @@ async function postToPinnwand() {
     return;
   }
 
-  // 2. Discord-Push Benachrichtigung absenden
+  // 2. Schickes Discord-Embed-Payload absenden
   const payload = {
     username: 'QuapsHub Pinnwand',
-    content: `📢 **@everyone: Neue Nachricht auf der Pinnwand!**\n**${currentGlobalUser}:** ${text}`
+    avatar_url: 'https://airbusfan.de/unnamed.jpg',
+    content: '📢 @everyone **Neue Nachricht am Start!**',
+    embeds: [{
+      title: '💬 Quaps Attack Pinnwand',
+      description: `>>> ${text}`,
+      color: 0xa8ff78, 
+      fields: [
+        {
+          name: '👤 Absender',
+          value: `\`${currentGlobalUser}\``,
+          inline: true
+        },
+        {
+          name: '📱 Link',
+          value: '[Dashboard öffnen](https://airbusfan.de)',
+          inline: true
+        }
+      ],
+      footer: {
+        text: 'Gesendet via QuapsHub Dashboard'
+      },
+      timestamp: new Date().toISOString()
+    }]
   };
 
   try {
@@ -596,7 +616,6 @@ async function postToPinnwand() {
   btn.disabled = false;
   input.disabled = false;
   
-  // Box aktualisieren
   loadPinnwand();
 }
 
