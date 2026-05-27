@@ -353,7 +353,7 @@ main {
 
   <div class="sidebar-status">
     <span class="status-dot"></span>
-    <span class="status-text">SYSTEM ONLINE</span>
+    <span class="status-text">SECURE SESSION</span>
   </div>
 </div>
 
@@ -362,9 +362,9 @@ main {
   <div id="home" class="page active">
 
     <div class="hero" data-reveal="1">
-      <div class="hero-tag">// STATUS: ACTIVE</div>
-      <h1>Willkommen zurück, <br><span>Agent</span>.</h1>
-      <p class="hero-sub">&gt; Alle Systeme laufen im Live-Betrieb._</p>
+      <div class="hero-tag">// STATUS: AUTHENTICATED</div>
+      <h1>Willkommen zurück, <br><span id="user-name-display">Agent</span>.</h1>
+      <p class="hero-sub">&gt; Alle Systeme laufen im verifizierten Live-Betrieb._</p>
     </div>
 
     <div class="glass-card mc-panel" data-reveal="2">
@@ -453,8 +453,43 @@ main {
 
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+// Supabase Verbindungsdaten (Identisch mit deiner login.html)
+const SUPABASE_URL = "https://aklhszhwwyvrwprdefhz.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_f6E_FUr75feDBx-X7zWfVQ_2FCuMxx2";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
+
+// Session-Check direkt beim Laden der Seite
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+  if (error || !session) {
+    // Nicht eingeloggt? Kaltgestellt und zurück zum Login!
+    window.location.href = 'login.html';
+    return;
+  }
+
+  // Benutzerdaten auswerten (Google Name oder E-Mail)
+  const user = session.user;
+  const userName = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
+
+  // UI mit echten User-Daten befüllen
+  document.getElementById('user-name-display').textContent = userName;
+  document.getElementById('uploaderName').value = userName;
+
+  // Animationen triggern
+  setTimeout(initReveal, 100);
+});
+
+/* ── SUPABASE LOGOUT ── */
+async function logout() {
+  await supabaseClient.auth.signOut();
+  window.location.href = 'login.html';
+}
 
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -463,13 +498,6 @@ function showPage(id) {
   document.getElementById('btn-' + id).classList.add('active');
   setTimeout(initReveal, 50);
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-  const user = localStorage.getItem('loggedInUser') || 'Agent';
-  document.getElementById('user-name-display').textContent = user;
-  document.getElementById('uploaderName').value = user;
-  setTimeout(initReveal, 100);
-});
 
 /* ── SCROLL REVEAL ── */
 function initReveal() {
@@ -548,12 +576,6 @@ async function sendToDiscord() {
     btn.textContent = '▶ DISCORD DROP';
     btn.disabled = false;
   }
-}
-
-/* ── LOGOUT ── */
-function logout() {
-  localStorage.removeItem('loggedInUser');
-  window.location.href = 'login.html';
 }
 </script>
 </body>
