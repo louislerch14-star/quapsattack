@@ -180,6 +180,11 @@
             min-height: 24px;
             line-height: 1.4;
         }
+
+        /* CSS Klassen zum Verstecken von Elementen */
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -188,26 +193,29 @@
 
     <div class="login-overlay">
         <div class="login-card">
-            <h1 class="logo-text">QUAPS ATTACK!</h1>
+            <h1 class="logo-text" id="formTitle">QUAPS LOGIN!</h1>
             
-            <form id="loginForm">
+            <form id="authForm">
                 <label class="mc-label">E-Mail Adresse</label>
                 <input type="email" id="email" placeholder="agent@quaps.de" required>
                 
                 <label class="mc-label">Passwort</label>
                 <input type="password" id="password" placeholder="••••••••" required>
                 
-                <button type="submit" id="submitBtn">LOGIN // MAIL</button>
+                <button type="submit" id="loginBtn">LOGIN // MAIL</button>
+                <button type="button" id="signUpSubmitBtn" class="hidden">CREATE ACCOUNT</button>
             </form>
 
-            <button class="secondary-btn" id="registerBtn">Noch kein Account? Registrieren</button>
+            <button class="secondary-btn" id="switchToRegisterBtn">Noch kein Account? Registrieren</button>
+            <button class="secondary-btn hidden" id="switchToLoginBtn">Bereits registriert? Zum Login</button>
 
-            <div class="divider">--------- OR ---------</div>
-
-            <button class="google-btn" id="googleBtn">
-                <div class="pixel-google-icon"></div>
-                SIGN IN WITH GOOGLE
-            </button>
+            <div id="googleSection">
+                <div class="divider">--------- OR ---------</div>
+                <button class="google-btn" id="googleBtn">
+                    <div class="pixel-google-icon"></div>
+                    SIGN IN WITH GOOGLE
+                </button>
+            </div>
 
             <div id="message"></div>
         </div>
@@ -220,12 +228,19 @@
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const loginForm = document.getElementById('loginForm');
+        // Elemente holen
+        const authForm = document.getElementById('authForm');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
-        const submitBtn = document.getElementById('submitBtn');
+        const formTitle = document.getElementById('formTitle');
+        
+        const loginBtn = document.getElementById('loginBtn');
+        const signUpSubmitBtn = document.getElementById('signUpSubmitBtn');
+        
+        const switchToRegisterBtn = document.getElementById('switchToRegisterBtn');
+        const switchToLoginBtn = document.getElementById('switchToLoginBtn');
+        const googleSection = document.getElementById('googleSection');
         const googleBtn = document.getElementById('googleBtn');
-        const registerBtn = document.getElementById('registerBtn');
         const messageDiv = document.getElementById('message');
 
         function showMessage(text, isError = true) {
@@ -233,8 +248,38 @@
             messageDiv.textContent = text;
         }
 
-        // 1. E-Mail Login
-        loginForm.addEventListener('submit', async (e) => {
+        // ── ANSICHT WECHSELN: ZU REGISTRIEREN ──
+        switchToRegisterBtn.addEventListener('click', () => {
+            showMessage("");
+            formTitle.textContent = "QUAPS REGISTRATION!";
+            
+            // Buttons und Google verstecken
+            loginBtn.classList.add('hidden');
+            googleSection.classList.add('hidden');
+            switchToRegisterBtn.classList.add('hidden');
+            
+            // Registrierungs-Buttons einblenden
+            signUpSubmitBtn.classList.remove('hidden');
+            switchToLoginBtn.classList.remove('hidden');
+        });
+
+        // ── ANSICHT WECHSELN: ZURÜCK ZUM LOGIN ──
+        switchToLoginBtn.addEventListener('click', () => {
+            showMessage("");
+            formTitle.textContent = "QUAPS LOGIN!";
+            
+            // Registrierungs-Buttons verstecken
+            signUpSubmitBtn.classList.add('hidden');
+            switchToLoginBtn.classList.add('hidden');
+            
+            // Login und Google einblenden
+            loginBtn.classList.remove('hidden');
+            googleSection.classList.remove('hidden');
+            switchToRegisterBtn.classList.remove('hidden');
+        });
+
+        // ── 1. E-MAIL LOGIN EXECUTE ──
+        authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             showMessage("");
 
@@ -244,7 +289,6 @@
             });
 
             if (error) {
-                // Fängt ab, falls die Mail noch unbestätigt ist
                 if (error.message.includes("Email not confirmed")) {
                     showMessage("Bitte bestätige zuerst deine E-Mail-Adresse!");
                 } else {
@@ -258,16 +302,15 @@
             }
         });
 
-        // 2. E-Mail Registrierung (mit Bestätigungs-Mail)
-        registerBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
+        // ── 2. E-MAIL REGISTRIERUNG EXECUTE ──
+        signUpSubmitBtn.addEventListener('click', async () => {
             showMessage("");
 
             const email = emailInput.value;
             const password = passwordInput.value;
 
             if (!email || !password) {
-                showMessage("Bitte trage zuerst E-Mail und Passwort oben ein.");
+                showMessage("Bitte trage E-Mail und Passwort ein.");
                 return;
             }
 
@@ -275,7 +318,6 @@
                 email: email,
                 password: password,
                 options: {
-                    // Leitet den User nach dem Klick in der Mail direkt zur index.html weiter
                     emailRedirectTo: window.location.origin + '/index.html'
                 }
             });
@@ -283,10 +325,8 @@
             if (error) {
                 showMessage(error.message);
             } else {
-                // Überprüfen, ob der User eine Bestätigungsmail braucht (Standard bei Supabase)
                 if (data.user && data.session === null) {
-                    showMessage("Registrierung erfolgreich! Bitte überprüfe dein E-Mail-Postfach, um den Account zu aktivieren.", false);
-                    // Felder leeren
+                    showMessage("Registrierung erfolgreich! Bitte überprüfe dein E-Mail-Postfach.", false);
                     emailInput.value = "";
                     passwordInput.value = "";
                 } else {
@@ -298,20 +338,16 @@
             }
         });
 
-        // 3. Google OAuth Login
+        // ── 3. GOOGLE OAUTH LOGIN ──
         googleBtn.addEventListener('click', async () => {
             showMessage("");
-            
             const { data, error } = await supabaseClient.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
                     redirectTo: window.location.origin + '/index.html'
                 }
             });
-
-            if (error) {
-                showMessage("Google Login fehlgeschlagen: " + error.message);
-            }
+            if (error) showMessage("Google Login fehlgeschlagen: " + error.message);
         });
     </script>
 </body>
