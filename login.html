@@ -178,6 +178,7 @@
             margin-top: 15px;
             font-size: 1rem;
             min-height: 24px;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -196,7 +197,7 @@
                 <label class="mc-label">Passwort</label>
                 <input type="password" id="password" placeholder="••••••••" required>
                 
-                <button type="submit">LOGIN // MAIL</button>
+                <button type="submit" id="submitBtn">LOGIN // MAIL</button>
             </form>
 
             <button class="secondary-btn" id="registerBtn">Noch kein Account? Registrieren</button>
@@ -214,7 +215,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Deine neuen, korrigierten Supabase Verbindungsdaten
         const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
         
@@ -223,6 +223,7 @@
         const loginForm = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
+        const submitBtn = document.getElementById('submitBtn');
         const googleBtn = document.getElementById('googleBtn');
         const registerBtn = document.getElementById('registerBtn');
         const messageDiv = document.getElementById('message');
@@ -243,7 +244,12 @@
             });
 
             if (error) {
-                showMessage(error.message);
+                // Fängt ab, falls die Mail noch unbestätigt ist
+                if (error.message.includes("Email not confirmed")) {
+                    showMessage("Bitte bestätige zuerst deine E-Mail-Adresse!");
+                } else {
+                    showMessage(error.message);
+                }
             } else {
                 showMessage("Login erfolgreich! Weiterleitung...", false);
                 setTimeout(() => {
@@ -252,25 +258,43 @@
             }
         });
 
-        // 2. E-Mail Registrierung
+        // 2. E-Mail Registrierung (mit Bestätigungs-Mail)
         registerBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             showMessage("");
 
-            if (!emailInput.value || !passwordInput.value) {
-                showMessage("Bitte E-Mail und Passwort eingeben.");
+            const email = emailInput.value;
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                showMessage("Bitte trage zuerst E-Mail und Passwort oben ein.");
                 return;
             }
 
             const { data, error } = await supabaseClient.auth.signUp({
-                email: emailInput.value,
-                password: passwordInput.value,
+                email: email,
+                password: password,
+                options: {
+                    // Leitet den User nach dem Klick in der Mail direkt zur index.html weiter
+                    emailRedirectTo: window.location.origin + '/index.html'
+                }
             });
 
             if (error) {
                 showMessage(error.message);
             } else {
-                showMessage("Account erstellt! Du kannst dich jetzt einloggen.", false);
+                // Überprüfen, ob der User eine Bestätigungsmail braucht (Standard bei Supabase)
+                if (data.user && data.session === null) {
+                    showMessage("Registrierung erfolgreich! Bitte überprüfe dein E-Mail-Postfach, um den Account zu aktivieren.", false);
+                    // Felder leeren
+                    emailInput.value = "";
+                    passwordInput.value = "";
+                } else {
+                    showMessage("Account direkt erstellt und eingeloggt! Weiterleitung...", false);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                }
             }
         });
 
