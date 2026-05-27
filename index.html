@@ -241,6 +241,36 @@ main {
 .panel-body .line:last-child { border-bottom: none; }
 .panel-body .line span { color: var(--primary); margin-right: 10px; }
 
+/* ── PINNWAND STYLES ── */
+.shoutbox-list {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 5px;
+}
+.shoutbox-msg {
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+.shoutbox-msg .msg-user {
+  color: var(--gold);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  margin-right: 8px;
+}
+.shoutbox-form {
+  display: flex;
+  gap: 10px;
+}
+.shoutbox-form .mc-input {
+  margin-bottom: 0;
+  flex: 1;
+}
+
 /* ── AUDIO VISUALIZER ── */
 .visualizer { display: flex; gap: 4px; height: 35px; align-items: center; margin: 20px 0; }
 .vis-bar { width: 5px; height: 10px; background: #333; border-radius: 2px; }
@@ -355,7 +385,7 @@ main {
   </div>
 
   <div class="sidebar-profile">
-    <img src="" id="user-avatar" class="profile-avatar" alt="M">
+    <img src="unnamed.jpg" id="user-avatar" class="profile-avatar" alt="M">
     <div class="profile-info">
       <span class="profile-name" id="sidebar-user-name">SPIELER</span>
       <div class="profile-status-wrapper">
@@ -385,6 +415,17 @@ main {
     </div>
 
     <div class="glass-card mc-panel" data-reveal="3">
+      <div class="mc-panel-title">💬 QUAPS PINNWAND</div>
+      <div class="shoutbox-list" id="pinnwand-box">
+        <div style="color: var(--muted); font-size: 1rem;">Lade Nachrichten...</div>
+      </div>
+      <div class="shoutbox-form">
+        <input type="text" id="pinnwand-input" class="mc-input" placeholder="Schreib was auf die Wand..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
+        <button onclick="postToPinnwand()" id="pinnwand-btn" class="mc-action">SENDEN</button>
+      </div>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="4">
       <div class="mc-panel-title">🎵 JUKEBOX // HYMNE</div>
       <div class="visualizer" id="visualizer">
         <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
@@ -458,6 +499,8 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
 
+let currentGlobalUser = "SPIELER";
+
 window.addEventListener('DOMContentLoaded', async () => {
   const { data: { session }, error } = await supabaseClient.auth.getSession();
 
@@ -467,19 +510,101 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   const user = session.user;
-  const userName = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
+  currentGlobalUser = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
   
-  const avatarUrl = user.user_metadata.avatar_url || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${userName}`;
+  document.getElementById('user-name-display').textContent = currentGlobalUser;
+  document.getElementById('uploaderName').value = currentGlobalUser;
+  document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
-  document.getElementById('user-name-display').textContent = userName;
-  document.getElementById('uploaderName').value = userName;
-  
-  document.getElementById('sidebar-user-name').textContent = userName;
-  document.getElementById('user-avatar').src = avatarUrl;
+  // Lädt die alten Nachrichten von der Pinnwand
+  loadPinnwand();
 
   setTimeout(initReveal, 100);
 });
 
+/* ── PINNWAND FUNKTIONEN ── */
+async function loadPinnwand() {
+  const { data, error } = await supabaseClient
+    .from('pinnwand')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(30);
+
+  if (error) {
+    document.getElementById('pinnwand-box').innerHTML = `<div style="color: #ff5555;">Fehler beim Laden!</div>`;
+    return;
+  }
+
+  const box = document.getElementById('pinnwand-box');
+  if (data.length === 0) {
+    box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Noch keine Einträge. Schreib den ersten!</div>`;
+    return;
+  }
+
+  // Dreht die Sortierung um, damit die neuste Nachricht optisch unten steht
+  const sortedData = data.reverse();
+
+  box.innerHTML = sortedData.map(msg => `
+    <div class="shoutbox-msg">
+      <span class="msg-user">${escapeHtml(msg.name)}:</span>
+      <span>${escapeHtml(msg.nachricht)}</span>
+    </div>
+  `).join('');
+  
+  box.scrollTop = box.scrollHeight;
+}
+
+async function postToPinnwand() {
+  const input = document.getElementById('pinnwand-input');
+  const btn = document.getElementById('pinnwand-btn');
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  btn.disabled = true;
+  input.disabled = true;
+
+  // 1. In Supabase speichern
+  const { error } = await supabaseClient
+    .from('pinnwand')
+    .insert([{ name: currentGlobalUser, nachricht: text }]);
+
+  if (error) {
+    alert('Fehler beim Speichern.');
+    btn.disabled = false;
+    input.disabled = false;
+    return;
+  }
+
+  // 2. Discord-Push Benachrichtigung absenden
+  const payload = {
+    username: 'QuapsHub Pinnwand',
+    content: `📢 **@everyone: Neue Nachricht auf der Pinnwand!**\n**${currentGlobalUser}:** ${text}`
+  };
+
+  try {
+    await fetch(DISCORD_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {
+    console.log('Discord Push fehlgeschlagen, Eintrag wurde trotzdem gespeichert.');
+  }
+
+  input.value = '';
+  btn.disabled = false;
+  input.disabled = false;
+  
+  // Box aktualisieren
+  loadPinnwand();
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+/* ── STANDARD NAVIGATION & CLIPS ── */
 async function logout() {
   await supabaseClient.auth.signOut();
   window.location.href = 'login.html';
