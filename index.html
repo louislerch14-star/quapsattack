@@ -636,7 +636,7 @@ main {
     </div>
   </div>
 
-  <!-- DOWNLOADS PAGE -->
+<!-- DOWNLOADS PAGE -->
   <div id="downloads" class="page">
     <div class="hero" data-reveal="1">
       <h1>Welten <span>Downloads</span></h1>
@@ -688,6 +688,11 @@ main {
         <div class="paypol-project-subtitle">Sicherer Download-Schutz & Verifizierung</div>
       </div>
 
+      <!-- 🏃‍♂️ LAUFTEXT BEREICH (Wird dynamisch gesteuert) 🏃‍♂️ -->
+      <div id="paypol-marquee-container" style="background: #111; border: 2px solid #555; padding: 8px; margin-bottom: 15px; overflow: hidden; white-space: nowrap; font-family: monospace; color: #ffaa00; font-size: 0.95rem; display: none;">
+        <marquee id="paypol-marquee" behavior="scroll" direction="left" scrollamount="6"></marquee>
+      </div>
+
       <!-- Schritt 1: Spenden-Eingabe -->
       <div id="paypol-step-1">
         <div class="paypol-input-group">
@@ -710,7 +715,7 @@ main {
         <button onclick="verifyPaypolCode()" id="paypolBtn" class="paypol-btn">Code prüfen & Download starten</button>
       </div>
 
-      <a id="hiddenDownloadTrigger" href="#" download style="display: none;"></a>
+      <a id="hiddenDownloadTrigger" href="#" target="_blank" style="display: none;"></a>
     </div>
     
     <!-- Fest eingebautes Trastpilod Siegel im unteren Bereich des Fensters -->
@@ -736,7 +741,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
 
-/* 🔑 TRASTPILOD CODES FÜR DIE WELTEN (Hier kannst du neue hinzufügen oder ändern) */
+/* 🔑 TRASTPILOD CODES FÜR DIE WELTEN */
 const VALID_DOWNLOAD_CODES = [
   "Joschi7",
   "GeheimKey123",
@@ -745,28 +750,39 @@ const VALID_DOWNLOAD_CODES = [
   "ServerPass2026"
 ];
 
-/* 📂 PROJEKTE & DATEIEN */
+/* 📂 PROJEKTE & DATEIEN (Inklusive Season 10 Google Drive Link) */
 const PROJECT_DOWNLOADS = [
+  {
+    id: "season10",
+    title: "Quaps Attack Hauptwelt (Season 10)",
+    version: "1.21+",
+    size: "ca. 5.0 GB",
+    file: "HIER_DEINEN_GOOGLE_DRIVE_LINK_EINFÜGEN",
+    marqueeText: "Das ist unserere Welt von QuapsAttack 10, harte arbeit in den Anus stecken, Nevada von Lois_7 und Milka_600 (danke joschi fürs Redstone)"
+  },
   {
     id: "hauptwelt",
     title: "Quaps Attack Hauptwelt (Season 1)",
     version: "1.21+",
     size: "ca. 420 MB",
-    file: "world_season1.zip"         
+    file: "world_season1.zip",
+    marqueeText: "Quaps Attack Season 1 Klassiker! Altes Hub und erste Basen."
   },
   {
     id: "projekt2",
     title: "Bedrock Test-Server Map",
     version: "1.20+",
     size: "ca. 85 MB",
-    file: "bedrock_map.zip"
+    file: "bedrock_map.zip",
+    marqueeText: "Test-Map für die Bedrock Edition Crossplay-Anbindungen."
   },
   {
     id: "projekt3",
     title: "Create Modpack Welt",
     version: "1.19.2",
     size: "ca. 1.2 GB",
-    file: "create_world.zip"
+    file: "create_world.zip",
+    marqueeText: "Vollgestopft mit Create-Mod Maschinen und riesigen Fabriken!"
   }
 ];
 
@@ -823,6 +839,16 @@ function openPaypolGateway(id) {
   document.getElementById('paypolCode').value = "";
   document.getElementById('paypolError').style.display = "none";
   
+  // Lauftext befüllen und anzeigen
+  const marqueeContainer = document.getElementById('paypol-marquee-container');
+  const marqueeEl = document.getElementById('paypol-marquee');
+  if (project.marqueeText) {
+    marqueeEl.textContent = project.marqueeText;
+    marqueeContainer.style.display = "block";
+  } else {
+    marqueeContainer.style.display = "none";
+  }
+
   // Interface resetten auf Schritt 1
   document.getElementById('paypol-step-2').style.display = "none";
   
@@ -838,7 +864,6 @@ function closePaypolGateway() {
 }
 
 function advanceToCodeStep() {
-  // Blendet die Code-Eingabe ein, sobald Schritt 1 bestätigt wurde
   document.getElementById('paypol-step-2').style.display = "block";
   playSound("xp.mp3");
 }
@@ -851,7 +876,6 @@ function verifyPaypolCode() {
   const errorBox = document.getElementById('paypolError');
   const btn = document.getElementById('paypolBtn');
 
-  // Prüft, ob der eingegebene Code in der Liste existiert
   if (VALID_DOWNLOAD_CODES.includes(inputCode)) {
     errorBox.style.display = "none";
     btn.textContent = "✔ VERIFIZIERT - DATEI WIRD GELADEN";
@@ -1005,5 +1029,7 @@ async function sendToDiscord() {
   } catch { alert('Übertragung fehlgeschlagen.'); btn.textContent = '▶ AN DISCORD SENDEN'; btn.disabled = false; }
 }
 </script>
+</body>
+</html>
 </body>
 </html>
