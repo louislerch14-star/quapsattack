@@ -688,10 +688,20 @@ main {
         <div class="paypol-project-subtitle">Sicherer Download-Schutz & Verifizierung</div>
       </div>
 
-      <!-- 🏃‍♂️ LAUFTEXT BEREICH (Wird dynamisch gesteuert) 🏃‍♂️ -->
-      <div id="paypol-marquee-container" style="background: #111; border: 2px solid #555; padding: 8px; margin-bottom: 15px; overflow: hidden; white-space: nowrap; font-family: monospace; color: #ffaa00; font-size: 0.95rem; display: none;">
-        <marquee id="paypol-marquee" behavior="scroll" direction="left" scrollamount="6"></marquee>
+      <!-- 🔥 STYLISCHER, CSS-ANIMIERTER LAUFTEXT (Kommt vor PayPol-Schritten!) 🔥 -->
+      <div id="paypol-marquee-container" style="background: #141414; border: 2px solid #555; padding: 12px; margin-bottom: 20px; overflow: hidden; position: relative; box-shadow: inset 0 0 10px #000; border-radius: 4px; display: none;">
+        <div id="paypol-marquee" style="display: inline-block; white-space: nowrap; font-family: 'Courier New', Courier, monospace; color: #ffaa00; font-size: 1.1rem; font-weight: bold; text-shadow: 2px 2px #332200; padding-left: 100%; animation: mcMarquee linear infinite;">
+          <!-- Text wird per JS eingefügt -->
+        </div>
       </div>
+
+      <!-- CSS Animation direkt eingebettet, damit die Schrift flüssig läuft -->
+      <style>
+        @keyframes mcMarquee {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-100%, 0, 0); }
+        }
+      </style>
 
       <!-- Schritt 1: Spenden-Eingabe -->
       <div id="paypol-step-1">
@@ -758,7 +768,7 @@ const PROJECT_DOWNLOADS = [
     version: "1.21+",
     size: "ca. 5.0 GB",
     file: "HIER_DEINEN_GOOGLE_DRIVE_LINK_EINFÜGEN",
-    marqueeText: "Das ist unserere Welt von QuapsAttack 10, harte arbeit in den Anus stecken, Nevada von Lois_7 und Milka_600 (danke joschi fürs Redstone)"
+    marqueeText: "Das ist unserere Welt von QuapsAttack 10, harte arbeit in den Anus stecken, Nevada von Lois_7 und Milka_600 (danke joschi fürs Redstone) ++ ps. für den download wird es ein Google Drive Link geben! ++"
   },
   {
     id: "hauptwelt",
@@ -839,12 +849,17 @@ function openPaypolGateway(id) {
   document.getElementById('paypolCode').value = "";
   document.getElementById('paypolError').style.display = "none";
   
-  // Lauftext befüllen und anzeigen
+  // Modernen CSS-Lauftext befüllen und Geschwindigkeit an Textlänge anpassen
   const marqueeContainer = document.getElementById('paypol-marquee-container');
   const marqueeEl = document.getElementById('paypol-marquee');
+  
   if (project.marqueeText) {
-    marqueeEl.textContent = project.marqueeText;
+    marqueeEl.textContent = project.marqueeText + "        ";
     marqueeContainer.style.display = "block";
+    
+    // Berechnet die Scroll-Dauer dynamisch je nach Textlänge (ca. 15s für Season 10)
+    const duration = Math.max(10, project.marqueeText.length * 0.08);
+    marqueeEl.style.animationDuration = `${duration}s`;
   } else {
     marqueeContainer.style.display = "none";
   }
@@ -1029,7 +1044,5 @@ async function sendToDiscord() {
   } catch { alert('Übertragung fehlgeschlagen.'); btn.textContent = '▶ AN DISCORD SENDEN'; btn.disabled = false; }
 }
 </script>
-</body>
-</html>
 </body>
 </html>
