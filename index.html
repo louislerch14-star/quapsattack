@@ -668,10 +668,26 @@ main {
 </div>
 
 
-<!-- ── 🌟 FAKE PAYPOL GATEWAY MODAL MIT INTEGRATED TRASTPILOD BAR 🌟 ── -->
+<!-- ── 🌟 FAKE PAYPOL GATEWAY MODAL MIT CINEMATIC INTRO & TRASTPILOD 🌟 ── -->
 <div class="paypol-modal-overlay" id="paypolModal">
-  <div class="paypol-box">
+  <div class="paypol-box" id="paypolMainBox">
     
+    <!-- 🎬 CINEMATIC INTRO SCREEN (SCHWARZER SCREEN VOR PAYPOL) -->
+    <div id="cinematic-intro-screen" style="position: absolute; top:0; left:0; width:100%; height:100%; background: #050505; z-index: 100; display: none; flex-direction: column; justify-content: space-between; padding: 25px; box-sizing: border-box; overflow: hidden; border-radius: 6px;">
+      
+      <!-- Der scrollende Text-Container -->
+      <div style="position: relative; width: 100%; height: 75%; overflow: hidden; mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);">
+        <div id="cinematic-text-scroll" style="position: absolute; width: 100%; text-align: center; font-family: 'Courier New', Courier, monospace; color: #ffaa00; font-size: 1.2rem; font-weight: bold; line-height: 1.8; text-shadow: 2px 2px #221100; transform: translateY(100%);">
+          <!-- Text wird dynamisch per JS geladen -->
+        </div>
+      </div>
+
+      <!-- Skip Button unten -->
+      <div style="text-align: center; margin-bottom: 10px;">
+        <button onclick="skipCinematicIntro()" class="mc-action" style="padding: 8px 25px; font-size: 0.9rem; background: #222; border: 2px solid #555; color: #aaa; cursor: pointer; border-radius: 4px;">⏩ INTRO ÜBERSPRINGEN</button>
+      </div>
+    </div>
+
     <!-- Header mit Fake PayPol Logo -->
     <div class="paypol-header">
       <div class="paypol-logo-area">
@@ -687,21 +703,6 @@ main {
         <div class="paypol-project-title" id="paypolItemName">Projektname</div>
         <div class="paypol-project-subtitle">Sicherer Download-Schutz & Verifizierung</div>
       </div>
-
-      <!-- 🔥 STYLISCHER, CSS-ANIMIERTER LAUFTEXT (Kommt vor PayPol-Schritten!) 🔥 -->
-      <div id="paypol-marquee-container" style="background: #141414; border: 2px solid #555; padding: 12px; margin-bottom: 20px; overflow: hidden; position: relative; box-shadow: inset 0 0 10px #000; border-radius: 4px; display: none;">
-        <div id="paypol-marquee" style="display: inline-block; white-space: nowrap; font-family: 'Courier New', Courier, monospace; color: #ffaa00; font-size: 1.1rem; font-weight: bold; text-shadow: 2px 2px #332200; padding-left: 100%; animation: mcMarquee linear infinite;">
-          <!-- Text wird per JS eingefügt -->
-        </div>
-      </div>
-
-      <!-- CSS Animation direkt eingebettet, damit die Schrift flüssig läuft -->
-      <style>
-        @keyframes mcMarquee {
-          0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-100%, 0, 0); }
-        }
-      </style>
 
       <!-- Schritt 1: Spenden-Eingabe -->
       <div id="paypol-step-1">
@@ -741,6 +742,14 @@ main {
   </div>
 </div>
 
+<!-- Keyframe Animation für das CSS-Scrolling -->
+<style>
+  @keyframes cinematicScrollUp {
+    0% { transform: translateY(100%); }
+    100% { transform: translateY(-110%); }
+  }
+</style>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -760,7 +769,7 @@ const VALID_DOWNLOAD_CODES = [
   "ServerPass2026"
 ];
 
-/* 📂 PROJEKTE & DATEIEN (Inklusive Season 10 Google Drive Link) */
+/* 📂 PROJEKTE & DATEIEN (Der Text wurde hier für das Intro angepasst und veredelt) */
 const PROJECT_DOWNLOADS = [
   {
     id: "season10",
@@ -768,7 +777,7 @@ const PROJECT_DOWNLOADS = [
     version: "1.21+",
     size: "ca. 5.0 GB",
     file: "HIER_DEINEN_GOOGLE_DRIVE_LINK_EINFÜGEN",
-    marqueeText: "Das ist unserere Welt von QuapsAttack 10, harte arbeit in den Anus stecken, Nevada von Lois_7 und Milka_600 (danke joschi fürs Redstone) ++ ps. für den download wird es ein Google Drive Link geben! ++"
+    introText: "✨ QUAPS ATTACK 10 ✨<br><br>Du stehst kurz vor dem Download einer Legende.<br>Monate voller Schweiß, Blut und unendlicher Arbeit stecken in diesen Blöcken.<br><br>Erlebe das gewaltige Nevada, erbaut von Lois_7 und Milka_600.<br><br>Ein riesiges Danke geht raus an Joschi für die kranke Redstone-Power!<br><br>🔒 SICHERER GOOGLE DRIVE DOWNLOAD BREITGESTELLT."
   },
   {
     id: "hauptwelt",
@@ -776,7 +785,7 @@ const PROJECT_DOWNLOADS = [
     version: "1.21+",
     size: "ca. 420 MB",
     file: "world_season1.zip",
-    marqueeText: "Quaps Attack Season 1 Klassiker! Altes Hub und erste Basen."
+    introText: "⭐ QUAPS ATTACK SEASON 1 ⭐<br><br>Zurück zu den Wurzeln.<br>Lade dir das erste offizielle Server-Hub und die Geburtsstunde unserer Community herunter!"
   },
   {
     id: "projekt2",
@@ -784,7 +793,7 @@ const PROJECT_DOWNLOADS = [
     version: "1.20+",
     size: "ca. 85 MB",
     file: "bedrock_map.zip",
-    marqueeText: "Test-Map für die Bedrock Edition Crossplay-Anbindungen."
+    introText: "📱 BEDROCK SERVER MAP 📱<br><br>Die offizielle Optimierungs- und Test-Welt für mobiles Crossplay."
   },
   {
     id: "projekt3",
@@ -792,12 +801,13 @@ const PROJECT_DOWNLOADS = [
     version: "1.19.2",
     size: "ca. 1.2 GB",
     file: "create_world.zip",
-    marqueeText: "Vollgestopft mit Create-Mod Maschinen und riesigen Fabriken!"
+    introText: "⚙️ CREATE MODPACK WELT ⚙️<br><br>Fabriken, automatisierte Züge und gigantische Maschinen.<br>Achtung: Extrem hohe Auslastung für schwache Rechner!"
   }
 ];
 
 let currentGlobalUser = "SPIELER";
 let selectedProjectId = null;
+let cinematicTimeout = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
   const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -849,33 +859,47 @@ function openPaypolGateway(id) {
   document.getElementById('paypolCode').value = "";
   document.getElementById('paypolError').style.display = "none";
   
-  // Modernen CSS-Lauftext befüllen und Geschwindigkeit an Textlänge anpassen
-  const marqueeContainer = document.getElementById('paypol-marquee-container');
-  const marqueeEl = document.getElementById('paypol-marquee');
-  
-  if (project.marqueeText) {
-    marqueeEl.textContent = project.marqueeText + "        ";
-    marqueeContainer.style.display = "block";
-    
-    // Berechnet die Scroll-Dauer dynamisch je nach Textlänge (ca. 15s für Season 10)
-    const duration = Math.max(10, project.marqueeText.length * 0.08);
-    marqueeEl.style.animationDuration = `${duration}s`;
-  } else {
-    marqueeContainer.style.display = "none";
-  }
-
   // Interface resetten auf Schritt 1
   document.getElementById('paypol-step-2').style.display = "none";
-  
   const btn = document.getElementById('paypolBtn');
   btn.textContent = "Code prüfen & Download starten";
   btn.classList.remove('paypol-btn-unlocked');
 
+  // Modal anzeigen
   document.getElementById('paypolModal').classList.add('show');
+
+  // Cinematic Intro auslösen falls Text vorhanden ist
+  const introScreen = document.getElementById('cinematic-intro-screen');
+  const scrollText = document.getElementById('cinematic-text-scroll');
+  
+  if (project.introText) {
+    introScreen.style.display = "flex";
+    scrollText.innerHTML = project.introText;
+    
+    // Animation via JS zuweisen, damit sie jedes Mal sauber von vorne startet
+    scrollText.style.animation = "cinematicScrollUp 18s linear forwards";
+    playSound("achievement.mp3");
+
+    // Nach 18 Sekunden automatisch weiterleiten, falls nicht geskippt wurde
+    cinematicTimeout = setTimeout(() => {
+      skipCinematicIntro();
+    }, 18000);
+  } else {
+    introScreen.style.display = "none";
+  }
+}
+
+function skipCinematicIntro() {
+  if (cinematicTimeout) clearTimeout(cinematicTimeout);
+  document.getElementById('cinematic-intro-screen').style.display = "none";
+  document.getElementById('cinematic-text-scroll').style.style = "";
+  playSound("xp.mp3");
 }
 
 function closePaypolGateway() {
+  if (cinematicTimeout) clearTimeout(cinematicTimeout);
   document.getElementById('paypolModal').classList.remove('show');
+  document.getElementById('cinematic-intro-screen').style.display = "none";
 }
 
 function advanceToCodeStep() {
