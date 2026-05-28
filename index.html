@@ -691,7 +691,7 @@ main {
       <!-- Schritt 1: Spenden-Eingabe -->
       <div id="paypol-step-1">
         <div class="paypol-input-group">
-          <label class="paypol-label">PROJEKT-SUPPORT-SPENDE (FREIWILLIG)</label>
+          <label class="paypol-label">PROJEKT SUPPORT SPENDE (Emeralds)</label>
           <div class="paypol-amount-box">
             <input type="number" id="paypolAmount" class="paypol-input" value="5" min="0">
             <span>EUR</span>
@@ -736,14 +736,22 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
 
-/* 📂 PROJEKTE & FREISCHALTCODES */
+/* 🔑 TRASTPILOD CODES FÜR DIE WELTEN (Hier kannst du neue hinzufügen oder ändern) */
+const VALID_DOWNLOAD_CODES = [
+  "Joschi7",
+  "GeheimKey123",
+  "QuapsMod2026",
+  "LouisBeta26",
+  "ServerPass2026"
+];
+
+/* 📂 PROJEKTE & DATEIEN */
 const PROJECT_DOWNLOADS = [
   {
     id: "hauptwelt",
     title: "Quaps Attack Hauptwelt (Season 1)",
     version: "1.21+",
     size: "ca. 420 MB",
-    code: "Joschi7",                 
     file: "world_season1.zip"         
   },
   {
@@ -751,7 +759,6 @@ const PROJECT_DOWNLOADS = [
     title: "Bedrock Test-Server Map",
     version: "1.20+",
     size: "ca. 85 MB",
-    code: "GeheimKey123",             
     file: "bedrock_map.zip"
   },
   {
@@ -759,7 +766,6 @@ const PROJECT_DOWNLOADS = [
     title: "Create Modpack Welt",
     version: "1.19.2",
     size: "ca. 1.2 GB",
-    code: "QuapsMod2026",             
     file: "create_world.zip"
   }
 ];
@@ -845,7 +851,8 @@ function verifyPaypolCode() {
   const errorBox = document.getElementById('paypolError');
   const btn = document.getElementById('paypolBtn');
 
-  if (inputCode === project.code) {
+  // Prüft, ob der eingegebene Code in der Liste existiert
+  if (VALID_DOWNLOAD_CODES.includes(inputCode)) {
     errorBox.style.display = "none";
     btn.textContent = "✔ VERIFIZIERT - DATEI WIRD GELADEN";
     btn.classList.add('paypol-btn-unlocked');
