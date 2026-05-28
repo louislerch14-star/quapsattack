@@ -6,7 +6,7 @@
 <title>QuapsHub</title>
 <link rel="icon" type="image/jpeg" href="unnamed.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --primary: #a8ff78; /* Frisches XP-Grün */
@@ -19,8 +19,8 @@
   --text:    #f0f0f0;
   --muted:   #aaaaaa;
   --trust-green: #00b67a;
-  --paypal-blue: #003087;
-  --paypal-cyan: #0079c1;
+  --paypol-blue: #003087;
+  --paypol-cyan: #0079c1;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -245,71 +245,6 @@ main {
 .panel-body .line:last-child { border-bottom: none; }
 .panel-body .line span { color: var(--primary); margin-right: 10px; }
 
-/* ── PAYPAL PANEL WITH INTEGRATED TRASTPILOD BAR ── */
-.paypal-action-btn {
-  display: block;
-  width: 100%;
-  background: linear-gradient(90deg, var(--paypal-blue), var(--paypal-cyan));
-  color: #fff;
-  border: none;
-  padding: 16px;
-  border-radius: 10px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.6rem;
-  cursor: pointer;
-  text-align: center;
-  transition: 0.2s;
-  box-shadow: 0 4px 15px rgba(0, 121, 193, 0.3);
-  text-decoration: none;
-  margin-bottom: 20px;
-}
-.paypal-action-btn:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-}
-.paypal-trust-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #ffffff;
-  color: #1c1c1c;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-}
-.paypal-trust-logo {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.paypal-trust-star {
-  background: var(--trust-green);
-  color: #fff;
-  padding: 2px 5px;
-  font-weight: bold;
-  font-size: 0.9rem;
-  border-radius: 2px;
-}
-.paypal-trust-text {
-  font-weight: 800;
-  font-size: 1.1rem;
-  letter-spacing: -0.5px;
-}
-.paypal-trust-stars {
-  color: #ffb600;
-  font-weight: bold;
-}
-.paypal-trust-badge {
-  background: var(--trust-green);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 20px;
-  text-transform: uppercase;
-}
-
 /* ── PINNWAND STYLES ── */
 .shoutbox-list {
   max-height: 220px;
@@ -465,8 +400,9 @@ main {
 .mc-cookie-btn.accept { color: var(--primary); }
 .mc-cookie-btn.decline { color: #ff5555; }
 
-/* ── TRASTPILOD VERIFIED GATEWAY MODAL ── */
-.trust-modal-overlay {
+
+/* ── 🌟 FAKE PAYPOL & TRASTPILOD GATEWAY MODAL 🌟 ── */
+.paypol-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.85);
@@ -477,9 +413,9 @@ main {
   padding: 20px;
   font-family: 'Inter', sans-serif;
 }
-.trust-modal-overlay.show { display: flex; }
+.paypol-modal-overlay.show { display: flex; }
 
-.trust-box {
+.paypol-box {
   background: #ffffff;
   color: #1c1c1c;
   width: 100%;
@@ -487,57 +423,84 @@ main {
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   overflow: hidden;
-  animation: trustPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: paypolPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-@keyframes trustPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes paypolPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-.trust-header {
+.paypol-header {
   background: #fcfcfd;
-  padding: 24px;
+  padding: 20px 24px;
   border-bottom: 1px solid #eef0f2;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.trust-logo-area { display: flex; align-items: center; gap: 6px; }
-.trust-logo-star { background: var(--trust-green); color: #fff; padding: 4px 6px; font-weight: bold; font-size: 1.1rem; border-radius: 3px; }
-.trust-logo-text { font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; color: #1c1c1c; }
-.trust-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #9aa1a7; }
+.paypol-logo-area {
+  display: flex;
+  align-items: center;
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.6rem;
+  letter-spacing: -1px;
+}
+.paypol-logo-p1 { color: var(--paypol-blue); }
+.paypol-logo-p2 { color: var(--paypol-cyan); }
 
-.trust-body { padding: 30px 24px; }
+.paypol-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #9aa1a7; }
 
-.trust-bar-container {
-  background: rgba(0, 182, 122, 0.08);
-  border: 1px solid rgba(0, 182, 122, 0.2);
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 24px;
+.paypol-body { padding: 24px; }
+
+.paypol-project-banner {
+  text-align: center;
+  background: #f4f6f8;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.paypol-project-title { font-size: 1.1rem; font-weight: 700; color: #1c1c1c; }
+.paypol-project-subtitle { font-size: 0.8rem; color: #6c7378; margin-top: 3px; }
+
+.paypol-input-group { margin-bottom: 20px; }
+.paypol-label { display: block; font-size: 0.75rem; font-weight: 700; color: #3b3d40; margin-bottom: 6px; letter-spacing: 0.5px; }
+.paypol-amount-box { position: relative; }
+.paypol-amount-box span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-weight: 700; font-size: 1.2rem; color: #1c1c1c; }
+.paypol-input {
+  width: 100%; padding: 14px; border: 2px solid #eef0f2; background: #f9fafb; border-radius: 8px; font-size: 1.1rem; color: #000; transition: 0.2s; font-weight: 600;
+}
+.paypol-input:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
+
+/* Code-Eingabe-Bereich (wird erst nach Schritt 1 eingeblendet) */
+.paypol-code-area {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed #eef0f2;
+  display: none;
+}
+
+.paypol-btn {
+  display: block; width: 100%; background: linear-gradient(90deg, var(--paypol-blue), var(--paypol-cyan)); color: #fff; border: none; padding: 15px; border-radius: 25px; font-size: 1rem; font-weight: 700; cursor: pointer; text-align: center; transition: 0.2s; box-shadow: 0 4px 12px rgba(0, 121, 193, 0.2);
+}
+.paypol-btn:hover { filter: brightness(1.1); }
+.paypol-btn-unlocked { background: var(--trust-green) !important; box-shadow: none; }
+
+.paypol-error-msg { color: #ca1a1a; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
+
+/* ── INTEGRATED TRASTPILOD BAR (AM BODEN DES MODALS) ── */
+.paypol-trust-footer-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: #1c1c1c;
+  color: #ffffff;
+  padding: 14px 24px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
 }
-.trust-score-stars { color: #ffb600; font-size: 1.2rem; font-weight: bold; }
-.trust-status-badge { background: var(--trust-green); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 20px; text-transform: uppercase; }
-
-.trust-project-info { text-align: center; margin-bottom: 25px; }
-.trust-project-name { font-size: 1.4rem; font-weight: 700; color: #000; }
-.trust-project-sub { font-size: 0.85rem; color: #6c7378; margin-top: 4px; }
-
-.trust-input-group { margin-bottom: 24px; }
-.trust-label { display: block; font-size: 0.8rem; font-weight: 700; color: #3b3d40; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-.trust-input {
-  width: 100%; padding: 14px; border: 2px solid #eef0f2; background: #f9fafb; border-radius: 8px; font-size: 1rem; color: #000; transition: 0.2s; text-align: center; font-weight: 600;
-}
-.trust-input:focus { border-color: var(--trust-green); outline: none; background: #fff; }
-
-.trust-btn {
-  display: block; width: 100%; background: #005fec; color: #fff; border: none; padding: 16px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: center; transition: 0.2s;
-}
-.trust-btn:hover { background: #004ec4; }
-.trust-btn-unlocked { background: var(--trust-green) !important; }
-
-.trust-error-msg { color: #ca1a1a; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
-.trust-footer { background: #f9fafb; padding: 16px 24px; font-size: 0.75rem; color: #6c7378; text-align: center; border-top: 1px solid #eef0f2; }
+.trast-logo { display: flex; align-items: center; gap: 4px; }
+.trast-star-icon { background: var(--trust-green); color: #fff; padding: 1px 5px; font-weight: bold; font-size: 0.8rem; border-radius: 2px; }
+.trast-text { font-weight: 800; font-size: 1rem; letter-spacing: -0.5px; }
+.trast-stars { color: #ffb600; font-weight: bold; }
+.trast-badge { background: var(--trust-green); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 20px; text-transform: uppercase; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 800px) {
@@ -595,36 +558,13 @@ main {
     <div class="glass-card mc-panel" data-reveal="2">
       <div class="mc-panel-title">📜 AKTUELLE INFOS</div>
       <div class="panel-body">
-        <div class="line"><span>▶</span> Trastpilod Sicherheits-Bar in Downloads integriert!</div>
-        <div class="line"><span>▶</span> Website-Update erfolgreich durchgeführt</div>
-        <div class="line"><span>▶</span> Alle Server laufen stabil</div>
+        <div class="line"><span>▶</span> PayPol Gateway & Trastpilod Bar erfolgreich integriert!</div>
+        <div class="line"><span>▶</span> Website-Update auf Version 2.6 abgeschlossen</div>
+        <div class="line"><span>▶</span> Alle Minecraft-Server laufen im Verbund stabil</div>
       </div>
     </div>
 
-    <!-- 🌟 NEU: PAYPAL PANEL MIT INTEGRIERTER TRASTPILOD BAR 🌟 -->
     <div class="glass-card mc-panel" data-reveal="3">
-      <div class="mc-panel-title">💎 SERVER UNTERSTÜTZUNG (PAYPAL)</div>
-      <p style="color: var(--muted); margin-bottom: 15px; font-size: 1.1rem;">
-        Wenn du die Server-Kosten supporten oder der Truppe einen ausgeben willst, kannst du das hier sicher über PayPal tun!
-      </p>
-      
-      <!-- Ersetze hier den href-Link mit deinem echten PayPal.me Link -->
-      <a href="https://paypal.me/DEIN_PAYPAL_NAME" target="_blank" class="paypal-action-btn">
-        ▶ JETZT PER PAYPAL SPENDEN
-      </a>
-
-      <!-- Die integrierte Trastpilod Bar am unteren Ende des Panels -->
-      <div class="paypal-trust-bar">
-        <div class="paypal-trust-logo">
-          <span class="paypal-trust-star">★</span>
-          <span class="paypal-trust-text">Trastpilod</span>
-        </div>
-        <span class="paypal-trust-stars">★★★★★ <span style="font-size: 0.8rem; color: #1c1c1c;">4.9 / 5</span></span>
-        <span class="paypal-trust-badge">Verifiziert</span>
-      </div>
-    </div>
-
-    <div class="glass-card mc-panel" data-reveal="4">
       <div class="mc-panel-title">💬 QUAPS PINNWAND</div>
       <div class="shoutbox-list" id="pinnwand-box">
         <div style="color: var(--muted); font-size: 1rem;">Lade Nachrichten...</div>
@@ -635,7 +575,7 @@ main {
       </div>
     </div>
 
-    <div class="glass-card mc-panel" data-reveal="5">
+    <div class="glass-card mc-panel" data-reveal="4">
       <div class="mc-panel-title">🎵 JUKEBOX // HYMNE</div>
       <div class="visualizer" id="visualizer">
         <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
@@ -727,44 +667,65 @@ main {
   </div>
 </div>
 
-<!-- TRASTPILOD VERIFIED GATEWAY MODAL -->
-<div class="trust-modal-overlay" id="trustModal">
-  <div class="trust-box">
-    <div class="trust-header">
-      <div class="trust-logo-area">
-        <span class="trust-logo-star">★</span>
-        <span class="trust-logo-text">Trastpilod</span>
+
+<!-- ── 🌟 FAKE PAYPOL GATEWAY MODAL MIT INTEGRATED TRASTPILOD BAR 🌟 ── -->
+<div class="paypol-modal-overlay" id="paypolModal">
+  <div class="paypol-box">
+    
+    <!-- Header mit Fake PayPol Logo -->
+    <div class="paypol-header">
+      <div class="paypol-logo-area">
+        <span class="paypol-logo-p1">Pay</span><span class="paypol-logo-p2">Pol</span>
       </div>
-      <button class="trust-close" onclick="closeTrustGateway()">&times;</button>
+      <button class="paypol-close" onclick="closePaypolGateway()">&times;</button>
     </div>
     
-    <div class="trust-body">
-      <div class="trust-bar-container">
-        <div>
-          <span style="font-size: 0.85rem; font-weight: 700; display: block; color: #1c1c1c;">Händler-Status:</span>
-          <span class="trust-score-stars">★★★★★ <span style="font-size: 0.8rem; color: #1c1c1c; font-family: sans-serif;">4.9 / 5</span></span>
+    <div class="paypol-body">
+      
+      <!-- Projektanzeige -->
+      <div class="paypol-project-banner">
+        <div class="paypol-project-title" id="paypolItemName">Projektname</div>
+        <div class="paypol-project-subtitle">Sicherer Download-Schutz & Verifizierung</div>
+      </div>
+
+      <!-- Schritt 1: Spenden-Eingabe -->
+      <div id="paypol-step-1">
+        <div class="paypol-input-group">
+          <label class="paypol-label">PROJEKT-SUPPORT-SPENDE (FREIWILLIG)</label>
+          <div class="paypol-amount-box">
+            <input type="number" id="paypolAmount" class="paypol-input" value="5" min="0">
+            <span>EUR</span>
+          </div>
         </div>
-        <span class="trust-status-badge">Verifiziert</span>
+        <button onclick="advanceToCodeStep()" class="paypol-btn">Weiter zur Verifizierung</button>
       </div>
 
-      <div class="trust-project-info">
-        <div class="trust-project-name" id="trustItemName">Projektname</div>
-        <div class="trust-project-sub">Gesicherter Community-Download über QuapsHub</div>
+      <!-- Schritt 2: Trastpilod Code Freischaltung -->
+      <div id="paypol-step-2" class="paypol-code-area">
+        <div class="paypol-input-group">
+          <label class="paypol-label" style="color: var(--trust-green); font-weight: 800;">🔒 TRASTPILOD FREISCHALTCODE ERFORDERLICH</label>
+          <input type="text" id="paypolCode" class="paypol-input" placeholder="Code eingeben..." autocomplete="off" style="text-align: center; letter-spacing: 1px;">
+          <div class="paypol-error-msg" id="paypolError">Ungültiger Freischaltcode für diese Welt!</div>
+        </div>
+        <button onclick="verifyPaypolCode()" id="paypolBtn" class="paypol-btn">Code prüfen & Download starten</button>
       </div>
 
-      <div class="trust-input-group">
-        <label class="trust-label" for="trustCode">PROJEKT-FREISCHALTCODE</label>
-        <input type="text" id="trustCode" class="trust-input" placeholder="Code eingeben..." autocomplete="off">
-        <div class="trust-error-msg" id="trustError">Ungültiger Freischaltcode für dieses Projekt!</div>
-      </div>
-
-      <button onclick="verifyTrustCode()" id="trustBtn" class="trust-btn">Code verifizieren & Download starten</button>
       <a id="hiddenDownloadTrigger" href="#" download style="display: none;"></a>
     </div>
     
-    <div class="trust-footer">Sicherer Daten-Check via Trastpilod Secure Engine v4.1.</div>
+    <!-- Fest eingebautes Trastpilod Siegel im unteren Bereich des Fensters -->
+    <div class="paypol-trust-footer-bar">
+      <div class="trast-logo">
+        <span class="trast-star-icon">★</span>
+        <span class="trast-text">Trastpilod</span>
+      </div>
+      <span class="trast-stars">★★★★★ <span style="font-size: 0.75rem; color: #fff;">4.9 / 5</span></span>
+      <span class="trast-badge">Verifiziert</span>
+    </div>
+
   </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -828,7 +789,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   setTimeout(initReveal, 100);
 });
 
-/* ── DOWNLOAD DYNAMISCH GENERIEREN ── */
+/* ── DOWNLOAD LISTE DYNAMISCH GENERIEREN ── */
 function renderDownloadList() {
   const container = document.getElementById('download-list-container');
   container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
@@ -840,53 +801,62 @@ function renderDownloadList() {
           Größe: ${proj.size}
         </div>
       </div>
-      <button onclick="openTrustGateway('${proj.id}')" class="mc-action" style="width: 100%;">▶ DOWNLOAD ANFORDERN</button>
+      <button onclick="openPaypolGateway('${proj.id}')" class="mc-action" style="width: 100%;">▶ DOWNLOAD ANFORDERN</button>
     </div>
   `).join('');
 }
 
-/* ── TRASTPILOD MODAL LOGIK ── */
-function openTrustGateway(id) {
+/* ── FAKE PAYPOL + TRASTPILOD MODAL LOGIK ── */
+function openPaypolGateway(id) {
   const project = PROJECT_DOWNLOADS.find(p => p.id === id);
   if (!project) return;
 
   selectedProjectId = id;
-  document.getElementById('trustItemName').textContent = project.title;
-  document.getElementById('trustCode').value = "";
-  document.getElementById('trustError').style.display = "none";
+  document.getElementById('paypolItemName').textContent = project.title;
+  document.getElementById('paypolAmount').value = "5";
+  document.getElementById('paypolCode').value = "";
+  document.getElementById('paypolError').style.display = "none";
   
-  const btn = document.getElementById('trustBtn');
-  btn.textContent = "Code verifizieren & Download starten";
-  btn.classList.remove('trust-btn-unlocked');
-  btn.setAttribute("onclick", "verifyTrustCode()");
+  // Interface resetten auf Schritt 1
+  document.getElementById('paypol-step-2').style.display = "none";
+  
+  const btn = document.getElementById('paypolBtn');
+  btn.textContent = "Code prüfen & Download starten";
+  btn.classList.remove('paypol-btn-unlocked');
 
-  document.getElementById('trustModal').classList.add('show');
+  document.getElementById('paypolModal').classList.add('show');
 }
 
-function closeTrustGateway() {
-  document.getElementById('trustModal').classList.remove('show');
+function closePaypolGateway() {
+  document.getElementById('paypolModal').classList.remove('show');
 }
 
-function verifyTrustCode() {
+function advanceToCodeStep() {
+  // Blendet die Code-Eingabe ein, sobald Schritt 1 bestätigt wurde
+  document.getElementById('paypol-step-2').style.display = "block";
+  playSound("xp.mp3");
+}
+
+function verifyPaypolCode() {
   const project = PROJECT_DOWNLOADS.find(p => p.id === selectedProjectId);
   if (!project) return;
 
-  const inputCode = document.getElementById('trustCode').value.trim();
-  const errorBox = document.getElementById('trustError');
-  const btn = document.getElementById('trustBtn');
+  const inputCode = document.getElementById('paypolCode').value.trim();
+  const errorBox = document.getElementById('paypolError');
+  const btn = document.getElementById('paypolBtn');
 
   if (inputCode === project.code) {
     errorBox.style.display = "none";
-    btn.textContent = "✔ CODE BESTÄTIGT - DATEI WIRD GELADEN";
-    btn.classList.add('trust-btn-unlocked');
+    btn.textContent = "✔ VERIFIZIERT - DATEI WIRD GELADEN";
+    btn.classList.add('paypol-btn-unlocked');
     playSound("xp.mp3");
     
     setTimeout(() => {
       const trigger = document.getElementById('hiddenDownloadTrigger');
       trigger.href = project.file;
       trigger.click();
-      closeTrustGateway();
-    }, 1200);
+      closePaypolGateway();
+    }, 1500);
   } else {
     errorBox.style.display = "block";
     playSound("creeper.mp3");
