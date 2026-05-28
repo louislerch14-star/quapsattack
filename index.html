@@ -19,6 +19,8 @@
   --text:    #f0f0f0;
   --muted:   #aaaaaa;
   --trust-green: #00b67a;
+  --paypal-blue: #003087;
+  --paypal-cyan: #0079c1;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -136,6 +138,55 @@ h1, h2, h3, .mc-font, .mc-btn, .mc-action {
 }
 .logout-btn:hover { background: rgba(255, 85, 85, 0.08); border-left-color: #ff5555; }
 
+/* ── PROFILE AREA IN SIDEBAR ── */
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 20px;
+  border-top: 2px solid var(--border);
+  background: #151515;
+}
+.profile-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  object-fit: cover;
+  background: var(--panel2);
+}
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.profile-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--primary);
+}
+.status-text {
+  font-size: 0.8rem;
+  color: var(--primary);
+  font-weight: bold;
+}
+
 /* ── MAIN CONTENT ── */
 main {
   margin-left: 240px;
@@ -147,6 +198,28 @@ main {
 .page { display: none; }
 .page.active { display: block; }
 
+/* ── MODERN SCROLL REVEAL ── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+[data-reveal="2"] { transition-delay: 0.1s; }
+[data-reveal="3"] { transition-delay: 0.2s; }
+[data-reveal="4"] { transition-delay: 0.3s; }
+[data-reveal="5"] { transition-delay: 0.4s; }
+
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── HERO ── */
+.hero { margin-bottom: 50px; }
+.hero h1 { font-size: 2.2rem; color: #fff; margin: 0; letter-spacing: -1px; }
+.hero h1 span { color: var(--gold); }
+.hero-sub { font-size: 1.1rem; color: var(--muted); margin-top: 10px; }
+
 /* ── CLEAN GLASS PANEL ── */
 .mc-panel {
   background: var(--panel);
@@ -155,7 +228,9 @@ main {
   padding: 30px;
   margin-bottom: 24px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  transition: 0.3s;
 }
+.mc-panel:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
 
 .mc-panel-title {
   font-size: 0.65rem;
@@ -167,9 +242,178 @@ main {
   padding: 10px 0;
   border-bottom: 1px solid #2a2a2a;
 }
+.panel-body .line:last-child { border-bottom: none; }
 .panel-body .line span { color: var(--primary); margin-right: 10px; }
 
-/* ── DOWNLOAD CARDS LIST ── */
+/* ── PAYPAL PANEL WITH INTEGRATED TRASTPILOD BAR ── */
+.paypal-action-btn {
+  display: block;
+  width: 100%;
+  background: linear-gradient(90deg, var(--paypal-blue), var(--paypal-cyan));
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.2s;
+  box-shadow: 0 4px 15px rgba(0, 121, 193, 0.3);
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+.paypal-action-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.paypal-trust-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  color: #1c1c1c;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+}
+.paypal-trust-logo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.paypal-trust-star {
+  background: var(--trust-green);
+  color: #fff;
+  padding: 2px 5px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border-radius: 2px;
+}
+.paypal-trust-text {
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.5px;
+}
+.paypal-trust-stars {
+  color: #ffb600;
+  font-weight: bold;
+}
+.paypal-trust-badge {
+  background: var(--trust-green);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+/* ── PINNWAND STYLES ── */
+.shoutbox-list {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 5px;
+}
+.shoutbox-msg {
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+.shoutbox-msg .msg-user {
+  color: var(--gold);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  margin-right: 8px;
+}
+.shoutbox-form {
+  display: flex;
+  gap: 10px;
+}
+.shoutbox-form .mc-input {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+/* ── AUDIO VISUALIZER ── */
+.visualizer { display: flex; gap: 4px; height: 35px; align-items: center; margin: 20px 0; }
+.vis-bar { width: 5px; height: 10px; background: #333; border-radius: 2px; }
+.playing .vis-bar { animation: modernVis 0.6s infinite alternate; background: var(--primary); }
+.playing .vis-bar:nth-child(2n) { animation-duration: 0.4s; background: var(--diamond); }
+@keyframes modernVis { from { height: 10px; } to { height: 35px; } }
+
+/* ── MODERN ACTION BUTTON ── */
+.mc-action {
+  display: inline-block;
+  background: var(--panel2);
+  color: var(--primary);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  padding: 14px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.2s;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.mc-action:hover { background: #fff; color: #000; border-color: #fff; transform: translateY(-1px); }
+.mc-action:disabled { opacity: 0.5; cursor: not-allowed; }
+.mc-action.full { width: 100%; text-align: center; display: block; }
+
+/* ── VIDEO EMBED ── */
+.clip-frame {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.clip-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.op-tag { color: var(--diamond); font-size: 0.9rem; margin-right: 15px; }
+
+/* ── CLEAN FORM ── */
+.mc-input {
+  display: block;
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 12px;
+  color: #fff;
+  margin-bottom: 15px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+.mc-input:focus { border-color: var(--primary); outline: none; background: rgba(0,0,0,0.7); }
+.mc-input[readonly] { opacity: 0.5; cursor: not-allowed; }
+
+.mc-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.mc-success {
+  display: none;
+  border: 2px solid var(--primary);
+  background: rgba(168,255,120,0.05);
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 12px;
+  color: var(--primary);
+}
+
+/* ── DOWNLOAD GRIDS ── */
 .download-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -191,24 +435,37 @@ main {
   margin-bottom: 10px;
 }
 
-/* ── MODERN ACTION BUTTON ── */
-.mc-action {
-  display: inline-block;
-  background: var(--panel2);
-  color: var(--primary);
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.55rem;
-  padding: 14px 28px;
-  border-radius: 10px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: 0.2s;
-  border: 1px solid var(--border);
-  text-align: center;
+/* ── MINECRAFT COOKIE BANNER STYLE ── */
+.mc-cookie-banner {
+  position: fixed;
+  bottom: 20px;
+  right: -420px;
+  width: 380px;
+  background: #212121;
+  border: 4px solid #000000;
+  padding: 15px;
+  z-index: 1000;
+  box-shadow: 0 10px 0 rgba(0,0,0,0.5);
+  font-family: 'VT323', monospace;
+  font-size: 1.3rem;
+  transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.mc-action:hover { background: #fff; color: #000; border-color: #fff; }
+.mc-cookie-banner.show { right: 20px; }
+.mc-advancement-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.mc-advancement-icon { width: 32px; height: 32px; image-rendering: pixelated; }
+.mc-advancement-text { display: flex; flex-direction: column; }
+.mc-advancement-title { font-family: 'Press Start 2P', monospace; font-size: 0.5rem; color: #cc55ff; text-transform: uppercase; }
+.mc-advancement-name { font-size: 1.5rem; color: #ffffff; font-weight: bold; }
+.mc-cookie-desc { color: #aaaaaa; font-size: 1.1rem; margin-bottom: 15px; line-height: 1.3; }
+.mc-cookie-buttons { display: flex; gap: 10px; }
+.mc-cookie-btn {
+  flex: 1; font-family: 'Press Start 2P', monospace; font-size: 0.5rem; padding: 10px; text-align: center; cursor: pointer; border: 2px solid #555; background: #555555; color: #fff; box-shadow: inset -2px -2px 0 #222, inset 2px 2px 0 #aaa;
+}
+.mc-cookie-btn:hover { background: #777777; border-color: #777; }
+.mc-cookie-btn.accept { color: var(--primary); }
+.mc-cookie-btn.decline { color: #ff5555; }
 
-/* ── TRUSTPILOD SECURE MODAL LAYER ── */
+/* ── TRASTPILOD VERIFIED GATEWAY MODAL ── */
 .trust-modal-overlay {
   position: fixed;
   inset: 0;
@@ -242,32 +499,13 @@ main {
   justify-content: space-between;
   align-items: center;
 }
-.trust-logo-area {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.trust-logo-star {
-  background: var(--trust-green);
-  color: #fff;
-  padding: 4px 6px;
-  font-weight: bold;
-  font-size: 1.1rem;
-  border-radius: 3px;
-}
-.trust-logo-text {
-  font-weight: 800;
-  font-size: 1.4rem;
-  letter-spacing: -0.5px;
-  color: #1c1c1c;
-}
-.trust-close {
-  background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #9aa1a7;
-}
+.trust-logo-area { display: flex; align-items: center; gap: 6px; }
+.trust-logo-star { background: var(--trust-green); color: #fff; padding: 4px 6px; font-weight: bold; font-size: 1.1rem; border-radius: 3px; }
+.trust-logo-text { font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; color: #1c1c1c; }
+.trust-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #9aa1a7; }
 
 .trust-body { padding: 30px 24px; }
 
-/* Vertrauensbar */
 .trust-bar-container {
   background: rgba(0, 182, 122, 0.08);
   border: 1px solid rgba(0, 182, 122, 0.2);
@@ -279,9 +517,7 @@ main {
   justify-content: space-between;
 }
 .trust-score-stars { color: #ffb600; font-size: 1.2rem; font-weight: bold; }
-.trust-status-badge {
-  background: var(--trust-green); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 20px; text-transform: uppercase;
-}
+.trust-status-badge { background: var(--trust-green); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 20px; text-transform: uppercase; }
 
 .trust-project-info { text-align: center; margin-bottom: 25px; }
 .trust-project-name { font-size: 1.4rem; font-weight: 700; color: #000; }
@@ -301,13 +537,16 @@ main {
 .trust-btn-unlocked { background: var(--trust-green) !important; }
 
 .trust-error-msg { color: #ca1a1a; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
-
 .trust-footer { background: #f9fafb; padding: 16px 24px; font-size: 0.75rem; color: #6c7378; text-align: center; border-top: 1px solid #eef0f2; }
 
+/* ── RESPONSIVE ── */
 @media (max-width: 800px) {
   .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid var(--border); }
   .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; }
   .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; }
+  .mc-btn:hover, .mc-btn.active { border-left-color: transparent; border-bottom-color: var(--primary); }
+  .logout-btn { margin-top: 0; margin-bottom: 0; }
+  .sidebar-profile { border-top: none; border-left: 2px solid var(--border); padding: 10px; }
   main { margin-left: 0; padding: 30px 20px; }
 }
 </style>
@@ -326,7 +565,21 @@ main {
 
   <div class="sidebar-section">
     <button class="mc-btn active" onclick="showPage('home')" id="btn-home">&nbsp; HOME</button>
+    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">&nbsp; CLIP-ARCHIV</button>
+    <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">&nbsp; CLIP UPLOAD</button>
     <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
+    <button class="mc-btn logout-btn" onclick="logout()">&nbsp; EXIT / LOGOUT</button>
+  </div>
+
+  <div class="sidebar-profile">
+    <img src="unnamed.jpg" id="user-avatar" class="profile-avatar" alt="M">
+    <div class="profile-info">
+      <span class="profile-name" id="sidebar-user-name">SPIELER</span>
+      <div class="profile-status-wrapper">
+        <span class="status-dot"></span>
+        <span class="status-text">ONLINE</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -334,34 +587,145 @@ main {
 
   <!-- HOME PAGE -->
   <div id="home" class="page active">
-    <div class="hero">
+    <div class="hero" data-reveal="1">
       <h1>Moin, <br><span id="user-name-display">Spieler</span>.</h1>
+      <p class="hero-sub">Willkommen im Quaps Attack Dashboard.</p>
     </div>
 
-    <div class="mc-panel">
-      <div class="mc-panel-title">📜 INTERNE MELDUNGEN</div>
+    <div class="glass-card mc-panel" data-reveal="2">
+      <div class="mc-panel-title">📜 AKTUELLE INFOS</div>
       <div class="panel-body">
-        <div class="line"><span>▶</span> Trastpilod Sicherheits-Bar in Downloads integriert.</div>
-        <div class="line"><span>▶</span> Nutze die hinterlegten Community-Codes zur Freischaltung.</div>
+        <div class="line"><span>▶</span> Trastpilod Sicherheits-Bar in Downloads integriert!</div>
+        <div class="line"><span>▶</span> Website-Update erfolgreich durchgeführt</div>
+        <div class="line"><span>▶</span> Alle Server laufen stabil</div>
       </div>
+    </div>
+
+    <!-- 🌟 NEU: PAYPAL PANEL MIT INTEGRIERTER TRASTPILOD BAR 🌟 -->
+    <div class="glass-card mc-panel" data-reveal="3">
+      <div class="mc-panel-title">💎 SERVER UNTERSTÜTZUNG (PAYPAL)</div>
+      <p style="color: var(--muted); margin-bottom: 15px; font-size: 1.1rem;">
+        Wenn du die Server-Kosten supporten oder der Truppe einen ausgeben willst, kannst du das hier sicher über PayPal tun!
+      </p>
+      
+      <!-- Ersetze hier den href-Link mit deinem echten PayPal.me Link -->
+      <a href="https://paypal.me/DEIN_PAYPAL_NAME" target="_blank" class="paypal-action-btn">
+        ▶ JETZT PER PAYPAL SPENDEN
+      </a>
+
+      <!-- Die integrierte Trastpilod Bar am unteren Ende des Panels -->
+      <div class="paypal-trust-bar">
+        <div class="paypal-trust-logo">
+          <span class="paypal-trust-star">★</span>
+          <span class="paypal-trust-text">Trastpilod</span>
+        </div>
+        <span class="paypal-trust-stars">★★★★★ <span style="font-size: 0.8rem; color: #1c1c1c;">4.9 / 5</span></span>
+        <span class="paypal-trust-badge">Verifiziert</span>
+      </div>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="4">
+      <div class="mc-panel-title">💬 QUAPS PINNWAND</div>
+      <div class="shoutbox-list" id="pinnwand-box">
+        <div style="color: var(--muted); font-size: 1rem;">Lade Nachrichten...</div>
+      </div>
+      <div class="shoutbox-form">
+        <input type="text" id="pinnwand-input" class="mc-input" placeholder="Schreib was auf die Wand..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
+        <button onclick="postToPinnwand()" id="pinnwand-btn" class="mc-action">SENDEN</button>
+      </div>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="5">
+      <div class="mc-panel-title">🎵 JUKEBOX // HYMNE</div>
+      <div class="visualizer" id="visualizer">
+        <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+        <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+      </div>
+      <audio id="communitySong">
+        <source src="quaps-hymne.mp3" type="audio/mpeg">
+      </audio>
+      <button onclick="togglePlay()" id="playBtn" class="mc-action">▶ SONG ABSPIELEN</button>
+    </div>
+  </div>
+
+  <!-- CLIPS ARCHIVE -->
+  <div id="clips" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Clip <span>Archiv</span></h1>
+      <p class="hero-sub">Die besten Szenen und Fail-Clips aus der Community.</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2">
+      <div class="mc-panel-title">Mace Hit Showcase</div>
+      <div class="clip-frame">
+        <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div>Eingesendet von: <span class="op-tag">LOUIS</span></div>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="3">
+      <div class="mc-panel-title">Uganana</div>
+      <div class="clip-frame">
+        <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div>Eingesendet von: <span class="op-tag">NILS</span><span class="op-tag">GIORGIO</span></div>
+    </div>
+  </div>
+
+  <!-- UPLOAD PAGE -->
+  <div id="upload" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Clip <span>einsenden</span></h1>
+      <p class="hero-sub">Teile deine Highlights direkt mit der gesamten Truppe.</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2" style="max-width: 600px; margin: 0 auto;">
+      <div class="mc-panel-title">Einsende-Formular</div>
+      
+      <label class="mc-label">DEIN NAME</label>
+      <input class="mc-input" id="uploaderName" type="text" readonly>
+
+      <label class="mc-label">TITEL DES CLIPS</label>
+      <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. Epic PvP Clutch">
+
+      <label class="mc-label">LINK (MEDAL ODER YOUTUBE)</label>
+      <textarea class="mc-input" id="clipLink" rows="4" placeholder="https://..."></textarea>
+      
+      <button onclick="sendToDiscord()" id="submitBtn" class="mc-action full">▶ AN DISCORD SENDEN</button>
+      <div class="mc-success" id="statusMsg">Erfolgreich an Discord übertragen!</div>
     </div>
   </div>
 
   <!-- DOWNLOADS PAGE -->
   <div id="downloads" class="page">
-    <div class="hero">
+    <div class="hero" data-reveal="1">
       <h1>Welten <span>Downloads</span></h1>
+      <p class="hero-sub">Lade dir hier die offiziellen Server-Maps und Quaps-Welten herunter.</p>
     </div>
 
-    <div class="mc-panel">
+    <div class="mc-panel" data-reveal="2">
       <div class="mc-panel-title">🌍 VERFÜGBARE WORLD-SAVES & PROJEKTE</div>
-      
-      <!-- Dynamische Liste wird hier generiert -->
       <div class="download-grid" id="download-list-container"></div>
     </div>
   </div>
 
 </main>
+
+<!-- COOKIE BANNER -->
+<div class="mc-cookie-banner" id="cookie-banner">
+  <div class="mc-advancement-header">
+    <img src="https://minecraft.wiki/images/Cookie_JE1_BE1.png" class="mc-advancement-icon" alt="Cookie">
+    <div class="mc-advancement-text">
+      <span class="mc-advancement-title">Challenge Complete!</span>
+      <span class="mc-advancement-name">Kekse gefressen?</span>
+    </div>
+  </div>
+  <div class="mc-cookie-desc">Diese Website nutzt Kekse, um dein Erlebnis fetter zu machen. Akzeptierst du die Bedingungen oder bist du ein Noob?</div>
+  <div class="mc-cookie-buttons">
+    <div class="mc-cookie-btn accept" onclick="handleCookie(true)">AKZEPTIEREN</div>
+    <div class="mc-cookie-btn decline" onclick="handleCookie(false)">ABLEHNEN</div>
+  </div>
+</div>
 
 <!-- TRASTPILOD VERIFIED GATEWAY MODAL -->
 <div class="trust-modal-overlay" id="trustModal">
@@ -375,7 +739,6 @@ main {
     </div>
     
     <div class="trust-body">
-      <!-- Vertrauensbar -->
       <div class="trust-bar-container">
         <div>
           <span style="font-size: 0.85rem; font-weight: 700; display: block; color: #1c1c1c;">Händler-Status:</span>
@@ -396,38 +759,38 @@ main {
       </div>
 
       <button onclick="verifyTrustCode()" id="trustBtn" class="trust-btn">Code verifizieren & Download starten</button>
-      
-      <!-- Unsichtbarer Download-Trigger -->
       <a id="hiddenDownloadTrigger" href="#" download style="display: none;"></a>
     </div>
     
-    <div class="trust-footer">
-      Sicherer Daten-Check via Trastpilod Secure Engine v4.1.
-    </div>
+    <div class="trust-footer">Sicherer Daten-Check via Trastpilod Secure Engine v4.1.</div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-/* ─────────────────────────────────────────────────────────────
-   📂 GROSSE UNBEARBEITETE LISTE FÜR DEINE CODES UND PROJEKTE
-   Hier kannst du beliebig viele Projekte hinzufügen, die Codes 
-   ändern oder die ZIP-Dateien anpassen!
-   ───────────────────────────────────────────────────────────── */
+const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
+
+/* 📂 PROJEKTE & FREISCHALTCODES */
 const PROJECT_DOWNLOADS = [
   {
     id: "hauptwelt",
     title: "Quaps Attack Hauptwelt (Season 1)",
     version: "1.21+",
     size: "ca. 420 MB",
-    code: "Joschi7",                 // Der Code, den man eingeben muss
-    file: "world_season1.zip"         // Der Dateiname auf dem Server
+    code: "Joschi7",                 
+    file: "world_season1.zip"         
   },
   {
     id: "projekt2",
     title: "Bedrock Test-Server Map",
     version: "1.20+",
     size: "ca. 85 MB",
-    code: "GeheimKey123",             // Passe diesen Code an!
+    code: "GeheimKey123",             
     file: "bedrock_map.zip"
   },
   {
@@ -435,26 +798,37 @@ const PROJECT_DOWNLOADS = [
     title: "Create Modpack Welt",
     version: "1.19.2",
     size: "ca. 1.2 GB",
-    code: "QuapsMod2026",             // Passe diesen Code an!
+    code: "QuapsMod2026",             
     file: "create_world.zip"
-  },
-  {
-    id: "projekt4",
-    title: "Jonas Base Backup",
-    version: "1.21",
-    size: "ca. 45 MB",
-    code: "JonasPranked",             // Passe diesen Code an!
-    file: "jonas_backup.zip"
   }
 ];
 
+let currentGlobalUser = "SPIELER";
 let selectedProjectId = null;
 
-// Beim Laden der Seite die Download-Karten erzeugen
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+  if (error || !session) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  const user = session.user;
+  currentGlobalUser = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
+  
+  document.getElementById('user-name-display').textContent = currentGlobalUser;
+  document.getElementById('uploaderName').value = currentGlobalUser;
+  document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
+
+  loadPinnwand();
   renderDownloadList();
+
+  setTimeout(triggerCookieBanner, 2000);
+  setTimeout(initReveal, 100);
 });
 
+/* ── DOWNLOAD DYNAMISCH GENERIEREN ── */
 function renderDownloadList() {
   const container = document.getElementById('download-list-container');
   container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
@@ -471,14 +845,12 @@ function renderDownloadList() {
   `).join('');
 }
 
-/* ── TRASTPILOD MODAL ENGINE ── */
+/* ── TRASTPILOD MODAL LOGIK ── */
 function openTrustGateway(id) {
   const project = PROJECT_DOWNLOADS.find(p => p.id === id);
   if (!project) return;
 
   selectedProjectId = id;
-  
-  // Modal Felder zurücksetzen
   document.getElementById('trustItemName').textContent = project.title;
   document.getElementById('trustCode').value = "";
   document.getElementById('trustError').style.display = "none";
@@ -503,31 +875,157 @@ function verifyTrustCode() {
   const errorBox = document.getElementById('trustError');
   const btn = document.getElementById('trustBtn');
 
-  // Überprüft den dynamisch aus der Liste geladenen Code
   if (inputCode === project.code) {
     errorBox.style.display = "none";
     btn.textContent = "✔ CODE BESTÄTIGT - DATEI WIRD GELADEN";
     btn.classList.add('trust-btn-unlocked');
+    playSound("xp.mp3");
     
-    // Führt die Weiterleitung/den Download aus
     setTimeout(() => {
       const trigger = document.getElementById('hiddenDownloadTrigger');
       trigger.href = project.file;
       trigger.click();
       closeTrustGateway();
-    }, 1000);
-
+    }, 1200);
   } else {
     errorBox.style.display = "block";
+    playSound("creeper.mp3");
   }
 }
 
-/* ── ALLGEMEINE SEITEN-STEUERUNG ── */
+/* ── ADVANCEMENT BANNER COOKIES ── */
+function triggerCookieBanner() {
+  if (!localStorage.getItem('mc_cookie_choice')) {
+    document.getElementById('cookie-banner').classList.add('show');
+    playSound("achievement.mp3");
+  }
+}
+
+function handleCookie(accepted) {
+  document.getElementById('cookie-banner').classList.remove('show');
+  localStorage.setItem('mc_cookie_choice', accepted ? 'accepted' : 'declined');
+  playSound(accepted ? "xp.mp3" : "creeper.mp3");
+}
+
+function playSound(file) {
+  try {
+    const audio = new Audio(file);
+    audio.volume = 0.4;
+    audio.play();
+  } catch (e) {}
+}
+
+/* ── PINNWAND CODES ── */
+async function loadPinnwand() {
+  const { data, error } = await supabaseClient
+    .from('pinnwand')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(30);
+
+  if (error) {
+    document.getElementById('pinnwand-box').innerHTML = `<div style="color: #ff5555;">Fehler beim Laden!</div>`;
+    return;
+  }
+
+  const box = document.getElementById('pinnwand-box');
+  if (data.length === 0) {
+    box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Noch keine Einträge.</div>`;
+    return;
+  }
+
+  box.innerHTML = data.reverse().map(msg => `
+    <div class="shoutbox-msg">
+      <span class="msg-user">${escapeHtml(msg.name)}:</span>
+      <span>${escapeHtml(msg.nachricht)}</span>
+    </div>
+  `).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function postToPinnwand() {
+  const input = document.getElementById('pinnwand-input');
+  const btn = document.getElementById('pinnwand-btn');
+  const text = input.value.trim();
+  if (!text) return;
+
+  btn.disabled = true; input.disabled = true;
+
+  const { error } = await supabaseClient
+    .from('pinnwand')
+    .insert([{ name: currentGlobalUser, nachricht: text }]);
+
+  if (error) { alert('Fehler beim Speichern.'); btn.disabled = false; input.disabled = false; return; }
+
+  const payload = {
+    username: 'QuapsHub Pinnwand',
+    avatar_url: 'https://quapsattack.airbusfan.de/unnamed.jpg',
+    content: '📢 **Neue Nachricht an der Wand!**',
+    embeds: [{
+      title: '💬 Quaps Attack Pinnwand',
+      description: `>>> ${text}`,
+      color: 0xa8ff78,
+      fields: [{ name: '👤 Absender', value: `\`${currentGlobalUser}\``, inline: true }]
+    }]
+  };
+
+  try { await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch (e) {}
+
+  input.value = ''; btn.disabled = false; input.disabled = false;
+  loadPinnwand();
+}
+
+function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+
+/* ── NAVIGATION & CO ── */
+async function logout() { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; }
+
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.getElementById('btn-' + id).classList.add('active');
+  setTimeout(initReveal, 50);
+}
+
+function initReveal() {
+  const els = document.querySelectorAll('.page.active [data-reveal]');
+  const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); }); }, { threshold: 0.1 });
+  els.forEach(el => { el.classList.remove('revealed'); obs.observe(el); });
+}
+
+function togglePlay() {
+  const audio = document.getElementById('communitySong');
+  const btn   = document.getElementById('playBtn');
+  const vis   = document.getElementById('visualizer');
+  if (audio.paused) { audio.play(); btn.textContent = '⏸ SONG PAUSIEREN'; vis.classList.add('playing'); }
+  else { audio.pause(); btn.textContent = '▶ SONG ABSPIELEN'; vis.classList.remove('playing'); }
+}
+
+async function sendToDiscord() {
+  const name  = document.getElementById('uploaderName').value;
+  const title = document.getElementById('clipTitle').value;
+  const link  = document.getElementById('clipLink').value;
+  const btn   = document.getElementById('submitBtn');
+  const msg   = document.getElementById('statusMsg');
+
+  if (!title || !link) { alert('Bitte Felder ausfüllen!'); return; }
+  btn.textContent = '... ÜBERTRAGE DATEN'; btn.disabled = true;
+
+  const payload = {
+    username: 'QuapsHub Monitor',
+    embeds: [{ title: '📹 Neuer Clip eingereicht', color: 0xa8ff78, fields: [{ name: 'Spieler', value: name, inline: true }, { name: 'Titel', value: title, inline: true }, { name: 'Link', value: link }] }]
+  };
+
+  try {
+    await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    msg.style.display = 'block';
+    setTimeout(() => {
+      msg.style.display = 'none'; btn.textContent = '▶ AN DISCORD SENDEN'; btn.disabled = false;
+      document.getElementById('clipTitle').value = ''; document.getElementById('clipLink').value = '';
+      showPage('home');
+    }, 3000);
+  } catch { alert('Übertragung fehlgeschlagen.'); btn.textContent = '▶ AN DISCORD SENDEN'; btn.disabled = false; }
 }
 </script>
 </body>
