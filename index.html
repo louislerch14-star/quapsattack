@@ -6,7 +6,7 @@
 <title>QuapsHub</title>
 <link rel="icon" type="image/jpeg" href="unnamed.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --primary: #a8ff78; /* Frisches XP-Grün */
@@ -18,6 +18,8 @@
   --border:  #333333;
   --text:    #f0f0f0;
   --muted:   #aaaaaa;
+  --paypal-blue: #00457c;
+  --paypal-light: #0079c1;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -358,45 +360,14 @@ main {
   font-size: 1.3rem;
   transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.mc-cookie-banner.show {
-  right: 20px; /* Reinfliegen */
-}
-.mc-advancement-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-.mc-advancement-icon {
-  width: 32px;
-  height: 32px;
-  image-rendering: pixelated;
-}
-.mc-advancement-text {
-  display: flex;
-  flex-direction: column;
-}
-.mc-advancement-title {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.5rem;
-  color: #cc55ff; /* Lila Achievement Farbe */
-  text-transform: uppercase;
-}
-.mc-advancement-name {
-  font-size: 1.5rem;
-  color: #ffffff;
-  font-weight: bold;
-}
-.mc-cookie-desc {
-  color: #aaaaaa;
-  font-size: 1.1rem;
-  margin-bottom: 15px;
-  line-height: 1.3;
-}
-.mc-cookie-buttons {
-  display: flex;
-  gap: 10px;
-}
+.mc-cookie-banner.show { right: 20px; }
+.mc-advancement-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.mc-advancement-icon { width: 32px; height: 32px; image-rendering: pixelated; }
+.mc-advancement-text { display: flex; flex-direction: column; }
+.mc-advancement-title { font-family: 'Press Start 2P', monospace; font-size: 0.5rem; color: #cc55ff; text-transform: uppercase; }
+.mc-advancement-name { font-size: 1.5rem; color: #ffffff; font-weight: bold; }
+.mc-cookie-desc { color: #aaaaaa; font-size: 1.1rem; margin-bottom: 15px; line-height: 1.3; }
+.mc-cookie-buttons { display: flex; gap: 10px; }
 .mc-cookie-btn {
   flex: 1;
   font-family: 'Press Start 2P', monospace;
@@ -409,12 +380,117 @@ main {
   color: #fff;
   box-shadow: inset -2px -2px 0 #222, inset 2px 2px 0 #aaa;
 }
-.mc-cookie-btn:hover {
-  background: #777777;
-  border-color: #777;
-}
+.mc-cookie-btn:hover { background: #777777; border-color: #777; }
 .mc-cookie-btn.accept { color: var(--primary); }
 .mc-cookie-btn.decline { color: #ff5555; }
+
+/* ── PAYPÖL GATEWAY MODAL (REALISTIC PAYPAL STYLE) ── */
+.paypal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+}
+.paypal-modal-overlay.show { display: flex; }
+.paypal-box {
+  background: #ffffff;
+  color: #2c2e2f;
+  width: 100%;
+  max-width: 460px;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  overflow: hidden;
+  animation: paypalPop 0.3s ease-out;
+}
+@keyframes paypalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.paypal-header {
+  padding: 24px;
+  text-align: center;
+  border-bottom: 1px solid #e2e4e6;
+  position: relative;
+}
+.paypal-logo {
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: var(--paypal-blue);
+  letter-spacing: -1px;
+}
+.paypal-logo span { color: var(--paypal-light); }
+.paypal-close {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: none; border: none;
+  font-size: 1.5rem; cursor: pointer; color: #9da3a6;
+}
+
+.paypal-body { padding: 30px 24px; }
+.paypal-price-tag {
+  text-align: center;
+  margin-bottom: 25px;
+}
+.paypal-amount { font-size: 2.2rem; font-weight: 700; color: #000; }
+.paypal-item-name { font-size: 0.95rem; color: #6c7378; margin-top: 4px; }
+
+.paypal-input-group { margin-bottom: 20px; }
+.paypal-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #3b3d40;
+  margin-bottom: 8px;
+}
+.paypal-input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #a6a9ab;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #000;
+  transition: 0.2s;
+}
+.paypal-input:focus { border-color: var(--paypal-light); outline: none; box-shadow: 0 0 0 3px rgba(0,121,193,0.15); }
+
+.paypal-btn {
+  display: block;
+  width: 100%;
+  background: #ffc439;
+  color: #000;
+  border: none;
+  padding: 14px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+.paypal-btn:hover { background: #f2ba36; }
+.paypal-btn-unlocked { background: #0079c1 !important; color: #fff !important; }
+.paypal-btn-unlocked:hover { background: #005ea6 !important; }
+
+.paypal-error {
+  color: #ca1a1a;
+  font-size: 0.85rem;
+  margin-top: 8px;
+  display: none;
+  font-weight: 500;
+}
+.paypal-footer {
+  background: #f5f7f8;
+  padding: 16px 24px;
+  font-size: 0.75rem;
+  color: #6c7378;
+  text-align: center;
+  border-top: 1px solid #e2e4e6;
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 800px) {
@@ -451,6 +527,9 @@ main {
     <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">
       &nbsp; CLIP UPLOAD
     </button>
+    <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">
+      &nbsp; WELTEN-DOWNLOADS
+    </button>
 
     <button class="mc-btn logout-btn" onclick="logout()">
       &nbsp; EXIT / LOGOUT
@@ -471,8 +550,8 @@ main {
 
 <main>
 
+  <!-- HOME PAGE -->
   <div id="home" class="page active">
-
     <div class="hero" data-reveal="1">
       <h1>Moin, <br><span id="user-name-display">Spieler</span>.</h1>
       <p class="hero-sub">Willkommen im Quaps Attack Dashboard.</p>
@@ -481,9 +560,9 @@ main {
     <div class="glass-card mc-panel" data-reveal="2">
       <div class="mc-panel-title">📜 AKTUELLE INFOS</div>
       <div class="panel-body">
+        <div class="line"><span>▶</span> Welten-Download Portal hinzugefügt!</div>
         <div class="line"><span>▶</span> Website-Update erfolgreich durchgeführt</div>
         <div class="line"><span>▶</span> Alle Server laufen stabil</div>
-        <div class="line"><span>▶</span> Ladet eure neuesten Clips hoch!</div>
       </div>
     </div>
 
@@ -509,9 +588,9 @@ main {
       </audio>
       <button onclick="togglePlay()" id="playBtn" class="mc-action">▶ SONG ABSPIELEN</button>
     </div>
-
   </div>
 
+  <!-- CLIPS ARCHIVE -->
   <div id="clips" class="page">
     <div class="hero" data-reveal="1">
       <h1>Clip <span>Archiv</span></h1>
@@ -537,6 +616,7 @@ main {
     </div>
   </div>
 
+  <!-- UPLOAD PAGE -->
   <div id="upload" class="page">
     <div class="hero" data-reveal="1">
       <h1>Clip <span>einsenden</span></h1>
@@ -561,8 +641,28 @@ main {
     </div>
   </div>
 
+  <!-- DOWNLOADS PAGE -->
+  <div id="downloads" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Welten <span>Downloads</span></h1>
+      <p class="hero-sub">Lade dir hier die offiziellen Server-Maps und Quaps-Welten herunter.</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2">
+      <div class="mc-panel-title">🌍 QUAPS ATTACK HAUPTWELT (SEASON 1)</div>
+      <div class="panel-body" style="margin-bottom: 20px;">
+        <div class="line"><span>Version:</span> 1.21+</div>
+        <div class="line"><span>Größe:</span> ca. 420 MB</div>
+        <div class="line"><span>Inhalt:</span> Alle Basen, die Community-Farmen und Geheimbauwerke.</div>
+      </div>
+      <!-- Löst das PayPöl Modal aus -->
+      <button onclick="openPaypolGateway('Quaps Attack Hauptwelt (Season 1)', 'world_season1.zip')" class="mc-action">▶ WELT HERUNTERLADEN</button>
+    </div>
+  </div>
+
 </main>
 
+<!-- COOKIE BANNER -->
 <div class="mc-cookie-banner" id="cookie-banner">
   <div class="mc-advancement-header">
     <img src="https://minecraft.wiki/images/Cookie_JE1_BE1.png" class="mc-advancement-icon" alt="Cookie">
@@ -580,6 +680,36 @@ main {
   </div>
 </div>
 
+<!-- PAYPÖL SECURE GATEWAY MODAL -->
+<div class="paypal-modal-overlay" id="paypalModal">
+  <div class="paypal-box">
+    <div class="paypal-header">
+      <button class="paypal-close" onclick="closePaypolGateway()">&times;</button>
+      <div class="paypal-logo">PayPöl</div>
+    </div>
+    <div class="paypal-body">
+      <div class="paypal-price-tag">
+        <div class="paypal-amount">0,00 EUR</div>
+        <div class="paypal-item-name" id="paypolItemName">Minecraft Welt Download</div>
+      </div>
+
+      <div class="paypal-input-group">
+        <label class="paypal-label" for="paypolCode">HÄNDLER-FREISCHALTCODE EINGEBEN</label>
+        <input type="text" id="paypolCode" class="paypal-input" placeholder="Zahlungscode eingeben (z.B. Joschi7)" autocomplete="off">
+        <div class="paypal-error" id="paypolError">Ungültiger Freischaltcode. Bitte überprüfe deine Eingabe!</div>
+      </div>
+
+      <button onclick="verifyPaypolCode()" id="paypolBtn" class="paypal-btn">Code prüfen & bezahlen</button>
+      
+      <!-- Der versteckte, echte Download-Link -->
+      <a id="realDownloadLink" href="#" download style="display: none;"></a>
+    </div>
+    <div class="paypal-footer">
+      Sichere Verbindung via PayPöl Secure-Attacks. © 1999-2026 PayPöl Inc.
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -590,6 +720,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
 
 let currentGlobalUser = "SPIELER";
+let activeDownloadFile = "";
 
 window.addEventListener('DOMContentLoaded', async () => {
   const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -608,19 +739,66 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   loadPinnwand();
 
-  // Trigger das Cookie-Banner nach 2 Sekunden
   setTimeout(triggerCookieBanner, 2000);
-
   setTimeout(initReveal, 100);
 });
 
-/* ── MINECRAFT COOKIE LOGIK & SOUNDS ── */
+/* ── PAYPÖL LOGIK ── */
+function openPaypolGateway(itemName, fileName) {
+  document.getElementById('paypolItemName').textContent = itemName;
+  activeDownloadFile = fileName;
+  
+  // Reset des Modals
+  document.getElementById('paypolCode').value = "";
+  document.getElementById('paypolError').style.display = "none";
+  const btn = document.getElementById('paypolBtn');
+  btn.textContent = "Code prüfen & bezahlen";
+  btn.classList.remove('paypal-btn-unlocked');
+  btn.setAttribute("onclick", "verifyPaypolCode()");
+
+  document.getElementById('paypalModal').classList.add('show');
+}
+
+function closePaypolGateway() {
+  document.getElementById('paypalModal').classList.remove('show');
+}
+
+function verifyPaypolCode() {
+  const codeInput = document.getElementById('paypolCode').value.trim();
+  const errorBox = document.getElementById('paypolError');
+  const btn = document.getElementById('paypolBtn');
+
+  // Prüft auf deinen gewünschten Code "Joschi7"
+  if (codeInput === "Joschi7") {
+    errorBox.style.display = "none";
+    btn.textContent = "✔ ZAHLUNG AKZEPTIERT - JETZT DOWNLOADEN";
+    btn.classList.add('paypal-btn-unlocked');
+    
+    // Ändert die Button-Funktion zum direkten Download bei erneutem Klick
+    btn.setAttribute("onclick", "triggerFileDownload()");
+    
+    // Spielt den XP-Sound als Bestätigung ab
+    playSound("xp.mp3");
+  } else {
+    errorBox.style.display = "block";
+    playSound("creeper.mp3"); // Creeper Zischen bei Falscheingabe!
+  }
+}
+
+function triggerFileDownload() {
+  if (activeDownloadFile) {
+    const dlLink = document.getElementById('realDownloadLink');
+    dlLink.href = activeDownloadFile; // Pfad zur Datei
+    dlLink.click();
+    closePaypolGateway();
+  }
+}
+
 /* ── MINECRAFT COOKIE LOGIK & SOUNDS (LOKAL) ── */
 function triggerCookieBanner() {
   if (!localStorage.getItem('mc_cookie_choice')) {
     const banner = document.getElementById('cookie-banner');
     banner.classList.add('show');
-    // Spielt deine lokale Datei ab
     playSound("achievement.mp3");
   }
 }
@@ -632,10 +810,8 @@ function handleCookie(accepted) {
   localStorage.setItem('mc_cookie_choice', accepted ? 'accepted' : 'declined');
 
   if (accepted) {
-    // Spielt deinen lokalen XP Sound ab
     playSound("xp.mp3");
   } else {
-    // Spielt deinen lokalen Creeper Sound ab
     playSound("creeper.mp3");
   }
 }
@@ -643,26 +819,10 @@ function handleCookie(accepted) {
 function playSound(file) {
   try {
     const audio = new Audio(file);
-    audio.volume = 0.4; // Lautstärke auf 40%, damit es nicht die Ohren weghaut
-    
-    let playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(error => {
-        console.log("Autoplay von Browser blockiert. Erst einmal auf die Seite klicken!");
-      });
-    }
-  } catch (e) {
-    console.log("Audio-Fehler: ", e);
-  }
-}
-
-function playSound(url) {
-  try {
-    const audio = new Audio(url);
     audio.volume = 0.4;
     audio.play();
   } catch (e) {
-    console.log("Audio-Wiedergabe blockiert. Erst mit der Seite interagieren!");
+    console.log("Audio blockiert: Interaktion erforderlich.");
   }
 }
 
@@ -727,20 +887,10 @@ async function postToPinnwand() {
       description: `>>> ${text}`,
       color: 0xa8ff78, 
       fields: [
-        {
-          name: '👤 Absender',
-          value: `\`${currentGlobalUser}\``,
-          inline: true
-        },
-        {
-          name: '📱 Link',
-          value: '[Pinnwand öffnen](https://quapsattack.airbusfan.de)',
-          inline: true
-        }
+        { name: '👤 Absender', value: `\`${currentGlobalUser}\``, inline: true },
+        { name: '📱 Link', value: '[Pinnwand öffnen](https://quapsattack.airbusfan.de)', inline: true }
       ],
-      footer: {
-        text: 'Gesendet via QuapsHub Dashboard'
-      },
+      footer: { text: 'Gesendet via QuapsHub Dashboard' },
       timestamp: new Date().toISOString()
     }]
   };
@@ -752,7 +902,7 @@ async function postToPinnwand() {
       body: JSON.stringify(payload)
     });
   } catch (e) {
-    console.log('Discord Push fehlgeschlagen, Eintrag wurde trotzdem gespeichert.');
+    console.log('Discord Push fehlgeschlagen.');
   }
 
   input.value = '';
@@ -766,7 +916,7 @@ function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
-/* ── STANDARD NAVIGATION & CLIPS ── */
+/* ── NAVIGATION ── */
 async function logout() {
   await supabaseClient.auth.signOut();
   window.location.href = 'login.html';
