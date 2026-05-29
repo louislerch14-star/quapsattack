@@ -3,27 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuapsHub</title>
+  <title>QuapsHub // Tactical Terminal</title>
   
   <link rel="icon" type="image/jpeg" href="unnamed.jpg">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   
   <style>
   :root {
-    --bg-app:        #0f172a; /* Tiefes, edles Studio-Dunkelgrau */
-    --bg-surface:    #1e293b; /* Mattes Asche-Grau für die Kacheln */
-    --bg-sub:        #334155; /* Helleres Grau für Inputs / sekundäre Elemente */
-    --border-clean:  #475569; /* Subtile, moderne Linien */
-    --accent-blue:   #38bdf8; /* Fokus-Farbe */
-    --accent-green:  #4ade80; /* Status-Erfolg */
-    --text-primary:  #f8fafc; /* Klarer, weißer Text */
-    --text-secondary:#94a3b8; /* Gedimmtes Grau */
+    --bg-deep:        #060913; /* Absoluter Sci-Fi Weltenraum-Hintergrund */
+    --bg-terminal:    #0d1324; /* Hologramm-Kachel-Basis */
+    --bg-core:        #141d34; /* Aktivierte Felder */
+    --border-glow:    #1f2e54; /* Subtile Energielinien */
+    --cyber-cyan:     #00f0ff; /* Reiner, leuchtender Hologramm-Fokus */
+    --matrix-green:   #39ff14; /* Diagnose-Erfolg / Live-Pinnwand */
+    --text-bright:    #ffffff; 
+    --text-dim:       #6277a5; /* Gedimmtes HUD-Blau */
     
-    --paypol-main:   #00457c;
-    --paypol-light:  #0079c1;
+    --paypol-main:    #00457c;
+    --paypol-light:   #0079c1;
   }
 
   *, *::before, *::after { 
@@ -33,104 +33,140 @@
   }
   
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: var(--bg-app);
-    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-deep);
+    background-image: 
+      linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+    background-size: 30px 30px; /* Interaktives Hintergrund-Gitter */
+    color: var(--text-bright);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
   }
 
-  /* RADIKAL NEUE TOP-BAR STATT SIDEBAR */
-  .app-header {
-    background: var(--bg-surface);
-    border-bottom: 1px solid var(--border-clean);
-    padding: 16px 40px;
+  /* TOP COMMAND LINE */
+  .terminal-top-bar {
+    background: rgba(13, 19, 36, 0.95);
+    border-bottom: 2px solid var(--cyber-cyan);
+    padding: 12px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+  }
+
+  .terminal-brand h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--text-bright);
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+  }
+  .terminal-brand span {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--cyber-cyan);
+    margin-left: 12px;
+    background: rgba(0, 240, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  .player-node-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid var(--border-glow);
+  }
+  .player-node-badge img {
+    width: 26px;
+    height: 26px;
+    border-radius: 3px;
+    border: 1px solid var(--cyber-cyan);
+  }
+  .player-node-badge span {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--matrix-green);
+  }
+
+  /* GRID CONTAINER INTERACTIVE SCREEN */
+  .workspace-layout {
+    flex: 1;
+    display: flex;
+    padding: 30px;
+    gap: 30px;
+    max-width: 1600px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* SYSTEM TERMINAL CONTROL CORES (LEFT NAV) */
+  .core-sidebar {
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .system-core-btn {
+    background: var(--bg-terminal);
+    border: 1px solid var(--border-glow);
+    color: var(--text-dim);
+    padding: 16px;
+    border-radius: 6px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: left;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-
-  .brand-zone h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
+  .system-core-btn::before {
+    content: '🖲';
+    font-size: 0.8rem;
+    opacity: 0.5;
   }
-  .brand-zone span {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-left: 8px;
+  .system-core-btn:hover {
+    color: var(--text-bright);
+    border-color: var(--cyber-cyan);
+    background: rgba(0, 240, 255, 0.02);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.05);
   }
-
-  .user-badge {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid var(--border-clean);
+  .system-core-btn.active {
+    color: var(--cyber-cyan);
+    border-color: var(--cyber-cyan);
+    background: var(--bg-core);
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    box-shadow: inset 3px 0 0 var(--cyber-cyan), 0 0 15px rgba(0, 240, 255, 0.1);
   }
-  .user-badge img {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-  }
-  .user-badge span {
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
-
-  /* MODERNE FLACHE SEGMENT-NAVIGATION */
-  .navigation-bar {
-    background: rgba(30, 41, 59, 0.5);
-    border-bottom: 1px solid var(--border-clean);
-    padding: 10px 40px;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-  }
-
-  .nav-segment {
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    padding: 8px 16px;
-    font-family: inherit;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.15s ease;
-    white-space: nowrap;
-  }
-  .nav-segment:hover {
-    color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.05);
-  }
-  .nav-segment.active {
-    color: var(--text-primary);
-    background: var(--bg-surface);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  }
-  .nav-segment.logout-trigger {
-    margin-left: auto;
+  .system-core-btn.power-off {
+    margin-top: auto;
+    border-color: rgba(248, 113, 113, 0.3);
     color: #f87171;
   }
-  .nav-segment.logout-trigger:hover {
+  .system-core-btn.power-off::before { content: '⚡'; opacity: 1; }
+  .system-core-btn.power-off:hover {
     background: rgba(248, 113, 113, 0.1);
+    border-color: #f87171;
+    box-shadow: 0 0 15px rgba(248, 113, 113, 0.2);
   }
 
-  /* MAIN WORKSPACE */
-  main {
+  /* DISPLAY FRAMES */
+  .main-monitor-frame {
     flex: 1;
-    padding: 40px;
-    max-width: 1400px;
-    width: 100%;
-    margin: 0 auto;
+    min-width: 0;
   }
 
   .view-container {
@@ -138,184 +174,216 @@
   }
   .view-container.active {
     display: block;
-    animation: layoutFade 0.2s ease-out;
+    animation: holoGlitch 0.25s ease-out;
   }
-  @keyframes layoutFade {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+  @keyframes holoGlitch {
+    0% { opacity: 0; transform: scale(0.995) translateY(2px); filter: brightness(1.5); }
+    100% { opacity: 1; transform: scale(1) translateY(0); filter: brightness(1); }
   }
 
-  /* ASYMMETRISCHES KACHEL-GRID FÜR DIE ÜBERSICHT */
-  .dashboard-grid {
+  /* COCKPIT DASHBOARD STRUCTURE */
+  .holo-grid {
     display: grid;
-    grid-template-columns: 1.6fr 1fr;
+    grid-template-columns: 1.4fr 1fr;
     gap: 24px;
   }
-
-  .tile-card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-clean);
-    border-radius: 12px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-  }
-  .tile-full-width {
-    grid-column: span 2;
-  }
-
-  .tile-title {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-secondary);
-    margin-bottom: 16px;
-    font-weight: 600;
-  }
-
-  /* CORE DATA LIST */
-  .row-item {
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 0.95rem;
-    display: flex;
-  }
-  .row-item:last-child { border-bottom: none; }
-  .row-item .tag { color: var(--accent-blue); width: 110px; font-weight: 600; flex-shrink: 0; }
-  .row-item .info { color: var(--text-primary); }
-
-  /* PINNWAND STREAM */
-  .pinnwand-stream {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border-clean);
+  .holo-card {
+    background: rgba(13, 19, 36, 0.85);
+    border: 1px solid var(--border-glow);
     border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    position: relative;
+    overflow: hidden;
+  }
+  .holo-card::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+  }
+  .holo-full { grid-column: span 2; }
+
+  .holo-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--cyber-cyan);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .holo-title::before {
+    content: ''; display: inline-block; width: 6px; height: 6px; background: var(--cyber-cyan); box-shadow: 0 0 6px var(--cyber-cyan);
+  }
+
+  /* DATALOG STRIPS */
+  .log-row {
+    font-family: 'Share Tech Mono', monospace;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 2px solid var(--border-glow);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    display: flex;
+  }
+  .log-row .status-tag { color: var(--cyber-cyan); width: 140px; font-weight: bold; }
+  .log-row .message { color: var(--text-bright); }
+
+  /* MATRIX COMM STREAM (PINNWAND) */
+  .pinnwand-stream {
+    background: rgba(4, 6, 12, 0.9);
+    border: 1px solid var(--border-glow);
+    border-radius: 4px;
     padding: 16px;
-    max-height: 240px;
+    max-height: 250px;
     overflow-y: auto;
     margin-bottom: 16px;
+    font-family: 'Share Tech Mono', monospace;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
   }
   .pinnwand-node {
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    font-size: 0.9rem;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(31, 46, 84, 0.3);
+    font-size: 0.95rem;
+    line-height: 1.4;
   }
   .pinnwand-node:last-child { border-bottom: none; }
-  .pinnwand-node .user { color: var(--accent-green); font-weight: 600; margin-right: 8px; }
+  .pinnwand-node .user { color: var(--matrix-green); font-weight: bold; margin-right: 8px; }
 
-  /* COMPACT CONTROLS */
-  .flex-input-group {
-    display: flex;
-    gap: 12px;
-  }
-
+  /* HUD INPUT ARCHITECTURE */
+  .flex-input-group { display: flex; gap: 12px; }
   .input-control {
     flex: 1;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border-clean);
-    padding: 12px 16px;
-    border-radius: 8px;
-    color: var(--text-primary);
+    background: rgba(4, 6, 12, 0.7);
+    border: 1px solid var(--border-glow);
+    padding: 14px 18px;
+    border-radius: 4px;
+    color: var(--text-bright);
     font-family: inherit;
     font-size: 0.95rem;
+    transition: all 0.15s;
   }
   .input-control:focus {
     outline: none;
-    border-color: var(--accent-blue);
+    border-color: var(--cyber-cyan);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
   }
   .input-control[readonly] {
     background: rgba(0, 0, 0, 0.4);
-    color: var(--text-secondary);
+    color: var(--text-dim);
+    border-color: rgba(31, 46, 84, 0.5);
     cursor: not-allowed;
   }
 
-  .btn-ui {
-    background: var(--bg-sub);
-    color: var(--text-primary);
-    border: 1px solid var(--border-clean);
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s;
-    white-space: nowrap;
+  .field-description {
+    display: block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
   }
-  .btn-ui:hover:not(:disabled) { background: var(--border-clean); }
-  .btn-ui:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-ui {
+    background: var(--bg-core);
+    color: var(--text-bright);
+    border: 1px solid var(--border-glow);
+    padding: 14px 28px;
+    border-radius: 4px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-ui:hover:not(:disabled) { 
+    background: rgba(0, 240, 255, 0.1); 
+    border-color: var(--cyber-cyan);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+  }
+  .btn-ui:disabled { opacity: 0.3; cursor: not-allowed; }
   .btn-ui.full { width: 100%; text-align: center; }
 
-  /* JUKEBOX */
+  /* CYBER AUDIO JUNCTION */
   .jukebox-box {
     display: flex;
-    align-items: center;
-    gap: 20px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid var(--border-clean);
+    flex-direction: column;
+    gap: 16px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 6px;
+    border: 1px solid var(--border-glow);
   }
-  .visual-bars { display: flex; gap: 4px; height: 16px; align-items: center; }
-  .bar-unit { width: 3px; height: 4px; background: var(--border-clean); }
-  .playing .bar-unit { background: var(--accent-blue); animation: barPulse 0.5s infinite alternate ease-in-out; }
-  .playing .bar-unit:nth-child(2n) { animation-delay: 0.1s; }
-  .playing .bar-unit:nth-child(3n) { animation-delay: 0.2s; }
-  @keyframes barPulse { from { height: 4px; } to { height: 16px; } }
+  .frequency-wave {
+    display: flex;
+    gap: 6px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(4, 6, 12, 0.8);
+    border-radius: 4px;
+    border: 1px solid rgba(31, 46, 84, 0.5);
+  }
+  .wave-bar { width: 4px; height: 6px; background: var(--border-glow); border-radius: 2px; transition: all 0.2s; }
+  .playing .wave-bar { background: var(--cyber-cyan); animation: waveMotion 0.6s infinite alternate ease-in-out; box-shadow: 0 0 8px var(--cyber-cyan); }
+  .playing .wave-bar:nth-child(even) { animation-delay: 0.15s; }
+  .playing .wave-bar:nth-child(3n) { animation-delay: 0.3s; }
+  @keyframes waveMotion { from { height: 4px; } to { height: 26px; } }
 
-  /* MAPS SYSTEM GRID */
-  .maps-layout-grid {
+  /* REPOSITORY GRID BUILD */
+  .repository-layout-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 24px;
   }
 
-  /* MEDIA SECTION */
-  .media-flow {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-  }
-  .video-container-frame {
+  /* MEDIA SHOWCASE MATRIX */
+  .media-flow { display: flex; flex-direction: column; gap: 40px; }
+  .video-hud-viewport {
     width: 100%;
     max-width: 900px;
     aspect-ratio: 16/9;
     background: #000;
-    border-radius: 12px;
+    border-radius: 6px;
     overflow: hidden;
-    border: 1px solid var(--border-clean);
+    border: 1px solid var(--border-glow);
     position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
   }
-  .video-container-frame iframe {
-    position: absolute;
-    inset: 0; width: 100%; height: 100%; border: none;
+  .video-hud-viewport iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+  .media-meta-tags {
+    margin-top: 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--text-dim);
   }
-  .media-meta {
-    margin-top: 10px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-  }
-  .media-meta span { color: var(--accent-blue); }
+  .media-meta-tags span { color: var(--cyber-cyan); font-weight: bold; }
 
-  /* COOKIE POPUP */
+  /* INTERACTIVE BANNER */
   .app-cookie-banner {
     position: fixed;
-    bottom: 24px; right: -450px;
-    width: 360px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-clean);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    bottom: 30px; right: -450px;
+    width: 380px;
+    background: var(--bg-terminal);
+    border: 1px solid var(--cyber-cyan);
+    padding: 24px;
+    border-radius: 6px;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
     z-index: 5000;
     transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .app-cookie-banner.show { right: 24px; }
+  .app-cookie-banner.show { right: 30px; }
 
-  /* PAYPOL MODAL REAL CLEAN ENGINE */
+  /* PAYPOL AUTH ENGINE (SERIÖS & SAUBER) */
   .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.85);
+    background: rgba(4, 6, 12, 0.92);
     z-index: 9999;
     display: none;
     align-items: center;
@@ -328,10 +396,10 @@
     background: #ffffff;
     color: #1e293b;
     width: 100%;
-    max-width: 420px;
-    border-radius: 16px;
+    max-width: 430px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
     position: relative;
   }
 
@@ -343,10 +411,10 @@
     justify-content: space-between;
     align-items: center;
   }
-  .paypol-logo { font-style: italic; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.5px; }
+  .paypol-logo { font-style: italic; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
   .p-blue { color: var(--paypol-main); }
   .p-cyan { color: var(--paypol-light); }
-  .paypol-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #94a3b8; }
+  .paypol-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8; }
 
   .paypol-body { padding: 24px; }
   .paypol-summary-card {
@@ -383,164 +451,170 @@
     padding: 12px 24px;
     font-size: 0.8rem;
   }
-  .stars-badge { background: var(--accent-green); color: #000; padding: 1px 4px; border-radius: 3px; font-weight: 700; margin-right: 4px; }
+  .stars-badge { background: #00b67a; color: #fff; padding: 1px 4px; border-radius: 3px; font-weight: 700; margin-right: 4px; }
 
-  /* SIMPLIFIED LOADING COVER INSTEAD OF SCROLL */
+  /* KREATIVES COCKPIT OVERLAY STIL */
   #loading-screen-cover {
-    position: absolute; inset: 0; background: #0f172a; z-index: 100; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center;
+    position: absolute; inset: 0; background: #060913; z-index: 100; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 32px; text-align: center;
   }
-  #loading-screen-text { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; }
+  #loading-screen-text { font-family: 'Share Tech Mono', monospace; font-size: 1rem; line-height: 1.6; margin-bottom: 24px; }
 
-  /* SYSTEM FOOTER STICKY COMPACT */
-  .app-footer {
-    background: var(--bg-surface);
-    border-top: 1px solid var(--border-clean);
+  /* CORE RUNTIME FOOTER */
+  .terminal-footer {
+    background: rgba(13, 19, 36, 0.9);
+    border-top: 1px solid var(--border-glow);
     padding: 14px 40px;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-dim);
     display: flex;
     justify-content: space-between;
     margin-top: auto;
   }
-  .app-footer span { color: var(--accent-blue); }
+  .terminal-footer span { color: var(--cyber-cyan); }
 
-  @media (max-width: 900px) {
-    .dashboard-grid { grid-template-columns: 1fr; }
-    .tile-full-width { grid-column: span 1; }
-    .app-header { flex-direction: column; gap: 12px; padding: 16px; text-align: center; }
-    .navigation-bar { padding: 10px 16px; }
-    main { padding: 20px; }
+  @media (max-width: 1024px) {
+    .workspace-layout { flex-direction: column; padding: 20px; }
+    .core-sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
+    .system-core-btn { padding: 12px; font-size: 0.7rem; }
+    .holo-grid { grid-template-columns: 1fr; }
+    .holo-full { grid-column: span 1; }
+    .terminal-top-bar { padding: 16px; flex-direction: column; gap: 12px; text-align: center; }
   }
   </style>
 </head>
 <body>
 
-  <header class="app-header">
-    <div class="brand-zone">
-      <h2>QuapsHub<span>Workspace</span></h2>
+  <header class="terminal-top-bar">
+    <div class="terminal-brand">
+      <h1>QuapsHub<span>Command Module</span></h1>
     </div>
-    <div class="user-badge">
-      <img src="unnamed.jpg" alt="Avatar" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
-      <span id="global-username-display">Nutzer</span>
+    <div class="player-node-badge">
+      <img src="unnamed.jpg" alt="Player Matrix" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
+      <span id="global-username-display">SPIELER</span>
     </div>
   </header>
 
-  <nav class="navigation-bar">
-    <button class="nav-segment active" onclick="switchTab('tab-home', this)">Übersicht</button>
-    <button class="nav-segment" onclick="switchTab('tab-clips', this)">Highlights</button>
-    <button class="nav-segment" onclick="switchTab('tab-upload', this)">Einreichen</button>
-    <button class="nav-segment" onclick="switchTab('tab-downloads', this)">Welten</button>
-    <button class="nav-segment" onclick="switchTab('tab-admin', this)">Anträge</button>
-    <button class="nav-segment logout-trigger" onclick="logout()">Abmelden</button>
-  </nav>
-
-  <main>
+  <div class="workspace-layout">
     
-    <div id="tab-home" class="view-container active">
-      <div class="dashboard-grid">
-        
-        <div class="tile-card">
-          <div class="tile-title">Systemstatus</div>
-          <div class="row-item"><span class="tag">Datenbank</span><span class="info">Schnittstellen-Authentifizierung stabil eingerichtet.</span></div>
-          <div class="row-item"><span class="tag">Repository</span><span class="info">Season 10 Hauptwelt steht im Datei-Archiv bereit.</span></div>
-        </div>
+    <aside class="core-sidebar">
+      <button class="system-core-btn active" onclick="switchCore('tab-home', this)">Übersicht</button>
+      <button class="system-core-btn" onclick="switchCore('tab-clips', this)">Highlights</button>
+      <button class="system-core-btn" onclick="switchCore('tab-upload', this)">Einreichen</button>
+      <button class="system-core-btn" onclick="switchCore('tab-downloads', this)">Welten</button>
+      <button class="system-core-btn" onclick="switchCore('tab-admin', this)">Anträge</button>
+      <button class="system-core-btn power-off" onclick="logout()">Disconnect</button>
+    </aside>
 
-        <div class="tile-card">
-          <div class="tile-title">Audio-Zentrale</div>
-          <div class="jukebox-box">
-            <div class="visual-bars" id="visualizer">
-              <div class="bar-unit"></div><div class="bar-unit"></div><div class="bar-unit"></div><div class="bar-unit"></div>
-              <div class="bar-unit"></div><div class="bar-unit"></div><div class="bar-unit"></div><div class="bar-unit"></div>
+    <main class="main-monitor-frame">
+      
+      <div id="tab-home" class="view-container active">
+        <div class="holo-grid">
+          
+          <div class="holo-card">
+            <div class="holo-title">System-Diagnose</div>
+            <div class="log-row"><span class="status-tag">[AUTH.OK]</span><span class="message">Schnittstellen-Verbindung stabil verifiziert.</span></div>
+            <div class="log-row"><span class="status-tag">[DATA.LOAD]</span><span class="message">Das Legendary-Projekt ist im Archiv verschlüsselt hinterlegt.</span></div>
+          </div>
+
+          <div class="holo-card">
+            <div class="holo-title">Frequenz-Generator</div>
+            <div class="jukebox-box">
+              <div class="frequency-wave" id="visualizer">
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+              </div>
+              <audio id="communitySong"><source src="quaps-hymne.mp3" type="audio/mpeg"></audio>
+              <button onclick="togglePlay()" id="playBtn" class="btn-ui">Hymne abspielen</button>
             </div>
-            <audio id="communitySong"><source src="quaps-hymne.mp3" type="audio/mpeg"></audio>
-            <button onclick="togglePlay()" id="playBtn" class="btn-ui">Hymne abspielen</button>
           </div>
-        </div>
 
-        <div class="tile-card tile-full-width">
-          <div class="tile-title">Projekt-Pinnwand</div>
-          <div class="pinnwand-stream" id="pinnwand-box">Lade Datensätze...</div>
-          <div class="flex-input-group">
-            <input type="text" id="pinnwand-input" class="input-control" placeholder="Eintrag verfassen (max. 120 Zeichen)..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
-            <button onclick="postToPinnwand()" id="pinnwand-btn" class="btn-ui">Absenden</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <div id="tab-clips" class="view-container">
-      <div class="tile-card">
-        <div class="tile-title">Archivierte Aufzeichnungen</div>
-        <div class="media-flow">
-          <div>
-            <span class="field-description">Aufzeichnung 1: Mace Hit Showcase</span>
-            <div class="video-container-frame">
-              <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+          <div class="holo-card holo-full">
+            <div class="holo-title">Matrix-Kommunikationsstrom</div>
+            <div class="pinnwand-stream" id="pinnwand-box">Frage Speicherzellen ab...</div>
+            <div class="flex-input-group">
+              <input type="text" id="pinnwand-input" class="input-control" placeholder="Eintrag senden (max. 120 Zeichen)..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
+              <button onclick="postToPinnwand()" id="pinnwand-btn" class="btn-ui">Senden</button>
             </div>
-            <div class="media-meta">Einsendung von: <span>Louis</span></div>
           </div>
-          <div>
-            <span class="field-description">Aufzeichnung 2: Uganana</span>
-            <div class="video-container-frame">
-              <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+
+        </div>
+      </div>
+
+      <div id="tab-clips" class="view-container">
+        <div class="holo-card">
+          <div class="holo-title">Archivierte Aufzeichnungen</div>
+          <div class="media-flow">
+            <div>
+              <span class="field-description">DATA-STREAM 01 // Mace Hit Showcase</span>
+              <div class="video-hud-viewport">
+                <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+              </div>
+              <div class="media-meta-tags">Einsendung von Node: <span>Louis</span></div>
             </div>
-            <div class="media-meta">Einsendung von: <span>Nils</span>, <span>Giorgio</span></div>
+            <div>
+              <span class="field-description">DATA-STREAM 02 // Uganana</span>
+              <div class="video-hud-viewport">
+                <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+              </div>
+              <div class="media-meta-tags">Einsendung von Node: <span>Nils</span>, <span>Giorgio</span></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div id="tab-upload" class="view-container">
-      <div class="tile-card" style="max-width: 600px;">
-        <div class="tile-title">Highlight einreichen</div>
-        
-        <div style="margin-bottom: 16px;">
-          <label class="field-description">Absenderkennung</label>
-          <input class="input-control" id="uploaderName" type="text" readonly>
-        </div>
-        
-        <div style="margin-bottom: 16px;">
-          <label class="field-description">Titel des Highlights</label>
-          <input class="input-control" id="clipTitle" type="text" placeholder="Beispiel: PvP Clutch Base">
-        </div>
-        
-        <div style="margin-bottom: 24px;">
-          <label class="field-description">Plattform-Link (Medal / YouTube)</label>
-          <input class="input-control" id="clipLink" type="text" placeholder="https://...">
-        </div>
-        
-        <button onclick="sendToDiscord()" id="submitBtn" class="btn-ui full">An Discord übertragen</button>
-        <div class="operation-success-alert" id="statusMsg" style="color: var(--accent-green); font-size:0.9rem; margin-top:12px; display:none;">Datensatz erfolgreich an Discord übermittelt.</div>
-      </div>
-    </div>
-
-    <div id="tab-downloads" class="view-container">
-      <div class="maps-layout-grid" id="download-list-container"></div>
-    </div>
-
-    <div id="tab-admin" class="view-container">
-      <div class="tile-card">
-        <div class="tile-title">Eingegangene Mitgliedschafts-Anträge</div>
-        <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 16px;">
-          <div style="color: var(--text-secondary);">Frage Protokolle ab...</div>
+      <div id="tab-upload" class="view-container">
+        <div class="holo-card" style="max-width: 650px;">
+          <div class="holo-title">Highlight einspeisen</div>
+          
+          <div style="margin-bottom: 20px;">
+            <span class="field-description">Sender-ID (Identifiziert)</span>
+            <input class="input-control" id="uploaderName" type="text" readonly>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <span class="field-description">Titel des Datensatzes</span>
+            <input class="input-control" id="clipTitle" type="text" placeholder="z.B. PvP Clutch Base">
+          </div>
+          
+          <div style="margin-bottom: 28px;">
+            <span class="field-description">Clip-URL (Medal / YouTube)</span>
+            <input class="input-control" id="clipLink" type="text" placeholder="https://...">
+          </div>
+          
+          <button onclick="sendToDiscord()" id="submitBtn" class="btn-ui full">An Discord übertragen</button>
+          <div id="statusMsg" style="color: var(--matrix-green); font-family:'Share Tech Mono',monospace; font-size:0.95rem; margin-top:14px; display:none;">[SUCCESS] Datensatz erfolgreich an Discord übermittelt.</div>
         </div>
       </div>
-    </div>
 
-  </main>
+      <div id="tab-downloads" class="view-container">
+        <div class="repository-layout-grid" id="download-list-container"></div>
+      </div>
 
-  <footer class="app-footer">
-    <div>Sitzung aktiv für: <span>Airbusfan.de</span></div>
-    <div>Verbindung gesichert &bull; Authentifizierung nominal</div>
+      <div id="tab-admin" class="view-container">
+        <div class="holo-card">
+          <div class="holo-title">Eingegangene Mitgliedschafts-Anträge</div>
+          <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="color: var(--text-dim); font-family: 'Share Tech Mono', monospace;">Lese Log-Dateien aus...</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <footer class="terminal-footer">
+    <div>SYSTEM LOG: <span>Airbusfan.de</span></div>
+    <div>CRYPTO SECURE &bull; ALL CORES NOMINAL</div>
   </footer>
 
   <div class="app-cookie-banner" id="cookie-banner">
-    <div style="font-weight:600; font-size:0.95rem; margin-bottom:6px;">Sitzungsdaten</div>
-    <p style="font-size:0.85rem; color: var(--text-secondary); margin-bottom:16px;">Lokale Browser-Sitzungsdaten werden genutzt, um den Login aufrechtzuerhalten.</p>
+    <div style="font-family: 'Orbitron', sans-serif; font-weight:700; font-size:0.8rem; letter-spacing:1px; margin-bottom:8px; color:var(--cyber-cyan);">Sitzungscache</div>
+    <p style="font-size:0.85rem; color: var(--text-dim); margin-bottom:18px; line-height: 1.4;">Lokale Sitzungsdaten werden temporär geladen, um das Core-Terminal autorisiert zu halten.</p>
     <div style="display:flex; gap:10px;">
-      <button class="btn-ui" style="flex:1; padding:8px;" onclick="handleCookie(true)">Zustimmen</button>
-      <button class="btn-ui" style="flex:1; padding:8px; background:transparent;" onclick="handleCookie(false)">Ablehnen</button>
+      <button class="btn-ui" style="flex:1; padding:10px;" onclick="handleCookie(true)">Zustimmen</button>
+      <button class="btn-ui" style="flex:1; padding:10px; background:transparent;" onclick="handleCookie(false)">Verwerfen</button>
     </div>
   </div>
 
@@ -548,12 +622,11 @@
     <div class="modern-paypol-box">
       
       <div id="loading-screen-cover">
-        <div id="loading-screen-text">
-          Sitzungs-Identifikation verifiziert.<br><br>
-          Der Zugriff auf das Datei-Repository von <strong>Season 10</strong> wurde freigegeben.<br>
-          Projekt erstellt von Louis und Mika.
+        <div id="loading-screen-text" style="color: #ffffff;">
+          <span style="color: var(--cyber-cyan); font-family:'Orbitron',sans-serif; font-weight:900; font-size:1.1rem; letter-spacing:1px; display:block; margin-bottom:16px;">AUTORISIERUNG ERFOLGREICH</span>
+          Der Zugriff auf das Datei-Repository vom <strong style="color:var(--cyber-cyan);">Legendary-Projekt</strong> wurde verifiziert und im Terminal freigegeben.
         </div>
-        <button onclick="skipCinematicIntro()" class="btn-ui">Fortfahren</button>
+        <button onclick="skipCinematicIntro()" class="btn-ui" style="background:var(--bg-core); border-color:var(--cyber-cyan);">Datenstrom öffnen</button>
       </div>
 
       <div class="paypol-header">
@@ -563,7 +636,7 @@
       
       <div class="paypol-body">
         <div class="paypol-summary-card">
-          <div id="paypolItemName" style="font-weight:700;">Projekt-Datei</div>
+          <div id="paypolItemName" style="font-weight:700; color: #0f172a;">Projekt-Datei</div>
           <p>Identitätsprüfung für Datei-Freigabe</p>
         </div>
         
@@ -580,7 +653,7 @@
         
         <div id="paypol-step-2" class="paypol-secure-wrapper">
           <div class="form-row">
-            <label style="color: var(--accent-green);">Freischaltcode eingeben</label>
+            <label style="color: #00b67a;">Freischaltcode eingeben</label>
             <input type="text" id="paypolCode" class="paypol-input" placeholder="Code eingeben" autocomplete="off" style="text-align:center; font-size:1.1rem; font-weight:600; letter-spacing:1px;">
             <div class="paypol-error" id="paypolError">Der eingegebene Code ist ungültig.</div>
           </div>
@@ -607,8 +680,8 @@
 
   const PROJECT_DOWNLOADS = [
     {
-      id: "season10",
-      title: "Quaps Attack Hauptwelt (Season 10)",
+      id: "legendary",
+      title: "Legendary-Projekt Hauptwelt",
       version: "1.21+",
       size: "ca. 5.0 GB",
       file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl"
@@ -638,25 +711,25 @@
   function renderDownloadList() {
     const container = document.getElementById('download-list-container');
     container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
-      <div class="tile-card" style="justify-content: space-between;">
+      <div class="holo-card" style="justify-content: space-between; display: flex; flex-direction: column;">
         <div>
-          <div style="font-size: 1.05rem; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${proj.title}</div>
-          <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">
-            Kompatibilität: ${proj.version} &bull; Größe: ${proj.size}
+          <div style="font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 700; color: var(--cyber-cyan); margin-bottom: 6px;">${proj.title}</div>
+          <div style="color: var(--text-dim); font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; margin-bottom: 20px;">
+            TARGET_VERSION: ${proj.version} <br> ARCHIVE_SIZE: ${proj.size}
           </div>
         </div>
-        <button onclick="openPaypolGateway('${proj.id}')" class="btn-ui full">Repository anfordern</button>
+        <button onclick="openPaypolGateway('${proj.id}')" class="btn-ui full">Kern-Download anfordern</button>
       </div>
     `).join('');
   }
 
-  /* RADIKAL SYSTEM TABS ENGINE */
-  function switchTab(targetTabId, element) {
+  function switchCore(targetTabId, element) {
     document.querySelectorAll('.view-container').forEach(view => view.classList.remove('active'));
-    document.querySelectorAll('.nav-segment').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.system-core-btn').forEach(btn => btn.classList.remove('active'));
     
     document.getElementById(targetTabId).classList.add('active');
     element.classList.add('active');
+    playSound("xp.mp3");
   }
 
   function openPaypolGateway(id) {
@@ -741,7 +814,7 @@
 
     box.innerHTML = data.reverse().map(msg => `
       <div class="pinnwand-node">
-        <span class="user">[${escapeHtml(msg.name)}]</span>
+        <span class="user">&gt; [${escapeHtml(msg.name)}]</span>
         <span>${escapeHtml(msg.nachricht)}</span>
       </div>
     `).join('');
@@ -756,9 +829,9 @@
     if (!data || data.length === 0) { box.innerHTML = "Keine Antragsdaten vorhanden."; return; }
 
     box.innerHTML = data.map(apply => `
-      <div style="background: rgba(0,0,0,0.2); padding: 16px; border: 1px solid var(--border-clean); border-radius: 8px;">
-        <div style="color: var(--text-primary); font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Antragsteller: ${escapeHtml(apply.username || 'Unbekannt')}</div>
-        <div style="white-space: pre-wrap; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">${escapeHtml(apply.begruendung || 'Keine Angabe.')}</div>
+      <div style="background: rgba(0,0,0,0.3); padding: 16px; border: 1px solid var(--border-glow); border-radius: 4px; font-family:'Share Tech Mono', monospace;">
+        <div style="color: var(--cyber-cyan); font-weight: 700; font-size: 0.95rem; margin-bottom: 6px;">[USER_NODE]: ${escapeHtml(apply.username || 'Unbekannt')}</div>
+        <div style="white-space: pre-wrap; color: var(--text-bright); font-size: 0.9rem; line-height: 1.5;">${escapeHtml(apply.begruendung || 'Keine Angabe.')}</div>
       </div>
     `).join('');
   }
@@ -774,9 +847,9 @@
     if (error) { alert('Fehler.'); btn.disabled = false; input.disabled = false; return; }
 
     const payload = {
-      username: 'QuapsHub Pinnwand',
-      content: '📢 **Neue Nachricht an der Wand!**',
-      embeds: [{ title: '💬 Quaps Attack Pinnwand', description: `>>> ${text}`, color: 3820274, fields: [{ name: '👤 Absender', value: `\`${currentGlobalUser}\``, inline: true }] }]
+      username: 'QuapsHub Terminal',
+      content: '📢 **Neue Terminal-Nachricht!**',
+      embeds: [{ title: '💬 Cyber-Core Pinnwand', description: `>>> ${text}`, color: 61695, fields: [{ name: '👤 Sender Node', value: `\`${currentGlobalUser}\``, inline: true }] }]
     };
     try { await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch (e) {}
 
@@ -807,7 +880,7 @@
 
     const payload = {
       username: 'QuapsHub Monitor',
-      embeds: [{ title: '📹 Neuer Clip eingereicht', color: 3820274, fields: [{ name: 'Spieler', value: name, inline: true }, { name: 'Titel', value: title, inline: true }, { name: 'Link', value: link }] }]
+      embeds: [{ title: '📹 Neuer Clip eingereicht', color: 61695, fields: [{ name: 'Spieler', value: name, inline: true }, { name: 'Titel', value: title, inline: true }, { name: 'Link', value: link }] }]
     };
 
     try {
@@ -816,7 +889,7 @@
       setTimeout(() => {
         msg.style.display = 'none'; btn.textContent = 'An Discord übertragen'; btn.disabled = false;
         document.getElementById('clipTitle').value = ''; document.getElementById('clipLink').value = '';
-        switchTab('tab-home', document.querySelector('.nav-segment'));
+        switchCore('tab-home', document.querySelector('.system-core-btn'));
       }, 2500);
     } catch { alert('Fehler.'); btn.textContent = 'An Discord übertragen'; btn.disabled = false; }
   }
