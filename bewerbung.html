@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuapsAttack - Server Bewerbung</title>
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #fff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      padding: 40px 20px;
+      margin: 0;
+    }
+    .apply-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #222;
+      border: 3px solid #555;
+      padding: 30px;
+      border-radius: 4px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+    h1 {
+      color: #ffaa00;
+      text-align: center;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 2px 2px #000;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      color: #aaa;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .mc-input, .mc-textarea {
+      width: 100%;
+      padding: 12px;
+      background: #111;
+      border: 2px solid #555;
+      color: #fff;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+    .mc-input:focus, .mc-textarea:focus {
+      border-color: #ffaa00;
+      outline: none;
+    }
+    .rules-box {
+      background: #151515;
+      border: 2px solid #444;
+      padding: 15px;
+      max-height: 150px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      color: #ccc;
+      line-height: 1.5;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .checkbox-group input {
+      margin-right: 12px;
+      margin-top: 3px;
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+    .checkbox-group span {
+      font-size: 0.95rem;
+      color: #ddd;
+    }
+    .mc-btn {
+      width: 100%;
+      background: #444;
+      color: #888;
+      border: 2px solid #555;
+      padding: 15px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: not-allowed;
+      text-transform: uppercase;
+      margin-top: 20px;
+      transition: all 0.2s;
+    }
+    .mc-btn.enabled {
+      background: #4e9a06;
+      border-color: #73d216;
+      color: #fff;
+      cursor: pointer;
+      text-shadow: 1px 1px #000;
+    }
+    .mc-btn.enabled:hover {
+      background: #5caf07;
+    }
+    .status-msg {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+      display: none;
+      padding: 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="apply-container">
+  <h1>📋 Server Bewerbung</h1>
+  
+  <form id="applyForm" onsubmit="submitApplication(event)">
+    
+    <div class="form-group">
+      <label for="username">DEIN MINECRAFT USERNAME</label>
+      <input type="text" id="username" class="mc-input" placeholder="z.B. Lois_7" required oninput="checkFormValidity()">
+    </div>
+
+    <div class="form-group">
+      <label for="begruendung">WARUM MÖCHTEST DU MITZOCKEN?</label>
+      <textarea id="begruendung" class="mc-textarea" rows="5" placeholder="Schreib eine kurze Begründung, warum wir dich auf den Server lassen sollten..." required oninput="checkFormValidity()"></textarea>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #444; margin: 25px 0;">
+
+    <label>📜 UNSERE SERVER-REGELN</label>
+    <div class="rules-box">
+      <strong>1. Griefer-Schutz:</strong> Das unbefugte Zerstören oder Verändern fremder Bauwerke ist strengstens untersagt.<br>
+      <strong>2. Modifikationen:</strong> Hacks, X-Ray oder unfaire Client-Modifikationen führen zum sofortigen Bann.<br>
+      <strong>3. Respekt:</strong> Beleidigungen, Spam oder toxisches Verhalten im Chat werden nicht geduldet.<br>
+      <strong>4. Redstone-Laggs:</strong> Riesen-Maschinen oder unendliche Clocker müssen abschaltbar sein, um Server-Laggs zu vermeiden.
+    </div>
+
+    <label class="checkbox-group">
+      <input type="checkbox" id="checkRules" onchange="checkFormValidity()">
+      <span>Ich respektiere die Regeln und habe das Regelwerk oben aufmerksam gelesen.</span>
+    </label>
+
+    <label class="checkbox-group">
+      <input type="checkbox" id="checkPlayers" onchange="checkFormValidity()">
+      <span>Ich respektiere alle Mitspieler und verhalte mich im Chat stets reif und freundlich.</span>
+    </label>
+
+    <label class="checkbox-group">
+      <input type="checkbox" id="checkStealing" onchange="checkFormValidity()">
+      <span>Ich schwöre, weder Items aus Kisten zu klauen, noch fremde Basen ungefragt zu betreten.</span>
+    </label>
+
+    <label class="checkbox-group">
+      <input type="checkbox" id="checkBetteln" onchange="checkFormValidity()">
+      <span>Ich werde das Admin-Team niemals nach Rechten (OP), Items oder Rängen anbetteln.</span>
+    </label>
+
+    <button type="submit" id="submitBtn" class="mc-btn" disabled>Bewerbung absenden</button>
+  </form>
+
+  <div id="statusMessage" class="status-msg"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Deine Supabase Verbindungsdaten
+  const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Prüft ob Textfelder ausgefüllt UND alle 4 Checkboxen aktiv sind
+  function checkFormValidity() {
+    const username = document.getElementById('username').value.trim();
+    const begruendung = document.getElementById('begruendung').value.trim();
+    const c1 = document.getElementById('checkRules').checked;
+    const c2 = document.getElementById('checkPlayers').checked;
+    const c3 = document.getElementById('checkStealing').checked;
+    const c4 = document.getElementById('checkBetteln').checked;
+    
+    const btn = document.getElementById('submitBtn');
+
+    if (username && begruendung && c1 && c2 && c3 && c4) {
+      btn.disabled = false;
+      btn.classList.add('enabled');
+    } else {
+      btn.disabled = true;
+      btn.classList.remove('enabled');
+    }
+  }
+
+  // Sendet die Daten ab
+  async function submitApplication(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value.trim();
+    const begruendung = document.getElementById('begruendung').value.trim();
+    const statusMsg = document.getElementById('statusMessage');
+    const btn = document.getElementById('submitBtn');
+
+    btn.disabled = true;
+    btn.textContent = "... ÜBERTRAGE DATEN";
+
+    const { error } = await supabaseClient
+      .from('bewerbungen')
+      .insert([{ username: username, begruendung: begruendung }]);
+
+    if (error) {
+      statusMsg.style.background = "rgba(255, 85, 85, 0.2)";
+      statusMsg.style.color = "#ff5555";
+      statusMsg.style.border = "1px solid #ff5555";
+      statusMsg.textContent = "Fehler beim Absenden! Bitte versuche es noch einmal.";
+      statusMsg.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "Bewerbung absenden";
+    } else {
+      statusMsg.style.background = "rgba(85, 255, 85, 0.2)";
+      statusMsg.style.color = "#55ff55";
+      statusMsg.style.border = "1px solid #55ff55";
+      statusMsg.textContent = "✔ Bewerbung erfolgreich gesendet! Du wirst weitergeleitet...";
+      statusMsg.style.display = "block";
+      
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 2500);
+    }
+  }
+</script>
+</body>
+</html>
