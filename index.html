@@ -791,14 +791,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
   loadPinnwand();
-  loadBewerber(); // Ruft die Bewerberliste direkt beim Start auf!
+  loadBewerber(); 
   renderDownloadList();
 
   setTimeout(triggerCookieBanner, 2000);
   setTimeout(initReveal, 100);
 });
 
-/* ── BEWERBERLISTE DYNAMISCH LADEN ── */
+/* ── BEWERBERLISTE DYNAMISCH MIT KÖPFEN LADEN ── */
 async function loadBewerber() {
   const { data, error } = await supabaseClient
     .from('bewerbungen')
@@ -817,12 +817,20 @@ async function loadBewerber() {
     return;
   }
 
-  // Generiert die Badges im schicken Minecraft-Style
-  liste.innerHTML = data.map(b => `
-    <span style="display: inline-block; background: rgba(0,0,0,0.4); border: 2px solid var(--primary); padding: 6px 12px; font-family: monospace; border-radius: 6px; color: #fff; font-size: 1.1rem; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);">
-      🟢 ${escapeHtml(b.username)}
-    </span>
-  `).join('');
+  // Generiert die Badges inklusive Avatar-Kopf im schicken Minecraft-Style
+  liste.innerHTML = data.map(b => {
+    const cleanUsername = escapeHtml(b.username.trim());
+    // Nutzt crafatar.com für das 3D-artig gerenderte Avatar-Face (Größe 24px) mit Skin-Overlay
+    const avatarUrl = `https://crafatar.com/avatars/${cleanUsername}?size=24&overlay`;
+
+    return `
+      <span style="display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4); border: 2px solid var(--primary); padding: 6px 12px; font-family: monospace; border-radius: 6px; color: #fff; font-size: 1.1rem; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);">
+        <img src="${avatarUrl}" alt="${cleanUsername}" style="width: 20px; height: 20px; image-rendering: pixelated; border-radius: 2px;" onerror="this.src='https://crafatar.com/avatars/Steve?size=24'">
+        <span style="color: var(--primary); font-size: 0.8rem; line-height: 1;">🟢</span>
+        ${cleanUsername}
+      </span>
+    `;
+  }).join('');
 }
 
 /* ── DOWNLOAD LISTE DYNAMISCH GENERIEREN ── */
