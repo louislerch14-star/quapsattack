@@ -569,6 +569,7 @@
     <button class="mc-btn active" onclick="showPage('home')" id="btn-home">&nbsp; HOME</button>
     <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">&nbsp; CLIP-ARCHIV</button>
     <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">&nbsp; CLIP UPLOAD</button>
+    <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload" style="color: var(--diamond); font-weight: bold;">&nbsp; 🖼 BILDER UP-LOAD</button>
     <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
     <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">&nbsp; 📋 BEWERBUNGEN</button>
     <button class="mc-btn logout-btn" onclick="logout()">&nbsp; EXIT / LOGOUT</button>
@@ -601,6 +602,14 @@
         <div class="line"><span>▶</span> Hacks, X-Ray oder unfaire Client Modifikationen führen zum sofortigen Bann.</div>
         <div class="line"><span>▶</span> Schicke ein Bild von deiner Base und sie steht unter Grieferschutz.(QA11)</div>
       </div>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2" style="border-color: var(--diamond); background: rgba(68, 212, 212, 0.03);">
+      <div class="mc-panel-title" style="color: var(--diamond);">🛡 BASE-SCHUTZ AKTIVIEREN</div>
+      <div class="panel-body" style="margin-bottom: 15px;">
+        <p style="font-size: 1.1rem; color: #ccc;">Sichere dein Eigentum! Lade hier direkt ein Bild deiner Base hoch, um den offiziellen Grieferschutz laut Regel 3 zu beantragen.</p>
+      </div>
+      <button onclick="showPage('image-upload')" class="mc-action" style="color: var(--diamond); border-color: var(--diamond);">▶ JETZT BILD HOCHLADEN</button>
     </div>
 
     <div class="glass-card mc-panel" data-reveal="3">
@@ -652,31 +661,51 @@
 
   <div id="upload" class="page">
     <div class="hero" data-reveal="1">
-      <h1>Clip / Bild <span>einsenden</span></h1>
-      <p class="hero-sub">Teile deine Highlights oder Base-Bilder direkt mit der gesamten Truppe.</p>
+      <h1>Clip <span>einsenden</span></h1>
+      <p class="hero-sub">Teile deine Highlights oder Fail-Momente mit der gesamten Truppe.</p>
     </div>
 
     <div class="glass-card mc-panel" data-reveal="2" style="max-width: 600px; margin: 0 auto;">
-      <div class="mc-panel-title">Einsende-Formular</div>
+      <div class="mc-panel-title">Clip-Formular</div>
       
       <label class="mc-label">DEIN NAME</label>
       <input class="mc-input" id="uploaderName" type="text" readonly>
 
       <label class="mc-label">TITEL ODER BESCHREIBUNG</label>
-      <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. Epic PvP Clutch oder Base für Grieferschutz">
+      <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. Epic PvP Clutch">
 
-      <label class="mc-label">LINK (MEDAL ODER YOUTUBE - OPTIONAL)</label>
+      <label class="mc-label">LINK (MEDAL ODER YOUTUBE)</label>
       <textarea class="mc-input" id="clipLink" rows="2" placeholder="https://..."></textarea>
-
-      <label class="mc-label">BILD HOCHLADEN (OPTIONAL)</label>
-      <div class="file-upload-wrapper">
-        <label class="file-upload-label" id="uploadLabel">📁 Datei auswählen oder hierher ziehen</label>
-        <input type="file" id="clipImage" class="file-upload-input" accept="image/*" onchange="previewFileName()">
-      </div>
-      <div class="file-name-preview" id="fileNameDisplay"></div>
       
       <button onclick="sendToDiscord()" id="submitBtn" class="mc-action full">▶ AN DISCORD SENDEN</button>
       <div class="mc-success" id="statusMsg">Erfolgreich an Discord übertragen!</div>
+    </div>
+  </div>
+
+  <div id="image-upload" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Bilder <span>Upload (Grieferschutz)</span></h1>
+      <p class="hero-sub">Lade hier Base-Bilder hoch, um Grieferschutz gemäß Regelwerk zu erhalten.</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2" style="max-width: 600px; margin: 0 auto; border-color: var(--diamond);">
+      <div class="mc-panel-title" style="color: var(--diamond);">Base / Image Formular</div>
+      
+      <label class="mc-label">DEIN NAME</label>
+      <input class="mc-input" id="imageUploaderName" type="text" readonly>
+
+      <label class="mc-label">BESCHREIBUNG / BASE-KOORDINATEN</label>
+      <input class="mc-input" id="imageDescription" type="text" placeholder="z.B. Meine Hauptbase bei X: 200 Z: -1500">
+
+      <label class="mc-label">BILD PER DATEIUPLOAD HINZUFÜGEN</label>
+      <div class="file-upload-wrapper">
+        <label class="file-upload-label" id="imgUploadLabel">📁 Bild auswählen oder hierher ziehen</label>
+        <input type="file" id="baseImageFile" class="file-upload-input" accept="image/*" onchange="previewImageFileName()">
+      </div>
+      <div class="file-name-preview" id="imgFileNameDisplay"></div>
+      
+      <button onclick="sendImageToDiscord()" id="imgSubmitBtn" class="mc-action full" style="color: var(--diamond); border-color: var(--diamond);">▶ BILD AN DISCORD SENDEN</button>
+      <div class="mc-success" id="imgStatusMsg" style="border-color: var(--diamond); color: var(--diamond); background: rgba(68,212,212,0.05);">Bild erfolgreich an Discord gesendet!</div>
     </div>
   </div>
 
@@ -839,6 +868,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   
   document.getElementById('user-name-display').textContent = currentGlobalUser;
   document.getElementById('uploaderName').value = currentGlobalUser;
+  document.getElementById('imageUploaderName').value = currentGlobalUser;
   document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
   loadPinnwand();
@@ -911,7 +941,7 @@ function closePaypolGateway() {
   document.getElementById('cinematic-intro-screen').style.display = "none";
 }
 
-function advanceToCodeStep() {
+ function advanceToCodeStep() {
   document.getElementById('paypol-step-2').style.display = "block";
   playSound("xp.mp3");
 }
@@ -1061,6 +1091,7 @@ function showPage(id) {
   document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.getElementById('btn-' + id).classList.add('active');
+  window.scrollTo(0, 0);
   setTimeout(initReveal, 50);
 }
 
@@ -1078,59 +1109,100 @@ function togglePlay() {
   else { audio.pause(); btn.textContent = '▶ SONG ABSPIELEN'; vis.classList.remove('playing'); }
 }
 
-function previewFileName() {
-  const fileInput = document.getElementById('clipImage');
-  const display = document.getElementById('fileNameDisplay');
-  const label = document.getElementById('uploadLabel');
+/* ── FUNKTIONEN FÜR KLASSISCHEN CLIP UPLOAD ── */
+async function sendToDiscord() {
+  const name = document.getElementById('uploaderName').value;
+  const title = document.getElementById('clipTitle').value;
+  const link = document.getElementById('clipLink').value;
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('statusMsg');
+
+  if (!title || !link) { alert('Bitte fülle alle Felder aus!'); return; }
+  btn.textContent = '... ÜBERTRAGE DATEN'; btn.disabled = true;
+
+  const payload = {
+    username: 'QuapsHub Monitor',
+    embeds: [{
+      title: '📹 Neuer Clip eingereicht',
+      color: 0xa8ff78,
+      fields: [
+        { name: 'Spieler', value: name, inline: true },
+        { name: 'Titel', value: title, inline: true },
+        { name: 'Link', value: link }
+      ]
+    }]
+  };
+
+  try {
+    await fetch(DISCORD_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    
+    msg.style.display = 'block';
+    setTimeout(() => {
+      msg.style.display = 'none'; 
+      btn.textContent = '▶ AN DISCORD SENDEN'; 
+      btn.disabled = false;
+      document.getElementById('clipTitle').value = ''; 
+      document.getElementById('clipLink').value = '';
+      showPage('home');
+    }, 3000);
+  } catch { 
+    alert('Übertragung fehlgeschlagen.'); 
+    btn.textContent = '▶ AN DISCORD SENDEN'; 
+    btn.disabled = false; 
+  }
+}
+
+/* ── FUNKTIONEN FÜR SEPARATEN BILDER UPLOAD (NEW DISCORD WEBHOOK) ── */
+function previewImageFileName() {
+  const fileInput = document.getElementById('baseImageFile');
+  const display = document.getElementById('imgFileNameDisplay');
+  const label = document.getElementById('imgUploadLabel');
   
   if (fileInput.files.length > 0) {
     display.textContent = "Ausgewählt: " + fileInput.files[0].name;
     display.style.display = "block";
     label.textContent = "✔ Bild geladen";
-    label.style.borderColor = "var(--primary)";
+    label.style.borderColor = "var(--diamond)";
   } else {
     display.style.display = "none";
-    label.textContent = "📁 Datei auswählen oder hierher ziehen";
+    label.textContent = "📁 Bild auswählen oder hierher ziehen";
     label.style.borderColor = "var(--border)";
   }
 }
 
-async function sendToDiscord() {
-  const name = document.getElementById('uploaderName').value;
-  const title = document.getElementById('clipTitle').value;
-  const link = document.getElementById('clipLink').value;
-  const fileInput = document.getElementById('clipImage');
-  const btn = document.getElementById('submitBtn');
-  const msg = document.getElementById('statusMsg');
+async function sendImageToDiscord() {
+  const name = document.getElementById('imageUploaderName').value;
+  const description = document.getElementById('imageDescription').value;
+  const fileInput = document.getElementById('baseImageFile');
+  const btn = document.getElementById('imgSubmitBtn');
+  const msg = document.getElementById('imgStatusMsg');
 
-  if (!title) { alert('Bitte einen Titel oder eine Beschreibung eingeben!'); return; }
+  if (fileInput.files.length === 0) { alert('Bitte wähle ein Bild zum Hochladen aus!'); return; }
   btn.textContent = '... ÜBERTRAGE DATEN'; btn.disabled = true;
 
   const formData = new FormData();
+  const file = fileInput.files[0];
   
-  // JSON-Payload für Discord vorbereiten
+  // Bild an Form-Daten hängen
+  formData.append('files[0]', file, file.name);
+
+  // Embed vorbereiten
   const embed = {
-    title: '📹 Neue Einsendung erhalten',
-    color: 0xa8ff78,
+    title: '🖼 Neues Base-Bild (Grieferschutz-Antrag)',
+    color: 0x44d4d4,
     fields: [
       { name: 'Spieler', value: name, inline: true },
-      { name: 'Titel / Info', value: title, inline: true }
-    ]
+      { name: 'Info / Koordinaten', value: description || 'Keine Beschreibung angegeben.', inline: true }
+    ],
+    image: { url: `attachment://${file.name}` }
   };
 
-  if (link.trim() !== '') {
-    embed.fields.push({ name: 'Link', value: link });
-  }
-
-  // Wenn ein Bild vorhanden ist, hängen wir es an das Formular an
-  if (fileInput.files.length > 0) {
-    const file = fileInput.files[0];
-    formData.append('files[0]', file, file.name);
-    embed.image = { url: `attachment://${file.name}` };
-  }
-
   const payload = {
-    username: 'QuapsHub Monitor',
+    username: 'QuapsHub Base-Schutz',
     embeds: [embed]
   };
 
@@ -1145,19 +1217,18 @@ async function sendToDiscord() {
     msg.style.display = 'block';
     setTimeout(() => {
       msg.style.display = 'none'; 
-      btn.textContent = '▶ AN DISCORD SENDEN'; 
+      btn.textContent = '▶ BILD AN DISCORD SENDEN'; 
       btn.disabled = false;
-      document.getElementById('clipTitle').value = ''; 
-      document.getElementById('clipLink').value = '';
-      document.getElementById('clipImage').value = '';
-      document.getElementById('fileNameDisplay').style.display = 'none';
-      document.getElementById('uploadLabel').textContent = '📁 Datei auswählen oder hierher ziehen';
-      document.getElementById('uploadLabel').style.borderColor = 'var(--border)';
+      document.getElementById('imageDescription').value = ''; 
+      document.getElementById('baseImageFile').value = '';
+      document.getElementById('imgFileNameDisplay').style.display = 'none';
+      document.getElementById('imgUploadLabel').textContent = '📁 Bild auswählen oder hierher ziehen';
+      document.getElementById('imgUploadLabel').style.borderColor = 'var(--border)';
       showPage('home');
     }, 3000);
   } catch { 
-    alert('Übertragung fehlgeschlagen.'); 
-    btn.textContent = '▶ AN DISCORD SENDEN'; 
+    alert('Bilder-Übertragung fehlgeschlagen.'); 
+    btn.textContent = '▶ BILD AN DISCORD SENDEN'; 
     btn.disabled = false; 
   }
 }
