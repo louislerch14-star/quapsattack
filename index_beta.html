@@ -13,18 +13,17 @@
   
   <style>
   :root {
-    --primary:       #a8ff78; /* XP-Grün als feiner Akzent */
-    --diamond:       #38bdf8; /* Modernes Hellblau für Highlights */
-    --bg-main:       #1e2530; /* Mattes, dunkleres Graublau für den Hintergrund */
-    --bg-card:       #29313f; /* Edles Anthrazit-Grau für Inhalts-Karten */
-    --bg-sidebar:    #191f29; /* Etwas dunkleres Grau für die Sidebar */
-    --border-line:   #384457; /* Subtile Trennlinien */
-    --text-main:     #f8fafc; /* Nahezu weißer Text für perfekten Kontrast */
-    --text-dimmed:   #94a3b8; /* Klassisches Grau für sekundäre Infos */
+    --bg-app:        #0f172a; /* Tiefes, edles Studio-Dunkelgrau */
+    --bg-surface:    #1e293b; /* Mattes Asche-Grau für die Kacheln */
+    --bg-sub:        #334155; /* Helleres Grau für Inputs / sekundäre Elemente */
+    --border-clean:  #475569; /* Subtile, moderne Linien */
+    --accent-blue:   #38bdf8; /* Fokus-Farbe */
+    --accent-green:  #4ade80; /* Status-Erfolg */
+    --text-primary:  #f8fafc; /* Klarer, weißer Text */
+    --text-secondary:#94a3b8; /* Gedimmtes Grau */
     
-    --trust-green:   #00b67a;
-    --paypol-blue:   #003087;
-    --paypol-cyan:   #0079c1;
+    --paypol-main:   #00457c;
+    --paypol-light:  #0079c1;
   }
 
   *, *::before, *::after { 
@@ -33,913 +32,794 @@
     padding: 0; 
   }
   
-  html, body {
-    height: 100%;
-    background-color: var(--bg-main);
-  }
-
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: var(--text-main);
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
   }
 
-  /* NEUES LAYOUT: SIDEBAR LINKS FIXED */
-  .sidebar-panel {
-    position: fixed;
-    top: 0; left: 0;
-    width: 280px;
-    height: calc(100vh - 50px);
-    background: var(--bg-sidebar);
-    border-right: 1px solid var(--border-line);
-    z-index: 100;
+  /* RADIKAL NEUE TOP-BAR STATT SIDEBAR */
+  .app-header {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-clean);
+    padding: 16px 40px;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .sidebar-branding {
-    padding: 30px 24px;
-    border-bottom: 1px solid var(--border-line);
-  }
-  
-  .sidebar-branding h2 {
-    font-size: 1.3rem;
+  .brand-zone h2 {
+    font-size: 1.25rem;
     font-weight: 700;
     letter-spacing: -0.5px;
-    color: var(--text-main);
   }
-  
-  .sidebar-subtext {
-    display: block;
-    margin-top: 4px;
-    color: var(--text-dimmed);
+  .brand-zone span {
     font-size: 0.75rem;
-    font-weight: 500;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 1px;
+    margin-left: 8px;
   }
 
-  /* ÜBERARBEITETE NAVBAR-NAMEN UND STYLING */
-  .sidebar-menu {
-    padding: 24px 16px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .menu-btn {
-    display: block;
-    width: 100%;
-    background: transparent;
-    color: var(--text-dimmed);
-    padding: 12px 16px;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    cursor: pointer;
-    text-align: left;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-  }
-  
-  .menu-btn:hover {
-    color: var(--text-main);
-    background: rgba(255, 255, 255, 0.04);
-  }
-  
-  .menu-btn.active {
-    color: var(--text-main);
-    background: var(--bg-card);
-    border-color: var(--border-line);
-  }
-
-  .menu-btn.exit-btn {
-    margin-top: auto;
-    color: #f87171;
-    border-top: 1px solid var(--border-line);
-    border-radius: 0;
-    padding-top: 20px;
-  }
-  .menu-btn.exit-btn:hover {
-    background: rgba(248, 113, 113, 0.08);
-  }
-
-  .sidebar-user-footer {
+  .user-badge {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 20px 24px;
-    border-top: 1px solid var(--border-line);
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border-clean);
   }
-  
-  .avatar-frame {
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--border-line);
-    background: var(--bg-main);
+  .user-badge img {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
   }
-  
-  .user-info-text {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .user-title {
-    color: var(--text-main);
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  
-  .user-status {
-    font-size: 0.75rem;
-    color: var(--trust-green);
+  .user-badge span {
+    font-size: 0.85rem;
     font-weight: 500;
   }
 
-  /* HAUPTINHALT */
-  main {
-    margin-left: 280px;
-    padding: 50px 50px;
-    flex: 1;
-    max-width: 1300px;
-    position: relative;
-  }
-
-  /* FLÜSSIGER SEITENWECHSEL */
-  .view-section { 
-    display: none; 
-    opacity: 0;
-  }
-  
-  .view-section.active { 
-    display: block; 
-    animation: cleanFadeIn 0.25s ease-out forwards;
-  }
-
-  @keyframes cleanFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  .content-header-title {
-    font-size: 2rem;
-    color: var(--text-main);
-    margin-bottom: 35px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-  }
-  
-  .content-header-title span {
-    color: var(--diamond);
-  }
-
-  /* GRAUE MODERNE CARDS */
-  .data-block {
-    background: var(--bg-card);
-    border: 1px solid var(--border-line);
-    padding: 30px;
-    margin-bottom: 30px;
-    position: relative;
-    border-radius: 12px;
-  }
-
-  .block-label {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--text-dimmed);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 15px;
-  }
-
-  .data-row {
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border-line);
-    font-size: 0.95rem;
+  /* MODERNE FLACHE SEGMENT-NAVIGATION */
+  .navigation-bar {
+    background: rgba(30, 41, 59, 0.5);
+    border-bottom: 1px solid var(--border-clean);
+    padding: 10px 40px;
     display: flex;
-    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
   }
-  .data-row:last-child { border-bottom: none; }
-  .data-row .prefix { color: var(--diamond); width: 120px; flex-shrink: 0; font-weight: 600; }
-  .data-row .value { color: var(--text-main); }
 
-  /* COMMUNITY PINNWAND */
-  .wall-text-stream {
-    max-height: 300px;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    background: rgba(0, 0, 0, 0.15);
-    border: 1px solid var(--border-line);
-    padding: 20px;
-    border-radius: 8px;
+  .nav-segment {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
   }
-  .wall-message-node {
-    padding: 10px 0;
+  .nav-segment:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .nav-segment.active {
+    color: var(--text-primary);
+    background: var(--bg-surface);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .nav-segment.logout-trigger {
+    margin-left: auto;
+    color: #f87171;
+  }
+  .nav-segment.logout-trigger:hover {
+    background: rgba(248, 113, 113, 0.1);
+  }
+
+  /* MAIN WORKSPACE */
+  main {
+    flex: 1;
+    padding: 40px;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .view-container {
+    display: none;
+  }
+  .view-container.active {
+    display: block;
+    animation: layoutFade 0.2s ease-out;
+  }
+  @keyframes layoutFade {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ASYMMETRISCHES KACHEL-GRID FÜR DIE ÜBERSICHT */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 24px;
+  }
+
+  .tile-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-clean);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .tile-full-width {
+    grid-column: span 2;
+  }
+
+  .tile-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  /* CORE DATA LIST */
+  .row-item {
+    padding: 12px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 0.95rem;
-  }
-  .wall-message-node:last-child { border-bottom: none; }
-  .wall-message-node .author {
-    color: var(--primary);
-    margin-right: 10px;
-    font-weight: 600;
-  }
-
-  .stream-input-container {
     display: flex;
-    gap: 15px;
   }
+  .row-item:last-child { border-bottom: none; }
+  .row-item .tag { color: var(--accent-blue); width: 110px; font-weight: 600; flex-shrink: 0; }
+  .row-item .info { color: var(--text-primary); }
 
-  /* JUKEBOX CONTROLS */
-  .audio-matrix-zone {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    background: rgba(0, 0, 0, 0.15);
-    padding: 20px;
-    border: 1px solid var(--border-line);
-    border-radius: 8px;
-  }
-
-  .wave-hologram {
-    display: flex;
-    gap: 5px;
-    height: 20px;
-    align-items: center;
-  }
-  .wave-bar {
-    width: 3px;
-    height: 4px;
-    background: var(--border-line);
-  }
-  .playing .wave-bar {
-    background: var(--diamond);
-    animation: wavePulse 0.5s infinite alternate ease-in-out;
-  }
-  .playing .wave-bar:nth-child(2n) { animation-delay: 0.15s; }
-  .playing .wave-bar:nth-child(3n) { animation-delay: 0.3s; }
-  @keyframes wavePulse { from { height: 4px; } to { height: 20px; } }
-
-  /* BUTTONS & FORMULAR-ELEMENTE */
-  .btn-action {
-    display: inline-block;
-    background: #334155;
-    color: var(--text-main);
-    padding: 12px 24px;
-    border: 1px solid var(--border-line);
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 600;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  .btn-action:hover:not(:disabled) {
-    background: #475569;
-    border-color: #64748b;
-  }
-  .btn-action:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-action.full-width { width: 100%; text-align: center; }
-
-  .input-field {
-    width: 100%;
+  /* PINNWAND STREAM */
+  .pinnwand-stream {
     background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border-line);
+    border: 1px solid var(--border-clean);
+    border-radius: 8px;
+    padding: 16px;
+    max-height: 240px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+  }
+  .pinnwand-node {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    font-size: 0.9rem;
+  }
+  .pinnwand-node:last-child { border-bottom: none; }
+  .pinnwand-node .user { color: var(--accent-green); font-weight: 600; margin-right: 8px; }
+
+  /* COMPACT CONTROLS */
+  .flex-input-group {
+    display: flex;
+    gap: 12px;
+  }
+
+  .input-control {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-clean);
     padding: 12px 16px;
     border-radius: 8px;
-    color: var(--text-main);
+    color: var(--text-primary);
     font-family: inherit;
     font-size: 0.95rem;
-    margin-bottom: 20px;
-    transition: border-color 0.2s;
   }
-  .input-field:focus {
+  .input-control:focus {
     outline: none;
-    border-color: var(--diamond);
+    border-color: var(--accent-blue);
   }
-  .input-field[readonly] {
+  .input-control[readonly] {
     background: rgba(0, 0, 0, 0.4);
-    color: var(--text-dimmed);
+    color: var(--text-secondary);
     cursor: not-allowed;
   }
 
-  .field-description {
-    font-size: 0.8rem;
-    color: var(--text-dimmed);
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: block;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .operation-success-alert {
-    display: none;
-    color: var(--trust-green);
+  .btn-ui {
+    background: var(--bg-sub);
+    color: var(--text-primary);
+    border: 1px solid var(--border-clean);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: inherit;
     font-size: 0.95rem;
-    margin-top: 15px;
-    font-weight: 500;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
   }
+  .btn-ui:hover:not(:disabled) { background: var(--border-clean); }
+  .btn-ui:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-ui.full { width: 100%; text-align: center; }
 
-  /* WELTEN GRID */
-  .cards-structural-grid {
+  /* JUKEBOX */
+  .jukebox-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-clean);
+  }
+  .visual-bars { display: flex; gap: 4px; height: 16px; align-items: center; }
+  .bar-unit { width: 3px; height: 4px; background: var(--border-clean); }
+  .playing .bar-unit { background: var(--accent-blue); animation: barPulse 0.5s infinite alternate ease-in-out; }
+  .playing .bar-unit:nth-child(2n) { animation-delay: 0.1s; }
+  .playing .bar-unit:nth-child(3n) { animation-delay: 0.2s; }
+  @keyframes barPulse { from { height: 4px; } to { height: 16px; } }
+
+  /* MAPS SYSTEM GRID */
+  .maps-layout-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 25px;
-  }
-  .card-node-element {
-    background: var(--bg-card);
-    border: 1px solid var(--border-line);
-    padding: 25px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
   }
 
-  /* CLIPS ARCHIV */
-  .media-stream-container {
+  /* MEDIA SECTION */
+  .media-flow {
     display: flex;
     flex-direction: column;
-    gap: 35px;
+    gap: 32px;
   }
-  .video-frame-wrapper {
+  .video-container-frame {
     width: 100%;
-    max-width: 850px;
+    max-width: 900px;
     aspect-ratio: 16/9;
-    border: 1px solid var(--border-line);
-    border-radius: 12px;
-    position: relative;
     background: #000;
+    border-radius: 12px;
     overflow: hidden;
+    border: 1px solid var(--border-clean);
+    position: relative;
   }
-  .video-frame-wrapper iframe {
+  .video-container-frame iframe {
     position: absolute;
     inset: 0; width: 100%; height: 100%; border: none;
   }
-  .meta-attribution {
-    margin-top: 12px;
-    font-size: 0.9rem;
-    color: var(--text-dimmed);
+  .media-meta {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
   }
-  .meta-attribution span {
-    color: var(--diamond);
-    font-weight: 500;
-  }
+  .media-meta span { color: var(--accent-blue); }
 
-  /* POPUPS (COOKIE BANNER) */
-  .matrix-cookie-popup {
+  /* COOKIE POPUP */
+  .app-cookie-banner {
     position: fixed;
-    bottom: 30px;
-    right: -450px;
-    width: 380px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-line);
-    padding: 25px;
-    z-index: 5000;
+    bottom: 24px; right: -450px;
+    width: 360px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-clean);
+    padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index: 5000;
     transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .matrix-cookie-popup.show { right: 30px; }
-  .cookie-header-text { font-size: 1rem; margin-bottom: 10px; color: var(--text-main); font-weight: 600; }
-  .cookie-body-desc { color: var(--text-dimmed); font-size: 0.9rem; margin-bottom: 20px; }
-  .cookie-btn-group { display: flex; gap: 12px; }
-  .cookie-btn-action {
-    flex: 1; padding: 10px; text-align: center; cursor: pointer; border: 1px solid var(--border-line); border-radius: 6px; background: #334155; color: var(--text-main); font-size: 0.9rem; font-family: inherit; font-weight: 600;
-  }
-  .cookie-btn-action.confirm-accent { background: var(--primary); color: #000; border-color: var(--primary); }
+  .app-cookie-banner.show { right: 24px; }
 
-  /* NORMALE SCHRIFT FÜR PAYPOL MODAL */
-  .overlay-backdrop {
+  /* PAYPOL MODAL REAL CLEAN ENGINE */
+  .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.8);
-    z-index: 9000;
+    background: rgba(15, 23, 42, 0.85);
+    z-index: 9999;
     display: none;
     align-items: center;
     justify-content: center;
     padding: 20px;
   }
-  .overlay-backdrop.show { display: flex; }
+  .modal-backdrop.show { display: flex; }
 
-  .gateway-modal {
+  .modern-paypol-box {
     background: #ffffff;
     color: #1e293b;
     width: 100%;
-    max-width: 440px;
-    position: relative;
+    max-width: 420px;
     border-radius: 16px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
     overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    position: relative;
   }
 
-  .gateway-top {
+  .paypol-header {
     background: #f8fafc;
-    padding: 20px;
+    padding: 18px 24px;
     border-bottom: 1px solid #e2e8f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  /* Absolut normaler, moderner Look für PayPol */
-  .gateway-logo { font-style: italic; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
-  .logo-p1 { color: var(--paypol-blue); }
-  .logo-p2 { color: var(--paypol-cyan); }
-  .gateway-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8; }
+  .paypol-logo { font-style: italic; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.5px; }
+  .p-blue { color: var(--paypol-main); }
+  .p-cyan { color: var(--paypol-light); }
+  .paypol-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #94a3b8; }
 
-  .gateway-main-body { padding: 30px; }
-  .gateway-meta-box {
+  .paypol-body { padding: 24px; }
+  .paypol-summary-card {
     background: #f1f5f9;
-    padding: 16px;
-    text-align: center;
-    margin-bottom: 24px;
+    padding: 14px;
     border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
   }
-  .meta-title { color: #0f172a; font-size: 1.1rem; font-weight: 700; }
-  .meta-subtitle { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
+  .paypol-summary-card h4 { font-size: 1rem; color: #0f172a; font-weight: 700; }
+  .paypol-summary-card p { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
 
-  .gateway-group { margin-bottom: 20px; }
-  .gateway-label { display: block; font-size: 0.8rem; color: #475569; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
-  .gateway-num-wrapper { position: relative; }
-  .gateway-num-wrapper span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #475569; font-size: 0.95rem; font-weight: 600; }
+  .form-row { margin-bottom: 16px; }
+  .form-row label { display: block; font-size: 0.75rem; color: #475569; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
   
-  .gateway-input-field {
-    width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 1rem; color: #0f172a; font-family: inherit; box-sizing: border-box; border-radius: 8px; font-weight: 500;
+  .paypol-input {
+    width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.95rem; color: #0f172a; font-family: inherit; border-radius: 8px; box-sizing: border-box; font-weight: 500;
   }
-  .gateway-input-field:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
+  .paypol-input:focus { outline: none; border-color: var(--paypol-light); background: #fff; }
 
-  .gateway-secure-zone { margin-top: 20px; padding-top: 20px; border-top: 2px dashed #e2e8f0; display: none; }
-  .gateway-action-trigger {
-    display: block; width: 100%; background: #0079c1; color: #fff; border: none; padding: 14px; font-size: 1rem; font-family: inherit; font-weight: 600; cursor: pointer; text-align: center; box-sizing: border-box; border-radius: 8px; transition: background 0.15s;
+  .paypol-secure-wrapper { margin-top: 16px; padding-top: 16px; border-top: 2px dashed #e2e8f0; display: none; }
+  .paypol-btn {
+    display: block; width: 100%; background: #0079c1; color: #fff; border: none; padding: 12px; font-size: 0.95rem; font-family: inherit; font-weight: 600; cursor: pointer; text-align: center; border-radius: 8px; box-sizing: border-box; transition: background 0.15s;
   }
-  .gateway-action-trigger:hover { background: #005a8f; }
-  .gateway-error-text { color: #ef4444; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
+  .paypol-btn:hover { background: #005a8f; }
+  .paypol-error { color: #ef4444; font-size: 0.8rem; margin-top: 6px; display: none; text-align: center; font-weight: 500; }
 
-  .gateway-footer-trust {
+  .paypol-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: #0f172a;
     color: #fff;
-    padding: 15px 25px;
-    font-size: 0.85rem;
+    padding: 12px 24px;
+    font-size: 0.8rem;
   }
-  .trust-badge-stars { background: var(--trust-green); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-right: 6px; }
-  
-  /* FLASCHIGER TEXT-SCROLL IM MODAL RAUSGEWORFEN / VEREINFACHT */
-  #cinematic-intro-screen {
-    position: absolute; inset: 0; background: #0f172a; z-index: 100; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 40px; box-sizing: border-box; text-align: center;
-  }
-  #cinematic-text-scroll {
-    color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px;
-  }
+  .stars-badge { background: var(--accent-green); color: #000; padding: 1px 4px; border-radius: 3px; font-weight: 700; margin-right: 4px; }
 
-  /* CONFIG FOOTER */
-  .system-status-footer {
-    flex-shrink: 0;
-    height: 50px;
-    border-top: 1px solid var(--border-line);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    font-size: 0.85rem;
-    color: var(--text-dimmed);
-    background: var(--bg-sidebar);
+  /* SIMPLIFIED LOADING COVER INSTEAD OF SCROLL */
+  #loading-screen-cover {
+    position: absolute; inset: 0; background: #0f172a; z-index: 100; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center;
   }
-  .system-status-footer span { color: var(--diamond); font-weight: 500; }
+  #loading-screen-text { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; }
+
+  /* SYSTEM FOOTER STICKY COMPACT */
+  .app-footer {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-clean);
+    padding: 14px 40px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+  .app-footer span { color: var(--accent-blue); }
 
   @media (max-width: 900px) {
-    .sidebar-panel { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-line); }
-    .sidebar-menu { flex-direction: row; flex-wrap: wrap; padding: 12px; }
-    .menu-btn { width: auto; }
-    main { margin-left: 0; padding: 30px 20px; }
-    .system-status-footer { flex-direction: column; height: auto; padding: 20px; text-align: center; gap: 10px; }
+    .dashboard-grid { grid-template-columns: 1fr; }
+    .tile-full-width { grid-column: span 1; }
+    .app-header { flex-direction: column; gap: 12px; padding: 16px; text-align: center; }
+    .navigation-bar { padding: 10px 16px; }
+    main { padding: 20px; }
   }
   </style>
 </head>
 <body>
 
-<div class="root-layout">
-
-  <div class="sidebar-panel">
-    <div class="sidebar-branding">
-      <h2>QuapsHub</h2>
-      <span class="sidebar-subtext">Verwaltung</span>
+  <header class="app-header">
+    <div class="brand-zone">
+      <h2>QuapsHub<span>Workspace</span></h2>
     </div>
-
-    <div class="sidebar-menu">
-      <button class="menu-btn active" onclick="switchView('home')" id="btn-home">Übersicht</button>
-      <button class="menu-btn" onclick="switchView('clips')" id="btn-clips">Archivierte Highlights</button>
-      <button class="menu-btn" onclick="switchView('upload')" id="btn-upload">Highlight einreichen</button>
-      <button class="menu-btn" onclick="switchView('downloads')" id="btn-downloads">Welten-Download</button>
-      <button class="menu-btn" onclick="switchView('admin-apply')" id="btn-admin-apply">Mitgliedschafts-Anträge</button>
-      <button class="menu-btn exit-btn" onclick="logout()">Abmelden</button>
+    <div class="user-badge">
+      <img src="unnamed.jpg" alt="Avatar" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
+      <span id="global-username-display">Nutzer</span>
     </div>
+  </header>
 
-    <div class="sidebar-user-footer">
-      <img src="unnamed.jpg" id="user-avatar" class="avatar-frame" alt="User" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
-      <div class="user-info-text">
-        <span class="user-title" id="sidebar-user-name">Nutzer</span>
-        <span class="user-status">Online</span>
-      </div>
-    </div>
-  </div>
+  <nav class="navigation-bar">
+    <button class="nav-segment active" onclick="switchTab('tab-home', this)">Übersicht</button>
+    <button class="nav-segment" onclick="switchTab('tab-clips', this)">Highlights</button>
+    <button class="nav-segment" onclick="switchTab('tab-upload', this)">Einreichen</button>
+    <button class="nav-segment" onclick="switchTab('tab-downloads', this)">Welten</button>
+    <button class="nav-segment" onclick="switchTab('tab-admin', this)">Anträge</button>
+    <button class="nav-segment logout-trigger" onclick="logout()">Abmelden</button>
+  </nav>
 
   <main>
-    <div id="home" class="view-section active">
-      <h1 class="content-header-title">Willkommen zurück, <span id="user-name-display">Nutzer</span></h1>
-
-      <div class="data-block">
-        <div class="block-label">System-Meldungen</div>
-        <div class="data-row"><span class="prefix">[Welt]</span><span class="value">Der Download für die Hauptwelt aus Season 10 ist freigeschaltet.</span></div>
-        <div class="data-row"><span class="prefix">[Schnittstelle]</span><span class="value">Die Benutzeroberfläche wurde erfolgreich auf das Graustufen-Layout aktualisiert.</span></div>
-      </div>
-
-      <div class="data-block">
-        <div class="block-label">Pinnwand</div>
-        <div class="wall-text-stream" id="pinnwand-box">Lade Einträge...</div>
+    
+    <div id="tab-home" class="view-container active">
+      <div class="dashboard-grid">
         
-        <div class="stream-input-container">
-          <input type="text" id="pinnwand-input" class="input-field" placeholder="Eintrag verfassen..." maxlength="120" style="margin-bottom:0;" onkeydown="if(event.key === 'Enter') postToPinnwand()">
-          <button onclick="postToPinnwand()" id="pinnwand-btn" class="btn-action">Senden</button>
+        <div class="tile-card">
+          <div class="tile-title">Systemstatus</div>
+          <div class="row-item"><span class="tag">Datenbank</span><span class="info">Schnittstellen-Authentifizierung stabil eingerichtet.</span></div>
+          <div class="row-item"><span class="tag">Repository</span><span class="info">Season 10 Hauptwelt steht im Datei-Archiv bereit.</span></div>
         </div>
-      </div>
 
-      <div class="data-block">
-        <div class="block-label">Jukebox</div>
-        <div class="audio-matrix-zone">
-          <div class="wave-hologram" id="visualizer">
-            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+        <div class="tile-card">
+          <div class="tile-title">Audio-Zentrale</div>
+          <div class="jukebox-box">
+            <div class="visual-bars" id="visualizer">
+              <div class="bar-unit"></div><div class="bar-unit"></div><div class="bar-unit"></div><div class="bar-unit"></div>
+              <div class="bar-unit"></div><div class="bar-unit"></div><div class="bar-unit"></div><div class="bar-unit"></div>
+            </div>
+            <audio id="communitySong"><source src="quaps-hymne.mp3" type="audio/mpeg"></audio>
+            <button onclick="togglePlay()" id="playBtn" class="btn-ui">Hymne abspielen</button>
           </div>
-          <audio id="communitySong">
-            <source src="quaps-hymne.mp3" type="audio/mpeg">
-          </audio>
-          <button onclick="togglePlay()" id="playBtn" class="btn-action">Hymne abspielen</button>
         </div>
-      </div>
-    </div>
 
-    <div id="clips" class="view-section">
-      <h1 class="content-header-title">Archivierte Highlights</h1>
-      
-      <div class="media-stream-container">
-        <div>
-          <span class="field-description">Aufzeichnung 1: Mace Hit Showcase</span>
-          <div class="video-frame-wrapper">
-            <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+        <div class="tile-card tile-full-width">
+          <div class="tile-title">Projekt-Pinnwand</div>
+          <div class="pinnwand-stream" id="pinnwand-box">Lade Datensätze...</div>
+          <div class="flex-input-group">
+            <input type="text" id="pinnwand-input" class="input-control" placeholder="Eintrag verfassen (max. 120 Zeichen)..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
+            <button onclick="postToPinnwand()" id="pinnwand-btn" class="btn-ui">Absenden</button>
           </div>
-          <div class="meta-attribution">Eingereicht von: <span>Louis</span></div>
         </div>
 
-        <div>
-          <span class="field-description">Aufzeichnung 2: Uganana</span>
-          <div class="video-frame-wrapper">
-            <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div id="tab-clips" class="view-container">
+      <div class="tile-card">
+        <div class="tile-title">Archivierte Aufzeichnungen</div>
+        <div class="media-flow">
+          <div>
+            <span class="field-description">Aufzeichnung 1: Mace Hit Showcase</span>
+            <div class="video-container-frame">
+              <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="media-meta">Einsendung von: <span>Louis</span></div>
           </div>
-          <div class="meta-attribution">Eingereicht von: <span>Nils</span>, <span>Giorgio</span></div>
+          <div>
+            <span class="field-description">Aufzeichnung 2: Uganana</span>
+            <div class="video-container-frame">
+              <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="media-meta">Einsendung von: <span>Nils</span>, <span>Giorgio</span></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div id="upload" class="view-section">
-      <h1 class="content-header-title">Highlight einreichen</h1>
-      
-      <div class="data-block" style="max-width: 600px;">
-        <label class="field-description">Absender</label>
-        <input class="input-field" id="uploaderName" type="text" readonly>
+    <div id="tab-upload" class="view-container">
+      <div class="tile-card" style="max-width: 600px;">
+        <div class="tile-title">Highlight einreichen</div>
         
-        <label class="field-description">Titel des Videos</label>
-        <input class="input-field" id="clipTitle" type="text" placeholder="z. B. Base-Tour Preview">
+        <div style="margin-bottom: 16px;">
+          <label class="field-description">Absenderkennung</label>
+          <input class="input-control" id="uploaderName" type="text" readonly>
+        </div>
         
-        <label class="field-description">Plattform-Link (Medal / YouTube)</label>
-        <input class="input-field" id="clipLink" type="text" placeholder="https://...">
+        <div style="margin-bottom: 16px;">
+          <label class="field-description">Titel des Highlights</label>
+          <input class="input-control" id="clipTitle" type="text" placeholder="Beispiel: PvP Clutch Base">
+        </div>
         
-        <button onclick="sendToDiscord()" id="submitBtn" class="btn-action full-width">An Discord übertragen</button>
-        <div class="operation-success-alert" id="statusMsg">Der Datensatz wurde erfolgreich übermittelt.</div>
+        <div style="margin-bottom: 24px;">
+          <label class="field-description">Plattform-Link (Medal / YouTube)</label>
+          <input class="input-control" id="clipLink" type="text" placeholder="https://...">
+        </div>
+        
+        <button onclick="sendToDiscord()" id="submitBtn" class="btn-ui full">An Discord übertragen</button>
+        <div class="operation-success-alert" id="statusMsg" style="color: var(--accent-green); font-size:0.9rem; margin-top:12px; display:none;">Datensatz erfolgreich an Discord übermittelt.</div>
       </div>
     </div>
 
-    <div id="downloads" class="view-section">
-      <h1 class="content-header-title">Welten-Download</h1>
-      <div class="cards-structural-grid" id="download-list-container"></div>
+    <div id="tab-downloads" class="view-container">
+      <div class="maps-layout-grid" id="download-list-container"></div>
     </div>
 
-    <div id="admin-apply" class="view-section">
-      <h1 class="content-header-title">Mitgliedschafts-Anträge</h1>
-      <div class="data-block">
-        <div class="block-label">Eingegangene Protokolle</div>
-        <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 15px;">
-          <div style="color: var(--text-dimmed);">Abfrage läuft...</div>
+    <div id="tab-admin" class="view-container">
+      <div class="tile-card">
+        <div class="tile-title">Eingegangene Mitgliedschafts-Anträge</div>
+        <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="color: var(--text-secondary);">Frage Protokolle ab...</div>
         </div>
       </div>
     </div>
+
   </main>
 
-</div>
+  <footer class="app-footer">
+    <div>Sitzung aktiv für: <span>Airbusfan.de</span></div>
+    <div>Verbindung gesichert &bull; Authentifizierung nominal</div>
+  </footer>
 
-<footer class="system-status-footer">
-  <div>Sitzung aktiv für <span>Airbusfan.de</span></div>
-  <div>Verbindung gesichert &bull; Authentifizierung stabil</div>
-</footer>
-
-<div class="matrix-cookie-popup" id="cookie-banner">
-  <div class="cookie-header-text">Sitzungs-Identifikation</div>
-  <p class="cookie-body-desc">Diese Anwendung nutzt lokale Sitzungsdaten, um den Login-Status aufrechtzuerhalten.</p>
-  <div class="cookie-btn-group">
-    <button class="cookie-btn-action confirm-accent" onclick="handleCookie(true)">Akzeptieren</button>
-    <button class="cookie-btn-action" onclick="handleCookie(false)">Ablehnen</button>
+  <div class="app-cookie-banner" id="cookie-banner">
+    <div style="font-weight:600; font-size:0.95rem; margin-bottom:6px;">Sitzungsdaten</div>
+    <p style="font-size:0.85rem; color: var(--text-secondary); margin-bottom:16px;">Lokale Browser-Sitzungsdaten werden genutzt, um den Login aufrechtzuerhalten.</p>
+    <div style="display:flex; gap:10px;">
+      <button class="btn-ui" style="flex:1; padding:8px;" onclick="handleCookie(true)">Zustimmen</button>
+      <button class="btn-ui" style="flex:1; padding:8px; background:transparent;" onclick="handleCookie(false)">Ablehnen</button>
+    </div>
   </div>
-</div>
 
-<div class="overlay-backdrop" id="paypolModal">
-  <div class="gateway-modal">
+  <div class="modal-backdrop" id="paypolModal">
+    <div class="modern-paypol-box">
+      
+      <div id="loading-screen-cover">
+        <div id="loading-screen-text">
+          Sitzungs-Identifikation verifiziert.<br><br>
+          Der Zugriff auf das Datei-Repository von <strong>Season 10</strong> wurde freigegeben.<br>
+          Projekt erstellt von Louis und Mika.
+        </div>
+        <button onclick="skipCinematicIntro()" class="btn-ui">Fortfahren</button>
+      </div>
+
+      <div class="paypol-header">
+        <div class="paypol-logo"><span class="p-blue">Pay</span><span class="p-cyan">Pol</span></div>
+        <button class="paypol-close" onclick="closePaypolGateway()">&times;</button>
+      </div>
+      
+      <div class="paypol-body">
+        <div class="paypol-summary-card">
+          <div id="paypolItemName" style="font-weight:700;">Projekt-Datei</div>
+          <p>Identitätsprüfung für Datei-Freigabe</p>
+        </div>
+        
+        <div id="paypol-step-1">
+          <div class="form-row">
+            <label>Projekt-Unterstützung</label>
+            <div style="position:relative;">
+              <input type="number" id="paypolAmount" class="paypol-input" value="5" min="0">
+              <span style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:0.85rem; font-weight:600; color:#475569;">Emeralds</span>
+            </div>
+          </div>
+          <button onclick="advanceToCodeStep()" class="paypol-btn">Zur Identitätsprüfung</button>
+        </div>
+        
+        <div id="paypol-step-2" class="paypol-secure-wrapper">
+          <div class="form-row">
+            <label style="color: var(--accent-green);">Freischaltcode eingeben</label>
+            <input type="text" id="paypolCode" class="paypol-input" placeholder="Code eingeben" autocomplete="off" style="text-align:center; font-size:1.1rem; font-weight:600; letter-spacing:1px;">
+            <div class="paypol-error" id="paypolError">Der eingegebene Code ist ungültig.</div>
+          </div>
+          <button onclick="verifyPaypolCode()" id="paypolBtn" class="paypol-btn">Verifizieren und freischalten</button>
+        </div>
+        <a id="hiddenDownloadTrigger" href="#" target="_blank" style="display: none;"></a>
+      </div>
+      
+      <div class="paypol-footer">
+        <div><span class="stars-badge">★</span>Zertifizierter Partner</div>
+        <span>Reputation: 4.9/5</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+  const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
+  const VALID_DOWNLOAD_CODES = ["Joschi7", "GeheimKey123", "QuapsMod2026", "LouisBeta26", "ServerPass2026"];
+
+  const PROJECT_DOWNLOADS = [
+    {
+      id: "season10",
+      title: "Quaps Attack Hauptwelt (Season 10)",
+      version: "1.21+",
+      size: "ca. 5.0 GB",
+      file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl"
+    }
+  ];
+
+  let currentGlobalUser = "SPIELER";
+  let selectedProjectId = null;
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+    if (error || !session) { window.location.href = 'login.html'; return; }
+
+    const user = session.user;
+    currentGlobalUser = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
     
-    <div id="cinematic-intro-screen">
-      <div id="cinematic-text-scroll">
-        Sitzungs-Identifikation erfolgreich.<br><br>
-        Der Zugriff auf die Weltdaten von <strong>Season 10</strong> wurde autorisiert.<br>
-        Das Projekt wurde von Louis und Mika erstellt.
-      </div>
-      <button onclick="skipCinematicIntro()" class="btn-action" style="background:#334155;">Weiter</button>
-    </div>
+    document.getElementById('global-username-display').textContent = currentGlobalUser;
+    document.getElementById('uploaderName').value = currentGlobalUser;
 
-    <div class="gateway-top">
-      <div class="gateway-logo"><span class="logo-p1">Pay</span><span class="logo-p2">Pol</span></div>
-      <button class="gateway-close" onclick="closePaypolGateway()">&times;</button>
-    </div>
-    <div class="gateway-main-body">
-      <div class="gateway-meta-box">
-        <div class="meta-title" id="paypolItemName">Projekt</div>
-        <div class="meta-subtitle">Identitätsprüfung für Datei-Freigabe</div>
-      </div>
-      <div id="paypol-step-1">
-        <div class="gateway-group">
-          <label class="gateway-label">Unterstützung</label>
-          <div class="gateway-num-wrapper">
-            <input type="number" id="paypolAmount" class="gateway-input-field" value="5" min="0">
-            <span>Emeralds</span>
+    loadPinnwand();
+    loadBewerbungen();
+    renderDownloadList();
+
+    setTimeout(triggerCookieBanner, 1200);
+  });
+
+  function renderDownloadList() {
+    const container = document.getElementById('download-list-container');
+    container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
+      <div class="tile-card" style="justify-content: space-between;">
+        <div>
+          <div style="font-size: 1.05rem; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${proj.title}</div>
+          <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">
+            Kompatibilität: ${proj.version} &bull; Größe: ${proj.size}
           </div>
         </div>
-        <button onclick="advanceToCodeStep()" class="gateway-action-trigger">Zur Identitätsprüfung</button>
+        <button onclick="openPaypolGateway('${proj.id}')" class="btn-ui full">Repository anfordern</button>
       </div>
-      <div id="paypol-step-2" class="gateway-secure-zone">
-        <div class="gateway-group">
-          <label class="gateway-label" style="color: var(--trust-green);">Freischaltcode eingeben</label>
-          <input type="text" id="paypolCode" class="gateway-input-field" placeholder="Code eintragen" autocomplete="off" style="text-align: center;">
-          <div class="gateway-error-text" id="paypolError">Der Freischaltcode ist ungültig.</div>
-        </div>
-        <button onclick="verifyPaypolCode()" id="paypolBtn" class="gateway-action-trigger">Verifizieren und herunterladen</button>
-      </div>
-      <a id="hiddenDownloadTrigger" href="#" target="_blank" style="display: none;"></a>
-    </div>
-    <div class="gateway-footer-trust">
-      <div><span class="trust-badge-stars">★</span>Zertifizierter Partner</div>
-      <span>Reputation: 4.9/5</span>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
-const VALID_DOWNLOAD_CODES = ["Joschi7", "GeheimKey123", "QuapsMod2026", "LouisBeta26", "ServerPass2026"];
-
-const PROJECT_DOWNLOADS = [
-  {
-    id: "season10",
-    title: "Quaps Attack Hauptwelt (Season 10)",
-    version: "1.21+",
-    size: "ca. 5.0 GB",
-    file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl"
-  },
-];
-
-let currentGlobalUser = "SPIELER";
-let selectedProjectId = null;
-
-window.addEventListener('DOMContentLoaded', async () => {
-  const { data: { session }, error } = await supabaseClient.auth.getSession();
-  if (error || !session) { window.location.href = 'login.html'; return; }
-
-  const user = session.user;
-  currentGlobalUser = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
-  
-  document.getElementById('user-name-display').textContent = currentGlobalUser;
-  document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
-  document.getElementById('uploaderName').value = currentGlobalUser;
-
-  loadPinnwand();
-  loadBewerbungen();
-  renderDownloadList();
-
-  setTimeout(triggerCookieBanner, 1500);
-});
-
-function renderDownloadList() {
-  const container = document.getElementById('download-list-container');
-  container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
-    <div class="card-node-element">
-      <div>
-        <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px;">${proj.title}</div>
-        <div style="color: var(--text-dimmed); font-size: 0.9rem; margin-bottom: 20px;">
-          Version: ${proj.version} | Größe: ${proj.size}
-        </div>
-      </div>
-      <button onclick="openPaypolGateway('${proj.id}')" class="btn-action full-width">Download anfordern</button>
-    </div>
-  `).join('');
-}
-
-function switchView(targetId) {
-  const currentActive = document.querySelector('.view-section.active');
-  if (!currentActive || currentActive.id === targetId) return;
-
-  document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('btn-' + targetId).classList.add('active');
-
-  currentActive.style.display = 'none';
-  currentActive.classList.remove('active');
-  
-  const nextActive = document.getElementById(targetId);
-  nextActive.classList.add('active');
-}
-
-function openPaypolGateway(id) {
-  const project = PROJECT_DOWNLOADS.find(p => p.id === id);
-  if (!project) return;
-
-  selectedProjectId = id;
-  document.getElementById('paypolItemName').textContent = project.title;
-  document.getElementById('paypolAmount').value = "5";
-  document.getElementById('paypolCode').value = "";
-  document.getElementById('paypolError').style.display = "none";
-  document.getElementById('paypol-step-2').style.display = "none";
-  
-  document.getElementById('paypolBtn').textContent = "Verifizieren und herunterladen";
-  document.getElementById('paypolModal').classList.add('show');
-  document.getElementById('cinematic-intro-screen').style.display = "flex";
-  playSound("achievement.mp3");
-}
-
-function skipCinematicIntro() {
-  document.getElementById('cinematic-intro-screen').style.display = "none";
-  playSound("xp.mp3");
-}
-
-function closePaypolGateway() {
-  document.getElementById('paypolModal').classList.remove('show');
-}
-
-function advanceToCodeStep() {
-  document.getElementById('paypol-step-2').style.display = "block";
-  playSound("xp.mp3");
-}
-
-function verifyPaypolCode() {
-  const project = PROJECT_DOWNLOADS.find(p => p.id === selectedProjectId);
-  if (!project) return;
-
-  const inputCode = document.getElementById('paypolCode').value.trim();
-  const errorBox = document.getElementById('paypolError');
-  const btn = document.getElementById('paypolBtn');
-
-  if (VALID_DOWNLOAD_CODES.includes(inputCode)) {
-    errorBox.style.display = "none";
-    btn.textContent = "Erfolgreich...";
-    playSound("xp.mp3");
-    
-    setTimeout(() => {
-      const trigger = document.getElementById('hiddenDownloadTrigger');
-      trigger.href = project.file;
-      trigger.click();
-      closePaypolGateway();
-    }, 1000);
-  } else {
-    errorBox.style.display = "block";
-    playSound("creeper.mp3");
+    `).join('');
   }
-}
 
-function triggerCookieBanner() {
-  if (!localStorage.getItem('mc_cookie_choice')) {
-    document.getElementById('cookie-banner').classList.add('show');
+  /* RADIKAL SYSTEM TABS ENGINE */
+  function switchTab(targetTabId, element) {
+    document.querySelectorAll('.view-container').forEach(view => view.classList.remove('active'));
+    document.querySelectorAll('.nav-segment').forEach(btn => btn.classList.remove('active'));
+    
+    document.getElementById(targetTabId).classList.add('active');
+    element.classList.add('active');
+  }
+
+  function openPaypolGateway(id) {
+    const project = PROJECT_DOWNLOADS.find(p => p.id === id);
+    if (!project) return;
+
+    selectedProjectId = id;
+    document.getElementById('paypolItemName').textContent = project.title;
+    document.getElementById('paypolAmount').value = "5";
+    document.getElementById('paypolCode').value = "";
+    document.getElementById('paypolError').style.display = "none";
+    document.getElementById('paypol-step-2').style.display = "none";
+    
+    document.getElementById('paypolBtn').textContent = "Verifizieren und freischalten";
+    document.getElementById('paypolModal').classList.add('show');
+    document.getElementById('loading-screen-cover').style.display = "flex";
     playSound("achievement.mp3");
   }
-}
 
-function handleCookie(accepted) {
-  document.getElementById('cookie-banner').classList.remove('show');
-  localStorage.setItem('mc_cookie_choice', accepted ? 'accepted' : 'declined');
-  playSound(accepted ? "xp.mp3" : "creeper.mp3");
-}
+  function skipCinematicIntro() {
+    document.getElementById('loading-screen-cover').style.display = "none";
+    playSound("xp.mp3");
+  }
 
-function playSound(file) {
-  try { const audio = new Audio(file); audio.volume = 0.2; audio.play(); } catch (e) {}
-}
+  function closePaypolGateway() {
+    document.getElementById('paypolModal').classList.remove('show');
+  }
 
-async function loadPinnwand() {
-  const { data, error } = await supabaseClient.from('pinnwand').select('*').order('created_at', { ascending: false }).limit(30);
-  if (error) { document.getElementById('pinnwand-box').innerHTML = "Fehler beim Laden."; return; }
+  function advanceToCodeStep() {
+    document.getElementById('paypol-step-2').style.display = "block";
+    playSound("xp.mp3");
+  }
 
-  const box = document.getElementById('pinnwand-box');
-  if (data.length === 0) { box.innerHTML = "Keine Einträge vorhanden."; return; }
+  function verifyPaypolCode() {
+    const project = PROJECT_DOWNLOADS.find(p => p.id === selectedProjectId);
+    if (!project) return;
 
-  box.innerHTML = data.reverse().map(msg => `
-    <div class="wall-message-node">
-      <span class="author">[${escapeHtml(msg.name)}]</span>
-      <span>${escapeHtml(msg.nachricht)}</span>
-    </div>
-  `).join('');
-  box.scrollTop = box.scrollHeight;
-}
+    const inputCode = document.getElementById('paypolCode').value.trim();
+    const errorBox = document.getElementById('paypolError');
+    const btn = document.getElementById('paypolBtn');
 
-async function loadBewerbungen() {
-  const { data, error } = await supabaseClient.from('bewerbungen').select('*').order('created_at', { ascending: false });
-  const box = document.getElementById('bewerbungen-liste-box');
+    if (VALID_DOWNLOAD_CODES.includes(inputCode)) {
+      errorBox.style.display = "none";
+      btn.textContent = "Autorisiert...";
+      playSound("xp.mp3");
+      
+      setTimeout(() => {
+        const trigger = document.getElementById('hiddenDownloadTrigger');
+        trigger.href = project.file;
+        trigger.click();
+        closePaypolGateway();
+      }, 1000);
+    } else {
+      errorBox.style.display = "block";
+      playSound("creeper.mp3");
+    }
+  }
 
-  if (error) { box.innerHTML = "Fehler beim Laden."; return; }
-  if (!data || data.length === 0) { box.innerHTML = "Keine Anträge vorhanden."; return; }
+  function triggerCookieBanner() {
+    if (!localStorage.getItem('mc_cookie_choice')) {
+      document.getElementById('cookie-banner').classList.add('show');
+      playSound("achievement.mp3");
+    }
+  }
 
-  box.innerHTML = data.map(apply => `
-    <div style="background: rgba(0,0,0,0.15); padding: 20px; border: 1px solid var(--border-line); border-radius: 8px;">
-      <div style="color: var(--text-main); font-weight: 600; margin-bottom: 6px;">Spieler: ${escapeHtml(apply.username || 'Unbekannt')}</div>
-      <div style="white-space: pre-wrap; color: var(--text-dimmed); font-size: 0.95rem;">${escapeHtml(apply.begruendung || 'Keine Angabe.')}</div>
-    </div>
-  `).join('');
-}
+  function handleCookie(accepted) {
+    document.getElementById('cookie-banner').classList.remove('show');
+    localStorage.setItem('mc_cookie_choice', accepted ? 'accepted' : 'declined');
+    playSound(accepted ? "xp.mp3" : "creeper.mp3");
+  }
 
-async function postToPinnwand() {
-  const input = document.getElementById('pinnwand-input');
-  const btn = document.getElementById('pinnwand-btn');
-  const text = input.value.trim();
-  if (!text) return;
+  function playSound(file) {
+    try { const audio = new Audio(file); audio.volume = 0.2; audio.play(); } catch (e) {}
+  }
 
-  btn.disabled = true; input.disabled = true;
-  const { error } = await supabaseClient.from('pinnwand').insert([{ name: currentGlobalUser, nachricht: text }]);
-  if (error) { alert('Fehler.'); btn.disabled = false; input.disabled = false; return; }
+  async function loadPinnwand() {
+    const { data, error } = await supabaseClient.from('pinnwand').select('*').order('created_at', { ascending: false }).limit(30);
+    if (error) { document.getElementById('pinnwand-box').innerHTML = "Fehler beim Datenabruf."; return; }
 
-  const payload = {
-    username: 'QuapsHub Pinnwand',
-    content: '📢 **Neue Nachricht an der Wand!**',
-    embeds: [{ title: '💬 Quaps Attack Pinnwand', description: `>>> ${text}`, color: 11075448, fields: [{ name: '👤 Absender', value: `\`${currentGlobalUser}\``, inline: true }] }]
-  };
-  try { await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch (e) {}
+    const box = document.getElementById('pinnwand-box');
+    if (data.length === 0) { box.innerHTML = "Keine Einträge protokolliert."; return; }
 
-  input.value = ''; btn.disabled = false; input.disabled = false;
-  loadPinnwand();
-}
+    box.innerHTML = data.reverse().map(msg => `
+      <div class="pinnwand-node">
+        <span class="user">[${escapeHtml(msg.name)}]</span>
+        <span>${escapeHtml(msg.nachricht)}</span>
+      </div>
+    `).join('');
+    box.scrollTop = box.scrollHeight;
+  }
 
-function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
-async function logout() { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; }
+  async function loadBewerbungen() {
+    const { data, error } = await supabaseClient.from('bewerbungen').select('*').order('created_at', { ascending: false });
+    const box = document.getElementById('bewerbungen-liste-box');
 
-function togglePlay() {
-  const audio = document.getElementById('communitySong');
-  const btn   = document.getElementById('playBtn');
-  const vis   = document.getElementById('visualizer');
-  if (audio.paused) { audio.play(); btn.textContent = 'Hymne stoppen'; vis.classList.add('playing'); }
-  else { audio.pause(); btn.textContent = 'Hymne abspielen'; vis.classList.remove('playing'); }
-}
+    if (error) { box.innerHTML = "Fehler beim Laden."; return; }
+    if (!data || data.length === 0) { box.innerHTML = "Keine Antragsdaten vorhanden."; return; }
 
-async function sendToDiscord() {
-  const name  = document.getElementById('uploaderName').value;
-  const title = document.getElementById('clipTitle').value;
-  const link  = document.getElementById('clipLink').value;
-  const btn   = document.getElementById('submitBtn');
-  const msg   = document.getElementById('statusMsg');
+    box.innerHTML = data.map(apply => `
+      <div style="background: rgba(0,0,0,0.2); padding: 16px; border: 1px solid var(--border-clean); border-radius: 8px;">
+        <div style="color: var(--text-primary); font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Antragsteller: ${escapeHtml(apply.username || 'Unbekannt')}</div>
+        <div style="white-space: pre-wrap; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">${escapeHtml(apply.begruendung || 'Keine Angabe.')}</div>
+      </div>
+    `).join('');
+  }
 
-  if (!title || !link) { alert('Bitte fülle alle Felder aus.'); return; }
-  btn.textContent = 'Übertrage...'; btn.disabled = true;
+  async function postToPinnwand() {
+    const input = document.getElementById('pinnwand-input');
+    const btn = document.getElementById('pinnwand-btn');
+    const text = input.value.trim();
+    if (!text) return;
 
-  const payload = {
-    username: 'QuapsHub Monitor',
-    embeds: [{ title: '📹 Neuer Clip eingereicht', color: 11075448, fields: [{ name: 'Spieler', value: name, inline: true }, { name: 'Titel', value: title, inline: true }, { name: 'Link', value: link }] }]
-  };
+    btn.disabled = true; input.disabled = true;
+    const { error } = await supabaseClient.from('pinnwand').insert([{ name: currentGlobalUser, nachricht: text }]);
+    if (error) { alert('Fehler.'); btn.disabled = false; input.disabled = false; return; }
 
-  try {
-    await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-    msg.style.display = 'block';
-    setTimeout(() => {
-      msg.style.display = 'none'; btn.textContent = 'An Discord übertragen'; btn.disabled = false;
-      document.getElementById('clipTitle').value = ''; document.getElementById('clipLink').value = '';
-      switchView('home');
-    }, 2500);
-  } catch { alert('Fehler.'); btn.textContent = 'An Discord übertragen'; btn.disabled = false; }
-}
-</script>
+    const payload = {
+      username: 'QuapsHub Pinnwand',
+      content: '📢 **Neue Nachricht an der Wand!**',
+      embeds: [{ title: '💬 Quaps Attack Pinnwand', description: `>>> ${text}`, color: 3820274, fields: [{ name: '👤 Absender', value: `\`${currentGlobalUser}\``, inline: true }] }]
+    };
+    try { await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch (e) {}
+
+    input.value = ''; btn.disabled = false; input.disabled = false;
+    loadPinnwand();
+  }
+
+  function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+  async function logout() { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; }
+
+  function togglePlay() {
+    const audio = document.getElementById('communitySong');
+    const btn   = document.getElementById('playBtn');
+    const vis   = document.getElementById('visualizer');
+    if (audio.paused) { audio.play(); btn.textContent = 'Hymne stoppen'; vis.classList.add('playing'); }
+    else { audio.pause(); btn.textContent = 'Hymne abspielen'; vis.classList.remove('playing'); }
+  }
+
+  async function sendToDiscord() {
+    const name  = document.getElementById('uploaderName').value;
+    const title = document.getElementById('clipTitle').value;
+    const link  = document.getElementById('clipLink').value;
+    const btn   = document.getElementById('submitBtn');
+    const msg   = document.getElementById('statusMsg');
+
+    if (!title || !link) { alert('Bitte fülle alle Pflichtfelder aus.'); return; }
+    btn.textContent = 'Übertrage...'; btn.disabled = true;
+
+    const payload = {
+      username: 'QuapsHub Monitor',
+      embeds: [{ title: '📹 Neuer Clip eingereicht', color: 3820274, fields: [{ name: 'Spieler', value: name, inline: true }, { name: 'Titel', value: title, inline: true }, { name: 'Link', value: link }] }]
+    };
+
+    try {
+      await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      msg.style.display = 'block';
+      setTimeout(() => {
+        msg.style.display = 'none'; btn.textContent = 'An Discord übertragen'; btn.disabled = false;
+        document.getElementById('clipTitle').value = ''; document.getElementById('clipLink').value = '';
+        switchTab('tab-home', document.querySelector('.nav-segment'));
+      }, 2500);
+    } catch { alert('Fehler.'); btn.textContent = 'An Discord übertragen'; btn.disabled = false; }
+  }
+  </script>
 </body>
 </html>
