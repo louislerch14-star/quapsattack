@@ -1,518 +1,522 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QuapsHub</title>
-<link rel="icon" type="image/jpeg" href="unnamed.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root {
-  --primary: #a8ff78; /* Frisches XP-Grün */
-  --diamond: #44d4d4;
-  --gold:    #f5c518;
-  --bg:      #0a0a0a;
-  --panel:   #1a1a1a;
-  --panel2:  #222222;
-  --border:  #333333;
-  --text:    #f0f0f0;
-  --muted:   #aaaaaa;
-  --trust-green: #00b67a;
-  --paypol-blue: #003087;
-  --paypol-cyan: #0079c1;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuapsHub</title>
+  
+  <link rel="icon" type="image/jpeg" href="unnamed.jpg">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+  :root {
+    --primary: #a8ff78; /* Frisches XP-Grün */
+    --diamond: #44d4d4;
+    --gold:    #f5c518;
+    --bg:      #0a0a0a;
+    --panel:   #1a1a1a;
+    --panel2:  #222222;
+    --border:  #333333;
+    --text:    #f0f0f0;
+    --muted:   #aaaaaa;
+    --trust-green: #00b67a;
+    --paypol-blue: #003087;
+    --paypol-cyan: #0079c1;
+  }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
 
-body {
-  font-family: 'VT323', monospace;
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
-  min-height: 100vh;
-  font-size: 1.2rem;
-  line-height: 1.6;
-}
+  body {
+    font-family: 'VT323', monospace;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+    font-size: 1.2rem;
+    line-height: 1.6;
+  }
 
-h1, h2, h3, .mc-font, .mc-btn, .mc-action {
-  font-family: 'Press Start 2P', monospace;
-  text-transform: uppercase;
-}
+  h1, h2, h3, .mc-font, .mc-btn, .mc-action {
+    font-family: 'Press Start 2P', monospace;
+    text-transform: uppercase;
+  }
 
-/* ── VIDEO BACKGROUND ── */
-.video-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: #0d1117;
-}
-.video-bg iframe {
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 100vw; height: 56.25vw;
-  min-height: 100vh; min-width: 177.77vh;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  filter: brightness(0.12) saturate(0.3);
-}
-.video-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,0.9) 100%);
-}
+  /* ── VIDEO BACKGROUND ── */
+  .video-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: #0d1117;
+  }
+  .video-bg iframe {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100vw; height: 56.25vw;
+    min-height: 100vh; min-width: 177.77vh;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    filter: brightness(0.12) saturate(0.3);
+  }
+  .video-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,0.9) 100%);
+  }
 
-/* ── SIDEBAR NAVBAR ── */
-.sidebar {
-  position: fixed;
-  top: 0; left: 0;
-  width: 240px;
-  height: 100vh;
-  background: var(--panel2);
-  border-right: 2px solid var(--border);
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-}
+  /* ── SIDEBAR NAVBAR ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--panel2);
+    border-right: 2px solid var(--border);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
 
-.sidebar-logo {
-  padding: 30px 20px;
-  border-bottom: 2px solid var(--border);
-  background: var(--panel);
-  text-align: center;
-}
-.sidebar-logo .logo-text {
-  font-size: 1rem;
-  color: var(--primary);
-  display: block;
-}
-.sidebar-logo .logo-sub {
-  font-family: 'VT323', monospace;
-  font-size: 1rem;
-  color: var(--muted);
-  margin-top: 8px;
-  display: block;
-  letter-spacing: 1px;
-}
+  .sidebar-logo {
+    padding: 30px 20px;
+    border-bottom: 2px solid var(--border);
+    background: var(--panel);
+    text-align: center;
+  }
+  .sidebar-logo .logo-text {
+    font-size: 1rem;
+    color: var(--primary);
+    display: block;
+  }
+  .sidebar-logo .logo-sub {
+    font-family: 'VT323', monospace;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-top: 8px;
+    display: block;
+    letter-spacing: 1px;
+  }
 
-.sidebar-section {
-  padding: 20px 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+  .sidebar-section {
+    padding: 20px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
-.mc-btn {
-  display: block;
-  width: 100%;
-  background: transparent;
-  color: var(--muted);
-  font-size: 0.6rem;
-  letter-spacing: 0.5px;
-  padding: 16px 20px;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  transition: 0.2s;
-  border-left: 3px solid transparent;
-}
-.mc-btn:hover {
-  background: rgba(168, 255, 120, 0.05);
-  color: #fff;
-  border-left-color: var(--primary);
-}
-.mc-btn.active {
-  background: rgba(168, 255, 120, 0.08);
-  color: #fff;
-  border-left-color: var(--primary);
-}
+  .mc-btn {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.6rem;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.2s;
+    border-left: 3px solid transparent;
+  }
+  .mc-btn:hover {
+    background: rgba(168, 255, 120, 0.05);
+    color: #fff;
+    border-left-color: var(--primary);
+  }
+  .mc-btn.active {
+    background: rgba(168, 255, 120, 0.08);
+    color: #fff;
+    border-left-color: var(--primary);
+  }
 
-.logout-btn {
-  margin-top: auto;
-  margin-bottom: 10px;
-  color: #ff5555 !important;
-}
-.logout-btn:hover { background: rgba(255, 85, 85, 0.08); border-left-color: #ff5555; }
+  .logout-btn {
+    margin-top: auto;
+    margin-bottom: 10px;
+    color: #ff5555 !important;
+  }
+  .logout-btn:hover { background: rgba(255, 85, 85, 0.08); border-left-color: #ff5555; }
 
-/* ── PROFILE AREA IN SIDEBAR ── */
-.sidebar-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px 20px;
-  border-top: 2px solid var(--border);
-  background: #151515;
-}
-.profile-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  object-fit: cover;
-  background: var(--panel2);
-}
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.profile-name {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.45rem;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.profile-status-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 4px;
-}
-.status-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--primary);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--primary);
-}
-.status-text {
-  font-size: 0.8rem;
-  color: var(--primary);
-  font-weight: bold;
-}
+  /* ── PROFILE AREA IN SIDEBAR ── */
+  .sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    border-top: 2px solid var(--border);
+    background: #151515;
+  }
+  .profile-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+    background: var(--panel2);
+  }
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .profile-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45rem;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .profile-status-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--primary);
+  }
+  .status-text {
+    font-size: 0.8rem;
+    color: var(--primary);
+    font-weight: bold;
+  }
 
-/* ── MAIN CONTENT ── */
-main {
-  margin-left: 240px;
-  padding: 60px 50px 80px;
-  position: relative;
-  z-index: 1;
-}
+  /* ── MAIN CONTENT ── */
+  main {
+    margin-left: 240px;
+    padding: 60px 50px 80px;
+    position: relative;
+    z-index: 1;
+  }
 
-.page { display: none; }
-.page.active { display: block; }
+  .page { display: none; }
+  .page.active { display: block; }
 
-/* ── MODERN SCROLL REVEAL ── */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-[data-reveal="2"] { transition-delay: 0.1s; }
-[data-reveal="3"] { transition-delay: 0.2s; }
-[data-reveal="4"] { transition-delay: 0.3s; }
-[data-reveal="5"] { transition-delay: 0.4s; }
+  /* ── MODERN SCROLL REVEAL ── */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  [data-reveal="2"] { transition-delay: 0.1s; }
+  [data-reveal="3"] { transition-delay: 0.2s; }
+  [data-reveal="4"] { transition-delay: 0.3s; }
+  [data-reveal="5"] { transition-delay: 0.4s; }
 
-[data-reveal].revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
+  [data-reveal].revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-/* ── HERO ── */
-.hero { margin-bottom: 50px; }
-.hero h1 { font-size: 2.2rem; color: #fff; margin: 0; letter-spacing: -1px; }
-.hero h1 span { color: var(--gold); }
-.hero-sub { font-size: 1.1rem; color: var(--muted); margin-top: 10px; }
+  /* ── HERO ── */
+  .hero { margin-bottom: 50px; }
+  .hero h1 { font-size: 2.2rem; color: #fff; margin: 0; letter-spacing: -1px; }
+  .hero h1 span { color: var(--gold); }
+  .hero-sub { font-size: 1.1rem; color: var(--muted); margin-top: 10px; }
 
-/* ── CLEAN GLASS PANEL ── */
-.mc-panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 30px;
-  margin-bottom: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-  transition: 0.3s;
-}
-.mc-panel:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+  /* ── CLEAN GLASS PANEL ── */
+  .mc-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    transition: 0.3s;
+  }
+  .mc-panel:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
 
-.mc-panel-title {
-  font-size: 0.65rem;
-  color: var(--gold);
-  margin-bottom: 20px;
-}
+  .mc-panel-title {
+    font-size: 0.65rem;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
 
-.panel-body .line {
-  padding: 10px 0;
-  border-bottom: 1px solid #2a2a2a;
-}
-.panel-body .line:last-child { border-bottom: none; }
-.panel-body .line span { color: var(--primary); margin-right: 10px; }
+  .panel-body .line {
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .panel-body .line:last-child { border-bottom: none; }
+  .panel-body .line span { color: var(--primary); margin-right: 10px; }
 
-/* ── PINNWAND STYLES ── */
-.shoutbox-list {
-  max-height: 220px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-  padding-right: 5px;
-}
-.shoutbox-msg {
-  padding: 10px 14px;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  font-size: 1.1rem;
-}
-.shoutbox-msg .msg-user {
-  color: var(--gold);
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.5rem;
-  margin-right: 8px;
-}
-.shoutbox-form {
-  display: flex;
-  gap: 10px;
-}
-.shoutbox-form .mc-input {
-  margin-bottom: 0;
-  flex: 1;
-}
+  /* ── PINNWAND STYLES ── */
+  .shoutbox-list {
+    max-height: 220px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 5px;
+  }
+  .shoutbox-msg {
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+  }
+  .shoutbox-msg .msg-user {
+    color: var(--gold);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    margin-right: 8px;
+  }
+  .shoutbox-form {
+    display: flex;
+    gap: 10px;
+  }
+  .shoutbox-form .mc-input {
+    margin-bottom: 0;
+    flex: 1;
+  }
 
-/* ── AUDIO VISUALIZER ── */
-.visualizer { display: flex; gap: 4px; height: 35px; align-items: center; margin: 20px 0; }
-.vis-bar { width: 5px; height: 10px; background: #333; border-radius: 2px; }
-.playing .vis-bar { animation: modernVis 0.6s infinite alternate; background: var(--primary); }
-.playing .vis-bar:nth-child(2n) { animation-duration: 0.4s; background: var(--diamond); }
-@keyframes modernVis { from { height: 10px; } to { height: 35px; } }
+  /* ── AUDIO VISUALIZER ── */
+  .visualizer { display: flex; gap: 4px; height: 35px; align-items: center; margin: 20px 0; }
+  .vis-bar { width: 5px; height: 10px; background: #333; border-radius: 2px; }
+  .playing .vis-bar { animation: modernVis 0.6s infinite alternate; background: var(--primary); }
+  .playing .vis-bar:nth-child(2n) { animation-duration: 0.4s; background: var(--diamond); }
+  @keyframes modernVis { from { height: 10px; } to { height: 35px; } }
 
-/* ── MODERN ACTION BUTTON ── */
-.mc-action {
-  display: inline-block;
-  background: var(--panel2);
-  color: var(--primary);
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.55rem;
-  padding: 14px 28px;
-  border-radius: 10px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: 0.2s;
-  border: 1px solid var(--border);
-  text-align: center;
-}
-.mc-action:hover { background: #fff; color: #000; border-color: #fff; transform: translateY(-1px); }
-.mc-action:disabled { opacity: 0.5; cursor: not-allowed; }
-.mc-action.full { width: 100%; text-align: center; display: block; }
+  /* ── MODERN ACTION BUTTON ── */
+  .mc-action {
+    display: inline-block;
+    background: var(--panel2);
+    color: var(--primary);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+    padding: 14px 28px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .mc-action:hover { background: #fff; color: #000; border-color: #fff; transform: translateY(-1px); }
+  .mc-action:disabled { opacity: 0.5; cursor: not-allowed; }
+  .mc-action.full { width: 100%; text-align: center; display: block; }
 
-/* ── VIDEO EMBED ── */
-.clip-frame {
-  position: relative;
-  aspect-ratio: 16/9;
-  background: #000;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  margin-bottom: 12px;
-}
-.clip-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-.op-tag { color: var(--diamond); font-size: 0.9rem; margin-right: 15px; }
+  /* ── VIDEO EMBED ── */
+  .clip-frame {
+    position: relative;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .clip-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+  .op-tag { color: var(--diamond); font-size: 0.9rem; margin-right: 15px; }
 
-/* ── CLEAN FORM ── */
-.mc-input {
-  display: block;
-  width: 100%;
-  background: rgba(0,0,0,0.5);
-  border: 1px solid var(--border);
-  padding: 16px;
-  border-radius: 12px;
-  color: #fff;
-  margin-bottom: 15px;
-  font-family: inherit;
-  font-size: 1rem;
-}
-.mc-input:focus { border-color: var(--primary); outline: none; background: rgba(0,0,0,0.7); }
-.mc-input[readonly] { opacity: 0.5; cursor: not-allowed; }
+  /* ── CLEAN FORM ── */
+  .mc-input {
+    display: block;
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: 12px;
+    color: #fff;
+    margin-bottom: 15px;
+    font-family: inherit;
+    font-size: 1rem;
+  }
+  .mc-input:focus { border-color: var(--primary); outline: none; background: rgba(0,0,0,0.7); }
+  .mc-input[readonly] { opacity: 0.5; cursor: not-allowed; }
 
-.mc-label {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.45rem;
-  color: var(--gold);
-  margin-bottom: 8px;
-  display: block;
-}
+  .mc-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+    display: block;
+  }
 
-.mc-success {
-  display: none;
-  border: 2px solid var(--primary);
-  background: rgba(168,255,120,0.05);
-  padding: 15px;
-  margin-top: 15px;
-  border-radius: 12px;
-  color: var(--primary);
-}
+  .mc-success {
+    display: none;
+    border: 2px solid var(--primary);
+    background: rgba(168,255,120,0.05);
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 12px;
+    color: var(--primary);
+  }
 
-/* ── DOWNLOAD GRIDS ── */
-.download-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-.download-card {
-  background: rgba(20, 20, 20, 0.8);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.download-card-title {
-  font-size: 1.4rem;
-  color: #fff;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
+  /* ── DOWNLOAD GRIDS ── */
+  .download-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .download-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .download-card-title {
+    font-size: 1.4rem;
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
 
-/* ── MINECRAFT COOKIE BANNER STYLE ── */
-.mc-cookie-banner {
-  position: fixed;
-  bottom: 20px;
-  right: -420px;
-  width: 380px;
-  background: #212121;
-  border: 4px solid #000000;
-  padding: 15px;
-  z-index: 1000;
-  box-shadow: 0 10px 0 rgba(0,0,0,0.5);
-  font-family: 'VT323', monospace;
-  font-size: 1.3rem;
-  transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.mc-cookie-banner.show { right: 20px; }
-.mc-advancement-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-.mc-advancement-icon { width: 32px; height: 32px; image-rendering: pixelated; }
-.mc-advancement-text { display: flex; flex-direction: column; }
-.mc-advancement-title { font-family: 'Press Start 2P', monospace; font-size: 0.5rem; color: #cc55ff; text-transform: uppercase; }
-.mc-advancement-name { font-size: 1.5rem; color: #ffffff; font-weight: bold; }
-.mc-cookie-desc { color: #aaaaaa; font-size: 1.1rem; margin-bottom: 15px; line-height: 1.3; }
-.mc-cookie-buttons { display: flex; gap: 10px; }
-.mc-cookie-btn {
-  flex: 1; font-family: 'Press Start 2P', monospace; font-size: 0.5rem; padding: 10px; text-align: center; cursor: pointer; border: 2px solid #555; background: #555555; color: #fff; box-shadow: inset -2px -2px 0 #222, inset 2px 2px 0 #aaa;
-}
-.mc-cookie-btn:hover { background: #777777; border-color: #777; }
-.mc-cookie-btn.accept { color: var(--primary); }
-.mc-cookie-btn.decline { color: #ff5555; }
+  /* ── MINECRAFT COOKIE BANNER STYLE ── */
+  .mc-cookie-banner {
+    position: fixed;
+    bottom: 20px;
+    right: -420px;
+    width: 380px;
+    background: #212121;
+    border: 4px solid #000000;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 10px 0 rgba(0,0,0,0.5);
+    font-family: 'VT323', monospace;
+    font-size: 1.3rem;
+    transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .mc-cookie-banner.show { right: 20px; }
+  .mc-advancement-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .mc-advancement-icon { width: 32px; height: 32px; image-rendering: pixelated; }
+  .mc-advancement-text { display: flex; flex-direction: column; }
+  .mc-advancement-title { font-family: 'Press Start 2P', monospace; font-size: 0.5rem; color: #cc55ff; text-transform: uppercase; }
+  .mc-advancement-name { font-size: 1.5rem; color: #ffffff; font-weight: bold; }
+  .mc-cookie-desc { color: #aaaaaa; font-size: 1.1rem; margin-bottom: 15px; line-height: 1.3; }
+  .mc-cookie-buttons { display: flex; gap: 10px; }
+  .mc-cookie-btn {
+    flex: 1; font-family: 'Press Start 2P', monospace; font-size: 0.5rem; padding: 10px; text-align: center; cursor: pointer; border: 2px solid #555; background: #555555; color: #fff; box-shadow: inset -2px -2px 0 #222, inset 2px 2px 0 #aaa;
+  }
+  .mc-cookie-btn:hover { background: #777777; border-color: #777; }
+  .mc-cookie-btn.accept { color: var(--primary); }
+  .mc-cookie-btn.decline { color: #ff5555; }
 
 
-/* ── 🌟 FAKE PAYPOL & TRASTPILOD GATEWAY MODAL 🌟 ── */
-.paypol-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  z-index: 2000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  font-family: 'Inter', sans-serif;
-}
-.paypol-modal-overlay.show { display: flex; }
+  /* ── 🌟 FAKE PAYPOL & TRASTPILOD GATEWAY MODAL 🌟 ── */
+  .paypol-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Inter', sans-serif;
+  }
+  .paypol-modal-overlay.show { display: flex; }
 
-.paypol-box {
-  background: #ffffff;
-  color: #1c1c1c;
-  width: 100%;
-  max-width: 480px;
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-  overflow: hidden;
-  animation: paypolPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes paypolPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .paypol-box {
+    background: #ffffff;
+    color: #1c1c1c;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    overflow: hidden;
+    animation: paypolPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes paypolPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-.paypol-header {
-  background: #fcfcfd;
-  padding: 20px 24px;
-  border-bottom: 1px solid #eef0f2;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.paypol-logo-area {
-  display: flex;
-  align-items: center;
-  font-style: italic;
-  font-weight: 800;
-  font-size: 1.6rem;
-  letter-spacing: -1px;
-}
-.paypol-logo-p1 { color: var(--paypol-blue); }
-.paypol-logo-p2 { color: var(--paypol-cyan); }
+  .paypol-header {
+    background: #fcfcfd;
+    padding: 20px 24px;
+    border-bottom: 1px solid #eef0f2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .paypol-logo-area {
+    display: flex;
+    align-items: center;
+    font-style: italic;
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: -1px;
+  }
+  .paypol-logo-p1 { color: var(--paypol-blue); }
+  .paypol-logo-p2 { color: var(--paypol-cyan); }
 
-.paypol-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #9aa1a7; }
+  .paypol-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #9aa1a7; }
 
-.paypol-body { padding: 24px; }
+  .paypol-body { padding: 24px; }
 
-.paypol-project-banner {
-  text-align: center;
-  background: #f4f6f8;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-.paypol-project-title { font-size: 1.1rem; font-weight: 700; color: #1c1c1c; }
-.paypol-project-subtitle { font-size: 0.8rem; color: #6c7378; margin-top: 3px; }
+  .paypol-project-banner {
+    text-align: center;
+    background: #f4f6f8;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .paypol-project-title { font-size: 1.1rem; font-weight: 700; color: #1c1c1c; }
+  .paypol-project-subtitle { font-size: 0.8rem; color: #6c7378; margin-top: 3px; }
 
-.paypol-input-group { margin-bottom: 20px; }
-.paypol-label { display: block; font-size: 0.75rem; font-weight: 700; color: #3b3d40; margin-bottom: 6px; letter-spacing: 0.5px; }
-.paypol-amount-box { position: relative; }
-.paypol-amount-box span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-weight: 700; font-size: 1.2rem; color: #1c1c1c; }
-.paypol-input {
-  width: 100%; padding: 14px; border: 2px solid #eef0f2; background: #f9fafb; border-radius: 8px; font-size: 1.1rem; color: #000; transition: 0.2s; font-weight: 600;
-}
-.paypol-input:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
+  .paypol-input-group { margin-bottom: 20px; }
+  .paypol-label { display: block; font-size: 0.75rem; font-weight: 700; color: #3b3d40; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .paypol-amount-box { position: relative; }
+  .paypol-amount-box span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-weight: 700; font-size: 1.2rem; color: #1c1c1c; }
+  .paypol-input {
+    width: 100%; padding: 14px; border: 2px solid #eef0f2; background: #f9fafb; border-radius: 8px; font-size: 1.1rem; color: #000; transition: 0.2s; font-weight: 600;
+  }
+  .paypol-input:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
 
-/* Code-Eingabe-Bereich (wird erst nach Schritt 1 eingeblendet) */
-.paypol-code-area {
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px dashed #eef0f2;
-  display: none;
-}
+  /* Code-Eingabe-Bereich (wird erst nach Schritt 1 eingeblendet) */
+  .paypol-code-area {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #eef0f2;
+    display: none;
+  }
 
-.paypol-btn {
-  display: block; width: 100%; background: linear-gradient(90deg, var(--paypol-blue), var(--paypol-cyan)); color: #fff; border: none; padding: 15px; border-radius: 25px; font-size: 1rem; font-weight: 700; cursor: pointer; text-align: center; transition: 0.2s; box-shadow: 0 4px 12px rgba(0, 121, 193, 0.2);
-}
-.paypol-btn:hover { filter: brightness(1.1); }
-.paypol-btn-unlocked { background: var(--trust-green) !important; box-shadow: none; }
+  .paypol-btn {
+    display: block; width: 100%; background: linear-gradient(90deg, var(--paypol-blue), var(--paypol-cyan)); color: #fff; border: none; padding: 15px; border-radius: 25px; font-size: 1rem; font-weight: 700; cursor: pointer; text-align: center; transition: 0.2s; box-shadow: 0 4px 12px rgba(0, 121, 193, 0.2);
+  }
+  .paypol-btn:hover { filter: brightness(1.1); }
+  .paypol-btn-unlocked { background: var(--trust-green) !important; box-shadow: none; }
 
-.paypol-error-msg { color: #ca1a1a; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
+  .paypol-error-msg { color: #ca1a1a; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
 
-/* ── INTEGRATED TRASTPILOD BAR (AM BODEN DES MODALS) ── */
-.paypol-trust-footer-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #1c1c1c;
-  color: #ffffff;
-  padding: 14px 24px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-}
-.trast-logo { display: flex; align-items: center; gap: 4px; }
-.trast-star-icon { background: var(--trust-green); color: #fff; padding: 1px 5px; font-weight: bold; font-size: 0.8rem; border-radius: 2px; }
-.trast-text { font-weight: 800; font-size: 1rem; letter-spacing: -0.5px; }
-.trast-stars { color: #ffb600; font-weight: bold; }
-.trast-badge { background: var(--trust-green); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 20px; text-transform: uppercase; }
+  /* ── INTEGRATED TRASTPILOD BAR (AM BODEN DES MODALS) ── */
+  .paypol-trust-footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1c1c1c;
+    color: #ffffff;
+    padding: 14px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+  }
+  .trast-logo { display: flex; align-items: center; gap: 4px; }
+  .trast-star-icon { background: var(--trust-green); color: #fff; padding: 1px 5px; font-weight: bold; font-size: 0.8rem; border-radius: 2px; }
+  .trast-text { font-weight: 800; font-size: 1rem; letter-spacing: -0.5px; }
+  .trast-stars { color: #ffb600; font-weight: bold; }
+  .trast-badge { background: var(--trust-green); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 20px; text-transform: uppercase; }
 
-/* ── RESPONSIVE ── */
-@media (max-width: 800px) {
-  .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid var(--border); }
-  .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; }
-  .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; }
-  .mc-btn:hover, .mc-btn.active { border-left-color: transparent; border-bottom-color: var(--primary); }
-  .logout-btn { margin-top: 0; margin-bottom: 0; }
-  .sidebar-profile { border-top: none; border-left: 2px solid var(--border); padding: 10px; }
-  main { margin-left: 0; padding: 30px 20px; }
-}
-</style>
+  /* ── RESPONSIVE ── */
+  @media (max-width: 800px) {
+    .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid var(--border); }
+    .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; }
+    .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; }
+    .mc-btn:hover, .mc-btn.active { border-left-color: transparent; border-bottom-color: var(--primary); }
+    .logout-btn { margin-top: 0; margin-bottom: 0; }
+    .sidebar-profile { border-top: none; border-left: 2px solid var(--border); padding: 10px; }
+    main { margin-left: 0; padding: 30px 20px; }
+  }
+  </style>
 </head>
 <body>
 
@@ -535,7 +539,7 @@ main {
   </div>
 
   <div class="sidebar-profile">
-    <img src="unnamed.jpg" id="user-avatar" class="profile-avatar" alt="M">
+    <img src="unnamed.jpg" id="user-avatar" class="profile-avatar" alt="M" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
     <div class="profile-info">
       <span class="profile-name" id="sidebar-user-name">SPIELER</span>
       <div class="profile-status-wrapper">
@@ -559,13 +563,6 @@ main {
       <div class="panel-body">
         <div class="line"><span>▶</span> Offizieller download der Quaps 10 Welt</div>
         <div class="line"><span>▶</span> Website Update auf Version 2.6 abgeschlossen</div>
-      </div>
-    </div>
-
-    <div class="glass-card mc-panel" data-reveal="2">
-      <div class="mc-panel-title">👥 REGISTERED / BEWORBENE SPIELER</div>
-      <div id="bewerber-liste" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 5px 0;">
-        <div style="color: var(--muted); font-size: 1rem;">Lade Bewerber...</div>
       </div>
     </div>
 
@@ -639,7 +636,7 @@ main {
     </div>
   </div>
 
-<div id="downloads" class="page">
+  <div id="downloads" class="page">
     <div class="hero" data-reveal="1">
       <h1>Welten <span>Downloads</span></h1>
       <p class="hero-sub">Lade dir hier die offiziellen Server-Maps und Quaps-Welten herunter.</p>
@@ -655,7 +652,7 @@ main {
 
 <div class="mc-cookie-banner" id="cookie-banner">
   <div class="mc-advancement-header">
-    <img src="https://minecraft.wiki/images/Cookie_JE1_BE1.png" class="mc-advancement-icon" alt="Cookie">
+    <img src="https://minecraft.wiki/images/Cookie_JE1_BE1.png" class="mc-advancement-icon" alt="Cookie" onerror="this.src='unnamed.jpg'">
     <div class="mc-advancement-text">
       <span class="mc-advancement-title">Challenge Complete!</span>
       <span class="mc-advancement-name">Kekse gefressen?</span>
@@ -673,12 +670,9 @@ main {
   <div class="paypol-box" id="paypolMainBox">
     
     <div id="cinematic-intro-screen" style="position: absolute; top:0; left:0; width:100%; height:100%; background: #050505; z-index: 100; display: none; flex-direction: column; justify-content: space-between; padding: 25px; box-sizing: border-box; overflow: hidden; border-radius: 6px;">
-      
       <div style="position: relative; width: 100%; height: 75%; overflow: hidden; mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);">
-        <div id="cinematic-text-scroll" style="position: absolute; width: 100%; text-align: center; font-family: 'Courier New', Courier, monospace; color: #ffaa00; font-size: 1.2rem; font-weight: bold; line-height: 1.8; text-shadow: 2px 2px #221100; transform: translateY(100%);">
-          </div>
+        <div id="cinematic-text-scroll" style="position: absolute; width: 100%; text-align: center; font-family: 'Courier New', Courier, monospace; color: #ffaa00; font-size: 1.2rem; font-weight: bold; line-height: 1.8; text-shadow: 2px 2px #221100; transform: translateY(100%);"></div>
       </div>
-
       <div style="text-align: center; margin-bottom: 10px;">
         <button onclick="skipCinematicIntro()" class="mc-action" style="padding: 8px 25px; font-size: 0.9rem; background: #222; border: 2px solid #555; color: #aaa; cursor: pointer; border-radius: 4px;">⏩ INTRO ÜBERSPRINGEN</button>
       </div>
@@ -692,7 +686,6 @@ main {
     </div>
     
     <div class="paypol-body">
-      
       <div class="paypol-project-banner">
         <div class="paypol-project-title" id="paypolItemName">Projektname</div>
         <div class="paypol-project-subtitle">Sicherer Download-Schutz & Verifizierung</div>
@@ -740,7 +733,6 @@ main {
   }
 </style>
 
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -750,7 +742,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
 
-/* 🔑 TRASTPILOD CODES FÜR DIE WELTEN */
+/* 🔑 TRASTPILOD CODES */
 const VALID_DOWNLOAD_CODES = [
   "Joschi7",
   "GeheimKey123",
@@ -768,7 +760,7 @@ const PROJECT_DOWNLOADS = [
     size: "ca. 5.0 GB",
     file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl",
     introText: " QUAPS ATTACK 10 <br><br>Du stehst kurz vor dem Download einer Legende.<br>Monate voller Schweiß, Blut und unendlicher Arbeit stecken in diesen Blöcken.<br><br>Erlebe das gewaltige Nevada, erbaut von Lois_7 und Milka_600.<br><br>Lois_7 bereut es immer noch nicht Joschi all sein Redstone geklaut zu haben!<br><br>🔒 SICHERER GOOGLE DRIVE DOWNLOAD BREITGESTELLT."
-  }
+  },
 ];
 
 let currentGlobalUser = "SPIELER";
@@ -791,49 +783,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
   loadPinnwand();
-  loadBewerber(); 
   renderDownloadList();
 
   setTimeout(triggerCookieBanner, 2000);
   setTimeout(initReveal, 100);
 });
 
-/* ── BEWERBERLISTE DYNAMISCH MIT KÖPFEN LADEN ── */
-async function loadBewerber() {
-  const { data, error } = await supabaseClient
-    .from('bewerbungen')
-    .select('username')
-    .order('created_at', { ascending: false });
-
-  const liste = document.getElementById('bewerber-liste');
-
-  if (error) {
-    liste.innerHTML = `<div style="color: #ff5555; font-size: 1rem;">Fehler beim Laden der Spieler-Liste.</div>`;
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    liste.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Noch keine registrierten Spieler vorhanden.</div>`;
-    return;
-  }
-
-  // Generiert die Badges inklusive Avatar-Kopf im schicken Minecraft-Style
-  liste.innerHTML = data.map(b => {
-    const cleanUsername = escapeHtml(b.username.trim());
-    // Nutzt crafatar.com für das 3D-artig gerenderte Avatar-Face (Größe 24px) mit Skin-Overlay
-    const avatarUrl = `https://crafatar.com/avatars/${cleanUsername}?size=24&overlay`;
-
-    return `
-      <span style="display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4); border: 2px solid var(--primary); padding: 6px 12px; font-family: monospace; border-radius: 6px; color: #fff; font-size: 1.1rem; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);">
-        <img src="${avatarUrl}" alt="${cleanUsername}" style="width: 20px; height: 20px; image-rendering: pixelated; border-radius: 2px;" onerror="this.src='https://crafatar.com/avatars/Steve?size=24'">
-        <span style="color: var(--primary); font-size: 0.8rem; line-height: 1;">🟢</span>
-        ${cleanUsername}
-      </span>
-    `;
-  }).join('');
-}
-
-/* ── DOWNLOAD LISTE DYNAMISCH GENERIEREN ── */
 function renderDownloadList() {
   const container = document.getElementById('download-list-container');
   container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
@@ -850,7 +805,6 @@ function renderDownloadList() {
   `).join('');
 }
 
-/* ── FAKE PAYPOL + TRASTPILOD MODAL LOGIK ── */
 function openPaypolGateway(id) {
   const project = PROJECT_DOWNLOADS.find(p => p.id === id);
   if (!project) return;
@@ -874,7 +828,6 @@ function openPaypolGateway(id) {
   if (project.introText) {
     introScreen.style.display = "flex";
     scrollText.innerHTML = project.introText;
-    
     scrollText.style.animation = "cinematicScrollUp 18s linear forwards";
     playSound("achievement.mp3");
 
@@ -889,7 +842,6 @@ function openPaypolGateway(id) {
 function skipCinematicIntro() {
   if (cinematicTimeout) clearTimeout(cinematicTimeout);
   document.getElementById('cinematic-intro-screen').style.display = "none";
-  document.getElementById('cinematic-text-scroll').style.animation = "";
   playSound("xp.mp3");
 }
 
@@ -930,7 +882,6 @@ function verifyPaypolCode() {
   }
 }
 
-/* ── ADVANCEMENT BANNER COOKIES ── */
 function triggerCookieBanner() {
   if (!localStorage.getItem('mc_cookie_choice')) {
     document.getElementById('cookie-banner').classList.add('show');
@@ -952,7 +903,6 @@ function playSound(file) {
   } catch (e) {}
 }
 
-/* ── PINNWAND CODES ── */
 async function loadPinnwand() {
   const { data, error } = await supabaseClient
     .from('pinnwand')
@@ -1014,7 +964,6 @@ async function postToPinnwand() {
 
 function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
 
-/* ── NAVIGATION & CO ── */
 async function logout() { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; }
 
 function showPage(id) {
