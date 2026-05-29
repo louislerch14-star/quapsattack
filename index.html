@@ -854,23 +854,44 @@ const PROJECT_DOWNLOADS = [
 let currentGlobalUser = "SPIELER";
 let selectedProjectId = null;
 let cinematicTimeout = null;
+let isGuestMode = false; // Variable, um den Gast-Status global zu speichern
 
 window.addEventListener('DOMContentLoaded', async () => {
-  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  // Überprüfen, ob ?guest=true in der URL steht
+  const urlParams = new URLSearchParams(window.location.search);
+  isGuestMode = urlParams.get('guest') === 'true';
 
-  if (error || !session) {
-    window.location.href = 'login.html';
-    return;
+  if (isGuestMode) {
+    // Gast-Modus Einstellungen
+    currentGlobalUser = "GAST";
+    
+    // UI für Gäste anpassen
+    document.getElementById('user-name-display').textContent = currentGlobalUser;
+    document.getElementById('uploaderName').value = currentGlobalUser;
+    document.getElementById('imageUploaderName').value = currentGlobalUser;
+    document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
+
+    // Features sperren (Buttons deaktivieren und beschriften)
+    disableGuestFeatures();
+  } else {
+    // Normaler Login-Schutz über Supabase
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+    if (error || !session) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const user = session.user;
+    currentGlobalUser = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
+    
+    document.getElementById('user-name-display').textContent = currentGlobalUser;
+    document.getElementById('uploaderName').value = currentGlobalUser;
+    document.getElementById('imageUploaderName').value = currentGlobalUser;
+    document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
   }
 
-  const user = session.user;
-  currentGlobalUser = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
-  
-  document.getElementById('user-name-display').textContent = currentGlobalUser;
-  document.getElementById('uploaderName').value = currentGlobalUser;
-  document.getElementById('imageUploaderName').value = currentGlobalUser;
-  document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
-
+  // Diese Funktionen werden für beide geladen (Gäste können die Pinnwand/Bewerbungen lesen)
   loadPinnwand();
   loadBewerbungen();
   renderDownloadList();
@@ -879,23 +900,62 @@ window.addEventListener('DOMContentLoaded', async () => {
   setTimeout(initReveal, 100);
 });
 
+// Hilfsfunktion, um die Buttons für Gäste zu sperren
+function disableGuestFeatures() {
+  // Pinnwand Button sperren
+  const pinnwandBtn = document.getElementById('pinnwand-btn');
+  if (pinnwandBtn) {
+    pinnwandBtn.disabled = true;
+    pinnwandBtn.textContent = "NUR ALS MITGLIED";
+    pinnwandBtn.style.opacity = "0.5";
+    pinnwandBtn.style.cursor = "not-allowed";
+  }
+  
+  // Clip Upload Button sperren
+  const clipBtn = document.getElementById('submitBtn');
+  if (clipBtn) {
+    clipBtn.disabled = true;
+    clipBtn.textContent = "NUR ALS MITGLIED";
+    clipBtn.style.opacity = "0.5";
+    clipBtn.style.cursor = "not-allowed";
+  }
+
+  // Bilder Upload Button sperren
+  const imgBtn = document.getElementById('imgSubmitBtn');
+  if (imgBtn) {
+    imgBtn.disabled = true;
+    imgBtn.textContent = "NUR ALS MITGLIED";
+    imgBtn.style.opacity = "0.5";
+    imgBtn.style.cursor = "not-allowed";
+  }
+}
+
 function renderDownloadList() {
   const container = document.getElementById('download-list-container');
-  container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
-    <div class="download-card">
-      <div>
-        <div class="download-card-title">${proj.title}</div>
-        <div style="color: var(--muted); font-size: 1.1rem; margin-bottom: 15px;">
-          Version: ${proj.version}<br>
-          Größe: ${proj.size}
+  container.innerHTML = PROJECT_DOWNLOADS.map(proj => {
+    // Wenn Gast-Modus aktiv ist, wird der Button direkt blockiert ausgegeben
+    const buttonHtml = isGuestMode 
+      ? `<button class="mc-action" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>▶ NUR ALS MITGLIED</button>`
+      : `<button onclick="openPaypolGateway('${proj.id}')" class="mc-action" style="width: 100%;">▶ DOWNLOAD ANFORDERN</button>`;
+
+    return `
+      <div class="download-card">
+        <div>
+          <div class="download-card-title">${proj.title}</div>
+          <div style="color: var(--muted); font-size: 1.1rem; margin-bottom: 15px;">
+            Version: ${proj.version}<br>
+            Größe: ${proj.size}
+          </div>
         </div>
+        ${buttonHtml}
       </div>
-      <button onclick="openPaypolGateway('${proj.id}')" class="mc-action" style="width: 100%;">▶ DOWNLOAD ANFORDERN</button>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 function openPaypolGateway(id) {
+  if (isGuestMode) return; // Sicherheits-Check
+
   const project = PROJECT_DOWNLOADS.find(p => p.id === id);
   if (!project) return;
 
@@ -947,6 +1007,8 @@ function advanceToCodeStep() {
 }
 
 function verifyPaypolCode() {
+  if (isGuestMode) return;
+
   const project = PROJECT_DOWNLOADS.find(p => p.id === selectedProjectId);
   if (!project) return;
 
@@ -1051,6 +1113,8 @@ async function loadBewerbungen() {
 }
 
 async function postToPinnwand() {
+  if (isGuestMode) return; // Sicherheits-Check für Gäste
+
   const input = document.getElementById('pinnwand-input');
   const btn = document.getElementById('pinnwand-btn');
   const text = input.value.trim();
@@ -1111,6 +1175,8 @@ function togglePlay() {
 
 /* ── FUNKTIONEN FÜR KLASSISCHEN CLIP UPLOAD ── */
 async function sendToDiscord() {
+  if (isGuestMode) return; // Sicherheits-Check
+
   const name = document.getElementById('uploaderName').value;
   const title = document.getElementById('clipTitle').value;
   const link = document.getElementById('clipLink').value;
@@ -1175,6 +1241,8 @@ function previewImageFileName() {
 }
 
 async function sendImageToDiscord() {
+  if (isGuestMode) return; // Sicherheits-Check
+
   const name = document.getElementById('imageUploaderName').value;
   const description = document.getElementById('imageDescription').value;
   const fileInput = document.getElementById('baseImageFile');
@@ -1187,15 +1255,11 @@ async function sendImageToDiscord() {
   const formData = new FormData();
   const file = fileInput.files[0];
   
-  // Datei-Endung extrahieren (.png, .jpg etc.) und einen sicheren Namen bauen.
-  // Das verhindert, dass Leerzeichen oder Sonderzeichen im Upload-Namen das Discord-Embed brechen.
   const extension = file.name.split('.').pop();
   const safeFileName = `base_upload.${extension}`;
 
-  // Bild mit dem bereinigten Dateinamen an die Form-Daten hängen
   formData.append('files[0]', file, safeFileName);
 
-  // Embed für Discord generieren
   const embed = {
     title: '🖼 Neues Base-Bild (Grieferschutz-Antrag)',
     color: 0x44d4d4,
@@ -1203,7 +1267,6 @@ async function sendImageToDiscord() {
       { name: 'Spieler', value: name, inline: true },
       { name: 'Info / Koordinaten', value: description || 'Keine Beschreibung angegeben.', inline: true }
     ],
-    // Durch das "image" Objekt wird die angehängte Datei nun VOLLSTÄNDIG GROSS eingebettet.
     image: { 
       url: `attachment://${safeFileName}` 
     }
