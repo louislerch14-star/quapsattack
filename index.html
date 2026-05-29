@@ -941,7 +941,7 @@ function closePaypolGateway() {
   document.getElementById('cinematic-intro-screen').style.display = "none";
 }
 
- function advanceToCodeStep() {
+function advanceToCodeStep() {
   document.getElementById('paypol-step-2').style.display = "block";
   playSound("xp.mp3");
 }
@@ -1187,10 +1187,15 @@ async function sendImageToDiscord() {
   const formData = new FormData();
   const file = fileInput.files[0];
   
-  // Bild an Form-Daten hängen
-  formData.append('files[0]', file, file.name);
+  // Datei-Endung extrahieren (.png, .jpg etc.) und einen sicheren Namen bauen.
+  // Das verhindert, dass Leerzeichen oder Sonderzeichen im Upload-Namen das Discord-Embed brechen.
+  const extension = file.name.split('.').pop();
+  const safeFileName = `base_upload.${extension}`;
 
-  // Embed vorbereiten
+  // Bild mit dem bereinigten Dateinamen an die Form-Daten hängen
+  formData.append('files[0]', file, safeFileName);
+
+  // Embed für Discord generieren
   const embed = {
     title: '🖼 Neues Base-Bild (Grieferschutz-Antrag)',
     color: 0x44d4d4,
@@ -1198,7 +1203,10 @@ async function sendImageToDiscord() {
       { name: 'Spieler', value: name, inline: true },
       { name: 'Info / Koordinaten', value: description || 'Keine Beschreibung angegeben.', inline: true }
     ],
-    image: { url: `attachment://${file.name}` }
+    // Durch das "image" Objekt wird die angehängte Datei nun VOLLSTÄNDIG GROSS eingebettet.
+    image: { 
+      url: `attachment://${safeFileName}` 
+    }
   };
 
   const payload = {
