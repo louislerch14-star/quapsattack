@@ -548,7 +548,6 @@ main {
 
 <main>
 
-  <!-- HOME PAGE -->
   <div id="home" class="page active">
     <div class="hero" data-reveal="1">
       <h1>Moin, <br><span id="user-name-display">Spieler</span>.</h1>
@@ -560,7 +559,13 @@ main {
       <div class="panel-body">
         <div class="line"><span>▶</span> Offizieller download der Quaps 10 Welt</div>
         <div class="line"><span>▶</span> Website Update auf Version 2.6 abgeschlossen</div>
-        
+      </div>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2">
+      <div class="mc-panel-title">👥 REGISTERED / BEWORBENE SPIELER</div>
+      <div id="bewerber-liste" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 5px 0;">
+        <div style="color: var(--muted); font-size: 1rem;">Lade Bewerber...</div>
       </div>
     </div>
 
@@ -588,7 +593,6 @@ main {
     </div>
   </div>
 
-  <!-- CLIPS ARCHIVE -->
   <div id="clips" class="page">
     <div class="hero" data-reveal="1">
       <h1>Clip <span>Archiv</span></h1>
@@ -612,7 +616,6 @@ main {
     </div>
   </div>
 
-  <!-- UPLOAD PAGE -->
   <div id="upload" class="page">
     <div class="hero" data-reveal="1">
       <h1>Clip <span>einsenden</span></h1>
@@ -636,8 +639,7 @@ main {
     </div>
   </div>
 
-<!-- DOWNLOADS PAGE -->
-  <div id="downloads" class="page">
+<div id="downloads" class="page">
     <div class="hero" data-reveal="1">
       <h1>Welten <span>Downloads</span></h1>
       <p class="hero-sub">Lade dir hier die offiziellen Server-Maps und Quaps-Welten herunter.</p>
@@ -651,7 +653,6 @@ main {
 
 </main>
 
-<!-- COOKIE BANNER -->
 <div class="mc-cookie-banner" id="cookie-banner">
   <div class="mc-advancement-header">
     <img src="https://minecraft.wiki/images/Cookie_JE1_BE1.png" class="mc-advancement-icon" alt="Cookie">
@@ -668,27 +669,21 @@ main {
 </div>
 
 
-<!-- ── 🌟 FAKE PAYPOL GATEWAY MODAL MIT CINEMATIC INTRO & TRASTPILOD 🌟 ── -->
 <div class="paypol-modal-overlay" id="paypolModal">
   <div class="paypol-box" id="paypolMainBox">
     
-    <!-- 🎬 CINEMATIC INTRO SCREEN (SCHWARZER SCREEN VOR PAYPOL) -->
     <div id="cinematic-intro-screen" style="position: absolute; top:0; left:0; width:100%; height:100%; background: #050505; z-index: 100; display: none; flex-direction: column; justify-content: space-between; padding: 25px; box-sizing: border-box; overflow: hidden; border-radius: 6px;">
       
-      <!-- Der scrollende Text-Container -->
       <div style="position: relative; width: 100%; height: 75%; overflow: hidden; mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);">
         <div id="cinematic-text-scroll" style="position: absolute; width: 100%; text-align: center; font-family: 'Courier New', Courier, monospace; color: #ffaa00; font-size: 1.2rem; font-weight: bold; line-height: 1.8; text-shadow: 2px 2px #221100; transform: translateY(100%);">
-          <!-- Text wird dynamisch per JS geladen -->
-        </div>
+          </div>
       </div>
 
-      <!-- Skip Button unten -->
       <div style="text-align: center; margin-bottom: 10px;">
         <button onclick="skipCinematicIntro()" class="mc-action" style="padding: 8px 25px; font-size: 0.9rem; background: #222; border: 2px solid #555; color: #aaa; cursor: pointer; border-radius: 4px;">⏩ INTRO ÜBERSPRINGEN</button>
       </div>
     </div>
 
-    <!-- Header mit Fake PayPol Logo -->
     <div class="paypol-header">
       <div class="paypol-logo-area">
         <span class="paypol-logo-p1">Pay</span><span class="paypol-logo-p2">Pol</span>
@@ -698,13 +693,11 @@ main {
     
     <div class="paypol-body">
       
-      <!-- Projektanzeige -->
       <div class="paypol-project-banner">
         <div class="paypol-project-title" id="paypolItemName">Projektname</div>
         <div class="paypol-project-subtitle">Sicherer Download-Schutz & Verifizierung</div>
       </div>
 
-      <!-- Schritt 1: Spenden-Eingabe -->
       <div id="paypol-step-1">
         <div class="paypol-input-group">
           <label class="paypol-label">PROJEKT SUPPORT SPENDE (Emeralds)</label>
@@ -716,7 +709,6 @@ main {
         <button onclick="advanceToCodeStep()" class="paypol-btn">Weiter zur Verifizierung</button>
       </div>
 
-      <!-- Schritt 2: Trastpilod Code Freischaltung -->
       <div id="paypol-step-2" class="paypol-code-area">
         <div class="paypol-input-group">
           <label class="paypol-label" style="color: var(--trust-green); font-weight: 800;">🔒 TRASTPILOD FREISCHALTCODE ERFORDERLICH</label>
@@ -729,7 +721,6 @@ main {
       <a id="hiddenDownloadTrigger" href="#" target="_blank" style="display: none;"></a>
     </div>
     
-    <!-- Fest eingebautes Trastpilod Siegel im unteren Bereich des Fensters -->
     <div class="paypol-trust-footer-bar">
       <div class="trast-logo">
         <span class="trast-star-icon">★</span>
@@ -742,7 +733,6 @@ main {
   </div>
 </div>
 
-<!-- Keyframe Animation für das CSS-Scrolling -->
 <style>
   @keyframes cinematicScrollUp {
     0% { transform: translateY(100%); }
@@ -769,7 +759,7 @@ const VALID_DOWNLOAD_CODES = [
   "ServerPass2026"
 ];
 
-/* 📂 PROJEKTE & DATEIEN (Der Text wurde hier für das Intro angepasst und veredelt) */
+/* 📂 PROJEKTE & DATEIEN */
 const PROJECT_DOWNLOADS = [
   {
     id: "season10",
@@ -778,8 +768,7 @@ const PROJECT_DOWNLOADS = [
     size: "ca. 5.0 GB",
     file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl",
     introText: " QUAPS ATTACK 10 <br><br>Du stehst kurz vor dem Download einer Legende.<br>Monate voller Schweiß, Blut und unendlicher Arbeit stecken in diesen Blöcken.<br><br>Erlebe das gewaltige Nevada, erbaut von Lois_7 und Milka_600.<br><br>Lois_7 bereut es immer noch nicht Joschi all sein Redstone geklaut zu haben!<br><br>🔒 SICHERER GOOGLE DRIVE DOWNLOAD BREITGESTELLT."
-  },
-  
+  }
 ];
 
 let currentGlobalUser = "SPIELER";
@@ -802,11 +791,39 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
   loadPinnwand();
+  loadBewerber(); // Ruft die Bewerberliste direkt beim Start auf!
   renderDownloadList();
 
   setTimeout(triggerCookieBanner, 2000);
   setTimeout(initReveal, 100);
 });
+
+/* ── BEWERBERLISTE DYNAMISCH LADEN ── */
+async function loadBewerber() {
+  const { data, error } = await supabaseClient
+    .from('bewerbungen')
+    .select('username')
+    .order('created_at', { ascending: false });
+
+  const liste = document.getElementById('bewerber-liste');
+
+  if (error) {
+    liste.innerHTML = `<div style="color: #ff5555; font-size: 1rem;">Fehler beim Laden der Spieler-Liste.</div>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    liste.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Noch keine registrierten Spieler vorhanden.</div>`;
+    return;
+  }
+
+  // Generiert die Badges im schicken Minecraft-Style
+  liste.innerHTML = data.map(b => `
+    <span style="display: inline-block; background: rgba(0,0,0,0.4); border: 2px solid var(--primary); padding: 6px 12px; font-family: monospace; border-radius: 6px; color: #fff; font-size: 1.1rem; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);">
+      🟢 ${escapeHtml(b.username)}
+    </span>
+  `).join('');
+}
 
 /* ── DOWNLOAD LISTE DYNAMISCH GENERIEREN ── */
 function renderDownloadList() {
@@ -836,16 +853,13 @@ function openPaypolGateway(id) {
   document.getElementById('paypolCode').value = "";
   document.getElementById('paypolError').style.display = "none";
   
-  // Interface resetten auf Schritt 1
   document.getElementById('paypol-step-2').style.display = "none";
   const btn = document.getElementById('paypolBtn');
   btn.textContent = "Code prüfen & Download starten";
   btn.classList.remove('paypol-btn-unlocked');
 
-  // Modal anzeigen
   document.getElementById('paypolModal').classList.add('show');
 
-  // Cinematic Intro auslösen falls Text vorhanden ist
   const introScreen = document.getElementById('cinematic-intro-screen');
   const scrollText = document.getElementById('cinematic-text-scroll');
   
@@ -853,11 +867,9 @@ function openPaypolGateway(id) {
     introScreen.style.display = "flex";
     scrollText.innerHTML = project.introText;
     
-    // Animation via JS zuweisen, damit sie jedes Mal sauber von vorne startet
     scrollText.style.animation = "cinematicScrollUp 18s linear forwards";
     playSound("achievement.mp3");
 
-    // Nach 18 Sekunden automatisch weiterleiten, falls nicht geskippt wurde
     cinematicTimeout = setTimeout(() => {
       skipCinematicIntro();
     }, 18000);
@@ -869,7 +881,7 @@ function openPaypolGateway(id) {
 function skipCinematicIntro() {
   if (cinematicTimeout) clearTimeout(cinematicTimeout);
   document.getElementById('cinematic-intro-screen').style.display = "none";
-  document.getElementById('cinematic-text-scroll').style.style = "";
+  document.getElementById('cinematic-text-scroll').style.animation = "";
   playSound("xp.mp3");
 }
 
