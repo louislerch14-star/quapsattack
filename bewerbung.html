@@ -194,6 +194,17 @@
     }
   }
 
+  // Sound-Funktion (nutzt die vorhandene achievement.mp3 aus dem Hauptverzeichnis)
+  function playAchievementSound() {
+    try {
+      const audio = new Audio('achievement.mp3');
+      audio.volume = 0.5;
+      audio.play();
+    } catch (e) {
+      console.log("Audio-Wiedergabe fehlgeschlagen:", e);
+    }
+  }
+
   // Sendet die Daten ab
   async function submitApplication(e) {
     e.preventDefault();
@@ -224,6 +235,9 @@
       statusMsg.style.border = "1px solid #55ff55";
       statusMsg.textContent = "✔ Bewerbung erfolgreich gesendet! Du wirst weitergeleitet...";
       statusMsg.style.display = "block";
+      
+      // 🎵 Spielt den epischen Sound ab
+      playAchievementSound();
       
       setTimeout(() => {
         window.location.href = 'index.html';
