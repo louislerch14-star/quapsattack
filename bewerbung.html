@@ -174,6 +174,11 @@
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // Audio-Objekt vorab initialisieren und laden
+  const achievementAudio = new Audio('achievement.mp3');
+  achievementAudio.volume = 0.5;
+  achievementAudio.preload = 'auto';
+
   // Prüft ob Textfelder ausgefüllt UND alle 4 Checkboxen aktiv sind
   function checkFormValidity() {
     const username = document.getElementById('username').value.trim();
@@ -191,17 +196,6 @@
     } else {
       btn.disabled = true;
       btn.classList.remove('enabled');
-    }
-  }
-
-  // Sound-Funktion (nutzt die vorhandene achievement.mp3 aus dem Hauptverzeichnis)
-  function playAchievementSound() {
-    try {
-      const audio = new Audio('achievement.mp3');
-      audio.volume = 0.5;
-      audio.play();
-    } catch (e) {
-      console.log("Audio-Wiedergabe fehlgeschlagen:", e);
     }
   }
 
@@ -233,15 +227,34 @@
       statusMsg.style.background = "rgba(85, 255, 85, 0.2)";
       statusMsg.style.color = "#55ff55";
       statusMsg.style.border = "1px solid #55ff55";
-      statusMsg.textContent = "✔ Bewerbung erfolgreich gesendet! Du wirst weitergeleitet...";
+      statusMsg.textContent = "✔ Bewerbung erfolgreich gesendet! Sound wird abgespielt...";
       statusMsg.style.display = "block";
       
-      // 🎵 Spielt den epischen Sound ab
-      playAchievementSound();
+      // Falls der Browser die Wiedergabe blockiert, nutzen wir einen Fallback-Timer
+      let redirected = false;
       
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 2500);
+      // Event-Listener: Sobald der Sound fertig ist -> Weiterleitung!
+      achievementAudio.onended = function() {
+        if (!redirected) {
+          redirected = true;
+          window.location.href = 'index.html';
+        }
+      };
+
+      try {
+        achievementAudio.currentTime = 0;
+        // Startet das Abspielen des epischen Sounds
+        await achievementAudio.play();
+      } catch (e) {
+        console.log("Audio konnte nicht automatisch abgespielt werden:", e);
+        // Fallback: Wenn der Browser blockiert, leiten wir nach 2.5 Sekunden normal weiter
+        setTimeout(() => {
+          if (!redirected) {
+            redirected = true;
+            window.location.href = 'index.html';
+          }
+        }, 2500);
+      }
     }
   }
 </script>
