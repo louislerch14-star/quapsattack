@@ -9,20 +9,18 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
   :root {
-    --primary:       #a8ff78; /* XP-Grün (Behalten wir als Akzent) */
-    --diamond:       #38bdf8; /* Lighter Blue für Highlights */
-    --gold:          #f5c518;
-    --bg-main:       #f1f5f9; /* Sehr helles Grau */
-    --bg-card:       #ffffff; /* Weiß für Inhaltskarten */
-    --border-line:   #e2e8f0; /* Sehr helles Grau für Linien */
-    --shadow-main:   0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-    --shadow-card:   0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    --text-main:     #1e293b; /* Dunkles Grau für Text */
-    --text-dimmed:   #64748b; /* Grau für gedimmten Text */
+    --primary:       #a8ff78; /* XP-Grün als feiner Akzent */
+    --diamond:       #38bdf8; /* Modernes Hellblau für Highlights */
+    --bg-main:       #1e2530; /* Mattes, dunkleres Graublau für den Hintergrund */
+    --bg-card:       #29313f; /* Edles Anthrazit-Grau für Inhalts-Karten */
+    --bg-sidebar:    #191f29; /* Etwas dunkleres Grau für die Sidebar */
+    --border-line:   #384457; /* Subtile Trennlinien */
+    --text-main:     #f8fafc; /* Nahezu weißer Text für perfekten Kontrast */
+    --text-dimmed:   #94a3b8; /* Klassisches Grau für sekundäre Infos */
     
     --trust-green:   #00b67a;
     --paypol-blue:   #003087;
@@ -41,7 +39,6 @@
   }
 
   body {
-    /* Normale moderne Schrift für alles */
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 1rem;
     line-height: 1.5;
@@ -51,21 +48,17 @@
     flex-direction: column;
   }
 
-  /* Pixel-Schrift nur als minimaler Akzent */
-  .pixel-font { font-family: 'Press Start 2P', monospace; font-size: 0.7rem; }
-
-  /* SLIM MINIMALIST SIDEBAR */
+  /* NEUES LAYOUT: SIDEBAR LINKS FIXED */
   .sidebar-panel {
     position: fixed;
     top: 0; left: 0;
-    width: 260px;
-    height: calc(100vh - 40px);
-    background: var(--bg-card);
+    width: 280px;
+    height: calc(100vh - 50px);
+    background: var(--bg-sidebar);
     border-right: 1px solid var(--border-line);
     z-index: 100;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--shadow-main);
   }
 
   .sidebar-branding {
@@ -74,27 +67,29 @@
   }
   
   .sidebar-branding h2 {
-    color: #fff; /* Dunkler Text */
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: -0.5px;
     color: var(--text-main);
   }
   
   .sidebar-subtext {
     display: block;
-    margin-top: 6px;
+    margin-top: 4px;
     color: var(--text-dimmed);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 500;
     text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
+  /* ÜBERARBEITETE NAVBAR-NAMEN UND STYLING */
   .sidebar-menu {
     padding: 24px 16px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
 
   .menu-btn {
@@ -102,7 +97,7 @@
     width: 100%;
     background: transparent;
     color: var(--text-dimmed);
-    padding: 14px 16px;
+    padding: 12px 16px;
     border: 1px solid transparent;
     border-radius: 8px;
     cursor: pointer;
@@ -115,46 +110,46 @@
   
   .menu-btn:hover {
     color: var(--text-main);
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.04);
   }
   
   .menu-btn.active {
     color: var(--text-main);
-    background: #f1f5f9;
+    background: var(--bg-card);
     border-color: var(--border-line);
-    box-shadow: var(--shadow-main);
   }
 
   .menu-btn.exit-btn {
     margin-top: auto;
-    color: #ef4444;
+    color: #f87171;
+    border-top: 1px solid var(--border-line);
+    border-radius: 0;
+    padding-top: 20px;
   }
   .menu-btn.exit-btn:hover {
-    background: #fef2f2;
+    background: rgba(248, 113, 113, 0.08);
   }
 
   .sidebar-user-footer {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     padding: 20px 24px;
     border-top: 1px solid var(--border-line);
-    background: #f8fafc;
+    background: rgba(0, 0, 0, 0.1);
   }
   
   .avatar-frame {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border: 1px solid var(--border-line);
     background: var(--bg-main);
     border-radius: 50%;
-    image-rendering: pixelated;
   }
   
   .user-info-text {
     display: flex;
     flex-direction: column;
-    gap: 4px;
   }
   
   .user-title {
@@ -169,50 +164,44 @@
     font-weight: 500;
   }
 
-  /* MAIN STAGE WITH ADVANCED TRANSITIONS */
+  /* HAUPTINHALT */
   main {
-    margin-left: 260px;
-    padding: 50px 40px;
+    margin-left: 280px;
+    padding: 50px 50px;
     flex: 1;
-    max-width: 1200px;
+    max-width: 1300px;
     position: relative;
   }
 
-  /* DIE SEITEN-TRANSITIONEN */
+  /* FLÜSSIGER SEITENWECHSEL */
   .view-section { 
     display: none; 
     opacity: 0;
-    transform: scale(0.98);
   }
   
   .view-section.active { 
     display: block; 
-    animation: modernFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: cleanFadeIn 0.25s ease-out forwards;
   }
 
-  @keyframes modernFadeIn {
-    0% {
-      opacity: 0;
-      transform: scale(0.98);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
+  @keyframes cleanFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   .content-header-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: var(--text-main);
-    margin-bottom: 40px;
+    margin-bottom: 35px;
     font-weight: 700;
+    letter-spacing: -0.5px;
   }
   
   .content-header-title span {
     color: var(--diamond);
   }
 
-  /* MODERNE CARDS FÜR INHALTE */
+  /* GRAUE MODERNE CARDS */
   .data-block {
     background: var(--bg-card);
     border: 1px solid var(--border-line);
@@ -220,70 +209,61 @@
     margin-bottom: 30px;
     position: relative;
     border-radius: 12px;
-    box-shadow: var(--shadow-card);
   }
 
   .block-label {
-    position: absolute;
-    top: -10px;
-    left: 25px;
-    background: var(--primary);
-    padding: 4px 10px;
-    color: #1e293b;
-    font-size: 0.7rem;
-    font-weight: 600;
-    border-radius: 6px;
-    border: 1px solid rgba(0,0,0,0.05);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dimmed);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
   }
 
   .data-row {
-    padding: 16px 0;
+    padding: 14px 0;
     border-bottom: 1px solid var(--border-line);
-    font-size: 1rem;
+    font-size: 0.95rem;
     display: flex;
     align-items: center;
   }
   .data-row:last-child { border-bottom: none; }
-  .data-row .prefix { color: var(--diamond); width: 140px; flex-shrink: 0; font-weight: 600; }
+  .data-row .prefix { color: var(--diamond); width: 120px; flex-shrink: 0; font-weight: 600; }
   .data-row .value { color: var(--text-main); }
 
-  /* PINNWAND TEXT-FLOW */
+  /* COMMUNITY PINNWAND */
   .wall-text-stream {
-    max-height: 320px;
+    max-height: 300px;
     overflow-y: auto;
-    margin-bottom: 25px;
-    padding-right: 15px;
-    background: #f8fafc;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.15);
     border: 1px solid var(--border-line);
     padding: 20px;
     border-radius: 8px;
   }
   .wall-message-node {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border-line);
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.95rem;
   }
   .wall-message-node:last-child { border-bottom: none; }
   .wall-message-node .author {
-    color: var(--diamond);
-    margin-right: 12px;
+    color: var(--primary);
+    margin-right: 10px;
     font-weight: 600;
   }
 
   .stream-input-container {
     display: flex;
-    gap: 20px;
-    align-items: center;
-  }
-  .stream-input-container .input-field {
-    margin-bottom: 0;
+    gap: 15px;
   }
 
   /* JUKEBOX CONTROLS */
   .audio-matrix-zone {
     display: flex;
     align-items: center;
-    gap: 40px;
-    background: #f8fafc;
+    gap: 30px;
+    background: rgba(0, 0, 0, 0.15);
     padding: 20px;
     border: 1px solid var(--border-line);
     border-radius: 8px;
@@ -291,7 +271,7 @@
 
   .wave-hologram {
     display: flex;
-    gap: 6px;
+    gap: 5px;
     height: 20px;
     align-items: center;
   }
@@ -299,18 +279,19 @@
     width: 3px;
     height: 4px;
     background: var(--border-line);
-    transition: background 0.3s;
   }
   .playing .wave-bar {
     background: var(--diamond);
-    animation: wavePulse 0.6s infinite alternate ease-in-out;
+    animation: wavePulse 0.5s infinite alternate ease-in-out;
   }
+  .playing .wave-bar:nth-child(2n) { animation-delay: 0.15s; }
+  .playing .wave-bar:nth-child(3n) { animation-delay: 0.3s; }
   @keyframes wavePulse { from { height: 4px; } to { height: 20px; } }
 
   /* BUTTONS & FORMULAR-ELEMENTE */
   .btn-action {
     display: inline-block;
-    background: #f1f5f9;
+    background: #334155;
     color: var(--text-main);
     padding: 12px 24px;
     border: 1px solid var(--border-line);
@@ -319,35 +300,33 @@
     font-family: inherit;
     font-size: 0.95rem;
     font-weight: 600;
-    transition: all 0.2s;
+    transition: background 0.2s, border-color 0.2s;
   }
   .btn-action:hover:not(:disabled) {
-    background: #e2e8f0;
-    color: #fff;
-    border-color: #e2e8f0;
+    background: #475569;
+    border-color: #64748b;
   }
   .btn-action:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-action.full-width { width: 100%; text-align: center; }
 
   .input-field {
     width: 100%;
-    background: #fff;
+    background: rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-line);
-    padding: 14px;
+    padding: 12px 16px;
     border-radius: 8px;
     color: var(--text-main);
     font-family: inherit;
-    font-size: 1rem;
-    margin-bottom: 25px;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
   }
   .input-field:focus {
     outline: none;
     border-color: var(--diamond);
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
   }
   .input-field[readonly] {
-    background: #f1f5f9;
+    background: rgba(0, 0, 0, 0.4);
     color: var(--text-dimmed);
     cursor: not-allowed;
   }
@@ -356,45 +335,45 @@
     font-size: 0.8rem;
     color: var(--text-dimmed);
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     display: block;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .operation-success-alert {
     display: none;
     color: var(--trust-green);
     font-size: 0.95rem;
-    margin-top: 20px;
+    margin-top: 15px;
     font-weight: 500;
   }
 
-  /* DOWNLOAD SYSTEM GRID */
+  /* WELTEN GRID */
   .cards-structural-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 25px;
   }
   .card-node-element {
     background: var(--bg-card);
     border: 1px solid var(--border-line);
-    padding: 30px;
+    padding: 25px;
     border-radius: 12px;
-    box-shadow: var(--shadow-card);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
 
-  /* MEDIA CLIP ELEMENTS */
+  /* CLIPS ARCHIV */
   .media-stream-container {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 35px;
   }
   .video-frame-wrapper {
     width: 100%;
-    max-width: 800px;
+    max-width: 850px;
     aspect-ratio: 16/9;
     border: 1px solid var(--border-line);
     border-radius: 12px;
@@ -407,16 +386,16 @@
     inset: 0; width: 100%; height: 100%; border: none;
   }
   .meta-attribution {
-    margin-top: 15px;
+    margin-top: 12px;
     font-size: 0.9rem;
     color: var(--text-dimmed);
   }
   .meta-attribution span {
     color: var(--diamond);
-    font-weight: 600;
+    font-weight: 500;
   }
 
-  /* COOKIE POPUP */
+  /* POPUPS (COOKIE BANNER) */
   .matrix-cookie-popup {
     position: fixed;
     bottom: 30px;
@@ -427,23 +406,23 @@
     padding: 25px;
     z-index: 5000;
     border-radius: 12px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .matrix-cookie-popup.show { right: 30px; }
-  .cookie-header-text { font-size: 1rem; margin-bottom: 12px; color: var(--text-main); font-weight: 600; }
-  .cookie-body-desc { color: var(--text-dimmed); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5; }
-  .cookie-btn-group { display: flex; gap: 15px; }
+  .cookie-header-text { font-size: 1rem; margin-bottom: 10px; color: var(--text-main); font-weight: 600; }
+  .cookie-body-desc { color: var(--text-dimmed); font-size: 0.9rem; margin-bottom: 20px; }
+  .cookie-btn-group { display: flex; gap: 12px; }
   .cookie-btn-action {
-    flex: 1; padding: 12px; text-align: center; cursor: pointer; border: 1px solid var(--border-line); border-radius: 8px; background: #f1f5f9; color: var(--text-main); font-size: 0.95rem; font-family: inherit; font-weight: 600;
+    flex: 1; padding: 10px; text-align: center; cursor: pointer; border: 1px solid var(--border-line); border-radius: 6px; background: #334155; color: var(--text-main); font-size: 0.9rem; font-family: inherit; font-weight: 600;
   }
-  .cookie-btn-action.confirm-accent { background: var(--primary); color: #1e293b; border-color: var(--primary); }
+  .cookie-btn-action.confirm-accent { background: var(--primary); color: #000; border-color: var(--primary); }
 
-  /* GATEWAY VERIFIKATION MODAL */
+  /* NORMALE SCHRIFT FÜR PAYPOL MODAL */
   .overlay-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(15, 23, 42, 0.8);
     z-index: 9000;
     display: none;
     align-items: center;
@@ -453,14 +432,13 @@
   .overlay-backdrop.show { display: flex; }
 
   .gateway-modal {
-    background: #fff;
+    background: #ffffff;
     color: #1e293b;
     width: 100%;
     max-width: 440px;
-    border: 1px solid #cbd5e1;
     position: relative;
     border-radius: 16px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
     overflow: hidden;
   }
 
@@ -472,7 +450,8 @@
     justify-content: space-between;
     align-items: center;
   }
-  .gateway-logo { font-style: italic; font-size: 1.3rem; font-family: 'Inter', system-ui, sans-serif; font-weight: 700; }
+  /* Absolut normaler, moderner Look für PayPol */
+  .gateway-logo { font-style: italic; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.5px; }
   .logo-p1 { color: var(--paypol-blue); }
   .logo-p2 { color: var(--paypol-cyan); }
   .gateway-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8; }
@@ -480,30 +459,30 @@
   .gateway-main-body { padding: 30px; }
   .gateway-meta-box {
     background: #f1f5f9;
-    padding: 15px;
+    padding: 16px;
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 24px;
     border-radius: 8px;
   }
   .meta-title { color: #0f172a; font-size: 1.1rem; font-weight: 700; }
-  .meta-sub { font-size: 0.9rem; color: #64748b; margin-top: 4px; }
+  .meta-subtitle { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
 
   .gateway-group { margin-bottom: 20px; }
-  .gateway-label { display: block; font-size: 0.8rem; color: #475569; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; }
+  .gateway-label { display: block; font-size: 0.8rem; color: #475569; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
   .gateway-num-wrapper { position: relative; }
-  .gateway-num-wrapper span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #1e293b; font-size: 1rem; font-weight: 700; }
+  .gateway-num-wrapper span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #475569; font-size: 0.95rem; font-weight: 600; }
+  
   .gateway-input-field {
-    width: 100%; padding: 14px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 1.1rem; color: #000; font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; border-radius: 8px; font-weight: 600;
+    width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 1rem; color: #0f172a; font-family: inherit; box-sizing: border-box; border-radius: 8px; font-weight: 500;
   }
-  .gateway-input-field:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; box-shadow: 0 0 0 3px rgba(0, 121, 193, 0.1); }
+  .gateway-input-field:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
 
   .gateway-secure-zone { margin-top: 20px; padding-top: 20px; border-top: 2px dashed #e2e8f0; display: none; }
   .gateway-action-trigger {
-    display: block; width: 100%; background: #0079c1; color: #fff; border: none; padding: 15px; font-size: 1.1rem; font-family: 'Inter', system-ui, sans-serif; font-weight: 700; cursor: pointer; text-align: center; box-sizing: border-box; border-radius: 30px; transition: background 0.2s;
+    display: block; width: 100%; background: #0079c1; color: #fff; border: none; padding: 14px; font-size: 1rem; font-family: inherit; font-weight: 600; cursor: pointer; text-align: center; box-sizing: border-box; border-radius: 8px; transition: background 0.15s;
   }
   .gateway-action-trigger:hover { background: #005a8f; }
-  .gateway-action-trigger.unlocked { background: var(--trust-green) !important; }
-  .gateway-error-text { color: #ef4444; font-size: 0.9rem; margin-top: 10px; display: none; text-align: center; font-weight: 500; }
+  .gateway-error-text { color: #ef4444; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
 
   .gateway-footer-trust {
     display: flex;
@@ -512,19 +491,19 @@
     background: #0f172a;
     color: #fff;
     padding: 15px 25px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.85rem;
   }
-  .trust-badge-stars { background: var(--trust-green); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-right: 8px; }
+  .trust-badge-stars { background: var(--trust-green); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-right: 6px; }
   
+  /* FLASCHIGER TEXT-SCROLL IM MODAL RAUSGEWORFEN / VEREINFACHT */
   #cinematic-intro-screen {
-    position: absolute; inset: 0; background: #080a0f; z-index: 100; display: none; flex-direction: column; justify-content: space-between; padding: 30px; box-sizing: border-box;
+    position: absolute; inset: 0; background: #0f172a; z-index: 100; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 40px; box-sizing: border-box; text-align: center;
   }
   #cinematic-text-scroll {
-    position: absolute; width: 90%; left: 5%; text-align: center; color: var(--primary); font-size: 0.8rem; line-height: 2; transform: translateY(100%);
+    color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px;
   }
 
-  /* SYSTEM STATUS FOOTER */
+  /* CONFIG FOOTER */
   .system-status-footer {
     flex-shrink: 0;
     height: 50px;
@@ -533,10 +512,9 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 40px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-dimmed);
-    background: var(--bg-card);
-    box-shadow: 0 -1px 3px 0 rgba(0, 0, 0, 0.05);
+    background: var(--bg-sidebar);
   }
   .system-status-footer span { color: var(--diamond); font-weight: 500; }
 
@@ -546,7 +524,6 @@
     .menu-btn { width: auto; }
     main { margin-left: 0; padding: 30px 20px; }
     .system-status-footer { flex-direction: column; height: auto; padding: 20px; text-align: center; gap: 10px; }
-    .video-frame-wrapper { max-width: 100%; }
   }
   </style>
 </head>
@@ -557,49 +534,49 @@
   <div class="sidebar-panel">
     <div class="sidebar-branding">
       <h2>QuapsHub</h2>
-      <span class="sidebar-subtext">Version 3.0 Alpha</span>
+      <span class="sidebar-subtext">Verwaltung</span>
     </div>
 
     <div class="sidebar-menu">
-      <button class="menu-btn active" onclick="switchView('home')" id="btn-home">Terminal</button>
-      <button class="menu-btn" onclick="switchView('clips')" id="btn-clips">Clip Archiv</button>
-      <button class="menu-btn" onclick="switchView('upload')" id="btn-upload">Clip einsenden</button>
-      <button class="menu-btn" onclick="switchView('downloads')" id="btn-downloads">Karten</button>
-      <button class="menu-btn" onclick="switchView('admin-apply')" id="btn-admin-apply">Bewerbungsverwaltung</button>
-      <button class="menu-btn exit-btn" onclick="logout()">Sitzung beenden</button>
+      <button class="menu-btn active" onclick="switchView('home')" id="btn-home">Übersicht</button>
+      <button class="menu-btn" onclick="switchView('clips')" id="btn-clips">Archivierte Highlights</button>
+      <button class="menu-btn" onclick="switchView('upload')" id="btn-upload">Highlight einreichen</button>
+      <button class="menu-btn" onclick="switchView('downloads')" id="btn-downloads">Welten-Download</button>
+      <button class="menu-btn" onclick="switchView('admin-apply')" id="btn-admin-apply">Mitgliedschafts-Anträge</button>
+      <button class="menu-btn exit-btn" onclick="logout()">Abmelden</button>
     </div>
 
     <div class="sidebar-user-footer">
-      <img src="unnamed.jpg" id="user-avatar" class="avatar-frame" alt="M" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
+      <img src="unnamed.jpg" id="user-avatar" class="avatar-frame" alt="User" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
       <div class="user-info-text">
-        <span class="user-title" id="sidebar-user-name">Spieler</span>
-        <span class="user-status">Verbindung stabil</span>
+        <span class="user-title" id="sidebar-user-name">Nutzer</span>
+        <span class="user-status">Online</span>
       </div>
     </div>
   </div>
 
   <main>
     <div id="home" class="view-section active">
-      <h1 class="content-header-title">Status: <span>Verbindung aktiv für <span id="user-name-display">Spieler</span></span></h1>
+      <h1 class="content-header-title">Willkommen zurück, <span id="user-name-display">Nutzer</span></h1>
 
       <div class="data-block">
-        <div class="block-label">CORE MESSAGES</div>
-        <div class="data-row"><span class="prefix">[Meldung]</span><span class="value">Der Download der Quaps 10 Hauptwelt steht im Archiv bereit</span></div>
-        <div class="data-row"><span class="prefix">[Info]</span><span class="value">Sitzungsaufbau über das neue Modern-Light-Interface erfolgreich.</span></div>
+        <div class="block-label">System-Meldungen</div>
+        <div class="data-row"><span class="prefix">[Welt]</span><span class="value">Der Download für die Hauptwelt aus Season 10 ist freigeschaltet.</span></div>
+        <div class="data-row"><span class="prefix">[Schnittstelle]</span><span class="value">Die Benutzeroberfläche wurde erfolgreich auf das Graustufen-Layout aktualisiert.</span></div>
       </div>
 
       <div class="data-block">
-        <div class="block-label">COMMUNITY PINNWAND</div>
+        <div class="block-label">Pinnwand</div>
         <div class="wall-text-stream" id="pinnwand-box">Lade Einträge...</div>
         
         <div class="stream-input-container">
-          <input type="text" id="pinnwand-input" class="input-field" placeholder="Eintrag verfassen..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
-          <button onclick="postToPinnwand()" id="pinnwand-btn" class="btn-action">Eintragen</button>
+          <input type="text" id="pinnwand-input" class="input-field" placeholder="Eintrag verfassen..." maxlength="120" style="margin-bottom:0;" onkeydown="if(event.key === 'Enter') postToPinnwand()">
+          <button onclick="postToPinnwand()" id="pinnwand-btn" class="btn-action">Senden</button>
         </div>
       </div>
 
       <div class="data-block">
-        <div class="block-label">JUKEBOX STATION</div>
+        <div class="block-label">Jukebox</div>
         <div class="audio-matrix-zone">
           <div class="wave-hologram" id="visualizer">
             <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
@@ -614,7 +591,7 @@
     </div>
 
     <div id="clips" class="view-section">
-      <h1 class="content-header-title">VIDEO ARCHIV // <span>Wichtige Aufzeichnungen</span></h1>
+      <h1 class="content-header-title">Archivierte Highlights</h1>
       
       <div class="media-stream-container">
         <div>
@@ -622,7 +599,7 @@
           <div class="video-frame-wrapper">
             <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
           </div>
-          <div class="meta-attribution">Absender: <span>Louis</span></div>
+          <div class="meta-attribution">Eingereicht von: <span>Louis</span></div>
         </div>
 
         <div>
@@ -630,39 +607,39 @@
           <div class="video-frame-wrapper">
             <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
           </div>
-          <div class="meta-attribution">Absender: <span>Nils</span>, <span>Giorgio</span></div>
+          <div class="meta-attribution">Eingereicht von: <span>Nils</span>, <span>Giorgio</span></div>
         </div>
       </div>
     </div>
 
     <div id="upload" class="view-section">
-      <h1 class="content-header-title">DATA UPLOAD // <span>Clip übermitteln</span></h1>
+      <h1 class="content-header-title">Highlight einreichen</h1>
       
       <div class="data-block" style="max-width: 600px;">
-        <label class="field-description">Absenderkennung</label>
+        <label class="field-description">Absender</label>
         <input class="input-field" id="uploaderName" type="text" readonly>
         
-        <label class="field-description">Titel des Highlights</label>
-        <input class="input-field" id="clipTitle" type="text" placeholder="Beispiel: Epic PvP Clutch">
+        <label class="field-description">Titel des Videos</label>
+        <input class="input-field" id="clipTitle" type="text" placeholder="z. B. Base-Tour Preview">
         
-        <label class="field-description">Link (Medal / YouTube)</label>
+        <label class="field-description">Plattform-Link (Medal / YouTube)</label>
         <input class="input-field" id="clipLink" type="text" placeholder="https://...">
         
-        <button onclick="sendToDiscord()" id="submitBtn" class="btn-action full-width">An Discord übermitteln</button>
-        <div class="operation-success-alert" id="statusMsg">Datensatz erfolgreich an das Admin-Team übermittelt.</div>
+        <button onclick="sendToDiscord()" id="submitBtn" class="btn-action full-width">An Discord übertragen</button>
+        <div class="operation-success-alert" id="statusMsg">Der Datensatz wurde erfolgreich übermittelt.</div>
       </div>
     </div>
 
     <div id="downloads" class="view-section">
-      <h1 class="content-header-title">MAPS // <span>Weltdatenbank</span></h1>
+      <h1 class="content-header-title">Welten-Download</h1>
       <div class="cards-structural-grid" id="download-list-container"></div>
     </div>
 
     <div id="admin-apply" class="view-section">
-      <h1 class="content-header-title">MITGLIEDSCHAFTSANTRÄGE // <span>Protokollierung</span></h1>
+      <h1 class="content-header-title">Mitgliedschafts-Anträge</h1>
       <div class="data-block">
-        <div class="block-label">EINGEGANGENE ANTRÄGE</div>
-        <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="block-label">Eingegangene Protokolle</div>
+        <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 15px;">
           <div style="color: var(--text-dimmed);">Abfrage läuft...</div>
         </div>
       </div>
@@ -673,38 +650,42 @@
 
 <footer class="system-status-footer">
   <div>Sitzung aktiv für <span>Airbusfan.de</span></div>
-  <div style="letter-spacing: 1px;">Status: Alle Systeme nominal // Authentifizierung stabil</div>
+  <div>Verbindung gesichert &bull; Authentifizierung stabil</div>
 </footer>
 
 <div class="matrix-cookie-popup" id="cookie-banner">
-  <div class="cookie-header-text">Authentifizierungs-Datensatz</div>
-  <p class="cookie-body-desc">Diese Schnittstelle nutzt lokale Sitzungsdaten, um deine Authentifizierung aufrechtzuerhalten.</p>
+  <div class="cookie-header-text">Sitzungs-Identifikation</div>
+  <p class="cookie-body-desc">Diese Anwendung nutzt lokale Sitzungsdaten, um den Login-Status aufrechtzuerhalten.</p>
   <div class="cookie-btn-group">
-    <button class="cookie-btn-action confirm-accent" onclick="handleCookie(true)">Zustimmen</button>
-    <button class="cookie-btn-action" onclick="handleCookie(false)">Abweisen</button>
+    <button class="cookie-btn-action confirm-accent" onclick="handleCookie(true)">Akzeptieren</button>
+    <button class="cookie-btn-action" onclick="handleCookie(false)">Ablehnen</button>
   </div>
 </div>
 
 <div class="overlay-backdrop" id="paypolModal">
   <div class="gateway-modal">
+    
     <div id="cinematic-intro-screen">
-      <div style="position: relative; width: 100%; height: 85%; overflow: hidden;">
-        <div id="cinematic-text-scroll"></div>
+      <div id="cinematic-text-scroll">
+        Sitzungs-Identifikation erfolgreich.<br><br>
+        Der Zugriff auf die Weltdaten von <strong>Season 10</strong> wurde autorisiert.<br>
+        Das Projekt wurde von Louis und Mika erstellt.
       </div>
-      <button onclick="skipCinematicIntro()" class="btn-action" style="align-self: center;">Intro überspringen</button>
+      <button onclick="skipCinematicIntro()" class="btn-action" style="background:#334155;">Weiter</button>
     </div>
+
     <div class="gateway-top">
       <div class="gateway-logo"><span class="logo-p1">Pay</span><span class="logo-p2">Pol</span></div>
       <button class="gateway-close" onclick="closePaypolGateway()">&times;</button>
     </div>
     <div class="gateway-main-body">
       <div class="gateway-meta-box">
-        <div class="meta-title" id="paypolItemName">Projektname</div>
-        <div class="meta-subtitle">Download-Identitätsprüfung</div>
+        <div class="meta-title" id="paypolItemName">Projekt</div>
+        <div class="meta-subtitle">Identitätsprüfung für Datei-Freigabe</div>
       </div>
       <div id="paypol-step-1">
         <div class="gateway-group">
-          <label class="gateway-label">Projekt-Unterstützung</label>
+          <label class="gateway-label">Unterstützung</label>
           <div class="gateway-num-wrapper">
             <input type="number" id="paypolAmount" class="gateway-input-field" value="5" min="0">
             <span>Emeralds</span>
@@ -714,11 +695,11 @@
       </div>
       <div id="paypol-step-2" class="gateway-secure-zone">
         <div class="gateway-group">
-          <label class="gateway-label" style="color: var(--trust-green);">Freischaltcode benötigt</label>
+          <label class="gateway-label" style="color: var(--trust-green);">Freischaltcode eingeben</label>
           <input type="text" id="paypolCode" class="gateway-input-field" placeholder="Code eintragen" autocomplete="off" style="text-align: center;">
-          <div class="gateway-error-text" id="paypolError">Der eingegebene Code ist nicht korrekt.</div>
+          <div class="gateway-error-text" id="paypolError">Der Freischaltcode ist ungültig.</div>
         </div>
-        <button onclick="verifyPaypolCode()" id="paypolBtn" class="gateway-action-trigger">Code verifizieren und starten</button>
+        <button onclick="verifyPaypolCode()" id="paypolBtn" class="gateway-action-trigger">Verifizieren und herunterladen</button>
       </div>
       <a id="hiddenDownloadTrigger" href="#" target="_blank" style="display: none;"></a>
     </div>
@@ -728,10 +709,6 @@
     </div>
   </div>
 </div>
-
-<style>
-  @keyframes mcScrollUp { 0% { transform: translateY(100%); } 100% { transform: translateY(-110%); } }
-</style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -748,14 +725,12 @@ const PROJECT_DOWNLOADS = [
     title: "Quaps Attack Hauptwelt (Season 10)",
     version: "1.21+",
     size: "ca. 5.0 GB",
-    file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl",
-    introText: "Abfrage der Repository-Daten läuft...<br><br>Sitzungs-Identifikation erfolgreich.<br><br>Du hast Zugriff auf die Weltdaten von Quaps Attack Season 10 angefordert.<br>Diese Datensätze sind urheberrechtlich geschützt und nur für autorisierte Mitglieder bestimmt.<br><br>Erkunde das Nevada, erbaut von Louis und Mika.<br><br>Die Datenverbindung wird aufgebaut."
+    file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl"
   },
 ];
 
 let currentGlobalUser = "SPIELER";
 let selectedProjectId = null;
-let cinematicTimeout = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
   const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -765,13 +740,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   currentGlobalUser = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
   
   document.getElementById('user-name-display').textContent = currentGlobalUser;
+  document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
   document.getElementById('uploaderName').value = currentGlobalUser;
 
   loadPinnwand();
   loadBewerbungen();
   renderDownloadList();
 
-  setTimeout(triggerCookieBanner, 2000);
+  setTimeout(triggerCookieBanner, 1500);
 });
 
 function renderDownloadList() {
@@ -779,7 +755,7 @@ function renderDownloadList() {
   container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
     <div class="card-node-element">
       <div>
-        <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px;">${proj.title}</div>
+        <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px;">${proj.title}</div>
         <div style="color: var(--text-dimmed); font-size: 0.9rem; margin-bottom: 20px;">
           Version: ${proj.version} | Größe: ${proj.size}
         </div>
@@ -789,23 +765,18 @@ function renderDownloadList() {
   `).join('');
 }
 
-/* FLÜSSIGER WECHSEL OHNE KI-LOOK */
 function switchView(targetId) {
   const currentActive = document.querySelector('.view-section.active');
   if (!currentActive || currentActive.id === targetId) return;
 
-  // Navigations-Status sofort anpassen
   document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('btn-' + targetId).classList.add('active');
 
-  currentActive.style.opacity = '0';
-  currentActive.style.transform = 'scale(0.98)';
+  currentActive.style.display = 'none';
+  currentActive.classList.remove('active');
   
-  setTimeout(() => {
-    currentActive.classList.remove('active');
-    const nextActive = document.getElementById(targetId);
-    nextActive.classList.add('active');
-  }, 100); // Sehr kurze Pause für flüssigen Übergang
+  const nextActive = document.getElementById(targetId);
+  nextActive.classList.add('active');
 }
 
 function openPaypolGateway(id) {
@@ -819,32 +790,18 @@ function openPaypolGateway(id) {
   document.getElementById('paypolError').style.display = "none";
   document.getElementById('paypol-step-2').style.display = "none";
   
-  const btn = document.getElementById('paypolBtn');
-  btn.textContent = "Code verifizieren und starten";
+  document.getElementById('paypolBtn').textContent = "Verifizieren und herunterladen";
   document.getElementById('paypolModal').classList.add('show');
-
-  const introScreen = document.getElementById('cinematic-intro-screen');
-  const scrollText = document.getElementById('cinematic-text-scroll');
-  
-  if (project.introText) {
-    introScreen.style.display = "flex";
-    scrollText.innerHTML = project.introText;
-    scrollText.style.animation = "mcScrollUp 18s linear forwards";
-    playSound("achievement.mp3");
-    cinematicTimeout = setTimeout(() => { skipCinematicIntro(); }, 18000);
-  } else {
-    introScreen.style.display = "none";
-  }
+  document.getElementById('cinematic-intro-screen').style.display = "flex";
+  playSound("achievement.mp3");
 }
 
 function skipCinematicIntro() {
-  if (cinematicTimeout) clearTimeout(cinematicTimeout);
   document.getElementById('cinematic-intro-screen').style.display = "none";
   playSound("xp.mp3");
 }
 
 function closePaypolGateway() {
-  if (cinematicTimeout) clearTimeout(cinematicTimeout);
   document.getElementById('paypolModal').classList.remove('show');
 }
 
@@ -863,7 +820,7 @@ function verifyPaypolCode() {
 
   if (VALID_DOWNLOAD_CODES.includes(inputCode)) {
     errorBox.style.display = "none";
-    btn.textContent = "Code akzeptiert - Starte...";
+    btn.textContent = "Erfolgreich...";
     playSound("xp.mp3");
     
     setTimeout(() => {
@@ -871,7 +828,7 @@ function verifyPaypolCode() {
       trigger.href = project.file;
       trigger.click();
       closePaypolGateway();
-    }, 1500);
+    }, 1000);
   } else {
     errorBox.style.display = "block";
     playSound("creeper.mp3");
@@ -892,12 +849,12 @@ function handleCookie(accepted) {
 }
 
 function playSound(file) {
-  try { const audio = new Audio(file); audio.volume = 0.3; audio.play(); } catch (e) {}
+  try { const audio = new Audio(file); audio.volume = 0.2; audio.play(); } catch (e) {}
 }
 
 async function loadPinnwand() {
   const { data, error } = await supabaseClient.from('pinnwand').select('*').order('created_at', { ascending: false }).limit(30);
-  if (error) { document.getElementById('pinnwand-box').innerHTML = "Fehler bei der Abfrage."; return; }
+  if (error) { document.getElementById('pinnwand-box').innerHTML = "Fehler beim Laden."; return; }
 
   const box = document.getElementById('pinnwand-box');
   if (data.length === 0) { box.innerHTML = "Keine Einträge vorhanden."; return; }
@@ -915,13 +872,13 @@ async function loadBewerbungen() {
   const { data, error } = await supabaseClient.from('bewerbungen').select('*').order('created_at', { ascending: false });
   const box = document.getElementById('bewerbungen-liste-box');
 
-  if (error) { box.innerHTML = "Fehler bei der Abfrage."; return; }
-  if (!data || data.length === 0) { box.innerHTML = "Keine Bewerbungen vorhanden."; return; }
+  if (error) { box.innerHTML = "Fehler beim Laden."; return; }
+  if (!data || data.length === 0) { box.innerHTML = "Keine Anträge vorhanden."; return; }
 
   box.innerHTML = data.map(apply => `
-    <div style="background: #f1f5f9; padding: 20px; border: 1px solid var(--border-line); border-radius: 8px;">
-      <div style="color: var(--text-main); font-weight: 600; font-size: 1rem; margin-bottom: 8px;">Spieler: ${escapeHtml(apply.username || 'Unbekannt')}</div>
-      <div style="white-space: pre-wrap; color: var(--text-dimmed); font-size: 0.95rem; line-height: 1.6;">${escapeHtml(apply.begruendung || 'Keine Angabe.')}</div>
+    <div style="background: rgba(0,0,0,0.15); padding: 20px; border: 1px solid var(--border-line); border-radius: 8px;">
+      <div style="color: var(--text-main); font-weight: 600; margin-bottom: 6px;">Spieler: ${escapeHtml(apply.username || 'Unbekannt')}</div>
+      <div style="white-space: pre-wrap; color: var(--text-dimmed); font-size: 0.95rem;">${escapeHtml(apply.begruendung || 'Keine Angabe.')}</div>
     </div>
   `).join('');
 }
@@ -934,11 +891,10 @@ async function postToPinnwand() {
 
   btn.disabled = true; input.disabled = true;
   const { error } = await supabaseClient.from('pinnwand').insert([{ name: currentGlobalUser, nachricht: text }]);
-  if (error) { alert('Aktion fehlgeschlagen.'); btn.disabled = false; input.disabled = false; return; }
+  if (error) { alert('Fehler.'); btn.disabled = false; input.disabled = false; return; }
 
   const payload = {
     username: 'QuapsHub Pinnwand',
-    avatar_url: 'https://quapsattack.airbusfan.de/unnamed.jpg',
     content: '📢 **Neue Nachricht an der Wand!**',
     embeds: [{ title: '💬 Quaps Attack Pinnwand', description: `>>> ${text}`, color: 11075448, fields: [{ name: '👤 Absender', value: `\`${currentGlobalUser}\``, inline: true }] }]
   };
@@ -966,8 +922,8 @@ async function sendToDiscord() {
   const btn   = document.getElementById('submitBtn');
   const msg   = document.getElementById('statusMsg');
 
-  if (!title || !link) { alert('Bitte alle Felder ausfüllen.'); return; }
-  btn.textContent = 'Übermittle...'; btn.disabled = true;
+  if (!title || !link) { alert('Bitte fülle alle Felder aus.'); return; }
+  btn.textContent = 'Übertrage...'; btn.disabled = true;
 
   const payload = {
     username: 'QuapsHub Monitor',
@@ -978,11 +934,11 @@ async function sendToDiscord() {
     await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     msg.style.display = 'block';
     setTimeout(() => {
-      msg.style.display = 'none'; btn.textContent = 'An Discord übermitteln'; btn.disabled = false;
+      msg.style.display = 'none'; btn.textContent = 'An Discord übertragen'; btn.disabled = false;
       document.getElementById('clipTitle').value = ''; document.getElementById('clipLink').value = '';
       switchView('home');
-    }, 3000);
-  } catch { alert('Fehler.'); btn.textContent = 'An Discord übermitteln'; btn.disabled = false; }
+    }, 2500);
+  } catch { alert('Fehler.'); btn.textContent = 'An Discord übertragen'; btn.disabled = false; }
 }
 </script>
 </body>
