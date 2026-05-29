@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuapsAttack // Server-Bewerbung Beta</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #060814;
+      --panel: rgba(15, 20, 42, 0.6);
+      --border: rgba(255, 255, 255, 0.06);
+      --primary: #00ff66;
+      --accent: #00f0ff;
+      --gold: #ffaa00;
+      --text: #e2e8f0;
+      --muted: #64748b;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      padding: 60px 20px;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: radial-gradient(circle at top right, rgba(0, 240, 255, 0.03), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(0, 255, 102, 0.03), transparent 40%);
+    }
+
+    .apply-container {
+      width: 100%;
+      max-width: 640px;
+      background: var(--panel);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      color: #fff;
+      font-size: 1.8rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .beta-subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 35px;
+    }
+    .beta-subtitle span {
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label.field-label {
+      display: block;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .mc-input, .mc-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+      color: #fff;
+      border-radius: 10px;
+      box-sizing: border-box;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.25s ease;
+    }
+    .mc-input:focus, .mc-textarea:focus {
+      border-color: var(--accent);
+      outline: none;
+      background: rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+    }
+
+    .rules-box {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      padding: 18px;
+      max-height: 160px;
+      overflow-y: auto;
+      margin-bottom: 25px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .rules-box strong {
+      color: #fff;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .checkbox-group input {
+      margin-right: 14px;
+      margin-top: 4px;
+      transform: scale(1.1);
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+    .checkbox-group span {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .mc-btn {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: not-allowed;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 15px;
+      transition: all 0.25s ease;
+    }
+    .mc-btn.enabled {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #060814;
+      cursor: pointer;
+    }
+    .mc-btn.enabled:hover {
+      background: #00e65c;
+      box-shadow: 0 10px 25px rgba(0, 255, 102, 0.2);
+      transform: translateY(-1px);
+    }
+    
+    .status-msg {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="apply-container">
+  <h1>Server Bewerbung</h1>
+  <div class="beta-subtitle">QUAPSATTACK ACCESS GATEWAY // <span>V3.0 BETA</span></div>
+  
+  <form id="applyForm" onsubmit="submitApplication(event)">
+    
+    <div class="form-group">
+      <label for="username" class="field-label">Dein Minecraft Username</label>
+      <input type="text" id="username" class="mc-input" placeholder="z.B. Lois_7" required oninput="checkFormValidity()">
+    </div>
+
+    <div class="form-group">
+      <label for="begruendung" class="field-label">Warum möchtest du mitzocken?</label>
+      <textarea id="begruendung" class="mc-textarea" rows="5" placeholder="Schreib uns eine kurze Begründung..." required oninput="checkFormValidity()"></textarea>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid var(--border); margin: 30px 0;">
+
+    <label class="field-label">📜 System-Regelwerk</label>
+    <div class="rules-box">
+      <strong>1. Griefer-Schutz:</strong> Das unbefugte Zerstören oder Verändern fremder Bauwerke ist strengstens untersagt.<br>
+      <strong>2. Modifikationen:</strong> Hacks, X-Ray oder unfaire Client-Modifikationen führen zum sofortigen Bann.<br>
+      <strong>3. Respekt:</strong> Beleidigungen, Spam oder toxisches Verhalten im Chat werden nicht geduldet.<br>
+      <strong>4. Redstone-Laggs:</strong> Riesen-Maschinen oder unendliche Clocker müssen abschaltbar sein, um Server-Laggs zu vermeiden.
+    </div>
+
+    <label class="checkbox-group">
+      <input type="checkbox" id="checkRules" onchange="checkFormValidity()">
+      <span>Ich respektiere die Regeln und habe das Regelwerk oben aufmerksam gelesen.</span>
+    </label>
+
+    <label class="checkbox-group">
+      <input type="checkbox" id="checkPlayers" onchange="checkFormValidity()">
+      <span>Ich respektiere alle Mitspieler und verhalte mich im Chat stets reif und freundlich.</span>
+    </label>
+
+    <label class="checkbox-group">
+      <input type="checkbox" id="checkStealing" onchange="checkFormValidity()">
+      <span>Ich schwöre, weder Items aus Kisten zu klauen, noch fremde Basen ungefragt zu betreten.</span>
+    </label>
+
+    <label class="checkbox-group">
+      <input type="checkbox" id="checkBetteln" onchange="checkFormValidity()">
+      <span>Ich werde das Admin-Team niemals nach Rechten (OP), Items oder Rängen anbetteln.</span>
+    </label>
+
+    <button type="submit" id="submitBtn" class="mc-btn" disabled>Bewerbung absenden</button>
+  </form>
+
+  <div id="statusMessage" class="status-msg"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const DISCORD_APPLY_WEBHOOK = "https://discord.com/api/webhooks/1509890063138295879/eo2gKT2ZKKCK27lO_Z55ZkGZcxsOuymexWtFJAMQqFJko3RyIwVOO2ZIobtiH7xyI9LR";
+
+  const achievementAudio = new Audio('achievement.mp3');
+  achievementAudio.volume = 0.5;
+  achievementAudio.preload = 'auto';
+
+  function checkFormValidity() {
+    const username = document.getElementById('username').value.trim();
+    const begruendung = document.getElementById('begruendung').value.trim();
+    const c1 = document.getElementById('checkRules').checked;
+    const c2 = document.getElementById('checkPlayers').checked;
+    const c3 = document.getElementById('checkStealing').checked;
+    const c4 = document.getElementById('checkBetteln').checked;
+    
+    const btn = document.getElementById('submitBtn');
+
+    if (username && begruendung && c1 && c2 && c3 && c4) {
+      btn.disabled = false;
+      btn.classList.add('enabled');
+    } else {
+      btn.disabled = true;
+      btn.classList.remove('enabled');
+    }
+  }
+
+  async function submitApplication(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value.trim();
+    const begruendung = document.getElementById('begruendung').value.trim();
+    const statusMsg = document.getElementById('statusMessage');
+    const btn = document.getElementById('submitBtn');
+
+    btn.disabled = true;
+    btn.textContent = "... TRANSMITTING DATA";
+
+    const { error } = await supabaseClient
+      .from('bewerbungen')
+      .insert([{ username: username, begruendung: begruendung }]);
+
+    if (error) {
+      statusMsg.style.background = "rgba(255, 75, 75, 0.1)";
+      statusMsg.style.color = "#ff4b4b";
+      statusMsg.style.border = "1px solid rgba(255, 75, 75, 0.2)";
+      statusMsg.textContent = "Fehler beim Absenden! Bitte versuche es noch einmal.";
+      statusMsg.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "Bewerbung absenden";
+    } else {
+      
+      const discordPayload = {
+        username: "QuapsAttack Bewerbungs-Bot",
+        avatar_url: "https://quapsattack.airbusfan.de/unnamed.jpg",
+        content: "📥 **Eine neue Server-Bewerbung ist eingegangen!**",
+        embeds: [{
+          title: "📋 Neue Spieler-Bewerbung",
+          color: 65382, // Passendes Cyber-Cyan für Discord
+          fields: [
+            { name: "👤 Minecraft Username", value: `\`${username}\``, inline: false },
+            { name: "💬 Begründung / Warum ich mitzocken will", value: `>>> ${begruendung}`, inline: false },
+            { name: "✅ Akzeptierte Bedingungen", value: "✔️ Regelwerk gelesen & akzeptiert\n✔️ Teammates respektieren\n✔️ Kein Diebstahl / Griefing\n✔️ Kein Betteln nach Rechten/Items", inline: false }
+          ],
+          timestamp: new Date().toISOString(),
+          footer: { text: "QuapsHub Beta Gateway", icon_url: "https://quapsattack.airbusfan.de/unnamed.jpg" }
+        }]
+      };
+
+      try {
+        await fetch(DISCORD_APPLY_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(discordPayload)
+        });
+      } catch (discordErr) {
+        console.error("Discord Webhook Fehler:", discordErr);
+      }
+
+      statusMsg.style.background = "rgba(0, 255, 102, 0.1)";
+      statusMsg.style.color = var(--primary);
+      statusMsg.style.border = "1px solid rgba(0, 255, 102, 0.2)";
+      statusMsg.textContent = "✔ Bewerbung erfolgreich übertragen! Initialisiere Audio...";
+      statusMsg.style.display = "block";
+      
+      let redirected = false;
+      
+      achievementAudio.onended = function() {
+        if (!redirected) {
+          redirected = true;
+          window.location.href = 'index.html';
+        }
+      };
+
+      try {
+        achievementAudio.currentTime = 0;
+        await achievementAudio.play();
+      } catch (audioErr) {
+        setTimeout(() => {
+          if (!redirected) {
+            redirected = true;
+            window.location.href = 'index.html';
+          }
+        }, 2500);
+      }
+    }
+  }
+</script>
+</body>
+</html>
