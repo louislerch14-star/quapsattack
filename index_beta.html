@@ -9,7 +9,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   
   <style>
   :root {
@@ -28,61 +28,72 @@
     --paypol-cyan: #0079c1;
   }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  *, *::before, *::after { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+  }
+  
+  html, body {
+    height: 100%;
+  }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.75rem;
+    line-height: 1.6;
     background: var(--bg);
     color: var(--text);
     overflow-x: hidden;
-    min-height: 100vh;
     display: flex;
+    flex-direction: column;
   }
 
-  .pixel-font { 
-    font-family: 'Press Start 2P', monospace; 
-    font-size: 0.7rem; 
+  /* WRAPPER FÜR INHALT ÜBER DEM FOOTER */
+  .app-container {
+    display: flex;
+    flex: 1 0 auto;
+    min-height: calc(100vh - 40px);
   }
 
-  /* SIDEBAR RE-DESIGN */
+  /* MODERNE SIDEBAR NAVBAR */
   .sidebar {
     position: fixed;
     top: 0; left: 0;
     width: 280px;
-    height: 100vh;
+    height: calc(100vh - 40px);
     background: var(--panel);
-    border-right: 1px solid var(--border);
+    border-right: 2px solid var(--border);
     z-index: 100;
     display: flex;
     flex-direction: column;
   }
 
   .sidebar-header {
-    padding: 35px 24px;
-    background: rgba(0, 0, 0, 0.15);
-    border-bottom: 1px solid var(--border);
+    padding: 30px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 2px solid var(--border);
   }
   
   .sidebar-header h2 {
     color: #fff;
-    font-size: 1.15rem;
-    font-weight: 700;
+    font-size: 0.9rem;
     letter-spacing: 0.5px;
   }
   
   .sidebar-header .tag {
     display: inline-block;
-    margin-top: 6px;
+    margin-top: 8px;
     color: var(--gold);
+    font-size: 0.6rem;
   }
 
   .sidebar-navigation {
-    padding: 25px 16px;
+    padding: 20px 12px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
 
   .nav-item {
@@ -90,12 +101,12 @@
     width: 100%;
     background: transparent;
     color: var(--muted);
-    padding: 14px 16px;
-    border: 1px solid transparent;
+    padding: 14px 12px;
+    border: 2px solid transparent;
     cursor: pointer;
     text-align: left;
-    font-weight: 500;
-    font-size: 0.95rem;
+    font-family: inherit;
+    font-size: 0.65rem;
     transition: all 0.2s ease;
   }
   
@@ -121,16 +132,16 @@
   .sidebar-user-card {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 20px 24px;
-    border-top: 1px solid var(--border);
+    gap: 12px;
+    padding: 15px 20px;
+    border-top: 2px solid var(--border);
     background: rgba(0,0,0,0.2);
   }
   
   .user-avatar-image {
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--border);
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--border);
     background: var(--bg);
     image-rendering: pixelated;
   }
@@ -138,93 +149,83 @@
   .user-meta-info {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
   }
   
   .user-profile-name {
-    font-weight: 600;
-    font-size: 0.95rem;
     color: #fff;
+    font-size: 0.65rem;
   }
   
   .user-online-badge {
-    font-size: 0.75rem;
+    font-size: 0.55rem;
     color: var(--primary);
   }
 
-  /* MAIN AREA RE-DESIGN */
+  /* HAUPTINHALT */
   main {
     margin-left: 280px;
-    padding: 50px;
+    padding: 40px;
     flex: 1;
-    max-width: 1300px;
+    max-width: 1200px;
   }
 
   .page { display: none; }
   .page.active { display: block; }
 
   .content-header {
-    margin-bottom: 35px;
+    margin-bottom: 30px;
   }
 
   .content-header h1 {
-    font-size: 1.8rem;
+    font-size: 1.1rem;
     color: #fff;
-    font-weight: 700;
   }
   
   .content-header h1 span { 
     color: var(--primary); 
   }
 
-  /* KACHELN UND BOXEN */
+  /* KACHEL DESIGN */
   .dashboard-card {
     background: var(--panel);
-    border: 1px solid var(--border);
-    padding: 30px;
-    margin-bottom: 30px;
+    border: 2px solid var(--border);
+    padding: 25px;
+    margin-bottom: 25px;
   }
 
   .card-section-title {
     color: var(--gold);
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-    letter-spacing: 0.5px;
+    font-size: 0.7rem;
+    margin-bottom: 18px;
   }
 
   .info-row {
     padding: 12px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
+    border-bottom: 2px solid rgba(255,255,255,0.02);
+    font-size: 0.65rem;
   }
   .info-row:last-child { border-bottom: none; }
-  .info-row strong { color: var(--diamond); margin-right: 12px; font-weight: 500; }
+  .info-row strong { color: var(--diamond); margin-right: 8px; }
 
-  /* PINNWAND AREA */
+  /* PINNWAND */
   .board-messages {
-    max-height: 300px;
+    max-height: 250px;
     overflow-y: auto;
-    margin-bottom: 20px;
-    background: rgba(0,0,0,0.15);
-    border: 1px solid var(--border);
+    margin-bottom: 15px;
+    background: rgba(0,0,0,0.2);
+    border: 2px solid var(--border);
     padding: 15px;
-    font-size: 1rem;
-    line-height: 1.5;
+    font-size: 0.65rem;
   }
   
   .board-post {
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.02);
+    padding: 8px 0;
   }
-  .board-post:last-child { border-bottom: none; }
   
   .board-post .author {
     color: var(--diamond);
-    font-weight: 600;
-    margin-right: 8px;
+    margin-right: 6px;
   }
   
   .board-interaction { 
@@ -237,51 +238,50 @@
     flex: 1; 
   }
 
-  /* INTERACTIVE AUDIO PLAYER */
+  /* JUKEBOX */
   .audio-player-widget {
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 20px;
     background: var(--panel2);
-    padding: 20px;
-    border: 1px solid var(--border);
+    padding: 15px;
+    border: 2px solid var(--border);
   }
 
   .audio-visual-bars { 
     display: flex; 
     gap: 4px; 
-    height: 24px; 
+    height: 20px; 
     align-items: center; 
   }
   
   .bar-element { 
-    width: 3px; 
+    width: 4px; 
     height: 4px; 
     background: var(--border); 
   }
   
   .playing .bar-element { 
-    animation: liveAudio 0.6s infinite alternate steps(5); 
+    animation: liveAudio 0.6s infinite alternate steps(4); 
     background: var(--primary); 
   }
   .playing .bar-element:nth-child(2n) { animation-duration: 0.4s; background: var(--diamond); }
-  @keyframes liveAudio { from { height: 4px; } to { height: 24px; } }
+  @keyframes liveAudio { from { height: 4px; } to { height: 20px; } }
 
-  /* BUTTONS & STEW-CONTROLS */
+  /* BUTTONS & INPUTS */
   .action-trigger {
     display: inline-block;
     background: var(--panel2);
     color: #fff;
-    padding: 14px 28px;
-    border: 1px solid var(--border);
+    padding: 12px 20px;
+    border: 2px solid var(--border);
     cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-family: inherit;
+    font-size: 0.65rem;
     transition: all 0.2s;
   }
   .action-trigger:hover {
     background: var(--border);
-    color: #fff;
   }
   .action-trigger:disabled { opacity: 0.3; cursor: not-allowed; }
   .action-trigger.stretch { width: 100%; text-align: center; }
@@ -290,55 +290,52 @@
     display: block;
     width: 100%;
     background: var(--panel2);
-    border: 1px solid var(--border);
-    padding: 14px;
+    border: 2px solid var(--border);
+    padding: 12px;
     color: #fff;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     font-family: inherit;
-    font-size: 0.95rem;
+    font-size: 0.65rem;
   }
   .form-input:focus { border-color: var(--primary); outline: none; }
   .form-input[readonly] { opacity: 0.5; cursor: not-allowed; }
 
   .input-label {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.6rem;
     color: var(--muted);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     display: block;
-    letter-spacing: 0.5px;
   }
 
   .success-notification {
     display: none;
-    border: 1px solid var(--primary);
-    background: rgba(168, 255, 120, 0.04);
-    padding: 14px;
-    margin-top: 20px;
+    border: 2px solid var(--primary);
+    background: rgba(168, 255, 120, 0.02);
+    padding: 12px;
+    margin-top: 15px;
     color: var(--primary);
     text-align: center;
-    font-size: 0.95rem;
+    font-size: 0.65rem;
   }
 
-  /* LIST GRIDING */
+  /* MAP DOWNLOAD LIST */
   .grid-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
   }
   
   .grid-card {
     background: var(--panel);
-    border: 1px solid var(--border);
-    padding: 25px;
+    border: 2px solid var(--border);
+    padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
   
   .grid-card-title {
-    font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 0.75rem;
     color: #fff;
     margin-bottom: 6px;
   }
@@ -347,41 +344,40 @@
     position: relative;
     aspect-ratio: 16/9;
     background: #000;
-    border: 1px solid var(--border);
-    margin-bottom: 16px;
+    border: 2px solid var(--border);
+    margin-bottom: 12px;
   }
   .video-container iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-  .badge-tag { color: var(--diamond); font-weight: 600; margin-right: 8px; }
+  .badge-tag { color: var(--diamond); margin-right: 6px; }
 
-  /* COOKIE WINDOW */
+  /* INTERACTIVE COOKIE WINDOW */
   .cookie-window {
     position: fixed;
-    bottom: 30px;
+    bottom: 60px;
     right: -450px;
-    width: 380px;
+    width: 360px;
     background: var(--panel2);
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     padding: 20px;
     z-index: 1000;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
     transition: right 0.5s cubic-bezier(0.1, 0.8, 0.2, 1);
   }
-  .cookie-window.show { right: 30px; }
-  .cookie-window-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
-  .cookie-window-icon { width: 28px; height: 28px; image-rendering: pixelated; }
-  .cookie-window-title { font-size: 0.85rem; color: #fff; font-weight: 600; }
-  .cookie-window-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 18px; line-height: 1.4; }
-  .cookie-window-actions { display: flex; gap: 12px; }
+  .cookie-window.show { right: 20px; }
+  .cookie-window-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .cookie-window-icon { width: 20px; height: 20px; image-rendering: pixelated; }
+  .cookie-window-title { font-size: 0.65rem; color: #fff; }
+  .cookie-window-desc { color: var(--muted); font-size: 0.55rem; margin-bottom: 15px; }
+  .cookie-window-actions { display: flex; gap: 10px; }
   .cookie-btn {
-    flex: 1; padding: 10px; text-align: center; cursor: pointer; border: 1px solid var(--border); background: var(--panel); color: #fff; font-size: 0.85rem; font-weight: 500;
+    flex: 1; padding: 10px; text-align: center; cursor: pointer; border: 2px solid var(--border); background: var(--panel); color: #fff; font-size: 0.55rem;
   }
-  .cookie-btn.confirm { background: var(--primary); color: #000; border-color: var(--primary); font-weight: 600; }
+  .cookie-btn.confirm { background: var(--primary); color: #000; border-color: var(--primary); }
 
-  /* SECURE GATEWAY MODAL */
+  /* GATEWAY FREISCHALTUNG OVERLAY */
   .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(7, 9, 13, 0.85);
+    background: rgba(7, 9, 13, 0.9);
     z-index: 2000;
     display: none;
     align-items: center;
@@ -394,50 +390,49 @@
     background: #fff;
     color: #2d3139;
     width: 100%;
-    max-width: 450px;
-    border: 1px solid #cdd2dc;
+    max-width: 440px;
+    border: 2px solid #cbd5e0;
     position: relative;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
   }
 
   .gateway-header {
     background: #f7f9fc;
-    padding: 18px 24px;
-    border-bottom: 1px solid #e2e7f0;
+    padding: 15px 20px;
+    border-bottom: 2px solid #e2e7f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .gateway-brand { font-style: italic; font-weight: 700; font-size: 1.3rem; }
+  .gateway-brand { font-style: italic; font-size: 1rem; font-family: sans-serif; font-weight: 700; }
   .brand-p1 { color: var(--paypol-blue); }
   .brand-p2 { color: var(--paypol-cyan); }
-  .gateway-close-trigger { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #a0aec0; }
+  .gateway-close-trigger { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #a0aec0; }
 
-  .gateway-body { padding: 24px; }
+  .gateway-body { padding: 20px; }
   .gateway-product-info {
     background: #f1f4f9;
-    padding: 14px;
+    padding: 12px;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
-  .product-title { font-weight: 700; color: #1a202c; font-size: 1rem; }
-  .product-subtitle { font-size: 0.8rem; color: #718096; margin-top: 2px; }
+  .product-title { color: #1a202c; font-size: 0.65rem; }
+  .product-subtitle { font-size: 0.55rem; color: #718096; margin-top: 4px; }
 
-  .gateway-field-group { margin-bottom: 18px; }
-  .gateway-field-label { display: block; font-size: 0.75rem; font-weight: 700; color: #4a5568; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .gateway-field-group { margin-bottom: 15px; }
+  .gateway-field-label { display: block; font-size: 0.55rem; color: #4a5568; margin-bottom: 6px; }
   .gateway-amount-wrapper { position: relative; }
-  .gateway-amount-wrapper span { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-weight: 700; color: #2d3139; font-size: 0.9rem; }
+  .gateway-amount-wrapper span { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #2d3139; font-size: 0.65rem; }
   .gateway-field-input {
-    width: 100%; padding: 12px; border: 1px solid #cbd5e0; background: #f7fafc; font-size: 1rem; color: #000; font-weight: 600; box-sizing: border-box;
+    width: 100%; padding: 10px; border: 2px solid #cbd5e0; background: #f7fafc; font-size: 0.65rem; color: #000; font-family: inherit; box-sizing: border-box;
   }
   .gateway-field-input:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
 
-  .gateway-verification-zone { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e2e7f0; display: none; }
+  .gateway-verification-zone { margin-top: 12px; padding-top: 12px; border-top: 2px dashed #e2e7f0; display: none; }
   .gateway-submit-btn {
-    display: block; width: 100%; background: #0079c1; color: #fff; border: none; padding: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; text-align: center; box-sizing: border-box;
+    display: block; width: 100%; background: #0079c1; color: #fff; border: none; padding: 12px; font-size: 0.65rem; font-family: inherit; cursor: pointer; text-align: center; box-sizing: border-box;
   }
   .gateway-submit-btn.unlocked { background: var(--trust-green) !important; }
-  .gateway-alert-error { color: #e53e3e; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 600; }
+  .gateway-alert-error { color: #e53e3e; font-size: 0.55rem; margin-top: 6px; display: none; text-align: center; }
 
   .gateway-trust-bar {
     display: flex;
@@ -445,162 +440,177 @@
     justify-content: space-between;
     background: #1a202c;
     color: #fff;
-    padding: 12px 24px;
-    font-size: 0.8rem;
+    padding: 10px 20px;
+    font-size: 0.55rem;
   }
-  .trust-brand-label { display: flex; align-items: center; gap: 5px; }
-  .trust-star-badge { background: var(--trust-green); color: #fff; padding: 1px 5px; font-weight: 700; border-radius: 2px; }
+  .trust-star-badge { background: var(--trust-green); color: #fff; padding: 1px 4px; margin-right: 4px; }
   
-  /* OVERLAY FOR INTRO TEXT */
   #cinematic-intro-screen {
-    position: absolute; inset: 0; background: #0b0d11; z-index: 100; display: none; flex-direction: column; justify-content: space-between; padding: 30px; box-sizing: border-box;
+    position: absolute; inset: 0; background: #0b0d11; z-index: 100; display: none; flex-direction: column; justify-content: space-between; padding: 25px; box-sizing: border-box;
   }
   #cinematic-text-scroll {
-    position: absolute; width: 90%; left: 5%; text-align: center; color: var(--primary); font-size: 1.1rem; line-height: 1.7; transform: translateY(100%);
+    position: absolute; width: 90%; left: 5%; text-align: center; color: var(--primary); font-size: 0.65rem; line-height: 1.8; transform: translateY(100%);
   }
+
+  /* DER NEUE CLEAN FOOTER */
+  .global-footer-bar {
+    flex-shrink: 0;
+    height: 40px;
+    background: #07090d;
+    border-top: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    font-size: 0.55rem;
+    color: var(--muted);
+    z-index: 110;
+  }
+  .footer-copyright span { color: var(--primary); }
 
   @media (max-width: 900px) {
     body { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
-    .sidebar-navigation { flex-direction: row; flex-wrap: wrap; padding: 12px; }
+    .app-container { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid var(--border); }
+    .sidebar-navigation { flex-direction: row; flex-wrap: wrap; padding: 10px; }
     .nav-item { width: auto; }
-    main { margin-left: 0; padding: 25px; }
+    main { margin-left: 0; padding: 20px; }
+    .global-footer-bar { flex-direction: column; height: auto; padding: 15px; text-align: center; gap: 8px; }
   }
   </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="sidebar-header">
-    <h2>QuapsHub</h2>
-    <span class="tag pixel-font">System v3.0 Beta</span>
-  </div>
+<div class="app-container">
 
-  <div class="sidebar-navigation">
-    <button class="nav-item active" onclick="showPage('home')" id="btn-home">Dashboard</button>
-    <button class="nav-item" onclick="showPage('clips')" id="btn-clips">Clip Archiv</button>
-    <button class="nav-item" onclick="showPage('upload')" id="btn-upload">Clip einsenden</button>
-    <button class="nav-item" onclick="showPage('downloads')" id="btn-downloads">Karten Downloads</button>
-    <button class="nav-item" onclick="showPage('admin-apply')" id="btn-admin-apply">Bewerbungsverwaltung</button>
-    <button class="nav-item logout-trigger" onclick="logout()">Abmelden</button>
-  </div>
-
-  <div class="sidebar-user-card">
-    <img src="unnamed.jpg" id="user-avatar" class="user-avatar-image" alt="M" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
-    <div class="user-meta-info">
-      <span class="user-profile-name" id="sidebar-user-name">Spieler</span>
-      <span class="user-online-badge pixel-font">Online</span>
-    </div>
-  </div>
-</div>
-
-<main>
-
-  <div id="home" class="page active">
-    <div class="content-header">
-      <h1>Willkommen, <span id="user-name-display">Spieler</span></h1>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>QuapsHub</h2>
+      <span class="tag">System v3.0 Beta</span>
     </div>
 
-    <div class="dashboard-card">
-      <div class="card-section-title">System Ankündigungen</div>
-      <div class="panel-body">
+    <div class="sidebar-navigation">
+      <button class="nav-item active" onclick="showPage('home')" id="btn-home">Dashboard</button>
+      <button class="nav-item" onclick="showPage('clips')" id="btn-clips">Clip Archiv</button>
+      <button class="nav-item" onclick="showPage('upload')" id="btn-upload">Clip einsenden</button>
+      <button class="nav-item" onclick="showPage('downloads')" id="btn-downloads">Karten Downloads</button>
+      <button class="nav-item" onclick="showPage('admin-apply')" id="btn-admin-apply">Bewerbungen</button>
+      <button class="nav-item logout-trigger" onclick="logout()">Abmelden</button>
+    </div>
+
+    <div class="sidebar-user-card">
+      <img src="unnamed.jpg" id="user-avatar" class="user-avatar-image" alt="M" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
+      <div class="user-meta-info">
+        <span class="user-profile-name" id="sidebar-user-name">Spieler</span>
+        <span class="user-online-badge">Online</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div id="home" class="page active">
+      <div class="content-header">
+        <h1>Willkommen, <span id="user-name-display">Spieler</span></h1>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-section-title">System Ankündigungen</div>
         <div class="info-row"><strong>Meldung</strong> Der Download der Quaps 10 Hauptwelt steht im Core bereit</div>
         <div class="info-row"><strong>Status</strong> Das neue, bereinigte Retro-Layout wurde aufgeschaltet</div>
       </div>
-    </div>
 
-    <div class="dashboard-card">
-      <div class="card-section-title">Gemeinschafts Pinnwand</div>
-      <div class="board-messages" id="pinnwand-box">Lade Einträge...</div>
-      <div class="board-interaction">
-        <input type="text" id="pinnwand-input" class="form-input" placeholder="Nachricht verfassen..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
-        <button onclick="postToPinnwand()" id="pinnwand-btn" class="action-trigger">Eintragen</button>
-      </div>
-    </div>
-
-    <div class="dashboard-card">
-      <div class="card-section-title">Jukebox-Modul</div>
-      <div class="audio-player-widget">
-        <div class="audio-visual-bars" id="visualizer">
-          <div class="bar-element"></div><div class="bar-element"></div><div class="bar-element"></div><div class="bar-element"></div>
-          <div class="bar-element"></div><div class="bar-element"></div><div class="bar-element"></div><div class="bar-element"></div>
+      <div class="dashboard-card">
+        <div class="card-section-title">Gemeinschafts Pinnwand</div>
+        <div class="board-messages" id="pinnwand-box">Lade Einträge...</div>
+        <div class="board-interaction">
+          <input type="text" id="pinnwand-input" class="form-input" placeholder="Nachricht verfassen..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
+          <button onclick="postToPinnwand()" id="pinnwand-btn" class="action-trigger">Eintragen</button>
         </div>
-        <audio id="communitySong">
-          <source src="quaps-hymne.mp3" type="audio/mpeg">
-        </audio>
-        <button onclick="togglePlay()" id="playBtn" class="action-trigger">Hymne abspielen</button>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-section-title">Jukebox-Modul</div>
+        <div class="audio-player-widget">
+          <div class="audio-visual-bars" id="visualizer">
+            <div class="bar-element"></div><div class="bar-element"></div><div class="bar-element"></div><div class="bar-element"></div>
+            <div class="bar-element"></div><div class="bar-element"></div><div class="bar-element"></div><div class="bar-element"></div>
+          </div>
+          <audio id="communitySong">
+            <source src="quaps-hymne.mp3" type="audio/mpeg">
+          </audio>
+          <button onclick="togglePlay()" id="playBtn" class="action-trigger">Hymne abspielen</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="clips" class="page">
-    <div class="content-header">
-      <h1>Gespeicherte Highlight-Clips</h1>
-    </div>
-
-    <div class="dashboard-card">
-      <div class="card-section-title">Mace Hit Showcase</div>
-      <div class="video-container">
-        <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+    <div id="clips" class="page">
+      <div class="content-header">
+        <h1>Highlight-Clips</h1>
       </div>
-      <div>Eingesendet von: <span class="badge-tag">Louis</span></div>
-    </div>
-
-    <div class="dashboard-card">
-      <div class="card-section-title">Uganana</div>
-      <div class="video-container">
-        <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+      <div class="dashboard-card">
+        <div class="card-section-title">Mace Hit Showcase</div>
+        <div class="video-container">
+          <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div>Eingesendet von: <span class="badge-tag">Louis</span></div>
       </div>
-      <div>Eingesendet von: <span class="badge-tag">Nils</span> <span class="badge-tag">Giorgio</span></div>
-    </div>
-  </div>
-
-  <div id="upload" class="page">
-    <div class="content-header">
-      <h1>Neuen Videoclip einreichen</h1>
-    </div>
-
-    <div class="dashboard-card" style="max-width: 650px;">
-      <label class="input-label">Absender</label>
-      <input class="form-input" id="uploaderName" type="text" readonly>
-
-      <label class="input-label">Titel des Highlights</label>
-      <input class="form-input" id="clipTitle" type="text" placeholder="Beispiel: Epic PvP Clutch im Nether">
-
-      <label class="input-label">Medal- oder YouTube-Link</label>
-      <input class="form-input" id="clipLink" type="text" placeholder="https://...">
-      
-      <button onclick="sendToDiscord()" id="submitBtn" class="action-trigger stretch">Daten an Discord übertragen</button>
-      <div class="success-notification" id="statusMsg">Der Clip wurde erfolgreich an das Admin-Team übermittelt.</div>
-    </div>
-  </div>
-
-  <div id="downloads" class="page">
-    <div class="content-header">
-      <h1>Server-Welten Download</h1>
-    </div>
-    <div class="grid-layout" id="download-list-container"></div>
-  </div>
-
-  <div id="admin-apply" class="page">
-    <div class="content-header">
-      <h1>Eingegangene Server-Bewerbungen</h1>
-    </div>
-    <div class="dashboard-card">
-      <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 16px;">
-        <div style="color: var(--muted);">Abfrage der Bewerber-Datenbank läuft...</div>
+      <div class="dashboard-card">
+        <div class="card-section-title">Uganana</div>
+        <div class="video-container">
+          <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div>Eingesendet von: <span class="badge-tag">Nils</span> <span class="badge-tag">Giorgio</span></div>
       </div>
     </div>
-  </div>
 
-</main>
+    <div id="upload" class="page">
+      <div class="content-header">
+        <h1>Videoclip einreichen</h1>
+      </div>
+      <div class="dashboard-card" style="max-width: 600px;">
+        <label class="input-label">Absender</label>
+        <input class="form-input" id="uploaderName" type="text" readonly>
+        <label class="input-label">Titel des Highlights</label>
+        <input class="form-input" id="clipTitle" type="text" placeholder="Beispiel: Epic PvP Clutch">
+        <label class="input-label">Medal- oder YouTube-Link</label>
+        <input class="form-input" id="clipLink" type="text" placeholder="https://...">
+        <button onclick="sendToDiscord()" id="submitBtn" class="action-trigger stretch">An Discord übertragen</button>
+        <div class="success-notification" id="statusMsg">Der Clip wurde erfolgreich übermittelt.</div>
+      </div>
+    </div>
+
+    <div id="downloads" class="page">
+      <div class="content-header">
+        <h1>Server-Welten Download</h1>
+      </div>
+      <div class="grid-layout" id="download-list-container"></div>
+    </div>
+
+    <div id="admin-apply" class="page">
+      <div class="content-header">
+        <h1>Eingegangene Server-Bewerbungen</h1>
+      </div>
+      <div class="dashboard-card">
+        <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="color: var(--muted);">Abfrage läuft...</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<footer class="global-footer-bar">
+  <div class="footer-copyright">&copy; <span>Airbusfan.de</span></div>
+  <div class="footer-random">und hier noch ein random text...</div>
+</footer>
 
 <div class="cookie-window" id="cookie-banner">
   <div class="cookie-window-header">
     <img src="https://minecraft.wiki/images/Cookie_JE1_BE1.png" class="cookie-window-icon" alt="Cookie">
     <span class="cookie-window-title">Profil-Speicherung</span>
   </div>
-  <p class="cookie-window-desc">Diese Webseite nutzt Cookies, um deine Sitzungsdaten lokal und verschlüsselt auf deinem Endgerät zu sichern.</p>
+  <p class="cookie-window-desc">Diese Webseite nutzt Cookies, um Sitzungsdaten lokal zu sichern.</p>
   <div class="cookie-window-actions">
     <div class="cookie-btn confirm" onclick="handleCookie(true)">Zustimmen</div>
     <div class="cookie-btn" onclick="handleCookie(false)">Ablehnen</div>
@@ -609,51 +619,44 @@
 
 <div class="modal-backdrop" id="paypolModal">
   <div class="gateway-container">
-    
     <div id="cinematic-intro-screen">
       <div style="position: relative; width: 100%; height: 85%; overflow: hidden;">
         <div id="cinematic-text-scroll"></div>
       </div>
-      <button onclick="skipCinematicIntro()" class="action-trigger" style="font-size:0.8rem; align-self: center; padding: 10px 20px;">Intro überspringen</button>
+      <button onclick="skipCinematicIntro()" class="action-trigger" style="align-self: center;">Intro überspringen</button>
     </div>
-
     <div class="gateway-header">
       <div class="gateway-brand"><span class="brand-p1">Pay</span><span class="brand-p2">Pol</span></div>
       <button class="gateway-close-trigger" onclick="closePaypolGateway()">&times;</button>
     </div>
-    
     <div class="gateway-body">
       <div class="gateway-product-info">
         <div class="product-title" id="paypolItemName">Projektname</div>
-        <div class="product-subtitle">Sicherer Identitätsnachweis und Download-Freigabe</div>
+        <div class="product-subtitle">Download-Identitätsprüfung</div>
       </div>
-
       <div id="paypol-step-1">
         <div class="gateway-field-group">
-          <label class="gateway-field-label">Projekt-Unterstützung (Optional)</label>
+          <label class="gateway-field-label">Projekt-Unterstützung</label>
           <div class="gateway-amount-wrapper">
             <input type="number" id="paypolAmount" class="gateway-field-input" value="5" min="0">
             <span>Emeralds</span>
           </div>
         </div>
-        <button onclick="advanceToCodeStep()" class="gateway-submit-btn">Weiter zur Identitätsprüfung</button>
+        <button onclick="advanceToCodeStep()" class="gateway-submit-btn">Zur Identitätsprüfung</button>
       </div>
-
       <div id="paypol-step-2" class="gateway-verification-zone">
         <div class="gateway-field-group">
           <label class="gateway-field-label" style="color: var(--trust-green);">Trastpilod Freischaltcode benötigt</label>
-          <input type="text" id="paypolCode" class="gateway-field-input" placeholder="Gültigen Code eintragen" autocomplete="off" style="text-align: center;">
-          <div class="gateway-alert-error" id="paypolError">Der eingegebene Freischaltcode ist nicht korrekt.</div>
+          <input type="text" id="paypolCode" class="gateway-field-input" placeholder="Code eintragen" autocomplete="off" style="text-align: center;">
+          <div class="gateway-alert-error" id="paypolError">Der Code ist nicht korrekt.</div>
         </div>
-        <button onclick="verifyPaypolCode()" id="paypolBtn" class="gateway-submit-btn">Code verifizieren und Download starten</button>
+        <button onclick="verifyPaypolCode()" id="paypolBtn" class="gateway-submit-btn">Verifizieren und starten</button>
       </div>
-
       <a id="hiddenDownloadTrigger" href="#" target="_blank" style="display: none;"></a>
     </div>
-    
     <div class="gateway-trust-bar">
-      <div class="trust-brand-label"><span class="trust-star-badge">★</span><span>Trastpilod</span></div>
-      <span>Zertifiziert 4.9/5</span>
+      <div><span class="trust-star-badge">★</span>Trastpilod</div>
+      <span>4.9/5</span>
     </div>
   </div>
 </div>
@@ -678,7 +681,7 @@ const PROJECT_DOWNLOADS = [
     version: "1.21+",
     size: "ca. 5.0 GB",
     file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl",
-    introText: "System-Entschlüsselung läuft...<br><br>QUAPS ATTACK SEASON 10 DATA<br><br>Du forderst hiermit die offiziellen Welt-Dateien an.<br>Zahlreiche Spielstunden und komplexe Strukturen sind in dieser Datei komprimiert.<br><br>Erkunde das von Louis und Mika errichtete Territorium.<br><br>Die Datenverbindung wird über einen gesicherten Server aufgebaut."
+    introText: "System-Entschlüsselung läuft...<br><br>QUAPS ATTACK SEASON 10 DATA<br><br>Du forderst hiermit die offiziellen Welt-Dateien an.<br>Erkunde das von Louis und Mika errichtete Territorium.<br><br>Die Datenverbindung wird über einen gesicherten Server aufgebaut."
   },
 ];
 
@@ -710,11 +713,11 @@ function renderDownloadList() {
     <div class="grid-card">
       <div>
         <div class="grid-card-title">${proj.title}</div>
-        <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 20px;">
-          Spielversion: ${proj.version} | Dateigröße: ${proj.size}
+        <div style="color: var(--muted); font-size: 0.6rem; margin-bottom: 15px;">
+          Version: ${proj.version} | ${proj.size}
         </div>
       </div>
-      <button onclick="openPaypolGateway('${proj.id}')" class="action-trigger" style="width: 100%;">Download anfordern</button>
+      <button onclick="openPaypolGateway('${proj.id}')" class="action-trigger" style="width: 100%;">Download</button>
     </div>
   `).join('');
 }
@@ -731,8 +734,7 @@ function openPaypolGateway(id) {
   document.getElementById('paypol-step-2').style.display = "none";
   
   const btn = document.getElementById('paypolBtn');
-  btn.textContent = "Code verifizieren und Download starten";
-  btn.classList.remove('gateway-submit-btn-unlocked');
+  btn.textContent = "Verifizieren und starten";
   document.getElementById('paypolModal').classList.add('show');
 
   const introScreen = document.getElementById('cinematic-intro-screen');
@@ -775,8 +777,7 @@ function verifyPaypolCode() {
 
   if (VALID_DOWNLOAD_CODES.includes(inputCode)) {
     errorBox.style.display = "none";
-    btn.textContent = "Freigabe erteilt - Übertragung startet";
-    btn.classList.add('gateway-submit-btn-unlocked');
+    btn.textContent = "Freigabe erteilt...";
     playSound("xp.mp3");
     
     setTimeout(() => {
@@ -810,10 +811,10 @@ function playSound(file) {
 
 async function loadPinnwand() {
   const { data, error } = await supabaseClient.from('pinnwand').select('*').order('created_at', { ascending: false }).limit(30);
-  if (error) { document.getElementById('pinnwand-box').innerHTML = "Fehler bei Datenabfrage."; return; }
+  if (error) { document.getElementById('pinnwand-box').innerHTML = "Fehler bei Abfrage."; return; }
 
   const box = document.getElementById('pinnwand-box');
-  if (data.length === 0) { box.innerHTML = "Aktuell keine Einträge vorhanden."; return; }
+  if (data.length === 0) { box.innerHTML = "Keine Einträge vorhanden."; return; }
 
   box.innerHTML = data.reverse().map(msg => `
     <div class="board-post">
@@ -828,17 +829,13 @@ async function loadBewerbungen() {
   const { data, error } = await supabaseClient.from('bewerbungen').select('*').order('created_at', { ascending: false });
   const box = document.getElementById('bewerbungen-liste-box');
 
-  if (error) { box.innerHTML = "Fehler bei Datenabfrage."; return; }
-  if (!data || data.length === 0) { box.innerHTML = "Es liegen keine Bewerbungen vor."; return; }
+  if (error) { box.innerHTML = "Fehler bei Abfrage."; return; }
+  if (!data || data.length === 0) { box.innerHTML = "Keine Bewerbungen vorhanden."; return; }
 
   box.innerHTML = data.map(apply => `
-    <div style="padding: 20px; background: var(--panel2); border: 1px solid var(--border); margin-bottom: 12px;">
-      <div style="font-weight: 600; font-size: 0.9rem; color: var(--gold); margin-bottom: 8px;">
-        Spielername: ${escapeHtml(apply.username || 'Unbekannt')}
-      </div>
-      <div style="font-size: 0.95rem; white-space: pre-wrap; color: #cbd5e0;">
-        ${escapeHtml(apply.begruendung || 'Keine Angabe hinterlegt.')}
-      </div>
+    <div style="padding: 15px; background: var(--panel2); border: 2px solid var(--border); margin-bottom: 10px;">
+      <div style="color: var(--gold); margin-bottom: 6px;">Spieler: ${escapeHtml(apply.username || 'Unbekannt')}</div>
+      <div style="white-space: pre-wrap; color: #cbd5e0;">${escapeHtml(apply.begruendung || 'Keine Angabe.')}</div>
     </div>
   `).join('');
 }
@@ -851,7 +848,7 @@ async function postToPinnwand() {
 
   btn.disabled = true; input.disabled = true;
   const { error } = await supabaseClient.from('pinnwand').insert([{ name: currentGlobalUser, nachricht: text }]);
-  if (error) { alert('Aktion fehlgeschlagen.'); btn.disabled = false; input.disabled = false; return; }
+  if (error) { alert('Fehlgeschlagen.'); btn.disabled = false; input.disabled = false; return; }
 
   const payload = {
     username: 'QuapsHub Pinnwand',
@@ -890,8 +887,8 @@ async function sendToDiscord() {
   const btn   = document.getElementById('submitBtn');
   const msg   = document.getElementById('statusMsg');
 
-  if (!title || !link) { alert('Bitte alle Felder ausfüllen.'); return; }
-  btn.textContent = 'Verarbeite Daten...'; btn.disabled = true;
+  if (!title || !link) { alert('Bitte alles ausfüllen.'); return; }
+  btn.textContent = 'Verarbeite...'; btn.disabled = true;
 
   const payload = {
     username: 'QuapsHub Monitor',
@@ -902,11 +899,11 @@ async function sendToDiscord() {
     await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     msg.style.display = 'block';
     setTimeout(() => {
-      msg.style.display = 'none'; btn.textContent = 'Daten an Discord übertragen'; btn.disabled = false;
+      msg.style.display = 'none'; btn.textContent = 'An Discord übertragen'; btn.disabled = false;
       document.getElementById('clipTitle').value = ''; document.getElementById('clipLink').value = '';
       showPage('home');
     }, 3000);
-  } catch { alert('Übertragungsfehler.'); btn.textContent = 'Daten an Discord übertragen'; btn.disabled = false; }
+  } catch { alert('Fehler.'); btn.textContent = 'An Discord übertragen'; btn.disabled = false; }
 }
 </script>
 </body>
