@@ -506,6 +506,41 @@
   .trast-stars { color: #ffb600; font-weight: bold; }
   .trast-badge { background: var(--trust-green); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 20px; text-transform: uppercase; }
 
+  /* ── FILE UPLOAD WRAPPER ── */
+  .file-upload-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+  }
+  .file-upload-label {
+    display: block;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px dashed var(--border);
+    padding: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: 0.2s;
+  }
+  .file-upload-label:hover {
+    border-color: var(--primary);
+    color: #fff;
+    background: rgba(168, 255, 120, 0.02);
+  }
+  .file-upload-input {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .file-name-preview {
+    margin-top: -5px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: var(--primary);
+    display: none;
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 800px) {
     .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid var(--border); }
@@ -535,7 +570,6 @@
     <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">&nbsp; CLIP-ARCHIV</button>
     <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">&nbsp; CLIP UPLOAD</button>
     <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
-    <button class="mc-btn" onclick="showPage('grieferschutz')" id="btn-grieferschutz">&nbsp; 🛡️ GRIEFERSCHUTZ</button>
     <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">&nbsp; 📋 BEWERBUNGEN</button>
     <button class="mc-btn logout-btn" onclick="logout()">&nbsp; EXIT / LOGOUT</button>
   </div>
@@ -618,8 +652,8 @@
 
   <div id="upload" class="page">
     <div class="hero" data-reveal="1">
-      <h1>Clip <span>einsenden</span></h1>
-      <p class="hero-sub">Teile deine Highlights direkt mit der gesamten Truppe.</p>
+      <h1>Clip / Bild <span>einsenden</span></h1>
+      <p class="hero-sub">Teile deine Highlights oder Base-Bilder direkt mit der gesamten Truppe.</p>
     </div>
 
     <div class="glass-card mc-panel" data-reveal="2" style="max-width: 600px; margin: 0 auto;">
@@ -628,11 +662,18 @@
       <label class="mc-label">DEIN NAME</label>
       <input class="mc-input" id="uploaderName" type="text" readonly>
 
-      <label class="mc-label">TITEL DES CLIPS</label>
-      <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. Epic PvP Clutch">
+      <label class="mc-label">TITEL ODER BESCHREIBUNG</label>
+      <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. Epic PvP Clutch oder Base für Grieferschutz">
 
-      <label class="mc-label">LINK (MEDAL ODER YOUTUBE)</label>
-      <textarea class="mc-input" id="clipLink" rows="4" placeholder="https://..."></textarea>
+      <label class="mc-label">LINK (MEDAL ODER YOUTUBE - OPTIONAL)</label>
+      <textarea class="mc-input" id="clipLink" rows="2" placeholder="https://..."></textarea>
+
+      <label class="mc-label">BILD HOCHLADEN (OPTIONAL)</label>
+      <div class="file-upload-wrapper">
+        <label class="file-upload-label" id="uploadLabel">📁 Datei auswählen oder hierher ziehen</label>
+        <input type="file" id="clipImage" class="file-upload-input" accept="image/*" onchange="previewFileName()">
+      </div>
+      <div class="file-name-preview" id="fileNameDisplay"></div>
       
       <button onclick="sendToDiscord()" id="submitBtn" class="mc-action full">▶ AN DISCORD SENDEN</button>
       <div class="mc-success" id="statusMsg">Erfolgreich an Discord übertragen!</div>
@@ -648,29 +689,6 @@
     <div class="mc-panel" data-reveal="2">
       <div class="mc-panel-title">🌍 VERFÜGBARE WORLD-SAVES & PROJEKTE</div>
       <div class="download-grid" id="download-list-container"></div>
-    </div>
-  </div>
-
-  <div id="grieferschutz" class="page">
-    <div class="hero" data-reveal="1">
-      <h1>Griefer<span>schutz</span></h1>
-      <p class="hero-sub">Registriere deine Base, um sie offiziell vor Griefing zu schützen.</p>
-    </div>
-
-    <div class="glass-card mc-panel" data-reveal="2" style="max-width: 600px; margin: 0 auto;">
-      <div class="mc-panel-title">Base Registrierung (QA11)</div>
-      
-      <label class="mc-label">SPIELERNAME</label>
-      <input class="mc-input" id="grieferPlayerName" type="text" readonly>
-
-      <label class="mc-label">KOORDINATEN DER BASE</label>
-      <input class="mc-input" id="baseCoordinates" type="text" placeholder="z.B. X: -450, Y: 68, Z: 1200">
-
-      <label class="mc-label">BILD-URL DEINER BASE</label>
-      <input class="mc-input" id="baseImageUrl" type="text" placeholder="https://imgur.com/...">
-      
-      <button onclick="sendGrieferschutzToDiscord()" id="grieferSubmitBtn" class="mc-action full">▶ SCHUTZ BEANTRAGEN</button>
-      <div class="mc-success" id="grieferStatusMsg">Base-Schutz erfolgreich beantragt und registriert!</div>
     </div>
   </div>
 
@@ -781,6 +799,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
+const NEW_DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1509916610008322128/3UyMxJGsobkWgUWaVh_fAa-K36T9Uax_LGBjbNrjliz37rp7JB-qYp7A39e8IfvCa2Dy";
 
 /* 🔑 TRASTPILOD CODES */
 const VALID_DOWNLOAD_CODES = [
@@ -820,11 +839,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   
   document.getElementById('user-name-display').textContent = currentGlobalUser;
   document.getElementById('uploaderName').value = currentGlobalUser;
-  document.getElementById('grieferPlayerName').value = currentGlobalUser;
   document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
   loadPinnwand();
-  loadBewerbungen(); // Bewerbungen werden beim Seitenstart geladen
+  loadBewerbungen();
   renderDownloadList();
 
   setTimeout(triggerCookieBanner, 2000);
@@ -972,7 +990,6 @@ async function loadPinnwand() {
   box.scrollTop = box.scrollHeight;
 }
 
-/* 📥 NEUE FUNKTION: FRAGT BEWERBUNGEN AUS SUPABASE AB */
 async function loadBewerbungen() {
   const { data, error } = await supabaseClient
     .from('bewerbungen')
@@ -1061,65 +1078,88 @@ function togglePlay() {
   else { audio.pause(); btn.textContent = '▶ SONG ABSPIELEN'; vis.classList.remove('playing'); }
 }
 
-async function sendToDiscord() {
-  const name  = document.getElementById('uploaderName').value;
-  const title = document.getElementById('clipTitle').value;
-  const link  = document.getElementById('clipLink').value;
-  const btn   = document.getElementById('submitBtn');
-  const msg   = document.getElementById('statusMsg');
+function previewFileName() {
+  const fileInput = document.getElementById('clipImage');
+  const display = document.getElementById('fileNameDisplay');
+  const label = document.getElementById('uploadLabel');
+  
+  if (fileInput.files.length > 0) {
+    display.textContent = "Ausgewählt: " + fileInput.files[0].name;
+    display.style.display = "block";
+    label.textContent = "✔ Bild geladen";
+    label.style.borderColor = "var(--primary)";
+  } else {
+    display.style.display = "none";
+    label.textContent = "📁 Datei auswählen oder hierher ziehen";
+    label.style.borderColor = "var(--border)";
+  }
+}
 
-  if (!title || !link) { alert('Bitte Felder ausfüllen!'); return; }
+async function sendToDiscord() {
+  const name = document.getElementById('uploaderName').value;
+  const title = document.getElementById('clipTitle').value;
+  const link = document.getElementById('clipLink').value;
+  const fileInput = document.getElementById('clipImage');
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('statusMsg');
+
+  if (!title) { alert('Bitte einen Titel oder eine Beschreibung eingeben!'); return; }
   btn.textContent = '... ÜBERTRAGE DATEN'; btn.disabled = true;
+
+  const formData = new FormData();
+  
+  // JSON-Payload für Discord vorbereiten
+  const embed = {
+    title: '📹 Neue Einsendung erhalten',
+    color: 0xa8ff78,
+    fields: [
+      { name: 'Spieler', value: name, inline: true },
+      { name: 'Titel / Info', value: title, inline: true }
+    ]
+  };
+
+  if (link.trim() !== '') {
+    embed.fields.push({ name: 'Link', value: link });
+  }
+
+  // Wenn ein Bild vorhanden ist, hängen wir es an das Formular an
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    formData.append('files[0]', file, file.name);
+    embed.image = { url: `attachment://${file.name}` };
+  }
 
   const payload = {
     username: 'QuapsHub Monitor',
-    embeds: [{ title: '📹 Neuer Clip eingereicht', color: 0xa8ff78, fields: [{ name: 'Spieler', value: name, inline: true }, { name: 'Titel', value: title, inline: true }, { name: 'Link', value: link }] }]
+    embeds: [embed]
   };
 
-  try {
-    await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-    msg.style.display = 'block';
-    setTimeout(() => {
-      msg.style.display = 'none'; btn.textContent = '▶ AN DISCORD SENDEN'; btn.disabled = false;
-      document.getElementById('clipTitle').value = ''; document.getElementById('clipLink').value = '';
-      showPage('home');
-    }, 3000);
-  } catch { alert('Übertragung fehlgeschlagen.'); btn.textContent = '▶ AN DISCORD SENDEN'; btn.disabled = false; }
-}
-
-async function sendGrieferschutzToDiscord() {
-  const name   = document.getElementById('grieferPlayerName').value;
-  const coords = document.getElementById('baseCoordinates').value;
-  const image  = document.getElementById('baseImageUrl').value;
-  const btn    = document.getElementById('grieferSubmitBtn');
-  const msg    = document.getElementById('grieferStatusMsg');
-
-  if (!coords || !image) { alert('Bitte alle Felder ausfüllen!'); return; }
-  btn.textContent = '... SENDER SCHUTZANTRAG'; btn.disabled = true;
-
-  const payload = {
-    username: 'QuapsHub Grieferschutz',
-    embeds: [{ 
-      title: '🛡️ Neuer Grieferschutz beantragt (QA11)', 
-      color: 0x44d4d4, 
-      fields: [
-        { name: 'Spieler', value: name, inline: true }, 
-        { name: 'Koordinaten', value: coords, inline: true }
-      ],
-      image: { url: image }
-    }]
-  };
+  formData.append('payload_json', JSON.stringify(payload));
 
   try {
-    await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    await fetch(NEW_DISCORD_WEBHOOK, {
+      method: 'POST',
+      body: formData
+    });
+    
     msg.style.display = 'block';
     setTimeout(() => {
-      msg.style.display = 'none'; btn.textContent = '▶ SCHUTZ BEANTRAGEN'; btn.disabled = false;
-      document.getElementById('baseCoordinates').value = ''; 
-      document.getElementById('baseImageUrl').value = '';
+      msg.style.display = 'none'; 
+      btn.textContent = '▶ AN DISCORD SENDEN'; 
+      btn.disabled = false;
+      document.getElementById('clipTitle').value = ''; 
+      document.getElementById('clipLink').value = '';
+      document.getElementById('clipImage').value = '';
+      document.getElementById('fileNameDisplay').style.display = 'none';
+      document.getElementById('uploadLabel').textContent = '📁 Datei auswählen oder hierher ziehen';
+      document.getElementById('uploadLabel').style.borderColor = 'var(--border)';
       showPage('home');
     }, 3000);
-  } catch { alert('Übertragung fehlgeschlagen.'); btn.textContent = '▶ SCHUTZ BEANTRAGEN'; btn.disabled = false; }
+  } catch { 
+    alert('Übertragung fehlgeschlagen.'); 
+    btn.textContent = '▶ AN DISCORD SENDEN'; 
+    btn.disabled = false; 
+  }
 }
 </script>
 </body>
