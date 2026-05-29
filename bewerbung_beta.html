@@ -7,7 +7,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -22,56 +22,67 @@
       --muted: #828897;
     }
 
+    *, *::before, *::after { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
+
+    html, body {
+      height: 100%;
+    }
+
     body {
       background-color: var(--bg);
       color: var(--text);
-      font-family: 'Inter', sans-serif;
-      padding: 40px 20px;
-      margin: 0;
-      min-height: 100vh;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.7rem;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-wrapper {
+      flex: 1 0 auto;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 40px 20px;
     }
 
     .apply-container {
       width: 100%;
       max-width: 650px;
       background: var(--panel);
-      border: 1px solid var(--border);
-      padding: 40px;
+      border: 2px solid var(--border);
+      padding: 35px;
     }
 
     h1 {
       color: #fff;
-      font-size: 1.5rem;
-      font-weight: 700;
+      font-size: 0.9rem;
       text-align: center;
       margin-bottom: 30px;
     }
 
     .form-group {
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
 
     label.field-label {
       display: block;
       color: var(--muted);
       margin-bottom: 8px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 0.6rem;
     }
 
     .form-input, .form-textarea {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       background: var(--panel2);
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
       color: #fff;
-      box-sizing: border-box;
-      font-size: 0.95rem;
+      font-size: 0.65rem;
       font-family: inherit;
     }
     .form-input:focus, .form-textarea:focus {
@@ -80,32 +91,31 @@
     }
 
     .rules-box {
-      background: rgba(0,0,0,0.15);
-      border: 1px solid var(--border);
-      padding: 20px;
-      max-height: 180px;
+      background: rgba(0,0,0,0.2);
+      border: 2px solid var(--border);
+      padding: 15px;
+      max-height: 150px;
       overflow-y: auto;
-      margin-bottom: 25px;
-      font-size: 0.95rem;
+      margin-bottom: 20px;
+      font-size: 0.6rem;
       color: #cbd5e0;
-      line-height: 1.6;
     }
-    .rules-box strong { color: var(--diamond); font-weight: 600; }
+    .rules-box strong { color: var(--diamond); }
 
     .checkbox-group {
       display: flex;
       align-items: flex-start;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       cursor: pointer;
       user-select: none;
     }
     .checkbox-group input {
-      margin-right: 14px;
-      margin-top: 4px;
+      margin-right: 12px;
+      margin-top: 2px;
       accent-color: var(--primary);
     }
     .checkbox-group span {
-      font-size: 0.95rem;
+      font-size: 0.6rem;
       color: #cbd5e0;
     }
 
@@ -113,12 +123,12 @@
       width: 100%;
       background: var(--panel2);
       color: var(--muted);
-      border: 1px solid var(--border);
-      padding: 16px;
-      font-size: 0.95rem;
-      font-weight: 600;
+      border: 2px solid var(--border);
+      padding: 14px;
+      font-size: 0.65rem;
+      font-family: inherit;
       cursor: not-allowed;
-      margin-top: 15px;
+      margin-top: 10px;
       transition: all 0.2s;
     }
     .action-trigger.enabled {
@@ -127,71 +137,93 @@
       color: #000;
       cursor: pointer;
     }
-    .action-trigger.enabled:hover {
-      filter: brightness(1.05);
-    }
     
     .status-msg {
       margin-top: 20px;
       text-align: center;
-      font-weight: 600;
       display: none;
-      padding: 14px;
-      font-size: 0.95rem;
-      border: 1px solid var(--border);
+      padding: 12px;
+      font-size: 0.65rem;
+      border: 2px solid var(--border);
+    }
+
+    /* FOOTER BAR */
+    .global-footer-bar {
+      flex-shrink: 0;
+      height: 40px;
+      background: #07090d;
+      border-top: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 25px;
+      font-size: 0.55rem;
+      color: var(--muted);
+    }
+    .footer-copyright span { color: var(--primary); }
+
+    @media (max-width: 700px) {
+      .global-footer-bar { flex-direction: column; height: auto; padding: 15px; text-align: center; gap: 8px; }
     }
   </style>
 </head>
 <body>
 
-<div class="apply-container">
-  <h1>Mitgliedschaft beantragen</h1>
-  
-  <form id="applyForm" onsubmit="submitApplication(event)">
+<div class="content-wrapper">
+  <div class="apply-container">
+    <h1>Mitgliedschaft beantragen</h1>
     
-    <div class="form-group">
-      <label for="username" class="field-label">Minecraft Spielername</label>
-      <input type="text" id="username" class="form-input" placeholder="Beispiel: Louis_7" required oninput="checkFormValidity()">
-    </div>
+    <form id="applyForm" onsubmit="submitApplication(event)">
+      
+      <div class="form-group">
+        <label for="username" class="field-label">Minecraft Spielername</label>
+        <input type="text" id="username" class="form-input" placeholder="Z.B. Louis_7" required oninput="checkFormValidity()">
+      </div>
 
-    <div class="form-group">
-      <label for="begruendung" class="field-label">Grund für deine Bewerbung</label>
-      <textarea id="begruendung" class="form-textarea" rows="4" placeholder="Erzähle uns kurz, warum du gerne mitspielen möchtest..." required oninput="checkFormValidity()"></textarea>
-    </div>
+      <div class="form-group">
+        <label for="begruendung" class="field-label">Grund für deine Bewerbung</label>
+        <textarea id="begruendung" class="form-textarea" rows="4" placeholder="Warum möchtest du mitspielen..." required oninput="checkFormValidity()"></textarea>
+      </div>
 
-    <label class="field-label">Verhaltensregeln auf dem Server</label>
-    <div class="rules-box">
-      <strong>Griefer-Schutz:</strong> Jegliche nicht abgesprochene Veränderung oder Zerstörung fremden Eigentums führt zum Ausschluss.<br>
-      <strong>Modifikationen:</strong> Unfaire Client-Modifikationen wie X-Ray oder Hacks sind verboten.<br>
-      <strong>Umgangston:</strong> Ein respektvoller und freundlicher Chat-Umgang ist Grundvoraussetzung.<br>
-      <strong>Server-Performance:</strong> Große Redstone-Schaltungen müssen zwingend deaktivierbar gebaut werden.
-    </div>
+      <label class="field-label">Verhaltensregeln</label>
+      <div class="rules-box">
+        <strong>Griefer-Schutz:</strong> Jegliche Veränderung fremden Eigentums führt zum Ausschluss.<br>
+        <strong>Modifikationen:</strong> Hacks oder X-Ray sind verboten.<br>
+        <strong>Umgangston:</strong> Ein respektvoller Umgang im Chat ist Pflicht.<br>
+        <strong>Performance:</strong> Redstone-Schaltungen müssen abschaltbar sein.
+      </div>
 
-    <label class="checkbox-group">
-      <input type="checkbox" id="checkRules" onchange="checkFormValidity()">
-      <span>Ich akzeptiere das Regelwerk und werde mich daran halten.</span>
-    </label>
+      <label class="checkbox-group">
+        <input type="checkbox" id="checkRules" onchange="checkFormValidity()">
+        <span>Ich akzeptiere das Regelwerk.</span>
+      </label>
 
-    <label class="checkbox-group">
-      <input type="checkbox" id="checkPlayers" onchange="checkFormValidity()">
-      <span>Ich verpflichte mich zu einem fairen Verhalten gegenüber anderen Spielern.</span>
-    </label>
+      <label class="checkbox-group">
+        <input type="checkbox" id="checkPlayers" onchange="checkFormValidity()">
+        <span>Ich verpflichte mich zu fairem Verhalten.</span>
+      </label>
 
-    <label class="checkbox-group">
-      <input type="checkbox" id="checkStealing" onchange="checkFormValidity()">
-      <span>Ich werde keine Items entwenden oder Basen plündern.</span>
-    </label>
+      <label class="checkbox-group">
+        <input type="checkbox" id="checkStealing" onchange="checkFormValidity()">
+        <span>Ich werde keine Items stehlen.</span>
+      </label>
 
-    <label class="checkbox-group">
-      <input type="checkbox" id="checkBetteln" onchange="checkFormValidity()">
-      <span>Ich fordere vom Admin-Team keine Bevorzugungen oder kostenlose Items.</span>
-    </label>
+      <label class="checkbox-group">
+        <input type="checkbox" id="checkBetteln" onchange="checkFormValidity()">
+        <span>Ich fordere keine kostenlosen Items an.</span>
+      </label>
 
-    <button type="submit" id="submitBtn" class="action-trigger">Antrag absenden</button>
-  </form>
+      <button type="submit" id="submitBtn" class="action-trigger">Antrag absenden</button>
+    </form>
 
-  <div id="statusMessage" class="status-msg"></div>
+    <div id="statusMessage" class="status-msg"></div>
+  </div>
 </div>
+
+<footer class="global-footer-bar">
+  <div class="footer-copyright">&copy; <span>Airbusfan.de</span></div>
+  <div class="footer-random">und hier noch ein random text...</div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -232,7 +264,7 @@
     const btn = document.getElementById('submitBtn');
 
     btn.disabled = true;
-    btn.textContent = "Übertragungsmodus...";
+    btn.textContent = "Verarbeite...";
 
     const { error } = await supabaseClient
       .from('bewerbungen')
@@ -242,7 +274,7 @@
       statusMsg.style.background = "#2a1616";
       statusMsg.style.color = "#ff6b6b";
       statusMsg.style.borderColor = "#ff6b6b";
-      statusMsg.textContent = "Fehler bei der Übermittlung zum Server.";
+      statusMsg.textContent = "Übermittlungsfehler.";
       statusMsg.style.display = "block";
       btn.disabled = false;
       btn.textContent = "Antrag absenden";
@@ -267,10 +299,10 @@
         await fetch(DISCORD_APPLY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(discordPayload) });
       } catch (e) {}
 
-      statusMsg.style.background = "rgba(168, 255, 120, 0.04)";
+      statusMsg.style.background = "rgba(168, 255, 120, 0.02)";
       statusMsg.style.color = "#a8ff78";
       statusMsg.style.borderColor = "#a8ff78";
-      statusMsg.textContent = "Der Antrag wurde erfolgreich übermittelt.";
+      statusMsg.textContent = "Erfolgreich übermittelt.";
       statusMsg.style.display = "block";
       
       let redirected = false;
