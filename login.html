@@ -139,6 +139,23 @@
         }
         .secondary-btn:hover { color: #fff; background: transparent; }
 
+        .guest-btn {
+            color: #ff5555;
+            margin-top: 16px;
+            font-size: 0.95rem;
+            text-decoration: none;
+            border: 1px dashed rgba(255, 85, 85, 0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-block;
+            transition: 0.2s;
+        }
+        .guest-btn:hover {
+            color: #ff7777;
+            background: rgba(255, 85, 85, 0.1);
+            border-color: #ff5555;
+        }
+
         .divider {
             margin: 25px 0;
             color: #333;
@@ -217,6 +234,10 @@
                 </button>
             </div>
 
+            <div id="guestSection">
+                <button class="secondary-btn guest-btn" id="guestBtn">Weiter ohne Account ☹ (Eingeschränkte Features)</button>
+            </div>
+
             <div id="message"></div>
         </div>
     </div>
@@ -240,6 +261,7 @@
         const switchToLoginBtn = document.getElementById('switchToLoginBtn');
         const googleSection = document.getElementById('googleSection');
         const googleBtn = document.getElementById('googleBtn');
+        const guestBtn = document.getElementById('guestBtn');
         const messageDiv = document.getElementById('message');
 
         function showMessage(text, isError = true) {
@@ -252,9 +274,10 @@
             showMessage("");
             formTitle.textContent = "QUAPS REGISTRATION!";
             
-            // Login & Google weg
+            // Login & Google & Gast weg
             loginBtn.classList.add('hidden');
             googleSection.classList.add('hidden');
+            guestBtn.classList.add('hidden');
             switchToRegisterBtn.classList.add('hidden');
             
             // Registrierungs-Button da
@@ -271,9 +294,10 @@
             signUpSubmitBtn.classList.add('hidden');
             switchToLoginBtn.classList.add('hidden');
             
-            // Login & Google wieder da
+            // Login & Google & Gast wieder da
             loginBtn.classList.remove('hidden');
             googleSection.classList.remove('hidden');
+            guestBtn.classList.remove('hidden');
             switchToRegisterBtn.classList.remove('hidden');
         });
 
@@ -347,6 +371,15 @@
                 }
             });
             if (error) showMessage("Google Login Fehler: " + error.message);
+        });
+
+        // ── 4. GAST-MODUS (WEITER OHNE ACCOUNT) ──
+        guestBtn.addEventListener('click', () => {
+            showMessage("Gast-Modus aktiviert. Lade Hub... ☹", false);
+            setTimeout(() => {
+                // Leitet an die Hauptseite weiter mit dem Parameter ?guest=true
+                window.location.href = 'index.html?guest=true';
+            }, 1000);
         });
     </script>
 </body>
