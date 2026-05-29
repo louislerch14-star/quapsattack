@@ -535,6 +535,7 @@
     <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">&nbsp; CLIP-ARCHIV</button>
     <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">&nbsp; CLIP UPLOAD</button>
     <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
+    <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">&nbsp; 📋 BEWERBUNGEN</button>
     <button class="mc-btn logout-btn" onclick="logout()">&nbsp; EXIT / LOGOUT</button>
   </div>
 
@@ -645,6 +646,20 @@
     <div class="mc-panel" data-reveal="2">
       <div class="mc-panel-title">🌍 VERFÜGBARE WORLD-SAVES & PROJEKTE</div>
       <div class="download-grid" id="download-list-container"></div>
+    </div>
+  </div>
+
+  <div id="admin-apply" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Eingegangene <span>Bewerbungen</span></h1>
+      <p class="hero-sub">Hier sind alle Spieler, die auf den Server wollen.</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2">
+      <div class="mc-panel-title">👥 OFFENE ANFRAGEN</div>
+      <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 15px;">
+        <div style="color: var(--muted); font-size: 1rem;">Lade Bewerbungen...</div>
+      </div>
     </div>
   </div>
 
@@ -783,6 +798,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
   loadPinnwand();
+  loadBewerbungen(); // Bewerbungen werden beim Seitenstart geladen
   renderDownloadList();
 
   setTimeout(triggerCookieBanner, 2000);
@@ -928,6 +944,37 @@ async function loadPinnwand() {
     </div>
   `).join('');
   box.scrollTop = box.scrollHeight;
+}
+
+/* 📥 NEUE FUNKTION: FRAGT BEWERBUNGEN AUS SUPABASE AB */
+async function loadBewerbungen() {
+  const { data, error } = await supabaseClient
+    .from('bewerbungen')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  const box = document.getElementById('bewerbungen-liste-box');
+
+  if (error) {
+    box.innerHTML = `<div style="color: #ff5555;">Fehler beim Laden der Bewerbungen!</div>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Aktuell keine Bewerbungen vorhanden.</div>`;
+    return;
+  }
+
+  box.innerHTML = data.map(apply => `
+    <div style="padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px;">
+      <div style="font-family: 'Press Start 2P', monospace; font-size: 0.6rem; color: var(--gold); margin-bottom: 8px;">
+        Spieler: ${escapeHtml(apply.username || 'Unbekannt')}
+      </div>
+      <div style="font-size: 1.1rem; color: #fff; white-space: pre-wrap;">
+        ${escapeHtml(apply.begruendung || 'Keine Begründung angegeben.')}
+      </div>
+    </div>
+  `).join('');
 }
 
 async function postToPinnwand() {
