@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuapsHub App Download</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #a8ff78; /* Frisches XP-Grün */
+      --diamond: #44d4d4;
+      --gold:    #f5c518;
+      --bg:      #0a0a0a;
+      --panel:   #1a1a1a;
+      --border:  #333333;
+      --text:    #f0f0f0;
+      --muted:   #aaaaaa;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Hintergrund-Effekt */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: linear-gradient(rgba(168, 255, 120, 0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(168, 255, 120, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -1;
+    }
+
+    .download-container {
+      max-width: 650px;
+      width: 100%;
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .pixel-title {
+      font-family: 'Press Start 2P', monospace;
+      color: var(--primary);
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 0px #000;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin-bottom: 35px;
+    }
+
+    /* Der große Download-Button */
+    .download-btn {
+      display: inline-block;
+      background: var(--primary);
+      color: #000;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.9rem;
+      padding: 20px 40px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 15px rgba(168, 255, 120, 0.4);
+      margin-bottom: 20px;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 25px rgba(168, 255, 120, 0.7);
+      background: #bcff96;
+    }
+
+    .download-btn:active {
+      transform: translateY(1px);
+    }
+
+    .file-info {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    .file-info span {
+      color: var(--diamond);
+    }
+
+    /* Info-Boxen */
+    .features-grid {
+      border-top: 1px solid var(--border);
+      padding-top: 30px;
+      text-align: left;
+    }
+
+    .feature-item {
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .feature-icon {
+      font-size: 1.3rem;
+      margin-right: 15px;
+      margin-top: 2px;
+    }
+
+    .feature-text h3 {
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .feature-text p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .shortcut-badge {
+      background: #333;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--gold);
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    /* Fußzeile */
+    .footer {
+      margin-top: 30px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="download-container">
+    <h1 class="pixel-title">QUAPSHUB APP</h1>
+    <p class="subtitle">Hol dir das Community Center direkt auf deinen Desktop!</p>
+
+    <a href="https://quaps.duckdns.org/s/KyRqAzEkEqcjSQn" class="download-btn">
+      ▶ JETZT DOWNLOADEN
+    </a>
+
+    <div class="file-info">
+      Dateityp: <span>Windows-Installer (.exe)</span> &nbsp;|&nbsp; Version: <span>1.0.0</span>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">🚀</div>
+        <div class="feature-text">
+          <h3>Schneller am Start</h3>
+          <p>Kein lästiges Browser-Suchen mehr. Ein Doppelklick auf dem Desktop genügt und du bist sofort im Hub.</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">⌨</div>
+        <div class="feature-text">
+          <h3>Globaler Shortcut</h3>
+          <p>Drücke einfach überall am PC <span class="shortcut-badge">Alt + C</span>, um die App blitzschnell zu öffnen oder im Hintergrund zu verstecken.</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-text">
+          <h3>Immer Up-to-Date</h3>
+          <p>Wenn Änderungen an der Website vorgenommen werden, aktualisiert sich deine PC-App vollautomatisch im Hintergrund.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Entwickelt für die Quaps Attack Season 10.
+  </div>
+
+</body>
+</html>
