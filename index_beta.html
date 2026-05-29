@@ -13,18 +13,17 @@
   
   <style>
   :root {
-    --bg-main:     #080a0f;       
-    --bg-surface:  #0d1117;       
-    --border-line: #1f2633;       
-    --accent-glow: #a8ff78;       
-    --accent-blue: #44d4d4;
-    --accent-warn: #f5c518;
-    --text-main:   #cbd5e1;
-    --text-muted:  #64748b;
+    --bg-dark:       #04060a;       
+    --line-color:    #161c28;       
+    --glow-primary:  #a8ff78;       
+    --glow-cyan:     #44d4d4;
+    --glow-amber:    #f5c518;
+    --text-bright:   #f1f5f9;
+    --text-dimmed:   #475569;
     
-    --trust-green: #00b67a;
-    --paypol-blue: #003087;
-    --paypol-cyan: #0079c1;
+    --trust-green:   #00b67a;
+    --paypol-blue:   #003087;
+    --paypol-cyan:   #0079c1;
   }
 
   *, *::before, *::after { 
@@ -35,379 +34,370 @@
   
   html, body {
     height: 100%;
-    background-color: var(--bg-main);
+    background-color: var(--bg-dark);
   }
 
   body {
     font-family: 'Press Start 2P', monospace;
-    font-size: 0.7rem;
-    line-height: 1.5;
-    color: var(--text-main);
+    font-size: 0.65rem;
+    line-height: 1.6;
+    color: var(--text-bright);
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
   }
 
-  /* STRUKTUR-WRAPPER */
-  .root-layout {
-    display: flex;
-    flex: 1 0 auto;
-    min-height: calc(100vh - 40px);
-  }
-
-  /* SLIM MINIMALIST SIDEBAR */
-  .sidebar-panel {
-    position: fixed;
-    top: 0; left: 0;
-    width: 260px;
-    height: calc(100vh - 40px);
-    background: var(--bg-surface);
-    border-right: 1px solid var(--border-line);
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .sidebar-branding {
-    padding: 40px 24px;
-    border-bottom: 1px solid var(--border-line);
-  }
-  
-  .sidebar-branding h2 {
-    color: #fff;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-  }
-  
-  .sidebar-subtext {
-    display: block;
-    margin-top: 6px;
-    color: var(--text-muted);
-    font-size: 0.5rem;
-    text-transform: uppercase;
-  }
-
-  .sidebar-menu {
-    padding: 24px 16px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .menu-btn {
-    display: block;
+  /* TOP BOUNDARY MENU BAR */
+  .top-matrix-bar {
     width: 100%;
+    height: 60px;
     background: transparent;
-    color: var(--text-muted);
-    padding: 14px 16px;
-    border: none;
-    border-left: 2px solid transparent;
-    cursor: pointer;
-    text-align: left;
-    font-family: inherit;
-    font-size: 0.6rem;
-    transition: all 0.25s ease;
-  }
-  
-  .menu-btn:hover {
-    color: #fff;
-    padding-left: 20px;
-  }
-  
-  .menu-btn.active {
-    color: var(--accent-glow);
-    border-left-color: var(--accent-glow);
-    background: linear-gradient(90deg, rgba(168,255,120,0.03) 0%, rgba(0,0,0,0) 100%);
-  }
-
-  .menu-btn.exit-btn {
-    margin-top: auto;
-    color: #ef4444;
-  }
-  .menu-btn.exit-btn:hover {
-    background: linear-gradient(90deg, rgba(239,68,68,0.03) 0%, rgba(0,0,0,0) 100%);
-  }
-
-  .sidebar-user-footer {
+    border-bottom: 1px solid var(--line-color);
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 20px 24px;
-    border-top: 1px solid var(--border-line);
-  }
-  
-  .avatar-frame {
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--border-line);
-    background: var(--bg-main);
-    image-rendering: pixelated;
-  }
-  
-  .user-info-text {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .user-title {
-    color: #fff;
-    font-size: 0.6rem;
-  }
-  
-  .user-status {
-    font-size: 0.5rem;
-    color: var(--accent-glow);
+    justify-content: space-between;
+    padding: 0 40px;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 1000;
   }
 
-  /* INTERAKTIVES ANIMATIONSSYSTEM FÜR MAIN INTERFACE */
-  main {
-    margin-left: 260px;
-    padding: 60px 50px;
-    flex: 1;
-    max-width: 1100px;
+  .branding-zone {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .branding-zone h2 {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    color: #fff;
+  }
+  .system-node-status {
+    width: 6px;
+    height: 6px;
+    background: var(--glow-primary);
+    box-shadow: 0 0 8px var(--glow-primary);
+  }
+
+  .navigation-links {
+    display: flex;
+    height: 100%;
+  }
+
+  .nav-item-link {
+    background: transparent;
+    border: none;
+    color: var(--text-dimmed);
+    font-family: inherit;
+    font-size: 0.55rem;
+    padding: 0 20px;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
     position: relative;
   }
+  .nav-item-link:hover {
+    color: #fff;
+  }
+  .nav-item-link.active {
+    color: var(--glow-primary);
+  }
+  /* Minimalistischer Indikator-Punkt statt Unterstreichung */
+  .nav-item-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 4px;
+    background: var(--glow-primary);
+    box-shadow: 0 0 6px var(--glow-primary);
+  }
 
-  /* DIE SEITEN-TRANSITIONEN (ECHTE CSS ANIMATIONEN) */
+  .nav-item-link.disconnect-action {
+    color: #ef4444;
+  }
+
+  /* MAIN STAGE WITH ADVANCED TRANSITIONS */
+  .viewport-stage {
+    margin-top: 60px;
+    padding: 60px 40px;
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: 1200px;
+    align-self: center;
+  }
+
+  /* DER HOCHWERTIGE GLOW-ANIMATIONS-WECHSEL */
   .view-section { 
     display: none; 
     opacity: 0;
+    transform: scaleY(0.95);
+    transform-origin: top;
   }
   
   .view-section.active { 
     display: block; 
-    animation: slideInView 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: holographicRebuild 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 
-  @keyframes slideInView {
+  @keyframes holographicRebuild {
     0% {
       opacity: 0;
-      transform: translateX(15px);
+      transform: scaleY(0.93);
     }
     100% {
       opacity: 1;
-      transform: translateX(0);
+      transform: scaleY(1);
     }
   }
 
-  /* AUSBLENDE-EFFEKT ÜBER HILFSKLASSE BEI WECHSEL */
   .view-section.leaving {
-    animation: slideOutView 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: holographicDeconstruct 0.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 
-  @keyframes slideOutView {
+  @keyframes holographicDeconstruct {
     0% {
       opacity: 1;
-      transform: translateX(0);
+      transform: scaleY(1);
     }
     100% {
       opacity: 0;
-      transform: translateX(-15px);
+      transform: scaleY(0.97);
     }
   }
 
-  .section-title {
-    font-size: 1rem;
-    color: #fff;
+  /* TEXTBASIERTE STRUKTUREN OHNE KACHELN */
+  .content-header-title {
+    font-size: 0.9rem;
+    color: var(--text-dimmed);
     margin-bottom: 40px;
     font-weight: normal;
+    letter-spacing: 1px;
   }
-  
-  .section-title span {
-    color: var(--accent-glow);
+  .content-header-title span {
+    color: #fff;
   }
 
-  /* ARCHIV / CONTAINER LOOK (FEINE LINIEN STATT MASSIVE BLÖCKE) */
-  .data-block {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-line);
-    padding: 30px;
-    margin-bottom: 30px;
+  .terminal-content-group {
+    margin-bottom: 50px;
     position: relative;
+    padding-top: 20px;
   }
 
-  .block-label {
-    position: absolute;
-    top: -8px;
-    left: 20px;
-    background: var(--bg-main);
-    padding: 0 8px;
-    color: var(--text-muted);
+  .group-meta-tag {
     font-size: 0.5rem;
-    text-transform: uppercase;
+    color: var(--glow-cyan);
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    display: block;
   }
 
-  .data-row {
-    padding: 14px 0;
-    border-bottom: 1px solid rgba(31, 38, 51, 0.4);
-    font-size: 0.6rem;
+  .clean-data-row {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line-color);
     display: flex;
+    align-items: flex-start;
   }
-  .data-row:last-child { border-bottom: none; }
-  .data-row .prefix { color: var(--accent-blue); width: 100px; flex-shrink: 0; }
-  .data-row .value { color: var(--text-main); }
+  .clean-data-row:last-of-type {
+    border-bottom: none;
+  }
+  .clean-data-row .tag {
+    width: 140px;
+    color: var(--text-dimmed);
+    flex-shrink: 0;
+  }
+  .clean-data-row .value {
+    color: var(--text-bright);
+  }
 
-  /* PINNWAND ARCHIV */
-  .archive-feed {
-    max-height: 280px;
+  /* PINNWAND TEXT-FLOW */
+  .wall-text-stream {
+    max-height: 320px;
     overflow-y: auto;
-    margin-bottom: 20px;
-    border: 1px solid var(--border-line);
-    background: rgba(0,0,0,0.15);
-    padding: 20px;
-    font-size: 0.6rem;
+    margin-bottom: 25px;
+    padding-right: 15px;
   }
-  
-  .feed-item {
-    padding: 10px 0;
-    border-bottom: 1px dashed var(--border-line);
+  .wall-message-node {
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--line-color);
   }
-  .feed-item:last-child { border-bottom: none; }
-  .feed-item .user { color: var(--accent-blue); margin-right: 10px; }
+  .wall-message-node .author {
+    color: var(--glow-primary);
+    margin-right: 12px;
+  }
 
-  .feed-controls { 
-    display: flex; 
-    gap: 15px; 
+  .stream-input-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    border-top: 1px solid var(--line-color);
+    padding-top: 25px;
   }
-  .feed-controls .field-ctrl { margin-bottom: 0; flex: 1; }
+  .stream-input-container .input-field {
+    margin-bottom: 0;
+  }
 
-  /* JUKEBOX ELEMENT */
-  .jukebox-player {
+  /* JUKEBOX CONTROLS */
+  .audio-matrix-zone {
     display: flex;
     align-items: center;
-    gap: 25px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    border: 1px solid var(--border-line);
+    gap: 40px;
+    padding: 20px 0;
   }
 
-  .frequency-bars { 
-    display: flex; 
-    gap: 5px; 
-    height: 16px; 
-    align-items: center; 
+  .wave-hologram {
+    display: flex;
+    gap: 6px;
+    height: 20px;
+    align-items: center;
   }
-  .freq-node { 
-    width: 3px; 
-    height: 3px; 
-    background: var(--border-line); 
+  .wave-bar {
+    width: 2px;
+    height: 4px;
+    background: var(--line-color);
+    transition: background 0.3s;
   }
-  .playing .freq-node { 
-    animation: audioWave 0.5s infinite alternate steps(3); 
-    background: var(--accent-glow); 
+  .playing .wave-bar {
+    background: var(--glow-primary);
+    animation: wavePulse 0.6s infinite alternate ease-in-out;
   }
-  .playing .freq-node:nth-child(3n) { animation-duration: 0.3s; background: var(--accent-blue); }
-  @keyframes audioWave { from { height: 3px; } to { height: 16px; } }
+  .playing .wave-bar:nth-child(2n) { animation-duration: 0.4s; background: var(--glow-cyan); }
+  .playing .wave-bar:nth-child(3n) { animation-duration: 0.7s; }
+  @keyframes wavePulse { from { height: 4px; } to { height: 20px; } }
 
-  /* BUTTONS & FORMULAR-ELEMENTE */
-  .btn-action {
-    display: inline-block;
+  /* COMPONENT INTERFACES */
+  .terminal-trigger-btn {
     background: transparent;
-    color: #fff;
-    padding: 14px 24px;
-    border: 1px solid var(--border-line);
-    cursor: pointer;
+    color: var(--text-bright);
+    border: 1px solid var(--line-color);
+    padding: 14px 28px;
     font-family: inherit;
-    font-size: 0.6rem;
-    transition: all 0.2s;
-  }
-  .btn-action:hover {
-    border-color: var(--accent-glow);
-    color: var(--accent-glow);
-  }
-  .btn-action:disabled { opacity: 0.25; cursor: not-allowed; border-color: var(--border-line) !important; color: #fff !important; }
-  .btn-action.full-width { width: 100%; text-align: center; }
-
-  .field-ctrl {
-    display: block;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border-line);
-    padding: 14px;
-    color: #fff;
-    margin-bottom: 20px;
-    font-family: inherit;
-    font-size: 0.6rem;
-  }
-  .field-ctrl:focus { border-color: var(--accent-blue); outline: none; }
-  .field-ctrl[readonly] { opacity: 0.4; cursor: not-allowed; }
-
-  .label-text {
     font-size: 0.55rem;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    display: block;
-    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
   }
-
-  .notify-box {
-    display: none;
-    border: 1px solid var(--accent-glow);
-    background: rgba(168, 255, 120, 0.01);
-    padding: 14px;
-    margin-top: 20px;
-    color: var(--accent-glow);
+  .terminal-trigger-btn:hover:not(:disabled) {
+    border-color: #fff;
+    color: #fff;
+    box-shadow: 0 0 12px rgba(255,255,255,0.05);
+  }
+  .terminal-trigger-btn:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+  }
+  .terminal-trigger-btn.full-stretch {
+    width: 100%;
     text-align: center;
-    font-size: 0.6rem;
   }
 
-  /* DOWNLOAD SYSTEM GRID */
-  .archive-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 25px;
+  .input-field {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--line-color);
+    padding: 16px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.6rem;
+    margin-bottom: 25px;
+    transition: border-color 0.3s;
   }
-  
-  .grid-node {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-line);
-    padding: 25px;
+  .input-field:focus {
+    outline: none;
+    border-color: var(--glow-cyan);
+  }
+  .input-field[readonly] {
+    color: var(--text-dimmed);
+    cursor: not-allowed;
+  }
+
+  .field-description {
+    font-size: 0.5rem;
+    color: var(--text-dimmed);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+    letter-spacing: 1px;
+  }
+
+  .operation-success-alert {
+    display: none;
+    color: var(--glow-primary);
+    font-size: 0.55rem;
+    margin-top: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* MINIMAL GRID FOR DOWNLOADS */
+  .cards-structural-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px;
+  }
+  .card-node-element {
+    border-top: 1px solid var(--line-color);
+    padding-top: 25px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: 180px;
   }
 
-  .video-embed-frame {
-    position: relative;
+  /* MEDIA CLIP ELEMENTS */
+  .media-stream-container {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+  }
+  .video-frame-wrapper {
+    width: 100%;
+    max-width: 800px;
     aspect-ratio: 16/9;
+    border: 1px solid var(--line-color);
+    position: relative;
     background: #000;
-    border: 1px solid var(--border-line);
-    margin-bottom: 16px;
   }
-  .video-embed-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-  .tag-info { color: var(--accent-blue); margin-right: 8px; }
+  .video-frame-wrapper iframe {
+    position: absolute;
+    inset: 0; width: 100%; height: 100%; border: none;
+  }
+  .meta-attribution {
+    margin-top: 15px;
+    font-size: 0.55rem;
+    color: var(--text-dimmed);
+  }
+  .meta-attribution span {
+    color: var(--glow-cyan);
+  }
 
-  /* COOKIE ANKÜNDIGUNG */
-  .cookie-popup {
+  /* COOKIE MODAL */
+  .matrix-cookie-popup {
     position: fixed;
-    bottom: 60px;
-    right: -450px;
-    width: 350px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-line);
-    padding: 24px;
-    z-index: 1000;
-    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    bottom: 30px;
+    right: -400px;
+    width: 320px;
+    background: var(--bg-dark);
+    border: 1px solid var(--line-color);
+    padding: 25px;
+    z-index: 5000;
+    transition: right 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .cookie-popup.show { right: 25px; }
-  .cookie-popup-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-  .cookie-popup-icon { width: 16px; height: 16px; image-rendering: pixelated; }
-  .cookie-popup-title { font-size: 0.6rem; color: #fff; }
-  .cookie-popup-text { color: var(--text-muted); font-size: 0.55rem; margin-bottom: 20px; line-height: 1.4; }
-  .cookie-popup-buttons { display: flex; gap: 12px; }
-  .cookie-action-btn {
-    flex: 1; padding: 10px; text-align: center; cursor: pointer; border: 1px solid var(--border-line); background: transparent; color: #fff; font-size: 0.55rem;
+  .matrix-cookie-popup.show { right: 30px; }
+  .cookie-header-text { font-size: 0.6rem; margin-bottom: 12px; color: #fff; }
+  .cookie-body-desc { color: var(--text-dimmed); font-size: 0.5rem; margin-bottom: 20px; line-height: 1.5; }
+  .cookie-btn-group { display: flex; gap: 15px; }
+  .cookie-btn-action {
+    flex: 1; padding: 12px; text-align: center; cursor: pointer; border: 1px solid var(--line-color); background: transparent; color: #fff; font-size: 0.5rem; font-family: inherit;
   }
-  .cookie-action-btn.primary { border-color: var(--accent-glow); color: var(--accent-glow); }
+  .cookie-btn-action.confirm-accent { border-color: var(--glow-primary); color: var(--glow-primary); }
 
   /* GATEWAY VERIFIKATION MODAL */
   .overlay-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(4, 5, 8, 0.85);
-    z-index: 2000;
+    background: rgba(4, 6, 10, 0.95);
+    z-index: 9000;
     display: none;
     align-items: center;
     justify-content: center;
@@ -417,214 +407,210 @@
 
   .gateway-modal {
     background: #fff;
-    color: #2d3139;
+    color: #1e293b;
     width: 100%;
-    max-width: 420px;
-    border: 1px solid #cbd5e0;
+    max-width: 400px;
+    border: 1px solid #cbd5e1;
     position: relative;
   }
 
   .gateway-top {
-    background: #f7f9fc;
-    padding: 16px 20px;
-    border-bottom: 2px solid #e2e7f0;
+    background: #f8fafc;
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .gateway-logo { font-style: italic; font-size: 0.95rem; font-family: sans-serif; font-weight: 700; }
+  .gateway-logo { font-style: italic; font-size: 0.9rem; font-family: sans-serif; font-weight: 700; }
   .logo-p1 { color: var(--paypol-blue); }
   .logo-p2 { color: var(--paypol-cyan); }
-  .gateway-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #a0aec0; }
+  .gateway-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #94a3b8; }
 
-  .gateway-main-body { padding: 24px; }
+  .gateway-main-body { padding: 25px; }
   .gateway-meta-box {
-    background: #f1f4f9;
-    padding: 12px;
+    background: #f1f5f9;
+    padding: 15px;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
   }
-  .meta-title { color: #1a202c; font-size: 0.6rem; }
-  .meta-sub { font-size: 0.5rem; color: #718096; margin-top: 4px; }
+  .meta-title { color: #0f172a; font-size: 0.55rem; }
+  .meta-sub { font-size: 0.5rem; color: #64748b; margin-top: 6px; }
 
-  .gateway-group { margin-bottom: 16px; }
-  .gateway-label { display: block; font-size: 0.5rem; color: #4a5568; margin-bottom: 6px; text-transform: uppercase; }
+  .gateway-group { margin-bottom: 20px; }
+  .gateway-label { display: block; font-size: 0.5rem; color: #475569; margin-bottom: 8px; text-transform: uppercase; }
   .gateway-num-wrapper { position: relative; }
-  .gateway-num-wrapper span { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #2d3139; font-size: 0.6rem; }
+  .gateway-num-wrapper span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #1e293b; font-size: 0.55rem; }
   .gateway-input-field {
-    width: 100%; padding: 12px; border: 2px solid #cbd5e0; background: #f7fafc; font-size: 0.6rem; color: #000; font-family: inherit; box-sizing: border-box;
+    width: 100%; padding: 14px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.55rem; color: #000; font-family: inherit; box-sizing: border-box;
   }
   .gateway-input-field:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
 
-  .gateway-secure-zone { margin-top: 16px; padding-top: 16px; border-top: 2px dashed #e2e7f0; display: none; }
+  .gateway-secure-zone { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #e2e8f0; display: none; }
   .gateway-action-trigger {
-    display: block; width: 100%; background: #0079c1; color: #fff; border: none; padding: 14px; font-size: 0.6rem; font-family: inherit; cursor: pointer; text-align: center; box-sizing: border-box;
+    display: block; width: 100%; background: #0079c1; color: #fff; border: none; padding: 15px; font-size: 0.55rem; font-family: inherit; cursor: pointer; text-align: center; box-sizing: border-box;
   }
   .gateway-action-trigger.unlocked { background: var(--trust-green) !important; }
-  .gateway-error-text { color: #e53e3e; font-size: 0.5rem; margin-top: 8px; display: none; text-align: center; }
+  .gateway-error-text { color: #ef4444; font-size: 0.5rem; margin-top: 8px; display: none; text-align: center; }
 
   .gateway-footer-trust {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #1a202c;
+    background: #0f172a;
     color: #fff;
-    padding: 12px 20px;
+    padding: 14px 20px;
     font-size: 0.5rem;
   }
-  .trust-badge-stars { background: var(--trust-green); color: #fff; padding: 1px 5px; margin-right: 6px; }
+  .trust-badge-stars { background: var(--trust-green); color: #fff; padding: 1px 4px; margin-right: 6px; }
   
   #cinematic-intro-screen {
-    position: absolute; inset: 0; background: #080a0f; z-index: 100; display: none; flex-direction: column; justify-content: space-between; padding: 30px; box-sizing: border-box;
+    position: absolute; inset: 0; background: #04060a; z-index: 100; display: none; flex-direction: column; justify-content: space-between; padding: 40px; box-sizing: border-box;
   }
   #cinematic-text-scroll {
-    position: absolute; width: 90%; left: 5%; text-align: center; color: var(--accent-glow); font-size: 0.6rem; line-height: 2; transform: translateY(100%);
+    position: absolute; width: 90%; left: 5%; text-align: center; color: var(--glow-primary); font-size: 0.55rem; line-height: 2; transform: translateY(100%);
   }
 
-  /* DER NEUE MINIMALISTISCHE CYBER-FOOTER */
-  .footer-navigation-bar {
+  /* MINIMAL SYSTEM BASE FOOTER */
+  .system-status-footer {
     flex-shrink: 0;
-    height: 40px;
-    background: var(--bg-surface);
-    border-top: 1px solid var(--border-line);
+    height: 50px;
+    border-top: 1px solid var(--line-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 30px;
-    font-size: 0.55rem;
-    color: var(--text-muted);
-    z-index: 110;
+    padding: 0 40px;
+    font-size: 0.5rem;
+    color: var(--text-dimmed);
+    background: var(--bg-dark);
   }
-  .footer-copyright span { color: var(--text-main); }
+  .system-status-footer span { color: var(--text-bright); }
 
   @media (max-width: 900px) {
-    body { flex-direction: column; }
-    .root-layout { flex-direction: column; }
-    .sidebar-panel { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-line); }
-    .sidebar-menu { flex-direction: row; flex-wrap: wrap; padding: 12px; }
-    .menu-btn { width: auto; border-left: none; border-bottom: 2px solid transparent; }
-    .menu-btn.active { border-bottom-color: var(--accent-glow); background: transparent; }
-    main { margin-left: 0; padding: 30px 20px; }
-    .footer-navigation-bar { flex-direction: column; height: auto; padding: 15px; text-align: center; gap: 8px; }
+    .top-matrix-bar { height: auto; flex-direction: column; padding: 15px; gap: 15px; position: relative; }
+    .navigation-links { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .nav-item-link { height: 40px; padding: 0 10px; }
+    .viewport-stage { margin-top: 0; padding: 30px 20px; }
+    .system-status-footer { flex-direction: column; height: auto; padding: 20px; text-align: center; gap: 10px; }
   }
   </style>
 </head>
 <body>
 
-<div class="root-layout">
-
-  <div class="sidebar-panel">
-    <div class="sidebar-branding">
-      <h2>QuapsHub</h2>
-      <span class="sidebar-subtext">CORE SYSTEM v3.5</span>
-    </div>
-
-    <div class="sidebar-menu">
-      <button class="menu-btn active" onclick="switchView('home')" id="btn-home">Terminal</button>
-      <button class="menu-btn" onclick="switchView('clips')" id="btn-clips">Archiv</button>
-      <button class="menu-btn" onclick="switchView('upload')" id="btn-upload">Upload</button>
-      <button class="menu-btn" onclick="switchView('downloads')" id="btn-downloads">Karten</button>
-      <button class="menu-btn" onclick="switchView('admin-apply')" id="btn-admin-apply">Anträge</button>
-      <button class="menu-btn exit-btn" onclick="logout()">Disconnect</button>
-    </div>
-
-    <div class="sidebar-user-footer">
-      <img src="unnamed.jpg" id="user-avatar" class="avatar-frame" alt="M" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
-      <div class="user-info-text">
-        <span class="user-title" id="sidebar-user-name">Spieler</span>
-        <span class="user-status">STABLE LINK</span>
-      </div>
-    </div>
+<header class="top-matrix-bar">
+  <div class="branding-zone">
+    <div class="system-node-status"></div>
+    <h2>QuapsHub</h2>
   </div>
+  <nav class="navigation-links">
+    <button class="nav-item-link active" onclick="switchView('home')" id="btn-home">Terminal</button>
+    <button class="nav-item-link" onclick="switchView('clips')" id="btn-clips">Archiv</button>
+    <button class="nav-item-link" onclick="switchView('upload')" id="btn-upload">Upload</button>
+    <button class="nav-item-link" onclick="switchView('downloads')" id="btn-downloads">Karten</button>
+    <button class="nav-item-link" onclick="switchView('admin-apply')" id="btn-admin-apply">Anträge</button>
+    <button class="nav-item-link disconnect-action" onclick="logout()">Disconnect</button>
+  </nav>
+</header>
+
+<div class="viewport-stage">
 
   <main>
     <div id="home" class="view-section active">
-      <div class="content-header">
-        <h1 class="section-title">SYSTEM_LOG // <span id="user-name-display">Spieler</span></h1>
-      </div>
+      <h1 class="content-header-title">PROT_EXECUTION // <span>Benutzer: <span id="user-name-display">Spieler</span></span></h1>
 
-      <div class="data-block">
-        <div class="block-label">Meldungen</div>
-        <div class="data-row"><span class="prefix">CORE</span><span class="value">Der Download der Quaps 10 Hauptwelt steht im Archiv bereit</span></div>
-        <div class="data-row"><span class="prefix">STATUS</span><span class="value">Das neue Cyber-Archiv-Interface wurde erfolgreich initialisiert</span></div>
-      </div>
-
-      <div class="data-block">
-        <div class="block-label">Gemeinschafts-Pinnwand</div>
-        <div class="archive-feed" id="pinnwand-box">Lade Einträge...</div>
-        <div class="feed-controls">
-          <input type="text" id="pinnwand-input" class="field-ctrl" placeholder="Eintrag verfassen..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
-          <button onclick="postToPinnwand()" id="pinnwand-btn" class="btn-action">Senden</button>
+      <div class="terminal-content-group">
+        <span class="group-meta-tag">// SYSTEM_LOG</span>
+        <div class="clean-data-row">
+          <span class="tag">[CORE]</span>
+          <span class="value">Der Download der Quaps 10 Hauptwelt steht im Archiv bereit</span>
+        </div>
+        <div class="clean-data-row">
+          <span class="tag">[STATUS]</span>
+          <span class="value">Das veränderte Matrix-Glow-Interface wurde erfolgreich deployed.</span>
         </div>
       </div>
 
-      <div class="data-block">
-        <div class="block-label">Audio-Frequenz</div>
-        <div class="jukebox-player">
-          <div class="frequency-bars" id="visualizer">
-            <div class="freq-node"></div><div class="freq-node"></div><div class="freq-node"></div><div class="freq-node"></div>
-            <div class="freq-node"></div><div class="freq-node"></div><div class="freq-node"></div><div class="freq-node"></div>
+      <div class="terminal-content-group">
+        <span class="group-meta-tag">// COMMUNITY_WALL</span>
+        <div class="wall-text-stream" id="pinnwand-box">Lade Datenstrom...</div>
+        
+        <div class="stream-input-container">
+          <div style="flex: 1;">
+            <span class="field-description">Neue Übertragung senden</span>
+            <input type="text" id="pinnwand-input" class="input-field" placeholder="Nachricht eingeben..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
+          </div>
+          <button onclick="postToPinnwand()" id="pinnwand-btn" class="terminal-trigger-btn">Senden</button>
+        </div>
+      </div>
+
+      <div class="terminal-content-group">
+        <span class="group-meta-tag">// AUDIO_FREQUENCY</span>
+        <div class="audio-matrix-zone">
+          <div class="wave-hologram" id="visualizer">
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
           </div>
           <audio id="communitySong">
             <source src="quaps-hymne.mp3" type="audio/mpeg">
           </audio>
-          <button onclick="togglePlay()" id="playBtn" class="btn-action">Hymne abspielen</button>
+          <button onclick="togglePlay()" id="playBtn" class="terminal-trigger-btn">Hymne laden</button>
         </div>
       </div>
     </div>
 
     <div id="clips" class="view-section">
-      <div class="content-header">
-        <h1 class="section-title">AUDIO_VISUAL_ARCHIVE</h1>
-      </div>
-      <div class="data-block">
-        <div class="block-label">Mace Hit Showcase</div>
-        <div class="video-embed-frame">
-          <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+      <h1 class="content-header-title">ARCHIVE_STREAMS // <span>Übertragungen</span></h1>
+      
+      <div class="media-stream-container">
+        <div>
+          <span class="group-meta-tag">DATENSATZ_01</span>
+          <div class="video-frame-wrapper">
+            <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="meta-attribution">PRODUZENT: <span>Louis</span></div>
         </div>
-        <div>PRODUZENT: <span class="tag-info">Louis</span></div>
-      </div>
-      <div class="data-block">
-        <div class="block-label">Uganana</div>
-        <div class="video-embed-frame">
-          <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+
+        <div>
+          <span class="group-meta-tag">DATENSATZ_02</span>
+          <div class="video-frame-wrapper">
+            <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="meta-attribution">PRODUZENTEN: <span>Nils</span>, <span>Giorgio</span></div>
         </div>
-        <div>PRODUZENTEN: <span class="tag-info">Nils</span> <span class="tag-info">Giorgio</span></div>
       </div>
     </div>
 
     <div id="upload" class="view-section">
-      <div class="content-header">
-        <h1 class="section-title">ARCHIV_UPLOAD</h1>
-      </div>
-      <div class="data-block" style="max-width: 600px;">
-        <div class="block-label">Metadaten</div>
-        <label class="label-text">Absender</label>
-        <input class="field-ctrl" id="uploaderName" type="text" readonly>
-        <label class="label-text">Titel des Eintrags</label>
-        <input class="field-ctrl" id="clipTitle" type="text" placeholder="Beispiel: Epic PvP Clutch">
-        <label class="label-text">Netzwerk-Link (Medal / YouTube)</label>
-        <input class="field-ctrl" id="clipLink" type="text" placeholder="https://...">
-        <button onclick="sendToDiscord()" id="submitBtn" class="btn-action full-width">An Discord übertragen</button>
-        <div class="notify-box" id="statusMsg">Datensatz erfolgreich übermittelt.</div>
+      <h1 class="content-header-title">DATA_INGESTION // <span>Uploadzentrum</span></h1>
+      
+      <div class="terminal-content-group" style="max-width: 600px;">
+        <span class="group-meta-tag">METADATEN_EINGABE</span>
+        
+        <span class="field-description">Absenderkennung</span>
+        <input class="input-field" id="uploaderName" type="text" readonly>
+        
+        <span class="field-description">Titel der Aufzeichnung</span>
+        <input class="input-field" id="clipTitle" type="text" placeholder="Beispiel: PvP_Clutch_04">
+        
+        <span class="field-description">Quell-URL (Medal / YouTube)</span>
+        <input class="input-field" id="clipLink" type="text" placeholder="https://...">
+        
+        <button onclick="sendToDiscord()" id="submitBtn" class="terminal-trigger-btn full-stretch">Übertragung starten</button>
+        <div class="operation-success-alert" id="statusMsg">Datensatz erfolgreich übermittelt.</div>
       </div>
     </div>
 
     <div id="downloads" class="view-section">
-      <div class="content-header">
-        <h1 class="section-title">MAP_DATA_REPOSITORIES</h1>
-      </div>
-      <div class="archive-grid" id="download-list-container"></div>
+      <h1 class="content-header-title">REPOSITORY_MAPS // <span>Weltdatenbank</span></h1>
+      <div class="cards-structural-grid" id="download-list-container"></div>
     </div>
 
     <div id="admin-apply" class="view-section">
-      <div class="content-header">
-        <h1 class="section-title">PENDING_APPLICATIONS</h1>
-      </div>
-      <div class="data-block">
-        <div class="block-label">Protokolle</div>
-        <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 16px;">
-          <div style="color: var(--text-muted);">Abfrage läuft...</div>
+      <h1 class="content-header-title">GATEWAY_REQUEST_LOGS // <span>Mitgliedschaftsanträge</span></h1>
+      <div class="terminal-content-group">
+        <span class="group-meta-tag">EINGEGANGENE_DATENSÄTZE</span>
+        <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 30px;">
+          <div style="color: var(--text-dimmed);">Synchronisiere...</div>
         </div>
       </div>
     </div>
@@ -632,20 +618,17 @@
 
 </div>
 
-<footer class="footer-navigation-bar">
-  <div class="footer-copyright">&copy; <span>Airbusfan.de</span></div>
-  <div class="footer-random">Sicherheitsfreigabe erteilt. Alle Systeme laufen im Nennbetrieb.</div>
+<footer class="system-status-footer">
+  <div>&copy; <span>Airbusfan.de</span></div>
+  <div style="letter-spacing: 1px;">Sicherheitsfreigabe erteilt. Alle Systeme laufen im Nennbetrieb.</div>
 </footer>
 
-<div class="cookie-popup" id="cookie-banner">
-  <div class="cookie-popup-head">
-    <img src="https://minecraft.wiki/images/Cookie_JE1_BE1.png" class="cookie-popup-icon" alt="Cookie">
-    <span class="cookie-popup-title">Sitzungs-Identifikation</span>
-  </div>
-  <p class="cookie-popup-text">Diese Plattform nutzt lokale Datensätze, um deine Sitzung über Wechsel hinweg aufrechtzuerhalten.</p>
-  <div class="cookie-popup-buttons">
-    <div class="cookie-action-btn primary" onclick="handleCookie(true)">Akzeptieren</div>
-    <div class="cookie-action-btn" onclick="handleCookie(false)">Abweisen</div>
+<div class="matrix-cookie-popup" id="cookie-banner">
+  <div class="cookie-header-text">Sitzungs-Identifikation</div>
+  <p class="cookie-body-desc">Diese Plattform nutzt lokale Datensätze, um deine Sitzung über Wechsel hinweg aufrechtzuerhalten.</p>
+  <div class="cookie-btn-group">
+    <button class="cookie-btn-action confirm-accent" onclick="handleCookie(true)">Zustimmen</button>
+    <button class="cookie-btn-action" onclick="handleCookie(false)">Ablehnen</button>
   </div>
 </div>
 
@@ -655,7 +638,7 @@
       <div style="position: relative; width: 100%; height: 85%; overflow: hidden;">
         <div id="cinematic-text-scroll"></div>
       </div>
-      <button onclick="skipCinematicIntro()" class="btn-action" style="align-self: center;">Intro überspringen</button>
+      <button onclick="skipCinematicIntro()" class="terminal-trigger-btn" style="align-self: center;">Intro überspringen</button>
     </div>
     <div class="gateway-top">
       <div class="gateway-logo"><span class="logo-p1">Pay</span><span class="logo-p2">Pol</span></div>
@@ -730,7 +713,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   
   document.getElementById('user-name-display').textContent = currentGlobalUser;
   document.getElementById('uploaderName').value = currentGlobalUser;
-  document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
   loadPinnwand();
   loadBewerbungen();
@@ -742,34 +724,30 @@ window.addEventListener('DOMContentLoaded', async () => {
 function renderDownloadList() {
   const container = document.getElementById('download-list-container');
   container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
-    <div class="grid-node">
+    <div class="card-node-element">
       <div>
-        <div style="font-size: 0.75rem; color: #fff; margin-bottom: 8px;">${proj.title}</div>
-        <div style="color: var(--text-muted); font-size: 0.55rem; margin-bottom: 20px;">
+        <div style="font-size: 0.7rem; color: #fff; margin-bottom: 6px;">${proj.title}</div>
+        <div style="color: var(--text-dimmed); font-size: 0.5rem;">
           PROT: ${proj.version} // SIZE: ${proj.size}
         </div>
       </div>
-      <button onclick="openPaypolGateway('${proj.id}')" class="btn-action" style="width: 100%;">Download</button>
+      <button onclick="openPaypolGateway('${proj.id}')" class="terminal-trigger-btn">Download anfordern</button>
     </div>
   `).join('');
 }
 
-/* ANIMIERTER SEITENWECHSEL-ALGORITHMUS */
+/* FLÜSSIGER TRANSITIONS-ALGORITHMUS OHNE KI-LOOK */
 function switchView(targetId) {
   const currentActive = document.querySelector('.view-section.active');
   if (!currentActive || currentActive.id === targetId) return;
 
-  // 1. Aktuelle Seite weicht animiert zurück (Klasse "leaving")
   currentActive.classList.add('leaving');
   
-  // 2. Navigations-Status sofort anpassen
-  document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-item-link').forEach(b => b.classList.remove('active'));
   document.getElementById('btn-' + targetId).classList.add('active');
 
-  // 3. Nach Ablauf der Out-Animation (200ms) umschalten
   setTimeout(() => {
     currentActive.classList.remove('active', 'leaving');
-    
     const nextActive = document.getElementById(targetId);
     nextActive.classList.add('active');
   }, 200);
@@ -870,8 +848,8 @@ async function loadPinnwand() {
   if (data.length === 0) { box.innerHTML = "Keine Einträge vorhanden."; return; }
 
   box.innerHTML = data.reverse().map(msg => `
-    <div class="feed-item">
-      <span class="user">[${escapeHtml(msg.name)}]:</span>
+    <div class="wall-message-node">
+      <span class="author">[${escapeHtml(msg.name)}]</span>
       <span>${escapeHtml(msg.nachricht)}</span>
     </div>
   `).join('');
@@ -886,9 +864,9 @@ async function loadBewerbungen() {
   if (!data || data.length === 0) { box.innerHTML = "Keine Bewerbungen vorhanden."; return; }
 
   box.innerHTML = data.map(apply => `
-    <div style="padding: 20px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-line); margin-bottom: 12px;">
-      <div style="color: var(--accent-warn); margin-bottom: 8px; text-transform: uppercase;">Antragsteller: ${escapeHtml(apply.username || 'Unbekannt')}</div>
-      <div style="white-space: pre-wrap; color: var(--text-main); font-size: 0.65rem;">${escapeHtml(apply.begruendung || 'Keine Angabe.')}</div>
+    <div style="border-top: 1px solid var(--line-color); padding-top: 15px;">
+      <div style="color: var(--glow-amber); margin-bottom: 8px;">LOG_RECOGNIZED // ID: ${escapeHtml(apply.username || 'Unbekannt')}</div>
+      <div style="white-space: pre-wrap; color: var(--text-bright); font-size: 0.6rem; padding-left: 20px;">${escapeHtml(apply.begruendung || 'Keine Angabe.')}</div>
     </div>
   `).join('');
 }
@@ -922,8 +900,8 @@ function togglePlay() {
   const audio = document.getElementById('communitySong');
   const btn   = document.getElementById('playBtn');
   const vis   = document.getElementById('visualizer');
-  if (audio.paused) { audio.play(); btn.textContent = 'Hymne pausieren'; vis.classList.add('playing'); }
-  else { audio.pause(); btn.textContent = 'Hymne abspielen'; vis.classList.remove('playing'); }
+  if (audio.paused) { audio.play(); btn.textContent = 'Hymne stoppen'; vis.classList.add('playing'); }
+  else { audio.pause(); btn.textContent = 'Hymne laden'; vis.classList.remove('playing'); }
 }
 
 async function sendToDiscord() {
@@ -945,11 +923,11 @@ async function sendToDiscord() {
     await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     msg.style.display = 'block';
     setTimeout(() => {
-      msg.style.display = 'none'; btn.textContent = 'An Discord übertragen'; btn.disabled = false;
+      msg.style.display = 'none'; btn.textContent = 'Übertragung starten'; btn.disabled = false;
       document.getElementById('clipTitle').value = ''; document.getElementById('clipLink').value = '';
       switchView('home');
     }, 3000);
-  } catch { alert('Fehler.'); btn.textContent = 'An Discord übertragen'; btn.disabled = false; }
+  } catch { alert('Fehler.'); btn.textContent = 'Übertragung starten'; btn.disabled = false; }
 }
 </script>
 </body>
