@@ -2,358 +2,268 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>QUAPS S11 - VECTOR ARENA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quaps Cloud OS</title>
   <style>
     :root {
-      --bg: #0a0b10;
-      --accent-blue: #00f0ff;
-      --accent-green: #00ff66;
-      --accent-red: #ff3366;
-      --panel-bg: rgba(15, 18, 36, 0.7);
-      --border: rgba(0, 240, 255, 0.2);
+      --bg: #090a10;
+      --card-bg: #131520;
+      --accent: #5865F2; /* Discord Blau */
+      --green: #23a55a;
+      --red: #f23f43;
+      --text: #f2f3f5;
+      --text-muted: #949ba4;
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     
-    body, html {
-      margin: 0; padding: 0; width: 100%; height: 100%;
-      background: var(--bg); color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      overflow: hidden; user-select: none;
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); overflow: hidden; }
+    
+    body.game-mode { display: flex; }
+
+    /* LAYOUT WIE EINE ECHTE APP */
+    .sidebar {
+      width: 260px; background: #11121c; border-right: 1px solid rgba(255,255,255,0.05);
+      display: flex; flex-direction: column; padding: 20px; justify-content: space-between;
     }
 
-    body.game-mode { display: flex; flex-direction: column; }
+    .main-content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 30px; }
 
-    /* MODERNES HUD */
-    .hud-overlay {
-      position: absolute; top: 20px; left: 20px; right: 20px;
-      display: flex; justify-content: space-between; align-items: center;
-      pointer-events: none; z-index: 10;
+    .app-title { font-size: 18px; font-weight: 800; letter-spacing: 1px; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .app-title span { color: var(--accent); }
+
+    .nav-btn {
+      background: none; border: none; color: var(--text-muted); width: 100%; text-align: left;
+      padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 8px; margin-bottom: 5px;
+      transition: all 0.2s;
     }
+    .nav-btn:hover, .nav-btn.active { background: rgba(88, 101, 242, 0.15); color: #fff; }
+    .nav-btn.active { border-left: 3px solid var(--accent); }
 
-    .hud-panel {
-      background: var(--panel-bg);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-      padding: 12px 24px; border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    /* COUNTER DASHBOARD */
+    .dashboard-header { background: var(--card-bg); border-radius: 16px; padding: 30px; border: 1px solid rgba(255,255,255,0.03); text-align: center; position: relative; overflow: hidden; }
+    .data-counter { font-size: 42px; font-weight: 800; color: #fff; margin: 10px 0; }
+    .data-ps { font-size: 14px; color: var(--text-muted); }
+
+    /* BIG CLICKER BUTTON */
+    .click-center { display: flex; justify-content: center; align-items: center; margin: 20px 0; }
+    .main-clicker {
+      width: 180px; height: 180px; border-radius: 50%; background: linear-gradient(135deg, #5865F2, #404eed);
+      border: none; color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
+      box-shadow: 0 10px 30px rgba(88, 101, 242, 0.4); transition: transform 0.1s, box-shadow 0.2s;
     }
+    .main-clicker:active { transform: scale(0.95); box-shadow: 0 5px 15px rgba(88, 101, 242, 0.2); }
 
-    .title-brand {
-      font-size: 14px; font-weight: 800; letter-spacing: 2px;
-      color: var(--accent-blue); text-transform: uppercase;
+    /* GRID FÜR UPGRADES / SABOTAGE */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    
+    .card {
+      background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.03);
+      display: flex; flex-direction: column; justify-content: space-between; gap: 15px; transition: transform 0.2s;
     }
+    .card:hover { transform: translateY(-2px); }
 
-    .stats { font-size: 12px; font-weight: 600; color: #a0aec0; margin-top: 4px; }
-    .stats span { color: #fff; font-weight: 700; }
-
-    .leaderboard {
-      position: absolute; right: 20px; top: 100px;
-      background: var(--panel-bg); border: 1px solid var(--border);
-      backdrop-filter: blur(12px); padding: 15px; border-radius: 16px;
-      width: 200px; pointer-events: none; z-index: 10;
+    .card-info { display: flex; flex-direction: column; gap: 4px; }
+    .card-title { font-size: 15px; font-weight: 700; color: #fff; }
+    .card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+    
+    .buy-btn {
+      background: var(--accent); color: #fff; border: none; padding: 10px; border-radius: 6px;
+      font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; width: 100%;
     }
+    .buy-btn:hover:not(:disabled) { background: #4752c4; }
+    .buy-btn:disabled { background: #2b2d38; color: #4e5058; cursor: not-allowed; }
+    .buy-btn.sabotage { background: var(--red); }
+    .buy-btn.sabotage:hover:not(:disabled) { background: #c93337; }
 
-    .lb-title { font-size: 11px; font-weight: 800; color: #718096; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
-    .lb-row { display: flex; justify-content: space-between; font-size: 12px; margin: 4px 0; color: #e2e8f0; }
-    .lb-row.dead { opacity: 0.3; text-decoration: line-through; }
+    /* LOG SCREEN WIE EIN ECHTER MESSENGER */
+    .log-box { background: #000; border-radius: 8px; padding: 15px; font-family: monospace; font-size: 12px; color: var(--green); height: 120px; overflow-y: auto; }
 
-    canvas { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
-
-    .controls-tip {
-      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-      font-size: 11px; color: #718096; background: rgba(0,0,0,0.6);
-      padding: 6px 16px; border-radius: 20px; pointer-events: none;
-    }
-
-    /* WIKIPEDIA TARN-MODUS (MAXIMAL UNGERACHTIG) */
-    body.tarn-mode { background: #ffffff !important; color: #202122 !important; padding: 40px !important; display: block !important; overflow: auto !important; }
+    /* TARNUNG */
+    body.tarn-mode { background: #fff !important; color: #202122 !important; padding: 40px !important; display: block !important; overflow: auto !important; }
     .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; }
     .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; margin-bottom: 20px; font-family: 'Georgia', serif; color: #000; }
   </style>
 </head>
 <body class="game-mode" id="main-body">
 
-  <div class="hud-overlay" id="game-hud">
-    <div class="hud-panel">
-      <div class="title-brand">QUAPS VECTOR // S11</div>
-      <div class="stats">SCORE: <span id="ui-score">0</span> &nbsp;|&nbsp; KILLS: <span id="ui-kills">0</span></div>
+  <!-- LINKER NAV-BEREICH -->
+  <div class="sidebar" id="app-sidebar">
+    <div>
+      <div class="app-title">QUAPS<span>CLOUD</span></div>
+      <button class="nav-btn active" id="btn-farm" onclick="switchTab('farm')">🖥️ Server-Zentrale</button>
+      <button class="nav-btn" id="btn-upgrades" onclick="switchTab('upgrades')">⚙️ Server-Upgrades</button>
+      <button class="nav-btn" id="btn-sabotage" onclick="switchTab('sabotage')">🔥 Sabotage-Zentrum</button>
     </div>
+    <div style="font-size: 11px; color: var(--text-muted); text-align: center;">Leertaste = App verbergen</div>
   </div>
 
-  <div class="leaderboard" id="game-lb">
-    <div class="lb-title">SERVER-STATUS</div>
-    <div id="lb-content"></div>
+  <!-- RECHTER CONTENT-BEREICH -->
+  <div class="main-content" id="app-content">
+    
+    <!-- DASHBOARD COUNTER -->
+    <div class="dashboard-header">
+      <div class="data-ps">Gesicherte Server-Fragmente</div>
+      <div class="data-counter" id="ui-data">0</div>
+      <div class="data-ps">Generierung: <span id="ui-dps" style="color: var(--green); font-weight: bold;">0</span> / Sekunde</div>
+    </div>
+
+    <!-- REITER 1: KLICKEN -->
+    <div id="tab-farm">
+      <div class="click-center">
+        <button class="main-clicker" onclick="clickData()">DATEN GENERIEREN</button>
+      </div>
+      <h3 style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">Live Server-Protokoll</h3>
+      <div class="log-box" id="log-container">
+        [SYSTEM]: Quaps S11 Cloud OS erfolgreich gestartet.<br>
+        [SYSTEM]: Warte auf Benutzerinteraktion...
+      </div>
+    </div>
+
+    <!-- REITER 2: UPGRADES -->
+    <div id="tab-upgrades" style="display: none;">
+      <div class="grid" id="upgrades-grid"></div>
+    </div>
+
+    <!-- REITER 3: SABOTAGE -->
+    <div id="tab-sabotage" style="display: none;">
+      <div class="grid" id="sabotage-grid"></div>
+    </div>
+
   </div>
-
-  <div class="controls-tip" id="game-tip">Maus bewegen = Fliegen | Linksklick = Laser abfeuern | Leertaste = Tarnung</div>
-
-  <canvas id="vectorCanvas"></canvas>
 
   <!-- WIKIPEDIA TARNUNG -->
   <div id="tarn-view" class="tarn-content" style="display: none;">
     <div class="tarn-header">Gemeindeordnung (Niedersachsen) [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]</div>
     <p>Aus Wikipedia, der freien Enzyklopädie</p>
-    <p>Die rechtlichen Grundlagen zur Ausgestaltung kommunaler Budgets im Raum Vechta basieren auf den niedersächsischen Verordnungen zur Haushaltskonsolidierung [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
+    <p>Die rechtlichen Rahmenbedingungen der Haushaltsführung niedersächsischer Gemeinden im Landkreis Vechta sind im Kommunalverfassungsgesetz festgeschrieben [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
   </div>
 
 <script>
-const canvas = document.getElementById("vectorCanvas");
-const ctx = canvas.getContext("2d");
-
 let isPanic = false;
-let width = canvas.width = window.innerWidth;
-let height = canvas.height = window.innerHeight;
+let totalData = 0;
+let dataPerSecond = 0;
 
-window.addEventListener('resize', () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-});
-
-// SPIELER-DATEIEN
-const player = {
-  x: width / 2, y: height / 2,
-  radius: 12, angle: 0,
-  speed: 0.08, // Smooth LERP Interpolation
-  score: 0, kills: 0
-};
-
-const mouse = { x: width / 2, y: height / 2 };
-
-// Bots & Entities (Die Truppe)
-let bots = [
-  { name: "Mika 🪵", x: 200, y: 300, vx: 2, vy: -1.5, color: "#00ff66", alive: true, kills: 0 },
-  { name: "Giorgio 🚫", x: 500, y: 150, vx: -2, vy: 2, color: "#ff3366", alive: true, kills: 0 },
-  { name: "Joschi 🔥", x: 700, y: 400, vx: 1.5, vy: 1.5, color: "#ffaa00", alive: true, kills: 0 },
-  { name: "Jonas 🕊", x: 150, y: 500, vx: -1, vy: -2, color: "#00f0ff", alive: true, kills: 0 },
-  { name: "Nils 🕵️‍♂️", x: 600, y: 550, vx: 2, vy: 1, color: "#a0aec0", alive: true, kills: 0 }
+// Upgrades (Generatoren)
+let upgrades = [
+  { id: 0, title: "Louis' CoreProtect-Schnittstelle", desc: "Sucht automatisch nach nützlichen Logs.", cost: 15, dps: 0.5, count: 0 },
+  { id: 1, title: "Mikas Pale-Oak-Plantage", desc: "Generiert feuerfeste Server-Ressourcen.", cost: 100, dps: 4, count: 0 },
+  { id: 2, title: "Jonas' Neutraler Proxy-Server", desc: "Beruhigt den Datenstrom und verfünffacht die Ausbeute.", cost: 500, dps: 32, count: 0 },
+  { id: 3, title: "Nils' Automatisierter Server-Anwalt", desc: "Erstreitet Datenvolumen auf rechtlicher Basis.", cost: 3000, dps: 260, count: 0 }
 ];
 
-let lasers = [];
-let particles = [];
-let collectibles = [];
+// Sabotagen (Aktionen gegen die anderen)
+let sabotages = [
+  { id: 0, title: "Giorgio mit Fake-Logs bannen", desc: "Schicke dem Admin gefälschte CoreProtect-Einträge.", cost: 50, actionText: "Du hast Giorgio erfolgreich für 10 Minuten verwirrt! 🚫" },
+  { id: 1, title: "Joschis Base fluten", desc: "Lass unbemerkt Tausende Wassereimer über seiner Bude spawnen.", cost: 250, actionText: "Joschis Haus steht komplett unter Wasser! Das gibt fetten Beef! 🔥" },
+  { id: 2, title: "Mikas Pale-Oak abholzen", desc: "Schicke einen automatischen Bot-Schwarm in seinen Wald.", cost: 1200, actionText: "Mikas feuerfester Wald wurde komplett gerodet! Er flucht im Chat! 🪵" },
+  { id: 3, title: "Nils eine Server-Klage schicken", desc: "Überfluche sein Terminal mit rechtlichen Fehlermeldungen.", cost: 5000, actionText: "Nils' Anwaltskanzlei brennt ab! Er muss den Server neu starten! 🕵️‍♂️" }
+];
 
-// Event Listeners
-window.addEventListener('mousemove', (e) => {
-  mouse.x = e.clientX; mouse.y = e.clientY;
-});
-window.addEventListener('touchmove', (e) => {
-  if(e.touches.length > 0) {
-    mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY;
-  }
-});
+function clickData() {
+  totalData += 1;
+  updateUI();
+}
 
-window.addEventListener('mousedown', () => { if(!isPanic) fireLaser(player.x, player.y, player.angle, true, "Du"); });
-window.addEventListener('touchstart', () => { if(!isPanic) fireLaser(player.x, player.y, player.angle, true, "Du"); });
+function updateUI() {
+  document.getElementById("ui-data").textContent = Math.floor(totalData);
+  document.getElementById("ui-dps").textContent = dataPerSecond.toFixed(1);
+  
+  // Buttons updaten (Upgrades)
+  upgrades.forEach(u => {
+    const btn = document.getElementById(`up-btn-${u.id}`);
+    if(btn) btn.disabled = totalData < u.cost;
+  });
 
-function fireLaser(x, y, angle, isPlayer, shooterName) {
-  lasers.push({
-    x: x + Math.cos(angle) * 15,
-    y: y + Math.sin(angle) * 15,
-    vx: Math.cos(angle) * 12,
-    vy: Math.sin(angle) * 12,
-    isPlayer: isPlayer,
-    shooter: shooterName,
-    life: 60
+  // Buttons updaten (Sabotagen)
+  sabotages.forEach(s => {
+    const btn = document.getElementById(`sab-btn-${s.id}`);
+    if(btn) btn.disabled = totalData < s.cost;
   });
 }
 
-function spawnCollectible() {
-  if (collectibles.length < 15) {
-    collectibles.push({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      type: Math.random() > 0.3 ? 'data' : 'diamond',
-      pulse: Math.random() * 10
-    });
+function buyUpgrade(id) {
+  let u = upgrades[id];
+  if (totalData >= u.cost) {
+    totalData -= u.cost;
+    u.count++;
+    u.cost = Math.floor(u.cost * 1.15); // Kosten steigen
+    dataPerSecond += u.dps;
+    
+    // UI neu bauen und updaten
+    renderUpgrades();
+    addLog(`[UPGRADE]: '${u.title}' erworben. (+${u.dps} Dat/s)`);
+    updateUI();
   }
 }
 
-function createExplosion(x, y, color) {
-  for (let i = 0; i < 15; i++) {
-    particles.push({
-      x: x, y: y,
-      vx: (Math.random() - 0.5) * 6,
-      vy: (Math.random() - 0.5) * 6,
-      radius: Math.random() * 3,
-      color: color,
-      alpha: 1
-    });
+function launchSabotage(id) {
+  let s = sabotages[id];
+  if (totalData >= s.cost) {
+    totalData -= s.cost;
+    addLog(`[SABOTAGE]: ${s.actionText}`);
+    updateUI();
   }
 }
 
-function updateLeaderboard() {
-  const content = document.getElementById("lb-content");
-  let sorted = [...bots, { name: "Du (Louis) 🛠", alive: true, kills: player.kills }].sort((a,b) => b.kills - a.kills);
+function addLog(text) {
+  const container = document.getElementById("log-container");
+  container.innerHTML += `<br>${text}`;
+  container.scrollTop = container.scrollHeight;
+}
+
+function switchTab(tabName) {
+  document.getElementById("tab-farm").style.display = tabName === 'farm' ? 'block' : 'none';
+  document.getElementById("tab-upgrades").style.display = tabName === 'upgrades' ? 'block' : 'none';
+  document.getElementById("tab-sabotage").style.display = tabName === 'sabotage' ? 'block' : 'none';
   
-  content.innerHTML = sorted.map(b => `
-    <div class="lb-row ${!b.alive ? 'dead' : ''}">
-      <span>${b.name}</span>
-      <span>${b.kills} K</span>
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove('active'));
+  document.getElementById(`btn-${tabName}`).classList.add('active');
+}
+
+function renderUpgrades() {
+  const grid = document.getElementById("upgrades-grid");
+  grid.innerHTML = upgrades.map(u => `
+    <div class="card">
+      <div class="card-info">
+        <div class="card-title">${u.title} (${u.count})</div>
+        <div class="card-desc">${u.desc}</div>
+        <div style="font-size: 11px; color: var(--green); font-weight: bold; margin-top: 5px;">+${u.dps} Fragmente/s</div>
+      </div>
+      <button class="buy-btn" id="up-btn-${u.id}" onclick="buyUpgrade(${u.id})">Kaufen (${u.cost})</button>
     </div>
   `).join('');
 }
 
-// SIMULATION & ENGINE
-function loop() {
-  if (isPanic) return;
-
-  ctx.fillStyle = "rgba(10, 11, 16, 0.2)"; // Motion Blur-Effekt
-  ctx.fillRect(0, 0, width, height);
-
-  // Spawner
-  if(Math.random() < 0.05) spawnCollectible();
-
-  // 1. PLAYER LOGIC (SMOOTH FOLLOW)
-  let dx = mouse.x - player.x;
-  let dy = mouse.y - player.y;
-  player.angle = Math.atan2(dy, dx);
-  
-  player.x += dx * player.speed;
-  player.y += dy * player.speed;
-
-  // Render Spieler (Modern Vector Tri-Ship)
-  ctx.save();
-  ctx.translate(player.x, player.y);
-  ctx.rotate(player.angle);
-  ctx.strokeStyle = varColor("--accent-blue");
-  ctx.lineWidth = 3;
-  ctx.shadowBlur = 15; ctx.shadowColor = varColor("--accent-blue");
-  ctx.beginPath();
-  ctx.moveTo(15, 0); ctx.lineTo(-10, -10); ctx.lineTo(-4, 0); ctx.lineTo(-10, 10);
-  ctx.closePath();
-  ctx.stroke();
-  ctx.restore();
-
-  // 2. COLLECTIBLES RENDER
-  collectibles.forEach((c, index) => {
-    c.pulse += 0.1;
-    let size = 5 + Math.sin(c.pulse) * 2;
-    
-    ctx.save();
-    ctx.shadowBlur = 10;
-    if (c.type === 'data') {
-      ctx.fillStyle = varColor("--accent-green");
-      ctx.shadowColor = varColor("--accent-green");
-      ctx.fillRect(c.x - size/2, c.y - size/2, size, size);
-    } else {
-      ctx.fillStyle = "#fff";
-      ctx.shadowColor = "#fff";
-      ctx.beginPath();
-      ctx.arc(c.x, c.y, size/2, 0, Math.PI*2);
-      ctx.fill();
-    }
-    ctx.restore();
-
-    // Kollision mit Spieler
-    let pDist = Math.hypot(player.x - c.x, player.y - c.y);
-    if (pDist < player.radius + size) {
-      collectibles.splice(index, 1);
-      player.score += c.type === 'data' ? 10 : 25;
-      document.getElementById("ui-score").textContent = player.score;
-    }
-  });
-
-  // 3. BOTS LOGIC (INTELLIGENT MOVEMENT & AUTO-FIRE)
-  bots.forEach(b => {
-    if (!b.alive) return;
-
-    b.x += b.vx; b.y += b.vy;
-    if (b.x < 20 || b.x > width - 20) b.vx *= -1;
-    if (b.y < 20 || b.y > height - 20) b.vy *= -1;
-
-    // Render Bot Orb
-    ctx.save();
-    ctx.shadowBlur = 12; ctx.shadowColor = b.color;
-    ctx.fillStyle = b.color;
-    ctx.beginPath(); ctx.arc(b.x, b.y, 10, 0, Math.PI * 2); ctx.fill();
-    
-    // Clean Vector Name-Tag
-    ctx.fillStyle = "rgba(255,255,255,0.7)";
-    ctx.font = "10px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(b.name, b.x, b.y - 18);
-    ctx.restore();
-
-    // Bot schießt zufällig auf den Spieler
-    if (Math.random() < 0.015) {
-      let bAngle = Math.atan2(player.y - b.y, player.x - b.x) + (Math.random() - 0.5) * 0.2;
-      fireLaser(b.x, b.y, bAngle, false, b.name);
-    }
-  });
-
-  // 4. LASER ENGINE
-  lasers.forEach((l, lIdx) => {
-    l.x += l.vx; l.y += l.vy;
-    l.life--;
-
-    ctx.save();
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = l.isPlayer ? varColor("--accent-blue") : varColor("--accent-red");
-    ctx.shadowBlur = 8; ctx.shadowColor = ctx.strokeStyle;
-    ctx.beginPath(); ctx.moveTo(l.x, l.y); ctx.lineTo(l.x - l.vx*1.5, l.y - l.vy*1.5); ctx.stroke();
-    ctx.restore();
-
-    if (l.life <= 0) { lasers.splice(lIdx, 1); return; }
-
-    // Kollision prüfen
-    if (l.isPlayer) {
-      bots.forEach(b => {
-        if (b.alive && Math.hypot(b.x - l.x, b.y - l.y) < 14) {
-          b.alive = false;
-          createExplosion(b.x, b.y, b.color);
-          lasers.splice(lIdx, 1);
-          player.kills++;
-          document.getElementById("ui-kills").textContent = player.kills;
-          updateLeaderboard();
-          
-          // Respawn Bot nach 3 Sekunden
-          setTimeout(() => { b.alive = true; b.x = Math.random()*width; b.y = Math.random()*height; updateLeaderboard(); }, 3000);
-        }
-      });
-    } else {
-      // Trifft den Spieler
-      if (Math.hypot(player.x - l.x, player.y - l.y) < player.radius) {
-        createExplosion(player.x, player.y, varColor("--accent-red"));
-        lasers.splice(lIdx, 1);
-        player.score = Math.max(0, player.score - 50);
-        document.getElementById("ui-score").textContent = player.score;
-      }
-    }
-  });
-
-  // 5. PARTIKEL EFFEKTE
-  particles.forEach((p, pIdx) => {
-    p.x += p.vx; p.y += p.vy;
-    p.alpha -= 0.02;
-    if(p.alpha <= 0) { particles.splice(pIdx, 1); return; }
-
-    ctx.save();
-    ctx.globalAlpha = p.alpha;
-    ctx.fillStyle = p.color;
-    ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fill();
-    ctx.restore();
-  });
-
-  requestAnimationFrame(loop);
+function renderSabotages() {
+  const grid = document.getElementById("sabotage-grid");
+  grid.innerHTML = sabotages.map(s => `
+    <div class="card">
+      <div class="card-info">
+        <div class="card-title">${s.title}</div>
+        <div class="card-desc">${s.desc}</div>
+      </div>
+      <button class="buy-btn sabotage" id="sab-btn-${s.id}" onclick="launchSabotage(${s.id})">Aktivieren (${s.cost})</button>
+    </div>
+  `).join('');
 }
 
-function varColor(name) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
+// GAME TICKER (Jede Sekunde)
+setInterval(() => {
+  if (!isPanic) {
+    totalData += dataPerSecond / 10;
+    updateUI();
+  }
+}, 100);
 
-// PANIC-FALLBACK MECHANISMUS
+// PANIC MECHANISMUS
 function togglePanic() {
   if (isPanic) {
     isPanic = false;
     document.getElementById('main-body').className = "game-mode";
+    document.getElementById('app-sidebar').style.display = "flex";
+    document.getElementById('app-content').style.display = "flex";
     document.getElementById('tarn-view').style.display = "none";
-    document.getElementById('game-hud').style.display = "flex";
-    document.getElementById('game-lb').style.display = "block";
-    document.getElementById('game-tip').style.display = "block";
-    canvas.style.display = "block";
-    loop();
   } else {
     if (window.electronAPI && typeof window.electronAPI.minimizeApp === 'function') {
       window.electronAPI.minimizeApp();
@@ -361,11 +271,9 @@ function togglePanic() {
     }
     isPanic = true;
     document.getElementById('main-body').className = "tarn-mode";
+    document.getElementById('app-sidebar').style.display = "none";
+    document.getElementById('app-content').style.display = "none";
     document.getElementById('tarn-view').style.display = "block";
-    document.getElementById('game-hud').style.display = "none";
-    document.getElementById('game-lb').style.display = "none";
-    document.getElementById('game-tip').style.display = "none";
-    canvas.style.display = "none";
   }
 }
 
@@ -376,9 +284,10 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// Init
-updateLeaderboard();
-loop();
+// Start
+renderUpgrades();
+renderSabotages();
+updateUI();
 </script>
 
 </body>
