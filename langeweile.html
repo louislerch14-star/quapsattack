@@ -3,58 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quaps 3D: Hardcore Hunter</title>
+  <title>Quaps 3D: Minecraft Edition</title>
   <style>
     :root {
-      --panel: rgba(6, 8, 16, 0.9);
-      --accent: #5865F2;
+      --panel: rgba(16, 20, 12, 0.95);
+      --accent: #4a7227; /* Minecraft Green */
       --gold: #ffaa00;
-      --red: #ff3366;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body, html {
-      width: 100%; height: 100%; background: #020205;
-      color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      width: 100%; height: 100%; background: #141419;
+      color: #fff; font-family: "Courier New", Courier, monospace; /* Retro Font */
       overflow: hidden; user-select: none;
     }
 
-    /* SCREEN MANAGEMENT */
-    .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; background: #06070d; }
+    /* CHAR-SELECTION DISPLAY */
+    .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; background: #111215; }
+    h1 { font-size: 24px; font-weight: bold; margin-bottom: 25px; text-transform: uppercase; color: #fff; text-shadow: 2px 2px #000; letter-spacing: 1px; }
+    .char-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; max-width: 650px; width: 100%; padding: 20px; }
     
-    /* CHAR-SELECTION */
-    h1 { font-size: 28px; font-weight: 900; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase; background: linear-gradient(45deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .char-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; max-width: 800px; width: 100%; padding: 20px; }
-    .char-card { background: var(--panel); border: 2px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: transform 0.2s, border-color 0.2s; }
-    .char-card:hover { transform: translateY(-4px); border-color: var(--accent); }
-    .char-avatar { font-size: 24px; margin-bottom: 10px; }
+    .char-card { 
+      background: #2e2e3a; border: 3px solid #1c1c24; border-radius: 4px; padding: 15px; text-align: center; cursor: pointer;
+      box-shadow: inset -3px -3px #111, inset 3px 3px #fff;
+    }
+    .char-card:hover { background: #3c3c4a; border-color: #4a7227; }
+    .char-avatar { font-size: 28px; margin-bottom: 8px; }
 
     /* HUD OVERLAY */
-    .hud { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; z-index: 50; pointer-events: none; }
-    .hud-card { background: var(--panel); border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; }
+    .hud { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; z-index: 50; pointer-events: none; }
+    .hud-card { background: var(--panel); border: 2px solid #000; padding: 10px 15px; font-size: 13px; font-weight: bold; text-shadow: 1px 1px #000; }
     
-    /* CROSSHAIR IN DER MITTE WIE BEI MC */
-    .crosshair { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; transform: translate(-50%, -50%); z-index: 40; pointer-events: none; display: none; }
-    .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(255,255,255,0.7); }
-    .crosshair::before { top: 4px; left: 0; width: 10px; height: 2px; }
-    .crosshair::after { top: 0; left: 4px; width: 2px; height: 10px; }
+    /* MINECRAFT CROSSHAIR */
+    .crosshair { position: absolute; top: 50%; left: 50%; width: 16px; height: 16px; transform: translate(-50%, -50%); z-index: 40; pointer-events: none; display: none; }
+    .crosshair::before, .crosshair::after { content: ''; position: absolute; background: #fff; mix-blend-mode: difference; }
+    .crosshair::before { top: 7px; left: 0; width: 16px; height: 2px; }
+    .crosshair::after { top: 0; left: 7px; width: 2px; height: 16px; }
 
-    /* DIALOGE */
-    .dialog-box { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: calc(100% - 40px); max-width: 600px; background: var(--panel); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; z-index: 60; display: none; }
-    .dialog-name { font-weight: 900; color: var(--gold); margin-bottom: 5px; font-size: 13px; text-transform: uppercase; }
-    .dialog-text { font-size: 14px; color: #e2e8f0; line-height: 1.5; }
+    /* DIALOG BOX (MINECRAFT STYLE) */
+    .dialog-box { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: calc(100% - 30px); max-width: 600px; background: rgba(0, 0, 0, 0.85); border: 3px solid #555; padding: 15px; z-index: 60; display: none; }
+    .dialog-name { color: var(--gold); margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+    .dialog-text { font-size: 13px; color: #fff; line-height: 1.4; }
     
-    /* KLICK-HINWEIS */
-    #instructions { font-size: 16px; color: var(--gold); text-align: center; margin-top: 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 8px; pointer-events: auto; }
+    #instructions { font-size: 14px; color: var(--gold); text-align: center; margin-top: 15px; background: rgba(0,0,0,0.8); padding: 8px 16px; border: 2px solid #000; display: none; pointer-events: auto; cursor: pointer; }
 
     canvas { display: block; width: 100%; height: 100%; }
 
-    /* WIKIPEDIA TARNUNG */
+    /* WIKIPEDIA PANIC MODE */
     body.tarn-mode { background: #ffffff !important; color: #202122 !important; padding: 40px !important; display: block !important; overflow: auto !important; }
-    .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; color: #000; }
+    .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; color: #000; font-family: sans-serif; }
     .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; margin-bottom: 20px; font-family: 'Georgia', serif; }
   </style>
-  <!-- SCRIPT-QUELLEN FÜR 3D & STEUERUNG -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
 </head>
@@ -62,27 +61,27 @@
 
   <!-- AVATAR AUSWAHL -->
   <div class="screen" id="select-screen">
-    <h1>Wähle dein Profil</h1>
+    <h1>MINECRAFT: PALE OAK QUEST</h1>
     <div class="char-grid" id="char-list"></div>
   </div>
 
-  <!-- HUD IM SPIEL -->
+  <!-- HUD -->
   <div class="hud" id="game-hud" style="display: none;">
-    <div class="hud-card">Spieler: <span id="hud-name" style="color: var(--gold);">Louis</span></div>
-    <div id="instructions">KLICKEN ZUM STEUERN (WASD)</div>
-    <div class="hud-card">Quest: <span id="hud-quest" style="color: #fff;">Finde Mika</span></div>
+    <div class="hud-card">SP]: <span id="hud-name" style="color: var(--gold);">Louis</span></div>
+    <div id="instructions">KLICKEN ZUM WEITERSPIELEN</div>
+    <div class="hud-card">ZIEL: <span id="hud-quest" style="color: #fff;">Finde Mika</span></div>
   </div>
 
   <div class="crosshair" id="game-crosshair"></div>
 
-  <!-- DIALOG CORNER -->
+  <!-- DIALOG -->
   <div class="dialog-box" id="dialog-window">
     <div class="dialog-name" id="npc-name">Mika</div>
     <div class="dialog-text" id="npc-text">Mika redet...</div>
-    <div style="font-size:10px; color: #718096; margin-top:10px; text-align:right;">Drücke 'E' zum Schließen</div>
+    <div style="font-size:10px; color: #aaa; margin-top:10px; text-align:right;">Drücke 'E' zum Schließen</div>
   </div>
 
-  <!-- WIKIPEDIA PANIC-SCREEN -->
+  <!-- TARN-SCREEN -->
   <div id="tarn-view" class="tarn-content" style="display: none;">
     <div class="tarn-header">Gemeindeordnung (Niedersachsen) [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]</div>
     <p>Aus Wikipedia, der freien Enzyklamädie</p>
@@ -94,7 +93,7 @@ let scene, camera, renderer, controls;
 let isPanic = false, isGameActive = false;
 let currentQuestStep = 0, activeNpc = null;
 
-// Bewegungsvariablen (Physik & Steuerung)
+// Bewegung & Physik
 let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
 let velocity = new THREE.Vector3();
 let direction = new THREE.Vector3();
@@ -104,6 +103,36 @@ let prevTime = performance.now();
 let npcs = [];
 let paleOakMesh = null;
 
+// Textur-Generator für den echten pixeligen Minecraft-Look
+function createPixelTexture(type) {
+  const size = 16;
+  const canvas = document.createElement('canvas');
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  if (type === 'grass') {
+    ctx.fillStyle = '#5b8731'; ctx.fillRect(0, 0, size, size);
+    for(let i=0; i<30; i++) {
+      ctx.fillStyle = Math.random() > 0.5 ? '#4d7229' : '#699c38';
+      ctx.fillRect(Math.floor(Math.random()*size), Math.floor(Math.random()*size), 1, 1);
+    }
+  } else if (type === 'dirt') {
+    ctx.fillStyle = '#866043'; ctx.fillRect(0, 0, size, size);
+    for(let i=0; i<30; i++) {
+      ctx.fillStyle = Math.random() > 0.5 ? '#573d26' : '#9c7353';
+      ctx.fillRect(Math.floor(Math.random()*size), Math.floor(Math.random()*size), 1, 1);
+    }
+  } else if (type === 'wood') {
+    ctx.fillStyle = '#e5d3b3'; ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = '#bc9d70'; ctx.fillRect(0, 4, size, 2); ctx.fillRect(0, 10, size, 2);
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.magFilter = THREE.NearestFilter; // WICHTIG: Verhindert Unschärfe, macht es pixelig!
+  texture.minFilter = THREE.NearestFilter;
+  return texture;
+}
+
 const heros = [
   { id: "louis", name: "Louis 🛠", icon: "⚙️", color: 0x00f0ff },
   { id: "mika", name: "Mika 🪵", icon: "🪓", color: 0x00ff66 },
@@ -112,44 +141,47 @@ const heros = [
 ];
 
 const stageConfig = [
-  { name: "Mika 🪵", pos: {x: 0, y: 1, z: -5}, color: 0x00ff66, msg: "HARDCORE-MODUS! Jemand hat mein Pale Oak Holz gestohlen! Spring über die Plattformen im Süden zu Giorgio, aber fall nicht in die Server-Leere!" },
-  { name: "Giorgio 🚫", pos: {x: 15, y: 3, z: -20}, color: 0xff3366, msg: "Nicht schlecht, du kannst springen! Das Holz? Such nach Jonas auf der riskanten Hänge-Plattform im tiefen Norden!" },
-  { name: "Jonas 🕊", pos: {x: -15, y: 5, z: -40}, color: 0xffaa00, msg: "Du hast es überlebt? Wahnsinn. Das Pale Oak Holz schwebt ganz im Osten auf der rotierenden Todes-Plattform!" },
-  { name: "Pale Oak 🪵", pos: {x: 30, y: 8, z: -55}, color: 0xf5f5dc, isItem: true, msg: "Du hast das legendäre Pale Oak Holz ergattert! Jetzt bring es im fehlerfreien Rückweg zu Mika!" }
+  { name: "Mika 🪵", pos: {x: 0, y: 1, z: -5}, color: 0x00ff66, msg: "HARDCORE! Jemand hat mein Pale Oak Holz geklaut! Spring über die eckigen Schluchten im Süden zu Giorgio. Fall nicht runter!" },
+  { name: "Giorgio 🚫", pos: {x: 14, y: 3, z: -20}, color: 0xff3366, msg: "Du hast die ersten Jumps geschafft? Respekt. Such nach Jonas im tiefen, dunklen Nordwald auf der schwebenden Plattform!" },
+  { name: "Jonas 🕊", pos: {x: -14, y: 5, z: -38}, color: 0xffaa00, msg: "Ich verhalte mich neutral! Das Pale Oak Holz wurde von Joschi ganz im Osten auf der rotierenden Voxel-Plattform versteckt!" },
+  { name: "Pale Oak 🪵", pos: {x: 28, y: 8, z: -52}, color: 0xf5f5dc, isItem: true, msg: "Du hast den Pale Oak Block gefunden! Jetzt bring ihn unbeschadet zurück zu Mikas Base!" }
 ];
 
-// GENERIERE AUSWAHL-KARTEN
-const charList = document.getElementById("char-list");
+// LISTE BAUEN
+const charGrid = document.getElementById("char-list");
 heros.forEach(h => {
   const card = document.createElement("div");
   card.className = "char-card";
+  card.innerHTML = `<div class="char-avatar">${h.icon}</div><div style="font-weight:bold;">${h.name}</div>`;
   card.onclick = () => start3DEngine(h);
-  card.innerHTML = `<div class="char-avatar">${h.icon}</div><div><b>${h.name}</b></div>`;
-  charList.appendChild(card);
+  charGrid.appendChild(card);
 });
 
 function start3DEngine(hero) {
   document.getElementById("select-screen").style.display = "none";
   document.getElementById("game-hud").style.display = "flex";
   document.getElementById("game-crosshair").style.display = "block";
-  document.getElementById("instructions").style.display = "block";
   document.getElementById("hud-name").textContent = hero.name;
 
   // 1. SCENE SETUP
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x020308);
-  scene.fog = new THREE.FogExp2(0x020308, 0.015);
+  scene.background = new THREE.Color(0x1a233a); // Minecraft Sky Color
+  scene.fog = new THREE.FogExp2(0x1a233a, 0.015);
 
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 2, 5); // Startposition Augenhöhe
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 2, 4);
 
-  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new THREE.WebGLRenderer({ antialias: false }); // Antialiasing AUS für harte Kanten
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // 2. STEUERUNG (POINTER LOCK WIE IN MINECRAFT)
+  // CONTROLS INITIALISIEREN & DIREKT SPERREN (FIX FÜR BROWSER-BLOCK)
   controls = new THREE.PointerLockControls(camera, document.body);
   
+  setTimeout(() => {
+    controls.lock();
+  }, 100);
+
   document.getElementById("instructions").addEventListener('click', () => {
     if(!isPanic) controls.lock();
   });
@@ -165,30 +197,34 @@ function start3DEngine(hero) {
     isGameActive = false;
   });
 
-  // LIGHTS
-  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-  let sun = new THREE.DirectionalLight(0xffffff, 0.8);
-  sun.position.set(10, 30, 10);
+  // BELEUCHTUNG
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  let sun = new THREE.DirectionalLight(0xffffff, 0.7);
+  sun.position.set(20, 40, 20);
   scene.add(sun);
 
-  // 3. HARDCORE MAP BAUEN (Schwebende Blöcke)
-  createPlatform(0, 0, 0, 6, 6); // Start-Insel
-  createPlatform(0, 0, -6, 4, 4); // Mika-Plattform
-  createPlatform(8, 1, -12, 3, 3); // Jump 1
-  createPlatform(15, 2, -20, 4, 4); // Giorgio Platform
-  createPlatform(-2, 3, -28, 2, 2); // Riskant Jump
-  createPlatform(-15, 4, -40, 5, 5); // Jonas Platform
-  createPlatform(10, 5, -45, 2, 2); // Präzisions-Jump
-  createPlatform(30, 7, -55, 3, 3); // Pale Oak Finale
+  // 3. MAP AUS MINECRAFT BLÖCKEN BAUEN (Eckige Plattforme)
+  createVoxelPlatform(0, 0, 0, 6, 6);   // Start
+  createVoxelPlatform(0, 0, -5, 4, 4);  // Mika
+  createVoxelPlatform(7, 1, -12, 3, 3); // Jump 1
+  createVoxelPlatform(14, 2, -20, 4, 4); // Giorgio
+  createVoxelPlatform(-1, 3, -28, 2, 2); // Jump 2
+  createVoxelPlatform(-14, 4, -38, 5, 5); // Jonas
+  createVoxelPlatform(8, 5, -44, 2, 2);  // Jump 3
+  createVoxelPlatform(28, 7, -52, 3, 3); // Pale Oak Ziel
 
-  // 4. SPAWNE NPCs
+  // 4. NPCs ALS RECHTECKIGE STEVE-FIGUREN SPAWNEN
   stageConfig.forEach(s => {
     let m;
     if (s.isItem) {
-      m = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1, 0.6), new THREE.MeshStandardMaterial({ color: s.color, metalness: 0.5 }));
+      // Echtes Pale Oak als rotierender Minecraft-Holzblock
+      const mat = new THREE.MeshStandardMaterial({ map: createPixelTexture('wood') });
+      m = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), mat);
       paleOakMesh = m;
     } else {
-      m = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1.6, 16), new THREE.MeshStandardMaterial({ color: s.color }));
+      // Rechteckige NPC-Körper (Eckig wie Steve!)
+      const blockMat = new THREE.MeshStandardMaterial({ color: s.color, roughness: 0.9 });
+      m = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.6, 0.7), blockMat);
     }
     m.position.set(s.pos.x, s.pos.y, s.pos.z);
     scene.add(m);
@@ -196,7 +232,6 @@ function start3DEngine(hero) {
     npcs.push(s);
   });
 
-  // LISTENERS
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
   window.addEventListener('resize', onWindowResize);
@@ -204,20 +239,30 @@ function start3DEngine(hero) {
   animate();
 }
 
-function createPlatform(x, y, z, w, d) {
-  let geo = new THREE.BoxGeometry(w, 1, d);
-  let mat = new THREE.MeshStandardMaterial({ color: 0x222533, roughness: 0.8 });
-  let mesh = new THREE.Mesh(geo, mat);
-  mesh.position.set(x, y - 0.5, z);
-  scene.add(mesh);
+function createVoxelPlatform(x, y, z, w, d) {
+  const grassMat = new THREE.MeshStandardMaterial({ map: createPixelTexture('grass') });
+  const dirtMat = new THREE.MeshStandardMaterial({ map: createPixelTexture('dirt') });
+
+  for(let i = -Math.floor(w/2); i <= Math.floor(w/2); i++) {
+    for(let j = -Math.floor(d/2); j <= Math.floor(d/2); j++) {
+      // Oberer Gras-Block
+      let boxG = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), grassMat);
+      boxG.position.set(x + i, y - 0.5, z + j);
+      scene.add(boxG);
+
+      // Unterer Dreck-Block (für mehr Tiefe)
+      let boxD = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), dirtMat);
+      boxD.position.set(x + i, y - 1.5, z + j);
+      scene.add(boxD);
+    }
+  }
 }
 
-// KEYBOARD ENGINE
+// STEUERUNGS ENGINE (WASD + SPACE + E)
 function onKeyDown(e) {
   if (e.code === 'Space') {
-    // Wenn Controls gelockt sind -> Springen. Wenn nicht gelockt -> Panik-Taste!
     if (controls && controls.isLocked) {
-      if (canJump === true) velocity.y += 7.5; // Echte Sprungkraft
+      if (canJump === true) velocity.y += 7.0; // Sprung-Physik
       canJump = false;
     } else {
       e.preventDefault();
@@ -233,7 +278,7 @@ function onKeyDown(e) {
     case 'KeyA': moveLeft = true; break;
     case 'KeyS': moveBackward = true; break;
     case 'KeyD': moveRight = true; break;
-    case 'KeyE': checkNpcInteraction(); break;
+    case 'KeyE': checkInteraction(); break;
   }
 }
 
@@ -246,7 +291,7 @@ function onKeyUp(e) {
   }
 }
 
-// RENDER & PHYSIK-TICK (60 FPS)
+// ANIMATION TICKER
 function animate() {
   if (isPanic) return;
   requestAnimationFrame(animate);
@@ -256,47 +301,48 @@ function animate() {
   if (controls && controls.isLocked) {
     const delta = (time - prevTime) / 1000;
 
-    // Dämpfung / Reibung
-    velocity.x -= velocity.x * 10.0 * delta;
-    velocity.z -= velocity.z * 10.0 * delta;
-    velocity.y -= 9.8 * 2.5 * delta; // Gravitation
+    velocity.x -= velocity.x * 9.0 * delta;
+    velocity.z -= velocity.z * 9.0 * delta;
+    velocity.y -= 9.8 * 2.2 * delta; // Gravitation
 
     direction.z = Number(moveForward) - Number(moveBackward);
     direction.x = Number(moveRight) - Number(moveLeft);
     direction.normalize();
 
-    if (moveForward || moveBackward) velocity.z -= direction.z * 45.0 * delta;
-    if (moveLeft || moveRight) velocity.x -= direction.x * 45.0 * delta;
+    if (moveForward || moveBackward) velocity.z -= direction.z * 40.0 * delta;
+    if (moveLeft || moveRight) velocity.x -= direction.x * 40.0 * delta;
 
     controls.moveRight(-velocity.x * delta);
     controls.moveForward(-velocity.z * delta);
 
     camera.position.y += (velocity.y * delta);
 
-    // Hardcore-Kollision (Einfache Höhenprüfung der Plattformen)
-    if (camera.position.y < -15) {
-      // ABSTURZ! Zurück zum Start!
-      camera.position.set(0, 2, 5);
+    // Sturzprüfung & Landungsmechanik
+    if (camera.position.y < -12) {
+      // ABSTURZ IN DIE LEERE -> RESET!
+      camera.position.set(0, 2, 4);
       velocity.set(0, 0, 0);
-    } else if (camera.position.y < 2) {
-      // Auf Plattformen landen
+    } else if (camera.position.y < 1.8) {
       velocity.y = 0;
-      camera.position.y = 2;
+      camera.position.y = 1.8;
       canJump = true;
     }
   }
 
-  if (paleOakMesh) paleOakMesh.rotation.y += 0.04;
+  if (paleOakMesh) {
+    paleOakMesh.rotation.y += 0.02;
+    paleOakMesh.rotation.x += 0.01;
+  }
 
   prevTime = time;
   if(renderer && scene && camera) renderer.render(scene, camera);
 }
 
-// QUESTS & DIALOGE
-function checkNpcInteraction() {
+// QUEST SYSTEM
+function checkInteraction() {
   npcs.forEach(npc => {
     let dist = camera.position.distanceTo(npc.mesh.position);
-    if (dist < 3) {
+    if (dist < 2.5) {
       controls.unlock();
       activeNpc = npc;
       const win = document.getElementById("dialog-window");
@@ -304,8 +350,8 @@ function checkNpcInteraction() {
       
       let text = npc.msg;
       if(npc.name.includes("Mika") && currentQuestStep === 4) {
-        text = "MEGA GEIL! Du hast das Pale Oak durch den Parkour gerettet! Server-Champion! 🏆";
-        document.getElementById("hud-quest").textContent = "Gewonnen!";
+        text = "UNFASSBAR GEIL! Du hast den Pale Oak Block gerettet und den Parkour besiegt! Du hast das Spiel gewonnen! 👑";
+        document.getElementById("hud-quest").textContent = "GEWONNEN!";
       }
       
       document.getElementById("npc-text").textContent = text;
@@ -319,13 +365,13 @@ function closeDialog() {
   if(!activeNpc) return;
 
   if (activeNpc.name.includes("Mika") && currentQuestStep === 0) {
-    currentQuestStep = 1; document.getElementById("hud-quest").textContent = "Erreiche Giorgio (Süden)";
+    currentQuestStep = 1; document.getElementById("hud-quest").textContent = "Gehe zu Giorgio (Süden)";
   } else if (activeNpc.name.includes("Giorgio") && currentQuestStep === 1) {
-    currentQuestStep = 2; document.getElementById("hud-quest").textContent = "Erreiche Jonas (Norden)";
+    currentQuestStep = 2; document.getElementById("hud-quest").textContent = "Finde Jonas (Norden)";
   } else if (activeNpc.name.includes("Jonas") && currentQuestStep === 2) {
     currentQuestStep = 3; document.getElementById("hud-quest").textContent = "Hol das Holz (Osten)";
   } else if (activeNpc.name.includes("Pale Oak") && currentQuestStep === 3) {
-    currentQuestStep = 4; document.getElementById("hud-quest").textContent = "Bring es zurück zu Mika!";
+    currentQuestStep = 4; document.getElementById("hud-quest").textContent = "Bring es zu Mika!";
     scene.remove(paleOakMesh);
   }
   
@@ -339,7 +385,7 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// TARN-BLITZ-MODUS
+// BLITZSCHNELLE LEHRER-TARNUNG
 function togglePanic() {
   if (isPanic) {
     isPanic = false;
