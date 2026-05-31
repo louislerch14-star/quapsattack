@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA11 - Anti-Langeweile-Zentrale</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #121212;
+      --panel: #1a1a1a;
+      --border: #333333;
+      --primary: #55ff55;
+      --gold: #ffaa00;
+      --diamond: #55ffff;
+      --muted: #aaaaaa;
+    }
+
+    body {
+      background-color: var(--background);
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container {
+      background: var(--panel);
+      border: 3px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    h1 {
+      font-family: 'Press Start 2P', monospace;
+      color: var(--gold);
+      font-size: 1.3rem;
+      margin-bottom: 25px;
+      text-shadow: 2px 2px #000;
+    }
+
+    .meme-box {
+      background: rgba(0,0,0,0.6);
+      border: 2px dashed var(--border);
+      padding: 20px;
+      border-radius: 8px;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    #meme-text {
+      color: var(--primary);
+      font-size: 1.1rem;
+      font-family: monospace;
+      margin: 0;
+      font-weight: bold;
+      line-height: 1.4;
+    }
+
+    .score-display {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    /* Minecraft Button Style */
+    .mc-btn {
+      background: #5c5c5c;
+      border: 2px solid #000;
+      border-top-color: #8b8b8b;
+      border-left-color: #8b8b8b;
+      color: #e0e0e0;
+      padding: 15px;
+      font-size: 3.5rem;
+      cursor: pointer;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      outline: none;
+      transition: transform 0.05s, background 0.2s;
+      box-shadow: 0 5px 0 #2e2e2e;
+    }
+
+    .mc-btn:hover {
+      background: #6c6c6c;
+      color: #fff;
+    }
+
+    .mc-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #2e2e2e;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.65rem;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--diamond);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>⛏ QA11 CLICKER & MEME-BOX</h1>
+
+  <!-- MEME / SPRÜCHE DISPLAY -->
+  <div class="meme-box">
+    <p id="meme-text">
+      "Klicke auf die Spitzhacke, um den Server-Beef zu starten..."
+    </p>
+  </div>
+
+  <!-- CLICKER BEREICH -->
+  <div>
+    <div class="score-display">
+      DIAMANTEN: <span id="click-score" style="color: var(--diamond);">0</span>
+    </div>
+    
+    <button onclick="triggerClicker()" class="mc-btn">
+      ⛏
+    </button>
+  </div>
+
+  <div style="color: var(--muted); font-size: 0.85rem; margin-top: 20px; font-style: italic;">
+    Klicke fleißig, um neue Insider-Sprüche freizuschalten!
+  </div>
+
+  <!-- ZURÜCK ZUM HUB -->
+  <a href="index.html" class="back-link">◀ ZURÜCK ZUM HUB</a>
+</div>
+
+<script>
+let diamondCount = 0;
+
+// Die Insider-Sprüche eures aktuellen Server-Krimis
+const QA_MEMES = [
+  "Mika: 'WO SIND MEINE PALE OAK LOGS?!'",
+  "Joschi steht schon mit dem Feuerzeug vor Giorgios Haus... 🔥",
+  "Giorgio: 'Ich war das safe nicht, Jungs!'",
+  "Nils wird mal wieder grundlos als Hauptverdächtiger hingestellt. 🕵️‍♂️",
+  "Louis: 'Ich hab die Schilder von Joschi genau gesehen!' (Oder auch nicht... 🤫)",
+  "Wer braucht schon CoreProtect, wenn man wild beschuldigen kann?",
+  "Season 11 läuft seit 2 Tagen und die erste Base brennt fast.",
+  "Ein normales Gespräch auf Quaps Attack existiert nicht.",
+  "Joschi: 'Ich platziere Schilder, wo ich will!'"
+];
+
+function triggerClicker() {
+  diamondCount++;
+  
+  // Score updaten
+  const scoreEl = document.getElementById('click-score');
+  if (scoreEl) scoreEl.textContent = diamondCount;
+  
+  // XP-Sound abspielen
+  playSound("xp.mp3");
+
+  // Alle 5 Klicks ein neues Meme laden
+  if (diamondCount % 5 === 0) {
+    showNewMeme();
+  }
+}
+
+function showNewMeme() {
+  const memeTextEl = document.getElementById('meme-text');
+  if (memeTextEl) {
+    const randomIndex = Math.floor(Math.random() * QA_MEMES.length);
+    memeTextEl.textContent = `"${QA_MEMES[randomIndex]}"`;
+    
+    // Achievement-Sound bei neuem Spruch
+    playSound("achievement.mp3");
+  }
+}
+
+function playSound(file) {
+  try {
+    const audio = new Audio(file);
+    audio.volume = 0.4;
+    audio.play();
+  } catch (e) {}
+}
+
+/* ⌨ ELECTRON RICH PRESENCE UPDATE (Falls als App gestartet) */
+if (window.electronAPI) {
+  window.electronAPI.updateStatus("Vertreibt sich die Langeweile im Clicker-Game 🕹");
+}
+</script>
+
+</body>
+</html>
