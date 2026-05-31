@@ -2,341 +2,335 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Quaps 3D: The Lost Pale Oak</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quaps 3D: Hardcore Hunter</title>
   <style>
     :root {
-      --panel: rgba(10, 12, 22, 0.85);
+      --panel: rgba(6, 8, 16, 0.9);
       --accent: #5865F2;
       --gold: #ffaa00;
+      --red: #ff3366;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body, html {
-      width: 100%; height: 100%; background: #050508;
+      width: 100%; height: 100%; background: #020205;
       color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       overflow: hidden; user-select: none;
     }
 
     /* SCREEN MANAGEMENT */
-    .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; }
-    #select-screen { pointer-events: auto; background: #0b0c10; z-index: 100; }
-
-    /* CHARAKTER AUSWAHL UI */
-    h1 { font-size: 26px; font-weight: 900; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase; background: linear-gradient(45deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .char-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; max-width: 800px; width: 100%; padding: 20px; }
+    .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; background: #06070d; }
     
-    .char-card {
-      background: var(--panel); border: 2px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 25px 20px; text-align: center; cursor: pointer;
-      transition: all 0.2s ease; pointer-events: auto;
-    }
-    .char-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 12px 30px rgba(88, 101, 242, 0.4); }
-    .char-avatar { width: 55px; height: 55px; border-radius: 12px; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; font-size: 26px; background: rgba(255,255,255,0.02); }
+    /* CHAR-SELECTION */
+    h1 { font-size: 28px; font-weight: 900; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase; background: linear-gradient(45deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .char-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; max-width: 800px; width: 100%; padding: 20px; }
+    .char-card { background: var(--panel); border: 2px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: transform 0.2s, border-color 0.2s; }
+    .char-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .char-avatar { font-size: 24px; margin-bottom: 10px; }
 
     /* HUD OVERLAY */
-    .hud { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; z-index: 50; }
-    .hud-card { background: var(--panel); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 14px 22px; border-radius: 14px; pointer-events: auto; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; }
+    .hud { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; z-index: 50; pointer-events: none; }
+    .hud-card { background: var(--panel); border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; }
     
-    /* RPG DIALOG SYSTEM */
-    .dialog-box {
-      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-      width: calc(100% - 40px); max-width: 650px; background: rgba(8, 9, 15, 0.95);
-      border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 22px; z-index: 60;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7); display: none; pointer-events: auto;
-    }
-    .dialog-name { font-weight: 900; color: var(--gold); margin-bottom: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
-    .dialog-text { font-size: 15px; color: #e2e8f0; line-height: 1.6; font-weight: 500; }
-    .dialog-btn { background: var(--accent); border: none; color: #fff; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; float: right; margin-top: 12px; transition: background 0.2s; }
-    .dialog-btn:hover { background: #4752c4; }
+    /* CROSSHAIR IN DER MITTE WIE BEI MC */
+    .crosshair { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; transform: translate(-50%, -50%); z-index: 40; pointer-events: none; display: none; }
+    .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(255,255,255,0.7); }
+    .crosshair::before { top: 4px; left: 0; width: 10px; height: 2px; }
+    .crosshair::after { top: 0; left: 4px; width: 2px; height: 10px; }
 
-    canvas { display: block; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+    /* DIALOGE */
+    .dialog-box { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: calc(100% - 40px); max-width: 600px; background: var(--panel); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; z-index: 60; display: none; }
+    .dialog-name { font-weight: 900; color: var(--gold); margin-bottom: 5px; font-size: 13px; text-transform: uppercase; }
+    .dialog-text { font-size: 14px; color: #e2e8f0; line-height: 1.5; }
+    
+    /* KLICK-HINWEIS */
+    #instructions { font-size: 16px; color: var(--gold); text-align: center; margin-top: 20px; cursor: pointer; display: none; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 8px; pointer-events: auto; }
 
-    /* LEHRER TARNUNG */
+    canvas { display: block; width: 100%; height: 100%; }
+
+    /* WIKIPEDIA TARNUNG */
     body.tarn-mode { background: #ffffff !important; color: #202122 !important; padding: 40px !important; display: block !important; overflow: auto !important; }
-    .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; color: #000; pointer-events: auto; }
+    .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; color: #000; }
     .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; margin-bottom: 20px; font-family: 'Georgia', serif; }
   </style>
-  <!-- THREE.JS ENGINE LADEN -->
+  <!-- SCRIPT-QUELLEN FÜR 3D & STEUERUNG -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
 </head>
 <body class="game-mode" id="main-body">
 
-  <!-- REITER 1: AVATAR-AUSWAHL -->
+  <!-- AVATAR AUSWAHL -->
   <div class="screen" id="select-screen">
     <h1>Wähle dein Profil</h1>
     <div class="char-grid" id="char-list"></div>
   </div>
 
-  <!-- REITER 2: HUD & DIALOGE IM SPIEL -->
+  <!-- HUD IM SPIEL -->
   <div class="hud" id="game-hud" style="display: none;">
-    <div class="hud-card">Hero: <span id="hud-name" style="color: var(--gold);">Louis</span></div>
-    <div class="hud-card" style="border-color: var(--gold);">Ziel: <span id="hud-quest" style="color: #fff;">Finde Mika bei der Base</span></div>
+    <div class="hud-card">Spieler: <span id="hud-name" style="color: var(--gold);">Louis</span></div>
+    <div id="instructions">KLICKEN ZUM STEUERN (WASD)</div>
+    <div class="hud-card">Quest: <span id="hud-quest" style="color: #fff;">Finde Mika</span></div>
   </div>
 
+  <div class="crosshair" id="game-crosshair"></div>
+
+  <!-- DIALOG CORNER -->
   <div class="dialog-box" id="dialog-window">
     <div class="dialog-name" id="npc-name">Mika</div>
-    <div class="dialog-text" id="npc-text">Lade Spieldaten...</div>
-    <button class="dialog-btn" onclick="closeDialog()">Verstanden</button>
+    <div class="dialog-text" id="npc-text">Mika redet...</div>
+    <div style="font-size:10px; color: #718096; margin-top:10px; text-align:right;">Drücke 'E' zum Schließen</div>
   </div>
 
-  <!-- WIKIPEDIA BLITZ-TARNUNG -->
+  <!-- WIKIPEDIA PANIC-SCREEN -->
   <div id="tarn-view" class="tarn-content" style="display: none;">
     <div class="tarn-header">Gemeindeordnung (Niedersachsen) [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]</div>
     <p>Aus Wikipedia, der freien Enzyklamädie</p>
-    <p>Die rechtlichen Grundlagen zur autonomen Verwaltung niedersächsischer Gemeinden im Landkreis Vechta sind in der Kommunalverfassung verankert [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
+    <p>Die rechtlichen Rahmenbedingungen der Haushaltsführung niedersächsischer Gemeinden im Landkreis Vechta sind im Kommunalverfassungsgesetz festgeschrieben [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
   </div>
 
 <script>
-let scene, camera, renderer;
-let isPanic = false;
-let selectedHero = null;
-let currentQuestStep = 0;
-let activeNpc = null;
+let scene, camera, renderer, controls;
+let isPanic = false, isGameActive = false;
+let currentQuestStep = 0, activeNpc = null;
 
-// 3D-Objekte & Physik-Variablen
-let playerMesh;
-let playerTarget = new THREE.Vector3(0, 0.5, 0);
-const playerSpeed = 0.15;
-let npcs3D = [];
-let trees = [];
-let paleOakWoodMesh = null;
+// Bewegungsvariablen (Physik & Steuerung)
+let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+let velocity = new THREE.Vector3();
+let direction = new THREE.Vector3();
+let canJump = false;
+let prevTime = performance.now();
+
+let npcs = [];
+let paleOakMesh = null;
 
 const heros = [
   { id: "louis", name: "Louis 🛠", icon: "⚙️", color: 0x00f0ff },
   { id: "mika", name: "Mika 🪵", icon: "🪓", color: 0x00ff66 },
   { id: "giorgio", name: "Giorgio 🚫", icon: "👑", color: 0xff3366 },
-  { id: "joschi", name: "Joschi 🔥", icon: "🧨", color: 0xffaa00 },
-  { id: "nils", name: "Nils 🕵️‍♂️", icon: "📜", color: 0xa0aec0 }
+  { id: "joschi", name: "Joschi 🔥", icon: "🧨", color: 0xffaa00 }
 ];
 
-const quests = [
-  { name: "Mika 🪵", pos: {x: -5, z: -3}, color: 0x00ff66, size: 0.6, msg: "Hilfe! Jemand hat mein feuerfestes Pale Oak Holz geklaut! Ich wette, Joschi war es. Geh den Server-Weg entlang zu Giorgio!" },
-  { name: "Giorgio 🚫", pos: {x: 3, z: 2}, color: 0xff3366, size: 0.7, msg: "Halt! Ohne Admin-Rechte läuft hier nix. Suchst du Mikas Holz? Ich habe verdächtige Logs bei Jonas im Nordwald gesehen!" },
-  { name: "Jonas 🕊", pos: {x: -2, z: 8}, color: 0xffaa00, size: 0.5, msg: "Hey! Ich bin ganz neutral. Joschi hat das Pale Oak Holz ganz im Osten hinter dem großen Baum vergraben. Schnapp es dir!" },
-  { name: "Pale Oak 🪵", pos: {x: 12, z: -4}, color: 0xf5f5dc, size: 0.4, isItem: true, msg: "Du hast das legendäre Pale Oak Holz aufgespürt! Bring es schnell zurück zu Mika!" }
+const stageConfig = [
+  { name: "Mika 🪵", pos: {x: 0, y: 1, z: -5}, color: 0x00ff66, msg: "HARDCORE-MODUS! Jemand hat mein Pale Oak Holz gestohlen! Spring über die Plattformen im Süden zu Giorgio, aber fall nicht in die Server-Leere!" },
+  { name: "Giorgio 🚫", pos: {x: 15, y: 3, z: -20}, color: 0xff3366, msg: "Nicht schlecht, du kannst springen! Das Holz? Such nach Jonas auf der riskanten Hänge-Plattform im tiefen Norden!" },
+  { name: "Jonas 🕊", pos: {x: -15, y: 5, z: -40}, color: 0xffaa00, msg: "Du hast es überlebt? Wahnsinn. Das Pale Oak Holz schwebt ganz im Osten auf der rotierenden Todes-Plattform!" },
+  { name: "Pale Oak 🪵", pos: {x: 30, y: 8, z: -55}, color: 0xf5f5dc, isItem: true, msg: "Du hast das legendäre Pale Oak Holz ergattert! Jetzt bring es im fehlerfreien Rückweg zu Mika!" }
 ];
 
-// INITIALISIERE DIE AUSWAHL-KARTEN
-const charGrid = document.getElementById("char-list");
+// GENERIERE AUSWAHL-KARTEN
+const charList = document.getElementById("char-list");
 heros.forEach(h => {
   const card = document.createElement("div");
   card.className = "char-card";
-  card.onclick = () => init3DGame(h);
-  card.innerHTML = `
-    <div class="char-avatar" style="border: 1px solid ${h.color.toString(16).padStart(6, '0')}">${h.icon}</div>
-    <div style="font-weight:800; font-size:14px;">${h.name}</div>
-  `;
-  charGrid.appendChild(card);
+  card.onclick = () => start3DEngine(h);
+  card.innerHTML = `<div class="char-avatar">${h.icon}</div><div><b>${h.name}</b></div>`;
+  charList.appendChild(card);
 });
 
-function init3DGame(hero) {
-  selectedHero = hero;
+function start3DEngine(hero) {
   document.getElementById("select-screen").style.display = "none";
   document.getElementById("game-hud").style.display = "flex";
+  document.getElementById("game-crosshair").style.display = "block";
+  document.getElementById("instructions").style.display = "block";
   document.getElementById("hud-name").textContent = hero.name;
 
-  // 1. SCENE & RENDERER SETUP
+  // 1. SCENE SETUP
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0a0c14);
-  scene.fog = new THREE.FogExp2(0x0a0c14, 0.03);
+  scene.background = new THREE.Color(0x020308);
+  scene.fog = new THREE.FogExp2(0x020308, 0.015);
 
-  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  // Isometrischer Blickwinkel von oben herab
-  camera.position.set(0, 15, 15);
-  camera.lookAt(0, 0, 0);
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 2, 5); // Startposition Augenhöhe
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMap.enabled = true;
   document.body.appendChild(renderer.domElement);
 
-  // 2. REALISTISCHES LICHT (Schattenwurf)
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-  scene.add(ambientLight);
-
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  dirLight.position.set(10, 20, 10);
-  dirLight.castShadow = true;
-  dirLight.shadow.mapSize.width = 2048;
-  dirLight.shadow.mapSize.height = 2048;
-  scene.add(dirLight);
-
-  // 3. MINECRAFT LANDSCHAFT (Grasboden & Wege)
-  const floorGeo = new THREE.BoxGeometry(40, 1, 40);
-  const floorMat = new THREE.MeshStandardMaterial({ color: 0x4a7227, roughness: 0.8 }); // Minecraft Gras-Grün
-  const floor = new THREE.Mesh(floorGeo, floorMat);
-  floor.position.y = -0.5;
-  floor.receiveShadow = true;
-  scene.add(floor);
-
-  // Server-Weg kreuzen (Erde/Kies-Look)
-  const pathGeo = new THREE.BoxGeometry(40, 1.02, 4);
-  const pathMat = new THREE.MeshStandardMaterial({ color: 0xd7b485, roughness: 0.9 });
-  const path1 = new THREE.Mesh(pathGeo, pathMat);
-  path1.position.set(0, -0.5, 0);
-  scene.add(path1);
-
-  // 4. SPIELER-MESH GENERIEREN
-  const playerGeo = new THREE.CylinderGeometry(0.4, 0.4, 1.2, 16);
-  const playerMat = new THREE.MeshStandardMaterial({ color: hero.color, roughness: 0.3, metalness: 0.2 });
-  playerMesh = new THREE.Mesh(playerGeo, playerMat);
-  playerMesh.position.set(-12, 0.6, 0);
-  playerMesh.castShadow = true;
-  scene.add(playerMesh);
+  // 2. STEUERUNG (POINTER LOCK WIE IN MINECRAFT)
+  controls = new THREE.PointerLockControls(camera, document.body);
   
-  playerTarget.copy(playerMesh.position);
-
-  // 5. QUEST-NPCs SPARKELND IN DIE WELT SETZEN
-  quests.forEach(q => {
-    let mesh;
-    if (q.isItem) {
-      // Das Pale Oak Holz als rotierende Box
-      const boxGeo = new THREE.BoxGeometry(q.size, q.size*2, q.size);
-      const boxMat = new THREE.MeshStandardMaterial({ color: q.color, roughness: 0.5 });
-      mesh = new THREE.Mesh(boxGeo, boxMat);
-      paleOakWoodMesh = mesh;
-    } else {
-      // NPCs als Zylinder
-      const nGeo = new THREE.CylinderGeometry(q.size, q.size, 1.4, 16);
-      const nMat = new THREE.MeshStandardMaterial({ color: q.color, roughness: 0.4 });
-      mesh = new THREE.Mesh(nGeo, nMat);
+  document.getElementById("instructions").addEventListener('click', () => {
+    if(!isPanic) controls.lock();
+  });
+  
+  controls.addEventListener('lock', () => {
+    document.getElementById("instructions").style.display = "none";
+    isGameActive = true;
+  });
+  controls.addEventListener('unlock', () => {
+    if(!isPanic && document.getElementById("dialog-window").style.display !== "block") {
+      document.getElementById("instructions").style.display = "block";
     }
-    mesh.position.set(q.pos.x, 0.7, q.pos.z);
-    mesh.castShadow = true;
-    scene.add(mesh);
-    
-    q.mesh = mesh;
-    npcs3D.push(q);
+    isGameActive = false;
   });
 
-  // 6. DEKO: 3D-BÄUME GENERIEREN
-  generate3DTree(-8, -6);
-  generate3DTree(6, -10);
-  generate3DTree(-5, 10);
-  generate3DTree(14, 5);
+  // LIGHTS
+  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+  let sun = new THREE.DirectionalLight(0xffffff, 0.8);
+  sun.position.set(10, 30, 10);
+  scene.add(sun);
 
-  // INTERAKTION / MOVEMENT PER KLICK
-  window.addEventListener('click', onMapClick);
+  // 3. HARDCORE MAP BAUEN (Schwebende Blöcke)
+  createPlatform(0, 0, 0, 6, 6); // Start-Insel
+  createPlatform(0, 0, -6, 4, 4); // Mika-Plattform
+  createPlatform(8, 1, -12, 3, 3); // Jump 1
+  createPlatform(15, 2, -20, 4, 4); // Giorgio Platform
+  createPlatform(-2, 3, -28, 2, 2); // Riskant Jump
+  createPlatform(-15, 4, -40, 5, 5); // Jonas Platform
+  createPlatform(10, 5, -45, 2, 2); // Präzisions-Jump
+  createPlatform(30, 7, -55, 3, 3); // Pale Oak Finale
+
+  // 4. SPAWNE NPCs
+  stageConfig.forEach(s => {
+    let m;
+    if (s.isItem) {
+      m = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1, 0.6), new THREE.MeshStandardMaterial({ color: s.color, metalness: 0.5 }));
+      paleOakMesh = m;
+    } else {
+      m = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1.6, 16), new THREE.MeshStandardMaterial({ color: s.color }));
+    }
+    m.position.set(s.pos.x, s.pos.y, s.pos.z);
+    scene.add(m);
+    s.mesh = m;
+    npcs.push(s);
+  });
+
+  // LISTENERS
+  window.addEventListener('keydown', onKeyDown);
+  window.addEventListener('keyup', onKeyUp);
   window.addEventListener('resize', onWindowResize);
 
   animate();
 }
 
-function generate3DTree(x, z) {
-  const group = new THREE.Group();
-  
-  // Stamm
-  const trunkGeo = new THREE.CylinderGeometry(0.2, 0.3, 2, 8);
-  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033 });
-  const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-  trunk.position.y = 1;
-  trunk.castShadow = true;
-  group.add(trunk);
-
-  // Blätter-Krone
-  const leavesGeo = new THREE.BoxGeometry(2, 2, 2);
-  const leavesMat = new THREE.MeshStandardMaterial({ color: 0x3b5e2b, roughness: 0.9 });
-  const leaves = new THREE.Mesh(leavesGeo, leavesMat);
-  leaves.position.y = 2.5;
-  leaves.castShadow = true;
-  group.add(leaves);
-
-  group.position.set(x, 0, z);
-  scene.add(group);
+function createPlatform(x, y, z, w, d) {
+  let geo = new THREE.BoxGeometry(w, 1, d);
+  let mat = new THREE.MeshStandardMaterial({ color: 0x222533, roughness: 0.8 });
+  let mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x, y - 0.5, z);
+  scene.add(mesh);
 }
 
-function onMapClick(e) {
-  if (isPanic || document.getElementById("dialog-window").style.display === "block") return;
-
-  // Raycasting um die Klick-Position im 3D-Raum zu ermitteln
-  const mouse = new THREE.Vector2(
-    (e.clientX / window.innerWidth) * 2 - 1,
-    -(e.clientY / window.innerHeight) * 2 + 1
-  );
-
-  const raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(scene.children);
-
-  for (let hit of intersects) {
-    if (hit.object.geometry.type === "BoxGeometry" && hit.object.position.y < 0) {
-      playerTarget.copy(hit.point);
-      playerTarget.y = 0.6; // Höhe anpassen
-      break;
+// KEYBOARD ENGINE
+function onKeyDown(e) {
+  if (e.code === 'Space') {
+    // Wenn Controls gelockt sind -> Springen. Wenn nicht gelockt -> Panik-Taste!
+    if (controls && controls.isLocked) {
+      if (canJump === true) velocity.y += 7.5; // Echte Sprungkraft
+      canJump = false;
+    } else {
+      e.preventDefault();
+      togglePanic();
     }
+  }
+  if (!isGameActive) {
+    if(e.code === 'KeyE' && document.getElementById("dialog-window").style.display === "block") closeDialog();
+    return;
+  }
+  switch (e.code) {
+    case 'KeyW': moveForward = true; break;
+    case 'KeyA': moveLeft = true; break;
+    case 'KeyS': moveBackward = true; break;
+    case 'KeyD': moveRight = true; break;
+    case 'KeyE': checkNpcInteraction(); break;
   }
 }
 
-// 3D ANIMATION TICKER
+function onKeyUp(e) {
+  switch (e.code) {
+    case 'KeyW': moveForward = false; break;
+    case 'KeyA': moveLeft = false; break;
+    case 'KeyS': moveBackward = false; break;
+    case 'KeyD': moveRight = false; break;
+  }
+}
+
+// RENDER & PHYSIK-TICK (60 FPS)
 function animate() {
   if (isPanic) return;
   requestAnimationFrame(animate);
 
-  // 1. SPIELER-BEWEGUNG INTERPOLIEREN
-  let dist = playerMesh.position.distanceTo(playerTarget);
-  if (dist > 0.1) {
-    let dir = new THREE.Vector3().subVectors(playerTarget, playerMesh.position).normalize();
-    playerMesh.position.addScaledVector(dir, playerSpeed);
-    
-    // Sanfte Kamera-Verfolgung
-    camera.position.set(playerMesh.position.x, playerMesh.position.y + 12, playerMesh.position.z + 13);
-    camera.lookAt(playerMesh.position);
-  }
+  const time = performance.now();
 
-  // 2. ROTATION DES PALE OAK ITEMS
-  if (paleOakWoodMesh) {
-    paleOakWoodMesh.rotation.y += 0.03;
-  }
+  if (controls && controls.isLocked) {
+    const delta = (time - prevTime) / 1000;
 
-  // 3. COLLISION / INTERAKTION CHECKS
-  npcs3D.forEach(npc => {
-    if (!npc.mesh.parent) return; // Falls gelöscht
-    let pDist = playerMesh.position.distanceTo(npc.mesh.position);
-    if (pDist < 1.5) {
-      // Stop movement
-      playerTarget.copy(playerMesh.position);
-      triggerDialog(npc);
+    // Dämpfung / Reibung
+    velocity.x -= velocity.x * 10.0 * delta;
+    velocity.z -= velocity.z * 10.0 * delta;
+    velocity.y -= 9.8 * 2.5 * delta; // Gravitation
+
+    direction.z = Number(moveForward) - Number(moveBackward);
+    direction.x = Number(moveRight) - Number(moveLeft);
+    direction.normalize();
+
+    if (moveForward || moveBackward) velocity.z -= direction.z * 45.0 * delta;
+    if (moveLeft || moveRight) velocity.x -= direction.x * 45.0 * delta;
+
+    controls.moveRight(-velocity.x * delta);
+    controls.moveForward(-velocity.z * delta);
+
+    camera.position.y += (velocity.y * delta);
+
+    // Hardcore-Kollision (Einfache Höhenprüfung der Plattformen)
+    if (camera.position.y < -15) {
+      // ABSTURZ! Zurück zum Start!
+      camera.position.set(0, 2, 5);
+      velocity.set(0, 0, 0);
+    } else if (camera.position.y < 2) {
+      // Auf Plattformen landen
+      velocity.y = 0;
+      camera.position.y = 2;
+      canJump = true;
     }
-  });
+  }
 
-  renderer.render(scene, camera);
+  if (paleOakMesh) paleOakMesh.rotation.y += 0.04;
+
+  prevTime = time;
+  if(renderer && scene && camera) renderer.render(scene, camera);
 }
 
-// STORY QUEST MANAGER
-function triggerDialog(npc) {
-  activeNpc = npc;
-  const box = document.getElementById("dialog-window");
-  document.getElementById("npc-name").textContent = npc.name;
-
-  let text = npc.msg;
-  if (npc.name.includes("Mika") && currentQuestStep === 4) {
-    text = "UNFASSBAR! Du hast das Pale Oak zurückgebracht! Du bist der absolute Held des Servers! 👑";
-    document.getElementById("hud-quest").textContent = "Server gerettet!";
-  }
-
-  document.getElementById("npc-text").textContent = text;
-  box.style.display = "block";
+// QUESTS & DIALOGE
+function checkNpcInteraction() {
+  npcs.forEach(npc => {
+    let dist = camera.position.distanceTo(npc.mesh.position);
+    if (dist < 3) {
+      controls.unlock();
+      activeNpc = npc;
+      const win = document.getElementById("dialog-window");
+      document.getElementById("npc-name").textContent = npc.name;
+      
+      let text = npc.msg;
+      if(npc.name.includes("Mika") && currentQuestStep === 4) {
+        text = "MEGA GEIL! Du hast das Pale Oak durch den Parkour gerettet! Server-Champion! 🏆";
+        document.getElementById("hud-quest").textContent = "Gewonnen!";
+      }
+      
+      document.getElementById("npc-text").textContent = text;
+      win.style.display = "block";
+    }
+  });
 }
 
 function closeDialog() {
   document.getElementById("dialog-window").style.display = "none";
-  if (!activeNpc) return;
+  if(!activeNpc) return;
 
   if (activeNpc.name.includes("Mika") && currentQuestStep === 0) {
-    currentQuestStep = 1;
-    document.getElementById("hud-quest").textContent = "Verhandele mit Giorgio auf der Brücke";
+    currentQuestStep = 1; document.getElementById("hud-quest").textContent = "Erreiche Giorgio (Süden)";
   } else if (activeNpc.name.includes("Giorgio") && currentQuestStep === 1) {
-    currentQuestStep = 2;
-    document.getElementById("hud-quest").textContent = "Triff Jonas im Nordwald";
+    currentQuestStep = 2; document.getElementById("hud-quest").textContent = "Erreiche Jonas (Norden)";
   } else if (activeNpc.name.includes("Jonas") && currentQuestStep === 2) {
-    currentQuestStep = 3;
-    document.getElementById("hud-quest").textContent = "Hol das Pale Oak Holz im Osten";
+    currentQuestStep = 3; document.getElementById("hud-quest").textContent = "Hol das Holz (Osten)";
   } else if (activeNpc.name.includes("Pale Oak") && currentQuestStep === 3) {
-    currentQuestStep = 4;
-    document.getElementById("hud-quest").textContent = "Bringe das Holz zurück zu Mika";
-    scene.remove(paleOakWoodMesh); // Aus der 3D Welt entfernen
+    currentQuestStep = 4; document.getElementById("hud-quest").textContent = "Bring es zurück zu Mika!";
+    scene.remove(paleOakMesh);
   }
+  
   activeNpc = null;
+  setTimeout(() => { controls.lock(); }, 100);
 }
 
 function onWindowResize() {
@@ -345,40 +339,27 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// TARN-SYSTEM FÜR ABSOLUTE SICHERHEIT
+// TARN-BLITZ-MODUS
 function togglePanic() {
   if (isPanic) {
     isPanic = false;
     document.getElementById('main-body').className = "game-mode";
     document.getElementById('tarn-view').style.display = "none";
     if (renderer) renderer.domElement.style.display = "block";
-    if (selectedHero) {
-      document.getElementById('game-hud').style.display = "flex";
-      animate();
-    } else {
-      document.getElementById('select-screen').style.display = "flex";
-    }
+    document.getElementById('game-hud').style.display = "flex";
+    document.getElementById('game-crosshair').style.display = "block";
+    animate();
   } else {
-    if (window.electronAPI && typeof window.electronAPI.minimizeApp === 'function') {
-      window.electronAPI.minimizeApp();
-      return;
-    }
     isPanic = true;
+    if(controls) controls.unlock();
     document.getElementById('main-body').className = "tarn-mode";
     document.getElementById('tarn-view').style.display = "block";
     document.getElementById('game-hud').style.display = "none";
-    document.getElementById('select-screen').style.display = "none";
+    document.getElementById('game-crosshair').style.display = "none";
+    document.getElementById('dialog-window').style.display = "none";
     if (renderer) renderer.domElement.style.display = "none";
   }
 }
-
-window.addEventListener('keydown', (e) => {
-  if (e.code === 'Space') {
-    e.preventDefault();
-    togglePanic();
-  }
-});
 </script>
-
 </body>
 </html>
