@@ -21,63 +21,77 @@
       color: #ffffff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      padding: 0;
+      padding: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      overflow-x: hidden;
     }
 
-    .container {
+    .game-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      max-width: 950px;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .game-layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
       background: var(--panel);
       border: 3px solid var(--border);
       border-radius: 12px;
-      padding: 30px;
-      max-width: 600px;
-      width: 90%;
+      padding: 25px;
       text-align: center;
       box-shadow: 0 10px 30px rgba(0,0,0,0.7);
     }
 
-    h1 {
+    h1, h2 {
       font-family: 'Press Start 2P', monospace;
       color: var(--gold);
-      font-size: 1.3rem;
-      margin-bottom: 25px;
       text-shadow: 2px 2px #000;
+      margin-top: 0;
     }
+
+    h1 { font-size: 1.2rem; margin-bottom: 20px; }
+    h2 { font-size: 0.9rem; margin-bottom: 15px; }
 
     .meme-box {
       background: rgba(0,0,0,0.6);
       border: 2px dashed var(--border);
-      padding: 20px;
+      padding: 15px;
       border-radius: 8px;
-      min-height: 70px;
+      min-height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     #meme-text {
       color: var(--primary);
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-family: monospace;
       margin: 0;
       font-weight: bold;
-      line-height: 1.4;
     }
 
     .score-display {
       font-family: 'Press Start 2P', monospace;
       font-size: 1.1rem;
-      color: #fff;
+      margin-bottom: 5px;
+    }
+
+    .cps-display {
+      font-size: 0.9rem;
+      color: var(--muted);
       margin-bottom: 20px;
     }
 
-    /* Minecraft Button Style */
-    .mc-btn {
+    .click-target {
       background: #5c5c5c;
       border: 2px solid #000;
       border-top-color: #8b8b8b;
@@ -86,75 +100,165 @@
       padding: 15px;
       font-size: 3.5rem;
       cursor: pointer;
-      width: 140px;
-      height: 140px;
+      width: 130px;
+      height: 130px;
       border-radius: 50%;
       outline: none;
-      transition: transform 0.05s, background 0.2s;
+      transition: transform 0.05s;
       box-shadow: 0 5px 0 #2e2e2e;
+      margin: 10px 0;
     }
 
-    .mc-btn:hover {
-      background: #6c6c6c;
-      color: #fff;
-    }
-
-    .mc-btn:active {
+    .click-target:active {
       transform: translateY(4px);
       box-shadow: 0 1px 0 #2e2e2e;
     }
 
-    .back-link {
-      display: inline-block;
-      margin-top: 30px;
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.65rem;
-      transition: color 0.2s;
+    /* Shop Items */
+    .shop-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
     }
 
-    .back-link:hover {
-      color: var(--diamond);
+    .shop-item {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      padding: 10px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
+
+    .shop-info strong { display: block; color: #fff; font-size: 0.9rem; }
+    .shop-info span { font-size: 0.8rem; color: var(--muted); }
+
+    .buy-btn {
+      background: #4a4a4a;
+      border: 1px solid #000;
+      color: #fff;
+      padding: 8px 12px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.65rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .buy-btn:hover:not(:disabled) { background: #5a5a5a; color: var(--diamond); }
+    .buy-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 25px;
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.65rem;
+    }
+    .back-link:hover { color: var(--diamond); }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>⛏ QA11 CLICKER & MEME-BOX</h1>
+<div class="game-layout">
+  
+  <!-- LINKE SEITE: CLICKER & MEMES -->
+  <div class="panel">
+    <h1>⛏ QA11 MINI-GAME</h1>
+    
+    <div class="meme-box">
+      <p id="meme-text">"Klicke auf die Kelle, um das Server-Drama anzuheizen..."</p>
+    </div>
 
-  <!-- MEME / SPRÜCHE DISPLAY -->
-  <div class="meme-box">
-    <p id="meme-text">
-      "Klicke auf die Spitzhacke, um den Server-Beef zu starten..."
-    </p>
-  </div>
-
-  <!-- CLICKER BEREICH -->
-  <div>
     <div class="score-display">
       DIAMANTEN: <span id="click-score" style="color: var(--diamond);">0</span>
     </div>
+    <div class="cps-display">
+      pro Sekunde (CPS): <span id="cps-score" style="color: var(--primary);">0</span>
+    </div>
     
-    <button onclick="triggerClicker()" class="mc-btn">
-      ⛏
-    </button>
+    <button onclick="triggerClicker()" class="click-target">⛏</button>
+    
+    <div style="font-size: 0.8rem; color: var(--muted); margin-top: 15px;" id="tool-text">
+      Aktuelles Werkzeug: Holz-Spitzhacke (+1 pro Klick)
+    </div>
+
+    <a href="index.html" class="back-link">◀ ZURÜCK ZUM HUB</a>
   </div>
 
-  <div style="color: var(--muted); font-size: 0.85rem; margin-top: 20px; font-style: italic;">
-    Klicke fleißig, um neue Insider-Sprüche freizuschalten!
+  <!-- RECHTE SEITE: DER SHOP -->
+  <div class="panel">
+    <h2>🛒 UPGRADES & UTILS</h2>
+    <div class="shop-list">
+      
+      <!-- WERKZEUG UPGRADE -->
+      <div class="shop-item">
+        <div class="shop-info">
+          <strong id="tool-name">Stein-Spitzhacke</strong>
+          <span id="tool-desc">Klick-Power +1 (Aktuell: +1)</span>
+        </div>
+        <button class="buy-btn" id="btn-upgrade-tool" onclick="upgradeTool()">Cost: 25</button>
+      </div>
+
+      <!-- AUTOFARM 1 -->
+      <div class="shop-item">
+        <div class="shop-info">
+          <strong>Minen-Zombie 🧟</strong>
+          <span>+0.5 Dias pro Sekunde</span>
+        </div>
+        <button class="buy-btn" id="btn-buy-zombie" onclick="buyAutoFarm('zombie', 15, 0.5)">Cost: 15</button>
+      </div>
+
+      <!-- AUTOFARM 2 -->
+      <div class="shop-item">
+        <div class="shop-info">
+          <strong>Sklaven-Golem 🤖</strong>
+          <span>+4.0 Dias pro Sekunde</span>
+        </div>
+        <button class="buy-btn" id="btn-buy-golem" onclick="buyAutoFarm('golem', 100, 4.0)">Cost: 100</button>
+      </div>
+
+      <!-- AUTOFARM 3 -->
+      <div class="shop-item">
+        <div class="shop-info">
+          <strong>Mikas Log-Fabrik 🪵</strong>
+          <span>+25.0 Dias pro Sekunde</span>
+        </div>
+        <button class="buy-btn" id="btn-buy-factory" onclick="buyAutoFarm('factory', 500, 25.0)">Cost: 500</button>
+      </div>
+
+    </div>
   </div>
 
-  <!-- ZURÜCK ZUM HUB -->
-  <a href="index.html" class="back-link">◀ ZURÜCK ZUM HUB</a>
 </div>
 
 <script>
-let diamondCount = 0;
+// Spiel-Variablen
+let diamonds = 0;
+let diamondsPerClick = 1;
+let totalCps = 0;
 
-// Die Insider-Sprüche eures aktuellen Server-Krimis
+// Werkzeug Stufen
+const TOOLS = [
+  { name: "Holz-Spitzhacke", power: 1, cost: 0 },
+  { name: "Stein-Spitzhacke", power: 2, cost: 25 },
+  { name: "Eisen-Spitzhacke", power: 5, cost: 120 },
+  { name: "Diamant-Spitzhacke", power: 12, cost: 450 },
+  { name: "Netherite-Spitzhacke", power: 35, cost: 1500 },
+  { name: "Louis OP-Spitzhacke 🛠", power: 100, cost: 5000 }
+];
+let currentToolIndex = 0;
+
+// Autofarm Preise & Besitzstände
+let shopItems = {
+  zombie: { count: 0, cost: 15 },
+  golem: { count: 0, cost: 100 },
+  factory: { count: 0, cost: 500 }
+};
+
+// Die Insider-Sprüche
 const QA_MEMES = [
   "Mika: 'WO SIND MEINE PALE OAK LOGS?!'",
   "Joschi steht schon mit dem Feuerzeug vor Giorgios Haus... 🔥",
@@ -167,44 +271,114 @@ const QA_MEMES = [
   "Joschi: 'Ich platziere Schilder, wo ich will!'"
 ];
 
+// Manueller Klick
 function triggerClicker() {
-  diamondCount++;
-  
-  // Score updaten
-  const scoreEl = document.getElementById('click-score');
-  if (scoreEl) scoreEl.textContent = diamondCount;
-  
-  // XP-Sound abspielen
+  diamonds += diamondsPerClick;
+  updateUI();
   playSound("xp.mp3");
 
-  // Alle 5 Klicks ein neues Meme laden
-  if (diamondCount % 5 === 0) {
+  // Zufallschance auf einen Spruch bei jedem Klick (15% Chance)
+  if (Math.random() < 0.15) {
     showNewMeme();
   }
 }
 
+// Upgrade Werkzeug kaufen
+function upgradeTool() {
+  let nextTool = TOOLS[currentToolIndex + 1];
+  if (nextTool && diamonds >= nextTool.cost) {
+    diamonds -= nextTool.cost;
+    currentToolIndex++;
+    diamondsPerClick = nextTool.power;
+    playSound("achievement.mp3");
+    updateUI();
+  }
+}
+
+// Autofarm kaufen
+function buyAutoFarm(key, baseCost, cpsValue) {
+  let item = shopItems[key];
+  if (diamonds >= item.cost) {
+    diamonds -= item.cost;
+    item.count++;
+    totalCps += cpsValue;
+    // Preis steigt um 20% pro gekauftem Item
+    item.cost = Math.round(item.cost * 1.2);
+    playSound("xp.mp3");
+    updateUI();
+  }
+}
+
+// Update der Benutzeroberfläche
+function updateUI() {
+  document.getElementById('click-score').textContent = Math.floor(diamonds);
+  document.getElementById('cps-score').textContent = totalCps.toFixed(1);
+  
+  // Werkzeug Text
+  document.getElementById('tool-text').textContent = `Aktuelles Werkzeug: ${TOOLS[currentToolIndex].name} (+${diamondsPerClick} pro Klick)`;
+
+  // Nächstes Werkzeug im Shop anzeigen
+  let nextTool = TOOLS[currentToolIndex + 1];
+  const toolBtn = document.getElementById('btn-upgrade-tool');
+  if (nextTool) {
+    document.getElementById('tool-name').textContent = nextTool.name;
+    document.getElementById('tool-desc').textContent = `Klick-Power +${nextTool.power - diamondsPerClick}`;
+    toolBtn.textContent = `Cost: ${nextTool.cost}`;
+    toolBtn.disabled = diamonds < nextTool.cost;
+  } else {
+    document.getElementById('tool-name').textContent = "MAXED OUT";
+    document.getElementById('tool-desc').textContent = "Du hast das beste Werkzeug!";
+    toolBtn.textContent = "---";
+    toolBtn.disabled = true;
+  }
+
+  // Autofarm Buttons aktivieren/deaktivieren
+  document.getElementById('btn-buy-zombie').textContent = `Cost: ${shopItems.zombie.cost} (${shopItems.zombie.count})`;
+  document.getElementById('btn-buy-zombie').disabled = diamonds < shopItems.zombie.cost;
+
+  document.getElementById('btn-buy-golem').textContent = `Cost: ${shopItems.golem.cost} (${shopItems.golem.count})`;
+  document.getElementById('btn-buy-golem').disabled = diamonds < shopItems.golem.cost;
+
+  document.getElementById('btn-buy-factory').textContent = `Cost: ${shopItems.factory.cost} (${shopItems.factory.count})`;
+  document.getElementById('btn-buy-factory').disabled = diamonds < shopItems.factory.cost;
+}
+
+// Neues Meme einblenden
 function showNewMeme() {
   const memeTextEl = document.getElementById('meme-text');
   if (memeTextEl) {
     const randomIndex = Math.floor(Math.random() * QA_MEMES.length);
     memeTextEl.textContent = `"${QA_MEMES[randomIndex]}"`;
-    
-    // Achievement-Sound bei neuem Spruch
-    playSound("achievement.mp3");
   }
 }
 
+// Sound-Engine
 function playSound(file) {
   try {
     const audio = new Audio(file);
-    audio.volume = 0.4;
+    audio.volume = 0.3;
     audio.play();
   } catch (e) {}
 }
 
-/* ⌨ ELECTRON RICH PRESENCE UPDATE (Falls als App gestartet) */
+// LOOP FÜR DIE PASSIVEN DIAMANTEN (Läuft alle 100ms für flüssige Animation)
+setInterval(function() {
+  if (totalCps > 0) {
+    diamonds += totalCps / 10;
+    document.getElementById('click-score').textContent = Math.floor(diamonds);
+    
+    // Buttons auch im Loop prüfen, falls man passiv genug Geld kriegt
+    let nextTool = TOOLS[currentToolIndex + 1];
+    if (nextTool) document.getElementById('btn-upgrade-tool').disabled = diamonds < nextTool.cost;
+    document.getElementById('btn-buy-zombie').disabled = diamonds < shopItems.zombie.cost;
+    document.getElementById('btn-buy-golem').disabled = diamonds < shopItems.golem.cost;
+    document.getElementById('btn-buy-factory').disabled = diamonds < shopItems.factory.cost;
+  }
+}, 100);
+
+// Electron Status
 if (window.electronAPI) {
-  window.electronAPI.updateStatus("Vertreibt sich die Langeweile im Clicker-Game 🕹");
+  window.electronAPI.updateStatus("Grindet im QA11 Diamond-Clicker 🕹");
 }
 </script>
 
