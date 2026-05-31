@@ -3,344 +3,310 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Quaps - Core Bound</title>
+  <title>Quaps RPG: The Lost Pale Oak</title>
   <style>
     :root {
-      --bg: #06070d;
-      --panel: rgba(13, 15, 30, 0.75);
-      --neon-blue: #00f0ff;
-      --neon-purple: #bf55ec;
-      --neon-green: #00ff66;
-      --neon-red: #ff3366;
+      --bg: #0b0c10;
+      --panel: rgba(20, 24, 45, 0.85);
+      --mc-green: #4a7227;
+      --mc-dirt: #573d26;
+      --accent: #5865F2;
+      --gold: #ffaa00;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
     body, html {
       width: 100%; height: 100%; background: var(--bg);
-      color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       overflow: hidden; user-select: none;
     }
 
-    body.game-mode { display: flex; justify-content: center; align-items: center; }
+    /* SCREEN-MANAGEMENT */
+    .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+    #game-screen { display: none; }
 
-    /* HUD OVERLAY */
-    .app-interface {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 10;
-      display: flex; flex-direction: column; justify-content: space-between;
-      padding: 25px;
-    }
-
-    .top-bar { display: flex; justify-content: space-between; width: 100%; }
+    /* CHARAKTER AUSWAHL */
+    h1 { font-size: 24px; font-weight: 800; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase; background: linear-gradient(45deg, #fff, #5865F2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
+    .char-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; max-width: 900px; width: 100%; }
     
-    .glass-card {
-      background: var(--panel); border: 1px solid rgba(0, 240, 255, 0.15);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      padding: 14px 28px; border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-      pointer-events: auto;
+    .char-card {
+      background: var(--panel); border: 2px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer;
+      transition: all 0.2s ease; backdrop-filter: blur(10px);
     }
+    .char-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 25px rgba(88, 101, 242, 0.3); }
+    .char-avatar { width: 60px; height: 60px; border-radius: 12px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 28px; }
 
-    .brand { font-size: 13px; font-weight: 900; letter-spacing: 3px; color: var(--neon-blue); text-transform: uppercase; }
-    .score-val { font-size: 24px; font-weight: 800; margin-top: 4px; background: linear-gradient(45deg, #fff, #a0aec0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-    .leaderboard { width: 220px; display: flex; flex-direction: column; gap: 8px; }
-    .lb-header { font-size: 11px; font-weight: 700; color: #4a5568; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-    .lb-player { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: #cbd5e0; }
-    .lb-player.active { color: var(--neon-green); }
-
-    .bottom-tip {
-      align-self: center; font-size: 12px; color: #4a5568; font-weight: 500;
-      background: rgba(0,0,0,0.4); padding: 8px 20px; border-radius: 30px;
+    /* HUD OVERLAY IM SPIEL */
+    .hud { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; pointer-events: none; z-index: 10; }
+    .hud-card { background: var(--panel); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(15px); padding: 12px 20px; border-radius: 14px; pointer-events: auto; font-size: 14px; font-weight: 600; }
+    
+    /* DIALOG BOX WIE IM ECHTEN RPG */
+    .dialog-box {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 60px); max-width: 700px; background: rgba(10, 12, 22, 0.95);
+      border: 2px solid var(--accent); border-radius: 16px; padding: 20px; z-index: 20;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6); display: none; pointer-events: auto;
     }
+    .dialog-name { font-weight: 800; color: var(--gold); margin-bottom: 6px; font-size: 14px; text-transform: uppercase; }
+    .dialog-text { font-size: 15px; color: #e2e8f0; line-height: 1.5; }
+    .dialog-btn { background: var(--accent); border: none; color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; float: right; margin-top: 10px; }
 
-    canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
+    canvas { display: block; background: #2c3e50; cursor: pointer; }
 
     /* WIKIPEDIA TARNUNG */
     body.tarn-mode { background: #ffffff !important; color: #202122 !important; padding: 40px !important; display: block !important; overflow: auto !important; }
-    .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; }
-    .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; margin-bottom: 20px; font-family: 'Georgia', serif; color: #000; }
+    .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; color: #000; }
+    .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; margin-bottom: 20px; font-family: 'Georgia', serif; }
   </style>
 </head>
 <body class="game-mode" id="main-body">
 
-  <!-- HUD INTERFACE -->
-  <div class="app-interface" id="hud-layer">
-    <div class="top-bar">
-      <div class="glass-card">
-        <div class="brand">CORE BOUND // S11</div>
-        <div class="score-val" id="ui-score">0000</div>
+  <div class="screen" id="select-screen">
+    <h1>Wähle deinen Spieler</h1>
+    <div class="char-grid" id="char-list">
       </div>
-      
-      <div class="glass-card leaderboard">
-        <div class="lb-header">Server-Knoten</div>
-        <div class="lb-player active"><span>Louis (Du)</span><span id="ui-kills">0 K</span></div>
-        <div class="lb-player"><span>Mika 🪵</span><span id="hp-mika">100%</span></div>
-        <div class="lb-player"><span>Giorgio 🚫</span><span id="hp-giorgio">100%</span></div>
-        <div class="lb-player"><span>Joschi 🔥</span><span id="hp-joschi">100%</span></div>
-        <div class="lb-player"><span>Nils 🕵️‍♂️</span><span id="hp-nils">100%</span></div>
-      </div>
-    </div>
-    
-    <div class="bottom-tip">Kugel ziehen & flitschen lassen | Leertaste = Sofort-Tarnung</div>
   </div>
 
-  <canvas id="gameCanvas"></canvas>
+  <div class="screen" id="game-screen">
+    <div class="hud">
+      <div class="hud-card">Spieler: <span id="hud-name" style="color: var(--gold);">Louis</span></div>
+      <div class="hud-card" style="border-color: var(--gold);">Quest: <span id="hud-quest" style="color: #fff;">Sprich mit Mika</span></div>
+    </div>
 
-  <!-- LEHRER-ABLENKUNG (WIKIPEDIA) -->
+    <div class="dialog-box" id="dialog-window">
+      <div class="dialog-name" id="npc-name">Mika</div>
+      <div class="dialog-text" id="npc-text">Hey! Jemand hat mein Pale Oak Holz geklaut...</div>
+      <button class="dialog-btn" onclick="closeDialog()">Weiter</button>
+    </div>
+
+    <canvas id="rpgCanvas"></canvas>
+  </div>
+
   <div id="tarn-view" class="tarn-content" style="display: none;">
-    <div class="tarn-header">Gemeindeordnung (Niedersachsen) [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]</div>
+    <div class="tarn-header">Gemeindeordnung (Niedersachsen)</div>
     <p>Aus Wikipedia, der freien Enzyklamädie</p>
-    <p>Die kommunale Haushaltskonsolidierung im Landkreis Vechta regelt die Zuweisungen autonomer Finanzmittel an die Gemeinden [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
+    <p>Die kommunale Haushaltskonsolidierung im Landkreis Vechta regelt die Zuweisungen autonomer Finanzmittel an die Gemeinden.</p>
   </div>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
+const canvas = document.getElementById("rpgCanvas");
 const ctx = canvas.getContext("2d");
 
 let isPanic = false;
 let width = canvas.width = window.innerWidth;
 let height = canvas.height = window.innerHeight;
 
-window.addEventListener('resize', () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-});
+// SPIELZUSTAND
+let selectedHero = null;
+let currentQuestStep = 0; 
+let activeNpc = null;
 
-// ENGINE PARAMETER
-const friction = 0.985;
-let score = 0;
-let kills = 0;
-
-// SPIELER-BALL (DEIN SLINGSHOT-DOT)
-const player = {
-  x: width / 2,
-  y: height / 2 + 150,
-  vx: 0, vy: 0,
-  radius: 12,
-  isDragging: false,
-  dragX: 0, dragY: 0
-};
-
-// DIE GEGNER-KNOTEN (DIE TRUPPE)
-let targets = [
-  { id: "mika", name: "Mika 🪵", angle: 0, distance: 160, speed: 0.02, radius: 20, hp: 100, color: "#00ff66" },
-  { id: "giorgio", name: "Giorgio 🚫", angle: 1.2, distance: 220, speed: -0.015, radius: 22, hp: 100, color: "#ff3366" },
-  { id: "joschi", name: "Joschi 🔥", angle: 2.5, distance: 130, speed: 0.025, radius: 18, hp: 100, color: "#ffaa00" },
-  { id: "nils", name: "Nils 🕵️‍♂️", angle: 4.0, distance: 190, speed: -0.01, radius: 19, hp: 100, color: "#00f0ff" }
+const heros = [
+  { id: "louis", name: "Louis 🛠", icon: "⚙️", color: "#00f0ff" },
+  { name: "Mika 🪵", icon: "🪓", color: "#00ff66" },
+  { name: "Giorgio 🚫", icon: "👑", color: "#ff3366" },
+  { name: "Joschi 🔥", icon: "🧨", color: "#ffaa00" },
+  { name: "Nils 🕵️‍♂️", icon: "📜", color: "#a0aec0" }
 ];
 
-let particles = [];
+// SPIEL-FIGUR (DER SPIELER)
+const player = {
+  x: 100, y: height / 2,
+  targetX: 100, targetY: height / 2,
+  speed: 4, radius: 14
+};
 
-// MOUSE / TOUCH EVENTS FÜR SCHICKES DRAG & DROP
-window.addEventListener('mousedown', startDrag);
-window.addEventListener('touchstart', (e) => startDrag(e.touches[0]));
+// NPCs IN DER MINECRAFT WELT
+let npcs = [
+  { name: "Mika 🪵", x: 250, y: height/2 - 60, radius: 16, color: "#00ff66", msg: ["Hilfe! Mein wertvolles Pale Oak Holz wurde aus meiner Kiste geklaut!", "Ich wette, Joschi steckt dahinter. Geh nach Osten und such nach Spuren!"] },
+  { name: "Giorgio 🚫", x: width / 2, y: height / 2 + 100, radius: 18, color: "#ff3366", msg: ["Halt! Um diesen Server-Weg zu passieren, brauchst du eine Admin-Genehmigung.", "Ah, du suchst Mikas Holz? Ich habe verdächtige Logs bei Jonas im Wald gesehen! Gehe nach Norden!"] },
+  { name: "Jonas 🕊", x: width / 2 + 80, y: 150, radius: 15, color: "#ffaa00", msg: ["Hey! Ich bin ganz neutral, aber ich habe Joschi gesehen! Er hat das Pale Oak hinter dem großen Baum ganz im Osten versteckt! Schnell!"] },
+  { name: "Pale Oak Holz 🪵", x: width - 200, y: height / 2 - 50, radius: 12, color: "#f5f5dc", isItem: true, msg: ["Du hast das legendäre Pale Oak Holz gefunden!", "Bring es zurück zu Mika, um den Server zu retten!"] }
+];
 
-window.addEventListener('mousemove', dragMove);
-window.addEventListener('touchmove', (e) => dragMove(e.touches[0]));
+// INITIALISIERUNG DER AUSWAHL
+const charGrid = document.getElementById("char-list");
+heros.forEach(h => {
+  const card = document.createElement("div");
+  card.className = "char-card";
+  card.onclick = () => selectCharacter(h);
+  card.innerHTML = `
+    <div class="char-avatar" style="background: rgba(255,255,255,0.03); border: 1px solid ${h.color};">${h.icon}</div>
+    <div style="font-weight:700; font-size:15px;">${h.name}</div>
+  `;
+  charGrid.appendChild(card);
+});
 
-window.addEventListener('mouseup', endDrag);
-window.addEventListener('touchend', endDrag);
+function selectCharacter(hero) {
+  selectedHero = hero;
+  document.getElementById("select-screen").style.display = "none";
+  document.getElementById("game-screen").style.display = "flex";
+  document.getElementById("hud-name").textContent = hero.name;
+  
+  // Start-Position
+  player.x = 80; player.y = height / 2;
+  player.targetX = 80; player.targetY = height / 2;
+  
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
 
-function startDrag(e) {
-  if (isPanic) return;
-  let dist = Math.hypot(e.clientX - player.x, e.clientY - player.y);
-  if (dist < player.radius + 30 && Math.hypot(player.vx, player.vy) < 0.2) {
-    player.isDragging = true;
-    player.dragX = e.clientX;
-    player.dragY = e.clientY;
-  }
+  // Klick auf Map setzt das Ziel (Point and Click)
+  canvas.addEventListener('click', (e) => {
+    if(document.getElementById("dialog-window").style.display === "block") return;
+    player.targetX = e.clientX;
+    player.targetY = e.clientY;
+  });
+
+  canvas.addEventListener('touchstart', (e) => {
+    if(document.getElementById("dialog-window").style.display === "block") return;
+    player.targetX = e.touches[0].clientX;
+    player.targetY = e.touches[0].clientY;
+  });
+
+  gameLoop();
 }
 
-function dragMove(e) {
-  if (player.isDragging) {
-    player.dragX = e.clientX;
-    player.dragY = e.clientY;
-  }
+// STORY ENGINE
+function checkInteractions() {
+  npcs.forEach(npc => {
+    let dist = Math.hypot(player.x - npc.x, player.y - npc.y);
+    if (dist < player.radius + npc.radius + 20) {
+      // Wenn nah genug am NPC, stoppe Bewegung und öffne Dialog
+      player.targetX = player.x;
+      player.targetY = player.y;
+      triggerDialog(npc);
+    }
+  });
 }
 
-function endDrag() {
-  if (player.isDragging) {
-    player.isDragging = false;
-    // Slingshot-Vektor berechnen (Gegengesetzte Richtung des Ziehens)
-    let dx = player.x - player.dragX;
-    let dy = player.y - player.dragY;
-    player.vx = dx * 0.18; // Power-Multiplikator
-    player.vy = dy * 0.18;
+function triggerDialog(npc) {
+  activeNpc = npc;
+  const box = document.getElementById("dialog-window");
+  document.getElementById("npc-name").textContent = npc.name;
+  
+  // Dynamischer Quest-Verlauf
+  let text = npc.msg[0];
+  if (npc.name.includes("Mika") && currentQuestStep === 4) {
+    text = "DANKE! Du hast mein Pale Oak gerettet! Der Server-Beef ist offiziell beendet! 👑";
+    document.getElementById("hud-quest").textContent = "Quest Erfolgreich!";
+  } else if (npc.name.includes("Mika") && currentQuestStep > 0) {
+    text = npc.msg[1] || npc.msg[0];
   }
+  
+  document.getElementById("npc-text").textContent = text;
+  box.style.display = "block";
 }
 
-function createExplosion(x, y, color) {
-  for (let i = 0; i < 20; i++) {
-    particles.push({
-      x, y,
-      vx: (Math.random() - 0.5) * 8,
-      vy: (Math.random() - 0.5) * 8,
-      radius: Math.random() * 3 + 1,
-      color,
-      alpha: 1
-    });
-  }
-}
-
-// MAIN GAME LOOP (60 FPS FLÜSSIG)
-function update() {
-  if (isPanic) return;
-
-  // Space-Background zeichnen
-  ctx.fillStyle = "rgba(6, 7, 13, 0.3)"; // Sanfter Schweif-Effekt
-  ctx.fillRect(0, 0, width, height);
-
-  const centerX = width / 2;
-  const centerY = height / 2;
-
-  // RENDER DOCK-PLATTFORM (DER SERVER-KREIS)
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, 280, 0, Math.PI * 2);
-  ctx.strokeStyle = "rgba(0, 240, 255, 0.05)";
-  ctx.lineWidth = 6;
-  ctx.stroke();
-  ctx.fillStyle = "rgba(13, 15, 30, 0.15)";
-  ctx.fill();
-  ctx.restore();
-
-  // 1. SPIELER BALL MECHANIK
-  if (!player.isDragging) {
-    player.x += player.vx;
-    player.y += player.vy;
-    player.vx *= friction;
-    player.vy *= friction;
-
-    // Physikalische Wand-Kollision mit der Kreis-Plattform
-    let distFromCenter = Math.hypot(player.x - centerX, player.y - centerY);
-    if (distFromCenter > 280 - player.radius) {
-      let nx = (player.x - centerX) / distFromCenter;
-      let ny = (player.y - centerY) / distFromCenter;
-      
-      // Reflexions-Vektor berechnen (Abprallen)
-      let dot = player.vx * nx + player.vy * ny;
-      player.vx = (player.vx - 2 * dot * nx) * 0.85;
-      player.vy = (player.vy - 2 * dot * ny) * 0.85;
-      
-      // Ball zurücksetzen um Glitches zu verhindern
-      player.x = centerX + nx * (280 - player.radius);
-      player.y = centerY + ny * (280 - player.radius);
+function closeDialog() {
+  document.getElementById("dialog-window").style.display = "none";
+  
+  // Quest-Fortschritt loggen
+  if (activeNpc) {
+    if (activeNpc.name.includes("Mika") && currentQuestStep === 0) {
+      currentQuestStep = 1;
+      document.getElementById("hud-quest").textContent = "Finde Giorgio am Weg";
+    } else if (activeNpc.name.includes("Giorgio") && currentQuestStep === 1) {
+      currentQuestStep = 2;
+      document.getElementById("hud-quest").textContent = "Finde Jonas im Nordwald";
+    } else if (activeNpc.name.includes("Jonas") && currentQuestStep === 2) {
+      currentQuestStep = 3;
+      document.getElementById("hud-quest").textContent = "Hol das Pale Oak im Osten";
+    } else if (activeNpc.name.includes("Pale Oak") && currentQuestStep === 3) {
+      currentQuestStep = 4;
+      document.getElementById("hud-quest").textContent = "Bring das Holz zu Mika";
+      // Entferne das Holz von der Map, da aufgesammelt
+      npcs = npcs.filter(n => !n.isItem);
     }
   }
+  activeNpc = null;
+}
 
-  // ZEICHNE DRAG-LINE (ZIELVORRICHTUNG)
-  if (player.isDragging) {
-    ctx.beginPath();
-    ctx.moveTo(player.x, player.y);
-    // Zeigt in Flugrichtung
-    let targetX = player.x + (player.x - player.dragX);
-    let targetY = player.y + (player.y - player.dragY);
-    ctx.lineTo(targetX, targetY);
-    ctx.strokeStyle = "rgba(0, 240, 255, 0.4)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([4, 4]);
-    ctx.stroke();
-    ctx.setLineDash([]);
+// RENDER ENGINE (MINECRAFT 2D LOOK)
+function gameLoop() {
+  if (isPanic) return;
 
-    // Den gezogenen Ball leicht versetzen für coolen elastischen Effekt
+  // 1. WELT ZEICHNEN (Minecraft Gras & Strukturen)
+  ctx.fillStyle = "#5b8731"; // Minecraft Grasfarbe
+  ctx.fillRect(0, 0, width, height);
+
+  // Zeichne einen Minecraft-Weg aus Erde/Sand
+  ctx.fillStyle = "#d7b485";
+  ctx.fillRect(0, height/2 - 40, width, 80);
+  ctx.fillRect(width/2 - 40, 0, 80, height);
+
+  // Dekoration: Bäume (Einfache Vektor-Minecraft-Formen)
+  drawTree(120, 100);
+  drawTree(width - 300, 120);
+  drawTree(180, height - 150);
+  drawTree(width - 180, height - 180);
+
+  // 2. NPC RENDERN
+  npcs.forEach(npc => {
+    ctx.save();
     ctx.beginPath();
-    ctx.arc(player.dragX, player.dragY, player.radius * 0.8, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(255,255,255,0.15)";
+    ctx.arc(npc.x, npc.y, npc.radius, 0, Math.PI * 2);
+    ctx.fillStyle = npc.color;
+    ctx.shadowBlur = 10; ctx.shadowColor = npc.color;
     ctx.fill();
+
+    // Namens-Tag über NPC
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(npc.name, npc.x, npc.y - npc.radius - 6);
+    ctx.restore();
+  });
+
+  // 3. SPIELER MOVEMENT (Flüssige Interpolation)
+  let dx = player.targetX - player.x;
+  let dy = player.targetY - player.y;
+  let dist = Math.hypot(dx, dy);
+
+  if (dist > 2) {
+    player.x += (dx / dist) * player.speed;
+    player.y += (dy / dist) * player.speed;
+    checkInteractions();
   }
 
-  // ZEICHNE SPIELER
+  // SPIELER ZEICHNEN
   ctx.save();
   ctx.beginPath();
   ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
-  ctx.fillStyle = "#fff";
-  ctx.shadowBlur = 20;
-  ctx.shadowColor = varColor("--neon-blue");
+  ctx.fillStyle = selectedHero.color;
+  ctx.shadowBlur = 15; ctx.shadowColor = selectedHero.color;
   ctx.fill();
+  
+  // Icon in die Mitte setzen
+  ctx.font = "14px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(selectedHero.icon, player.x, player.y);
   ctx.restore();
 
-  // 2. GEGNER-KNOTEN BERECHNEN & RENDERN
-  targets.forEach(t => {
-    if (t.hp <= 0) return;
-
-    // Umlaufbahn berechnen
-    t.angle += t.speed;
-    t.x = centerX + Math.cos(t.angle) * t.distance;
-    t.y = centerY + Math.sin(t.angle) * t.distance;
-
-    // Kollision Ball mit Gegner prüfen
-    let hitDist = Math.hypot(player.x - t.x, player.y - t.y);
-    if (hitDist < player.radius + t.radius) {
-      t.hp -= 35; // Schaden zufügen
-      createExplosion(t.x, t.y, t.color);
-      score += 150;
-      document.getElementById("ui-score").textContent = String(score).padStart(4, '0');
-
-      // Physikalischen Impuls auf den Ball übertragen (Abstoßen beim Treffer)
-      let kx = (player.x - t.x) / hitDist;
-      let ky = (player.y - t.y) / hitDist;
-      player.vx = kx * 8;
-      player.vy = ky * 8;
-
-      if (t.hp <= 0) {
-        t.hp = 0;
-        kills++;
-        document.getElementById("ui-kills").textContent = `${kills} K`;
-        score += 500;
-        // Respawn nach 4 Sekunden
-        setTimeout(() => { t.hp = 100; t.angle = Math.random()*6; }, 4000);
-      }
-      
-      document.getElementById(`hp-${t.id}`).textContent = t.hp > 0 ? `${t.hp}%` : "REBOOT...";
-    }
-
-    // GLOW DESIGN FÜR DIE ENERGIE-KNOTEN
-    ctx.save();
-    ctx.shadowBlur = 25; ctx.shadowColor = t.color;
-    ctx.fillStyle = t.color;
-    ctx.beginPath(); ctx.arc(t.x, t.y, t.radius, 0, Math.PI * 2); ctx.fill();
-    
-    // Innerer Ring
-    ctx.beginPath(); ctx.arc(t.x, t.y, t.radius * 0.6, 0, Math.PI*2); ctx.fillStyle = "#fff"; ctx.fill();
-    
-    // Cleanes Text-Label
-    ctx.fillStyle = "rgba(255,255,255,0.8)";
-    ctx.font = "bold 11px -apple-system, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(t.name, t.x, t.y - t.radius - 8);
-    ctx.restore();
-  });
-
-  // 3. EXPLOSIONS PARTIKEL RENDERN
-  particles.forEach((p, pIdx) => {
-    p.x += p.vx; p.y += p.vy;
-    p.alpha -= 0.025;
-    if (p.alpha <= 0) { particles.splice(pIdx, 1); return; }
-
-    ctx.save();
-    ctx.globalAlpha = p.alpha;
-    ctx.fillStyle = p.color;
-    ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
-    ctx.restore();
-  });
-
-  requestAnimationFrame(update);
+  requestAnimationFrame(gameLoop);
 }
 
-function varColor(name) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+function drawTree(x, y) {
+  ctx.fillStyle = "#5c4033"; // Stamm
+  ctx.fillRect(x - 10, y, 20, 40);
+  ctx.fillStyle = "#3b5e2b"; // Blätter
+  ctx.fillRect(x - 30, y - 40, 60, 40);
 }
 
-// DIE LEERTASTE FÜR BLITZSCHNELLE TARNUNG
+// PANIC BUTTON FOR LESSON SAFETY
 function togglePanic() {
   if (isPanic) {
     isPanic = false;
     document.getElementById('main-body').className = "game-mode";
-    document.getElementById('hud-layer').style.display = "flex";
-    canvas.style.display = "block";
-    update();
+    document.getElementById('tarn-view').style.display = "none";
+    if(selectedHero) {
+      document.getElementById('game-screen').style.display = "flex";
+      gameLoop();
+    } else {
+      document.getElementById('select-screen').style.display = "flex";
+    }
   } else {
     if (window.electronAPI && typeof window.electronAPI.minimizeApp === 'function') {
       window.electronAPI.minimizeApp();
@@ -348,8 +314,9 @@ function togglePanic() {
     }
     isPanic = true;
     document.getElementById('main-body').className = "tarn-mode";
-    document.getElementById('hud-layer').style.display = "none";
-    canvas.style.display = "none";
+    document.getElementById('tarn-view').style.display = "block";
+    document.getElementById('game-screen').style.display = "none";
+    document.getElementById('select-screen').style.display = "none";
   }
 }
 
@@ -359,9 +326,6 @@ window.addEventListener('keydown', (e) => {
     togglePanic();
   }
 });
-
-// Start der Engine
-update();
 </script>
 
 </body>
