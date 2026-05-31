@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="page-title">Wirtschaft & Sozialkunde - Analyse 8. Klasse</title>
+  <title>QUAPS ATTACK - Season 11 Core</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     :root {
-      --background: #121212;
-      --panel: #1a1a1a;
-      --border: #333333;
+      --background: #0d0d11;
+      --panel: #16161f;
+      --border: #44445c;
       --primary: #55ff55;
       --gold: #ffaa00;
       --diamond: #55ffff;
-      --muted: #aaaaaa;
+      --muted: #8888aa;
+      --red: #ff5555;
     }
 
-    /* NORMALES GAME-DESIGN */
     body.game-mode {
       background-color: var(--background);
       color: #ffffff;
@@ -27,14 +27,14 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      overflow-x: hidden;
+      user-select: none;
     }
 
     .game-layout {
       display: grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: 1fr 340px;
       gap: 20px;
-      max-width: 950px;
+      max-width: 1000px;
       width: 100%;
     }
 
@@ -48,239 +48,194 @@
       border-radius: 12px;
       padding: 25px;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      position: relative;
     }
 
     h1, h2 {
       font-family: 'Press Start 2P', monospace;
-      color: var(--gold);
       text-shadow: 2px 2px #000;
       margin-top: 0;
     }
+    h1 { color: var(--diamond); font-size: 1.4rem; margin-bottom: 20px; }
+    h2 { color: var(--gold); font-size: 0.9rem; margin-bottom: 15px; }
 
-    h1 { font-size: 1.2rem; margin-bottom: 20px; }
-    h2 { font-size: 0.9rem; margin-bottom: 15px; }
+    /* EVENT NOTIFICATION BOX */
+    .event-box {
+      background: rgba(255, 85, 85, 0.1);
+      border: 2px dashed var(--red);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; border-color: #fff; }
+      100% { opacity: 0.8; }
+    }
 
     .meme-box {
-      background: rgba(0,0,0,0.6);
-      border: 2px dashed var(--border);
+      background: rgba(0,0,0,0.5);
+      border: 2px solid var(--border);
       padding: 15px;
       border-radius: 8px;
-      min-height: 60px;
+      min-height: 50px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
+    #meme-text { color: var(--primary); font-size: 0.95rem; font-family: monospace; margin: 0; font-weight: bold; }
 
-    #meme-text {
-      color: var(--primary);
-      font-size: 1rem;
-      font-family: monospace;
-      margin: 0;
-      font-weight: bold;
-      line-height: 1.4;
-    }
+    .score-display { font-family: 'Press Start 2P', monospace; font-size: 1.4rem; margin-bottom: 5px; color: #fff; }
+    .cps-display { font-size: 0.9rem; color: var(--muted); margin-bottom: 25px; }
 
-    .score-display {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 1.1rem;
-      margin-bottom: 5px;
-    }
-
-    .cps-display {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-
+    /* INTERAKTIVER RIESEN-BUTTON */
     .click-target {
-      background: #5c5c5c;
-      border: 2px solid #000;
+      background: linear-gradient(135deg, #5c5c5c, #3a3a3a);
+      border: 3px solid #000;
       border-top-color: #8b8b8b;
       border-left-color: #8b8b8b;
-      color: #e0e0e0;
-      padding: 15px;
-      font-size: 3.5rem;
+      color: #fff;
+      font-size: 4rem;
       cursor: pointer;
-      width: 130px;
-      height: 130px;
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
       outline: none;
-      transition: transform 0.05s, background 0.2s;
-      box-shadow: 0 5px 0 #2e2e2e;
-      margin: 10px 0;
-    }
-
-    .click-target:hover { background: #6c6c6c; color: #fff; }
-    .click-target:active {
-      transform: translateY(4px);
-      box-shadow: 0 1px 0 #2e2e2e;
-    }
-
-    /* Shop Items */
-    .shop-list { display: flex; flex-direction: column; gap: 12px; text-align: left; }
-    .shop-item {
-      background: rgba(0,0,0,0.4);
-      border: 1px solid var(--border);
-      padding: 10px;
-      border-radius: 6px;
+      transition: transform 0.05s;
+      box-shadow: 0 8px 0 #1c1c1c, 0 10px 20px rgba(0,0,0,0.5);
+      margin: 10px auto;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
     }
+    .click-target:hover { transform: scale(1.03); }
+    .click-target:active { transform: translateY(6px) scale(0.98); box-shadow: 0 2px 0 #1c1c1c; }
 
-    .shop-info strong { display: block; color: #fff; font-size: 0.9rem; }
+    /* ERFOLGSBALKEN */
+    .progress-container { background: #000; border: 2px solid var(--border); border-radius: 6px; height: 16px; margin: 20px 0; position: relative; overflow: hidden; }
+    .progress-bar { background: var(--primary); width: 0%; height: 100%; transition: width 0.1s linear; }
+    .progress-text { position: absolute; width: 100%; text-align: center; top: 1px; font-family: monospace; font-size: 0.75rem; color: #fff; font-weight: bold; }
+
+    /* ACTION BUTTONS */
+    .action-btn { background: var(--red); color: white; border: 2px solid #000; padding: 6px 12px; font-family: 'Press Start 2P', monospace; font-size: 0.6rem; cursor: pointer; border-radius: 4px; box-shadow: 0 3px 0 #550000; }
+    .action-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #550000; }
+    .panic-btn { background: #333; color: var(--muted); border: 1px solid var(--border); padding: 5px; font-size: 0.55rem; cursor: pointer; border-radius: 4px; width: 100%; margin-top: 20px; font-family: monospace; }
+
+    .shop-list { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+    .shop-item { background: rgba(255,255,255,0.03); border: 2px solid var(--border); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
+    .shop-item:hover { border-color: var(--muted); }
+    .shop-info strong { display: block; color: #fff; font-size: 0.9rem; font-family: monospace; }
     .shop-info span { font-size: 0.8rem; color: var(--muted); }
 
-    .buy-btn {
-      background: #4a4a4a;
-      border: 1px solid #000;
-      color: #fff;
-      padding: 8px 12px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.65rem;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    .buy-btn:hover:not(:disabled) { background: #5a5a5a; color: var(--diamond); }
-    .buy-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
+    .buy-btn { background: #2a2a3a; border: 2px solid var(--border); color: #fff; padding: 10px 12px; font-family: 'Press Start 2P', monospace; font-size: 0.6rem; cursor: pointer; border-radius: 4px; box-shadow: 0 3px 0 #000; }
+    .buy-btn:hover:not(:disabled) { background: #3a3a52; color: var(--diamond); border-color: var(--diamond); }
+    .buy-btn:disabled { background: #111; color: #444; border-color: #222; cursor: not-allowed; box-shadow: none; transform: translateY(3px); }
 
-    .panic-btn {
-      background: #aa0000;
-      color: white;
-      border: 2px solid #000;
-      padding: 10px 15px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.6rem;
-      cursor: pointer;
-      margin-top: 15px;
-      border-radius: 4px;
-      width: 100%;
-    }
-
-    .back-link {
-      display: inline-block;
-      margin-top: 25px;
-      color: var(--muted);
-      text-decoration: none;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.65rem;
-    }
+    .back-link { display: inline-block; margin-top: 20px; color: var(--muted); text-decoration: none; font-family: 'Press Start 2P', monospace; font-size: 0.6rem; }
     .back-link:hover { color: var(--diamond); }
 
-    /* 🚨 TARNMODUS DESIGN (FALLBACK FÜR WEBBROWSER) */
-    body.tarn-mode {
-      background: #ffffff !important;
-      color: #202122 !important;
-      font-family: sans-serif !important;
-      padding: 40px !important;
-      display: block !important;
-    }
-
-    .tarn-content {
-      max-width: 800px;
-      margin: 0 auto;
-      text-align: left;
-      line-height: 1.6;
-    }
-
-    .tarn-header {
-      font-size: 2rem;
-      border-bottom: 1px solid #a2a9b1;
-      padding-bottom: 5px;
-      margin-bottom: 20px;
-      font-family: 'Georgia', serif;
-      color: #000;
-    }
+    /* 🚨 DIE UNSICHTBARE SCHUL-TARNUNG (WIRD ERST BEI PANIC AKTIV) */
+    body.tarn-mode { background: #ffffff !important; color: #202122 !important; font-family: sans-serif !important; padding: 40px !important; display: block !important; }
+    .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; }
+    .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; margin-bottom: 20px; font-family: 'Georgia', serif; color: #000; }
   </style>
 </head>
 <body class="game-mode" id="main-body">
 
-  <!-- SPIEL INHALT -->
+  <!-- DAS ECHTE GAME UNTERRICHTS-PROOF -->
   <div class="game-layout" id="game-view">
     
-    <!-- LINKE SEITE: CLICKER & MEMES -->
+    <!-- LINKE SPALTE: CORE GAMEPLAY -->
     <div class="panel">
-      <h1>⛏ QA11 MINI-GAME</h1>
+      <h1>QA11 OVERLORD</h1>
       
+      <!-- DYNAMISCHE KRISE -->
+      <div class="event-box" id="event-display">
+        <span id="event-title" style="font-family: 'Press Start 2P', monospace; font-size: 0.7rem; color: var(--red); display: block; margin-bottom: 8px;">🔥 KRISEN-ALARM!</span>
+        <span id="event-desc" style="font-size: 0.9rem; display: block; margin-bottom: 10px;">Joschi nähert sich einer Base!</span>
+        <button class="action-btn" id="event-action-btn" onclick="resolveCrisis()">🔥 ENTVAFFNEN (-10 Klicks)</button>
+      </div>
+
       <div class="meme-box">
-        <p id="meme-text">"Klicke auf die Kelle, um das Server-Drama anzuheizen..."</p>
+        <p id="meme-text">"Analysiere Server-Aktivitäten... Kein Beef aktiv."</p>
       </div>
 
       <div class="score-display">
-        DIAMANTEN: <span id="click-score" style="color: var(--diamond);">0</span>
+        <span id="click-score" style="color: var(--diamond);">0</span> <span style="font-size: 0.9rem; color: var(--diamond);">DIAS</span>
       </div>
       <div class="cps-display">
-        Forschungsrate (CPS): <span id="cps-score" style="color: var(--primary);">0</span>
+        Generierungs-Rate: <span id="cps-score" style="color: var(--primary); font-weight: bold;">0.0</span> /s
       </div>
       
+      <!-- DER INTERAKTIVE BUTTON -->
       <button onclick="triggerClicker()" class="click-target">⛏</button>
       
-      <div style="font-size: 0.8rem; color: var(--muted); margin-top: 15px;" id="tool-text">
-        Modus: Manuelle Datenerfassung (+1)
+      <!-- LEVEL SYSTEM -->
+      <div style="text-align: left; margin-top: 15px;">
+        <span id="rank-text" style="font-size: 0.8rem; font-family: monospace; color: var(--gold); font-weight: bold;">Rang: Unschuldiger Beobachter</span>
+        <div class="progress-container">
+          <div class="progress-bar" id="level-progress"></div>
+          <div class="progress-text" id="progress-digits">0 / 100</div>
+        </div>
       </div>
 
-      <!-- PANIK KNOPF -->
-      <button class="panic-btn" onclick="togglePanic()">🚨 DESKTOP TARNEN (LEERTASTE)</button>
+      <button class="panic-btn" onclick="togglePanic()">NOTFALL-PANIC-MODUS (LEERTASTE HÄLT DIE APP UNSICHTBAR)</button>
       <br>
       <a href="index.html" class="back-link">◀ ZURÜCK ZUM HUB</a>
     </div>
 
-    <!-- RECHTE SEITE: SHOP -->
+    <!-- RECHTE SPALTE: SERVER INTERAKTION SHOP -->
     <div class="panel">
-      <h2>🛒 UPGRADES & EFFIZIENZ</h2>
+      <h2>🛠 IN-GAME OPERATIONS</h2>
       <div class="shop-list">
         
         <div class="shop-item">
           <div class="shop-info">
-            <strong id="tool-name">Besseres Skript</strong>
-            <span id="tool-desc">Klick-Ertrag +1</span>
+            <strong id="tool-name">Eisen-Spitzhacke</strong>
+            <span id="tool-desc">Klick-Stärke +1</span>
           </div>
-          <button class="buy-btn" id="btn-upgrade-tool" onclick="upgradeTool()">Cost: 25</button>
+          <button class="buy-btn" id="btn-upgrade-tool" onclick="upgradeTool()">25 D</button>
         </div>
 
         <div class="shop-item">
           <div class="shop-info">
-            <strong>KI-Bot 🧟</strong>
-            <span>+0.5 Einheiten / Sek</span>
+            <strong>Kisten-Spion 🕵️‍♂️</strong>
+            <span>+0.8 Dias/s | Log-Suche</span>
           </div>
-          <button class="buy-btn" id="btn-buy-zombie" onclick="buyAutoFarm('zombie', 15, 0.5)">Cost: 15</button>
+          <button class="buy-btn" id="btn-buy-zombie" onclick="buyAutoFarm('zombie', 15, 0.8)">15 D</button>
         </div>
 
         <div class="shop-item">
           <div class="shop-info">
-            <strong>Server-Skript 🤖</strong>
-            <span>+4.0 Einheiten / Sek</span>
+            <strong>Schilder-Schreiber 📝</strong>
+            <span>+5.5 Dias/s | Verwirrung</span>
           </div>
-          <button class="buy-btn" id="btn-buy-golem" onclick="buyAutoFarm('golem', 100, 4.0)">Cost: 100</button>
+          <button class="buy-btn" id="btn-buy-golem" onclick="buyAutoFarm('golem', 110, 5.5)">110 D</button>
         </div>
 
         <div class="shop-item">
           <div class="shop-info">
-            <strong>Mikas Holz-Zentrale 🪵</strong>
-            <span>+25.0 Einheiten / Sek</span>
+            <strong>Mikas Pale-Oak Fabrik 🪵</strong>
+            <span>+32.0 Dias/s | Holz-Monopol</span>
           </div>
-          <button class="buy-btn" id="btn-buy-factory" onclick="buyAutoFarm('factory', 500, 25.0)">Cost: 500</button>
+          <button class="buy-btn" id="btn-buy-factory" onclick="buyAutoFarm('factory', 600, 32.0)">600 D</button>
         </div>
 
       </div>
     </div>
   </div>
 
-
-  <!-- 🚨 TARN-INHALT (WIKIPEDIA SITE - WIRD NUR IM NORMALEN BROWSER ALS FALLBACK GEZEIGT) -->
+  <!-- WIKIPEDIA TARNUNG (NUR AKTIV WENN BRWOSER-FALLBACK GREIFT) -->
   <div id="tarn-view" class="tarn-content" style="display: none;">
     <div class="tarn-header">Gemeindeordnung (Niedersachsen) [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]</div>
     <p>Aus Wikipedia, der freien Enzyklopädie</p>
-    <p>Die <strong>Gemeindeordnung</strong> regelt die Verfassung, Verwaltung und die wirtschaftlichen Grundlagen der Kommunen und Gemeinden im Bundesland Niedersachsen [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]. Sie stellt die gesetzliche Basis für die kommunale Selbstverwaltung dar, wie sie im Grundgesetz verankert ist.</p>
-    <h3>1. Aufgaben des Bürgermeisters</h3>
-    <p>Der Hauptverwaltungsbeamte (in Gemeinden meist der Bürgermeister genannt) leitet die Kommunalverwaltung und vertritt die Gemeinde nach außen [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]. Er bereitet die Beschlüsse des Gemeinderates vor und führt diese unter Einhaltung des Haushaltsplans aus. Zu den wirtschaftlichen Kernaufgaben gehört die Erstellung des jährlichen Haushalts- und Ergebnisplanes der Kommune.</p>
-    <h3>2. Struktur des Gemeinderates</h3>
-    <p>Der Rat einer Gemeinde ist das oberste Beschluss- und Kontrollorgan. Die Anzahl der Ratsmitglieder richtet sich nach der Einwohnerzahl der jeweiligen Kommune. Er entscheidet über Satzungen, öffentliche Abgaben (Gewerbesteuer, Grundsteuer) und strategische Investitionen in die lokale Infrastruktur.</p>
-    <p style="color: #777; font-size: 0.8rem; margin-top: 50px;">Zuletzt bearbeitet am 18. Mai 2026 um 14:22 Uhr. (Drücke Leertaste zum Zurückkehren)</p>
+    <p>Die <strong>Gemeindeordnung</strong> regelt die Verfassung und Verwaltung der Kommunen im Bundesland Niedersachsen [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]. Sie bildet die Rechtsgrundlage für die Arbeit des Bürgermeisters und des Gemeinderates.</p>
+    <p style="color: #777; font-size: 0.8rem; margin-top: 50px;">Drücke Leertaste, um zum Arbeitsblatt zurückzukehren.</p>
   </div>
-
 
 <script>
 let diamonds = 0;
@@ -288,19 +243,28 @@ let diamondsPerClick = 1;
 let totalCps = 0;
 let isPanic = false;
 
+// Krisen Variablen
+let activeCrisis = null;
+let crisisTimeout = null;
+
+// Level System
+let currentExp = 0;
+let nextLevelExp = 100;
+let rankIndex = 0;
+const RANKS = ["Unschuldiger Beobachter", "Indizien-Sammler", "Detektiv-Lehrling", "Server-Anwalt", "Wahrheits-Overlord 👑"];
+
 const TOOLS = [
-  { name: "Besseres Skript", power: 1, cost: 0 },
-  { name: "Automatisches Makro", power: 2, cost: 25 },
-  { name: "Daten-Parser", power: 5, cost: 120 },
-  { name: "Cloud-Schnittstelle", power: 12, cost: 450 },
-  { name: "Louis High-End API 🛠", power: 35, cost: 1500 }
+  { name: "Eisen-Spitzhacke", power: 2, cost: 25 },
+  { name: "Diamant-Spitzhacke", power: 6, cost: 150 },
+  { name: "Netherite-Spitzhacke", power: 18, cost: 500 },
+  { name: "Louis Hack-Client 🛠", power: 50, cost: 2000 }
 ];
-let currentToolIndex = 0;
+let currentToolIndex = -1;
 
 let shopItems = {
   zombie: { count: 0, cost: 15 },
-  golem: { count: 0, cost: 100 },
-  factory: { count: 0, cost: 500 }
+  golem: { count: 0, cost: 110 },
+  factory: { count: 0, cost: 600 }
 };
 
 const QA_MEMES = [
@@ -309,65 +273,112 @@ const QA_MEMES = [
   "Giorgio: 'Ich war das safe nicht, Jungs!'",
   "Nils wird mal wieder grundlos als Hauptverdächtiger hingestellt. 🕵️‍♂️",
   "Louis: 'Ich hab die Schilder von Joschi genau gesehen!'",
-  "Wer braucht schon CoreProtect, wenn man wild beschuldigen kann?",
-  "Season 11 läuft seit 2 Tagen und die erste Base brennt fast."
+  "Schilder-Krieg in Louis Base eskaliert komplett.",
+  "Season 11 läuft seit 2 Tagen und die halbe Map droht zu brennen."
 ];
 
-// 🚨 COMPACT PANIC-FUNKTION (Minimiert per Electron oder zeigt Wikipedia)
+const CRISES = [
+  { id: "fire", title: "🔥 BRANDSTIFTUNG!", desc: "Joschi zündet Giorgios Garten an!", action: "WASSER EIMER!", cost: 12 },
+  { id: "mika", title: "🪵 RAZZIA!", desc: "Mika durchsucht verdächtige Kisten!", action: "ABLENKEN!", cost: 20 },
+  { id: "schild", title: "📝 SCHILDER-SPAM!", desc: "Anonyme Schilder tauchen in deiner Base auf!", action: "ABREISSEN!", cost: 15 }
+];
+
 function togglePanic() {
   if (isPanic) return;
-
-  // Wenn Electron läuft, App komplett minimieren
   if (window.electronAPI && typeof window.electronAPI.minimizeApp === 'function') {
     window.electronAPI.minimizeApp();
     return;
   }
-
-  // Fallback für normalen Browser (Wikipedia-Tarnung)
   isPanic = true;
-  const body = document.getElementById('main-body');
-  const gameView = document.getElementById('game-view');
-  const tarnView = document.getElementById('tarn-view');
-  const title = document.getElementById('page-title');
-
-  body.className = "tarn-mode";
-  gameView.style.display = "none";
-  tarnView.style.display = "block";
-  title.textContent = "Gemeindeordnung (Niedersachsen) – Wikipedia [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]";
+  document.getElementById('main-body').className = "tarn-mode";
+  document.getElementById('game-view').style.display = "none";
+  document.getElementById('tarn-view').style.display = "block";
 }
 
-// LEERTASTE REAKTION
 window.addEventListener('keydown', function(e) {
   if (e.code === 'Space') {
     e.preventDefault(); 
-    
     if (isPanic) {
-      // Wenn im Browser-Tarnmodus, schalte zurück
       isPanic = false;
-      const body = document.getElementById('main-body');
-      const gameView = document.getElementById('game-view');
-      const tarnView = document.getElementById('tarn-view');
-      const title = document.getElementById('page-title');
-      
-      body.className = "game-mode";
-      gameView.style.display = "grid";
-      tarnView.style.display = "none";
-      title.textContent = "Wirtschaft & Sozialkunde - Analyse 8. Klasse";
+      document.getElementById('main-body').className = "game-mode";
+      document.getElementById('game-view').style.display = "grid";
+      document.getElementById('tarn-view').style.display = "none";
     } else {
       togglePanic();
     }
   }
 });
 
+// KLICK FUNKTION MIT INTERAKTIVEM ZUWACHS
 function triggerClicker() {
-  if (isPanic) return; 
+  if (isPanic) return;
   diamonds += diamondsPerClick;
+  addExp(diamondsPerClick);
   updateUI();
   playSound("xp.mp3");
 
-  if (Math.random() < 0.15) {
-    showNewMeme();
+  if (Math.random() < 0.12) { showNewMeme(); }
+}
+
+function addExp(amount) {
+  currentExp += amount;
+  if (currentExp >= nextLevelExp) {
+    currentExp -= nextLevelExp;
+    nextLevelExp = Math.round(nextLevelExp * 1.5);
+    if (rankIndex < RANKS.length - 1) rankIndex++;
+    document.getElementById('rank-text').textContent = `Rang: ${RANKS[rankIndex]}`;
+    playSound("achievement.mp3");
   }
+  
+  const pct = (currentExp / nextLevelExp) * 100;
+  document.getElementById('level-progress').style.width = pct + "%";
+  document.getElementById('progress-digits').textContent = `${Math.floor(currentExp)} / ${nextLevelExp}`;
+}
+
+// ZUFÄLLIGE KRISE STARTEN
+function triggerRandomCrisis() {
+  if (activeCrisis || isPanic) return;
+  
+  const randomCrisis = CRISES[Math.floor(Math.random() * CRISES.length)];
+  activeCrisis = randomCrisis;
+
+  const box = document.getElementById('event-display');
+  document.getElementById('event-title').textContent = randomCrisis.title;
+  document.getElementById('event-desc').textContent = randomCrisis.desc;
+  document.getElementById('event-action-btn').textContent = `${randomCrisis.action} (${randomCrisis.cost} Klicks!)`;
+  box.style.display = "block";
+
+  // Wenn man nicht rechtzeitig klickt (8 Sekunden Zeit)
+  crisisTimeout = setTimeout(() => {
+    endCrisis(false);
+  }, 8000);
+}
+
+// KRISE ERFOLGREICH GELÖST
+function resolveCrisis() {
+  if (!activeCrisis) return;
+  clearTimeout(crisisTimeout);
+  
+  // Belohnung: Fette Dias!
+  let reward = activeCrisis.cost * 3;
+  diamonds += reward;
+  addExp(reward);
+  
+  const textEl = document.getElementById('meme-text');
+  if (textEl) textEl.textContent = `💥 KRISE ABGEWENDET: Du hast die Situation gerettet! +${reward} Dias erhalten.`;
+  
+  endCrisis(true);
+}
+
+function endCrisis(success) {
+  document.getElementById('event-display').style.display = "none";
+  if (!success && activeCrisis) {
+    // Strafe: Bots produzieren kurz weniger
+    diamonds = Math.max(0, diamonds - 20);
+    document.getElementById('meme-text').textContent = `❌ KRISE ESKALIERT: Der Server-Beef wurde schlimmer. Du verlierst 20 Dias.`;
+  }
+  activeCrisis = null;
+  updateUI();
 }
 
 function upgradeTool() {
@@ -387,7 +398,7 @@ function buyAutoFarm(key, baseCost, cpsValue) {
     diamonds -= item.cost;
     item.count++;
     totalCps += cpsValue;
-    item.cost = Math.round(item.cost * 1.2);
+    item.cost = Math.round(item.cost * 1.25);
     playSound("xp.mp3");
     updateUI();
   }
@@ -396,28 +407,27 @@ function buyAutoFarm(key, baseCost, cpsValue) {
 function updateUI() {
   document.getElementById('click-score').textContent = Math.floor(diamonds);
   document.getElementById('cps-score').textContent = totalCps.toFixed(1);
-  document.getElementById('tool-text').textContent = `Aktuelles Werkzeug: ${TOOLS[currentToolIndex].name} (+${diamondsPerClick})`;
 
   let nextTool = TOOLS[currentToolIndex + 1];
   const toolBtn = document.getElementById('btn-upgrade-tool');
   if (nextTool) {
     document.getElementById('tool-name').textContent = nextTool.name;
-    document.getElementById('tool-desc').textContent = `Klick-Ertrag +${nextTool.power - diamondsPerClick}`;
-    toolBtn.textContent = `Cost: ${nextTool.cost}`;
+    document.getElementById('tool-desc').textContent = `Klick-Power +${nextTool.power}`;
+    toolBtn.textContent = `${nextTool.cost} D`;
     toolBtn.disabled = diamonds < nextTool.cost;
   } else {
-    document.getElementById('tool-name').textContent = "MAXED OUT";
-    toolBtn.textContent = "---";
+    document.getElementById('tool-name').textContent = "MAX OVERLORD CODE";
+    toolBtn.textContent = "MAX";
     toolBtn.disabled = true;
   }
 
-  document.getElementById('btn-buy-zombie').textContent = `Cost: ${shopItems.zombie.cost} (${shopItems.zombie.count})`;
+  document.getElementById('btn-buy-zombie').textContent = `${shopItems.zombie.cost} D (${shopItems.zombie.count})`;
   document.getElementById('btn-buy-zombie').disabled = diamonds < shopItems.zombie.cost;
 
-  document.getElementById('btn-buy-golem').textContent = `Cost: ${shopItems.golem.cost} (${shopItems.golem.count})`;
+  document.getElementById('btn-buy-golem').textContent = `${shopItems.golem.cost} D (${shopItems.golem.count})`;
   document.getElementById('btn-buy-golem').disabled = diamonds < shopItems.golem.cost;
 
-  document.getElementById('btn-buy-factory').textContent = `Cost: ${shopItems.factory.cost} (${shopItems.factory.count})`;
+  document.getElementById('btn-buy-factory').textContent = `${shopItems.factory.cost} D (${shopItems.factory.count})`;
   document.getElementById('btn-buy-factory').disabled = diamonds < shopItems.factory.cost;
 }
 
@@ -438,7 +448,7 @@ function playSound(file) {
   } catch (e) {}
 }
 
-// PASSIVER COMPUTE LOOP (Rechnet auch im minimierten Zustand heimlich weiter!)
+// GAME TICK (Passive Dias und zufällige Krisen-Events)
 setInterval(function() {
   if (totalCps > 0) {
     diamonds += totalCps / 10;
@@ -451,10 +461,15 @@ setInterval(function() {
       document.getElementById('btn-buy-factory').disabled = diamonds < shopItems.factory.cost;
     }
   }
+
+  // 3% Chance alle 100ms, dass eine Server-Krise ausbricht (macht es interaktiv!)
+  if (Math.random() < 0.003) {
+    triggerRandomCrisis();
+  }
 }, 100);
 
 if (window.electronAPI) {
-  window.electronAPI.updateStatus("Liest Fachartikel über Wirtschaftspolitik 📚");
+  window.electronAPI.updateStatus("Managt Krisen in Quaps Attack S11 🕵️‍♂️");
 }
 </script>
 
