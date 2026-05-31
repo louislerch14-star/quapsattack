@@ -2,258 +2,358 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QUAPS CLICK-WAR S11</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>QUAPS S11 - VECTOR ARENA</title>
   <style>
     :root {
-      --bg: #080810;
-      --panel: #121220;
-      --border: #333355;
-      --green: #55ff55;
-      --red: #ff5555;
-      --blue: #55ffff;
-      --gold: #ffaa00;
+      --bg: #0a0b10;
+      --accent-blue: #00f0ff;
+      --accent-green: #00ff66;
+      --accent-red: #ff3366;
+      --panel-bg: rgba(15, 18, 36, 0.7);
+      --border: rgba(0, 240, 255, 0.2);
     }
 
-    body.game-mode {
-      background: var(--bg);
-      color: #fff;
-      font-family: 'Press Start 2P', monospace;
-      margin: 0;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      user-select: none;
-    }
-
-    .header-zone {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    h1 { font-size: 1.2rem; color: var(--blue); margin: 0 0 5px 0; text-shadow: 2px 2px #000; }
-    .subtitle { font-size: 0.6rem; color: #888; font-family: sans-serif; }
-
-    /* ACTION GRID */
-    .arena {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      max-width: 950px;
-      width: 100%;
-    }
-
-    @media (max-width: 700px) { .arena { grid-template-columns: 1fr; } }
-
-    .base-card {
-      background: var(--panel);
-      border: 4px solid var(--border);
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      position: relative;
-      transition: transform 0.1s;
-    }
-
-    .base-card:active { transform: scale(0.98); }
-    .base-card.dead { border-color: var(--red); background: #200a0a; opacity: 0.5; }
-
-    .name { font-size: 0.8rem; margin-bottom: 10px; color: #fff; }
+    * { box-sizing: border-box; }
     
-    /* HP BALKEN */
-    .hp-container {
-      background: #000;
-      border: 2px solid #000;
-      height: 15px;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
-    .hp-bar { background: var(--green); height: 100%; width: 100%; transition: width 0.2s; }
-
-    .points { font-size: 0.7rem; color: var(--gold); margin: 10px 0; }
-
-    /* AKTIONEN INNERHALB DER CARD */
-    .btn-farm {
-      background: #224422;
-      border: 2px solid var(--green);
-      color: #fff;
-      padding: 8px 0;
-      width: 100%;
-      font-family: 'Press Start 2P';
-      font-size: 0.6rem;
-      cursor: pointer;
-      margin-bottom: 10px;
-    }
-    .btn-farm:hover { background: #336633; }
-
-    .attack-zone {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5px;
+    body, html {
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      background: var(--bg); color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden; user-select: none;
     }
 
-    .btn-action {
-      background: #333344;
+    body.game-mode { display: flex; flex-direction: column; }
+
+    /* MODERNES HUD */
+    .hud-overlay {
+      position: absolute; top: 20px; left: 20px; right: 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      pointer-events: none; z-index: 10;
+    }
+
+    .hud-panel {
+      background: var(--panel-bg);
       border: 1px solid var(--border);
-      color: #ccc;
-      padding: 5px 0;
-      font-family: 'Press Start 2P';
-      font-size: 0.5rem;
-      cursor: pointer;
+      backdrop-filter: blur(12px);
+      padding: 12px 24px; border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
-    .btn-action:hover:not(:disabled) { background: #444466; color: #fff; }
-    .btn-action:disabled { background: #111; color: #444; border-color: #222; cursor: not-allowed; }
-    .btn-action.atk { border-color: var(--red); }
-    .btn-action.atk:hover:not(:disabled) { background: #552222; }
 
-    /* TARNUNG */
-    body.tarn-mode { background: #fff !important; color: #202122 !important; font-family: sans-serif !important; padding: 40px !important; display: block !important; }
-    .tarn-content { max-width: 800px; margin: 0 auto; }
-    .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; font-family: 'Georgia', serif; }
+    .title-brand {
+      font-size: 14px; font-weight: 800; letter-spacing: 2px;
+      color: var(--accent-blue); text-transform: uppercase;
+    }
+
+    .stats { font-size: 12px; font-weight: 600; color: #a0aec0; margin-top: 4px; }
+    .stats span { color: #fff; font-weight: 700; }
+
+    .leaderboard {
+      position: absolute; right: 20px; top: 100px;
+      background: var(--panel-bg); border: 1px solid var(--border);
+      backdrop-filter: blur(12px); padding: 15px; border-radius: 16px;
+      width: 200px; pointer-events: none; z-index: 10;
+    }
+
+    .lb-title { font-size: 11px; font-weight: 800; color: #718096; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
+    .lb-row { display: flex; justify-content: space-between; font-size: 12px; margin: 4px 0; color: #e2e8f0; }
+    .lb-row.dead { opacity: 0.3; text-decoration: line-through; }
+
+    canvas { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
+
+    .controls-tip {
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      font-size: 11px; color: #718096; background: rgba(0,0,0,0.6);
+      padding: 6px 16px; border-radius: 20px; pointer-events: none;
+    }
+
+    /* WIKIPEDIA TARN-MODUS (MAXIMAL UNGERACHTIG) */
+    body.tarn-mode { background: #ffffff !important; color: #202122 !important; padding: 40px !important; display: block !important; overflow: auto !important; }
+    .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; }
+    .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; margin-bottom: 20px; font-family: 'Georgia', serif; color: #000; }
   </style>
 </head>
 <body class="game-mode" id="main-body">
 
-  <div class="header-zone" id="game-header">
-    <h1>QUAPS S11: CLICK-WAR</h1>
-    <div class="subtitle">Klicken zum Farmen. Punkte nutzen, um andere zu sabotieren oder sich zu schützen! (Leertaste = Tarnung)</div>
+  <div class="hud-overlay" id="game-hud">
+    <div class="hud-panel">
+      <div class="title-brand">QUAPS VECTOR // S11</div>
+      <div class="stats">SCORE: <span id="ui-score">0</span> &nbsp;|&nbsp; KILLS: <span id="ui-kills">0</span></div>
+    </div>
   </div>
 
-  <!-- DIE ARENA -->
-  <div class="arena" id="arena-grid">
-    <!-- Wird per JS gebaut -->
+  <div class="leaderboard" id="game-lb">
+    <div class="lb-title">SERVER-STATUS</div>
+    <div id="lb-content"></div>
   </div>
+
+  <div class="controls-tip" id="game-tip">Maus bewegen = Fliegen | Linksklick = Laser abfeuern | Leertaste = Tarnung</div>
+
+  <canvas id="vectorCanvas"></canvas>
 
   <!-- WIKIPEDIA TARNUNG -->
   <div id="tarn-view" class="tarn-content" style="display: none;">
     <div class="tarn-header">Gemeindeordnung (Niedersachsen) [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]</div>
     <p>Aus Wikipedia, der freien Enzyklopädie</p>
-    <p>Die kommunale Selbstverwaltung im Landkreis Vechta umfasst operative Richtlinien zur Haushaltskonsolidierung [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
+    <p>Die rechtlichen Grundlagen zur Ausgestaltung kommunaler Budgets im Raum Vechta basieren auf den niedersächsischen Verordnungen zur Haushaltskonsolidierung [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
   </div>
 
 <script>
-let isPanic = false;
+const canvas = document.getElementById("vectorCanvas");
+const ctx = canvas.getContext("2d");
 
-// Alle Spieler direkt auf einen Blick
-let players = [
-  { id: 0, name: "Louis 🛠", hp: 100, points: 0, protected: false, dead: false },
-  { id: 1, name: "Mika 🪵", hp: 100, points: 0, protected: false, dead: false },
-  { id: 2, name: "Giorgio 🚫", hp: 100, points: 0, protected: false, dead: false },
-  { id: 3, name: "Joschi 🔥", hp: 100, points: 0, protected: false, dead: false },
-  { id: 4, name: "Jonas 🕊", hp: 100, points: 0, protected: false, dead: false },
-  { id: 5, name: "Nils 🕵️‍♂️", hp: 100, points: 0, protected: false, dead: false }
+let isPanic = false;
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+
+window.addEventListener('resize', () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+});
+
+// SPIELER-DATEIEN
+const player = {
+  x: width / 2, y: height / 2,
+  radius: 12, angle: 0,
+  speed: 0.08, // Smooth LERP Interpolation
+  score: 0, kills: 0
+};
+
+const mouse = { x: width / 2, y: height / 2 };
+
+// Bots & Entities (Die Truppe)
+let bots = [
+  { name: "Mika 🪵", x: 200, y: 300, vx: 2, vy: -1.5, color: "#00ff66", alive: true, kills: 0 },
+  { name: "Giorgio 🚫", x: 500, y: 150, vx: -2, vy: 2, color: "#ff3366", alive: true, kills: 0 },
+  { name: "Joschi 🔥", x: 700, y: 400, vx: 1.5, vy: 1.5, color: "#ffaa00", alive: true, kills: 0 },
+  { name: "Jonas 🕊", x: 150, y: 500, vx: -1, vy: -2, color: "#00f0ff", alive: true, kills: 0 },
+  { name: "Nils 🕵️‍♂️", x: 600, y: 550, vx: 2, vy: 1, color: "#a0aec0", alive: true, kills: 0 }
 ];
 
-// Ausgewähltes Angriffsziel im Gedächtnis behalten
-let selectedTarget = null;
+let lasers = [];
+let particles = [];
+let collectibles = [];
 
-function renderArena() {
-  const grid = document.getElementById("arena-grid");
-  grid.innerHTML = "";
+// Event Listeners
+window.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX; mouse.y = e.clientY;
+});
+window.addEventListener('touchmove', (e) => {
+  if(e.touches.length > 0) {
+    mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY;
+  }
+});
 
-  players.forEach((p) => {
-    const card = document.createElement("div");
-    card.className = `base-card ${p.dead ? 'dead' : ''}`;
-    
-    // HP Balken Farbe ändern bei wenig Leben
-    let hpColor = "var(--green)";
-    if (p.hp < 40) hpColor = "var(--gold)";
-    if (p.hp < 20) hpColor = "var(--red)";
+window.addEventListener('mousedown', () => { if(!isPanic) fireLaser(player.x, player.y, player.angle, true, "Du"); });
+window.addEventListener('touchstart', () => { if(!isPanic) fireLaser(player.x, player.y, player.angle, true, "Du"); });
 
-    card.innerHTML = `
-      <div class="name">${p.name} ${p.protected ? '🛡️' : ''}</div>
-      <div class="hp-container">
-        <div class="hp-bar" style="width: ${p.hp}%; background: ${hpColor};"></div>
-      </div>
-      <div class="points">💎 ${p.points}</div>
-      
-      <button class="btn-farm" ${p.dead ? 'disabled' : ''} onclick="farmPoints(${p.id})">+ FARMEN</button>
-      
-      <div class="attack-zone">
-        <button class="btn-action atk" ${p.dead || p.points < 10 ? 'disabled' : ''} onclick="triggerAttack(${p.id})">SABOTIEREN (10)</button>
-        <button class="btn-action" ${p.dead || p.points < 15 ? 'disabled' : ''} onclick="buyShield(${p.id})">SCHUTZ (15)</button>
-      </div>
-    `;
-    grid.appendChild(card);
+function fireLaser(x, y, angle, isPlayer, shooterName) {
+  lasers.push({
+    x: x + Math.cos(angle) * 15,
+    y: y + Math.sin(angle) * 15,
+    vx: Math.cos(angle) * 12,
+    vy: Math.sin(angle) * 12,
+    isPlayer: isPlayer,
+    shooter: shooterName,
+    life: 60
   });
 }
 
-function farmPoints(id) {
-  players[id].points += 2;
-  renderArena();
-}
-
-function buyShield(id) {
-  if (players[id].points >= 15) {
-    players[id].points -= 15;
-    players[id].protected = true;
-    renderArena();
+function spawnCollectible() {
+  if (collectibles.length < 15) {
+    collectibles.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      type: Math.random() > 0.3 ? 'data' : 'diamond',
+      pulse: Math.random() * 10
+    });
   }
 }
 
-function triggerAttack(attackerId) {
-  if (players[attackerId].points < 10) return;
-  
-  // Prompt für schnelles Ziel-Eintippen per ID oder Klick (Simpel per Prompt gelöst um Platz zu sparen)
-  let targetName = prompt(`Wen willst du sabotieren?\nTyp eins: Louis, Mika, Giorgio, Joschi, Jonas, Nils`).toLowerCase().trim();
-  
-  let target = players.find(p => p.name.toLowerCase().includes(targetName) && !p.dead);
-  
-  if (!target) {
-    alert("Spieler nicht gefunden oder bereits tot!");
-    return;
+function createExplosion(x, y, color) {
+  for (let i = 0; i < 15; i++) {
+    particles.push({
+      x: x, y: y,
+      vx: (Math.random() - 0.5) * 6,
+      vy: (Math.random() - 0.5) * 6,
+      radius: Math.random() * 3,
+      color: color,
+      alpha: 1
+    });
   }
+}
+
+function updateLeaderboard() {
+  const content = document.getElementById("lb-content");
+  let sorted = [...bots, { name: "Du (Louis) 🛠", alive: true, kills: player.kills }].sort((a,b) => b.kills - a.kills);
   
-  if (target.id === attackerId) {
-    alert("Du kannst dich nicht selbst angreifen!");
-    return;
-  }
+  content.innerHTML = sorted.map(b => `
+    <div class="lb-row ${!b.alive ? 'dead' : ''}">
+      <span>${b.name}</span>
+      <span>${b.kills} K</span>
+    </div>
+  `).join('');
+}
 
-  // Abzug der Punkte beim Angreifer
-  players[attackerId].points -= 10;
+// SIMULATION & ENGINE
+function loop() {
+  if (isPanic) return;
 
-  // Schaden berechnen
-  if (target.protected) {
-    target.protected = false; // Schild bricht
-    alert(`Schutz von ${target.name} wurde zerstört!`);
-  } else {
-    target.hp -= 25;
-    if (target.hp <= 0) {
-      target.hp = 0;
-      target.dead = true;
-      target.points = 0;
+  ctx.fillStyle = "rgba(10, 11, 16, 0.2)"; // Motion Blur-Effekt
+  ctx.fillRect(0, 0, width, height);
+
+  // Spawner
+  if(Math.random() < 0.05) spawnCollectible();
+
+  // 1. PLAYER LOGIC (SMOOTH FOLLOW)
+  let dx = mouse.x - player.x;
+  let dy = mouse.y - player.y;
+  player.angle = Math.atan2(dy, dx);
+  
+  player.x += dx * player.speed;
+  player.y += dy * player.speed;
+
+  // Render Spieler (Modern Vector Tri-Ship)
+  ctx.save();
+  ctx.translate(player.x, player.y);
+  ctx.rotate(player.angle);
+  ctx.strokeStyle = varColor("--accent-blue");
+  ctx.lineWidth = 3;
+  ctx.shadowBlur = 15; ctx.shadowColor = varColor("--accent-blue");
+  ctx.beginPath();
+  ctx.moveTo(15, 0); ctx.lineTo(-10, -10); ctx.lineTo(-4, 0); ctx.lineTo(-10, 10);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
+
+  // 2. COLLECTIBLES RENDER
+  collectibles.forEach((c, index) => {
+    c.pulse += 0.1;
+    let size = 5 + Math.sin(c.pulse) * 2;
+    
+    ctx.save();
+    ctx.shadowBlur = 10;
+    if (c.type === 'data') {
+      ctx.fillStyle = varColor("--accent-green");
+      ctx.shadowColor = varColor("--accent-green");
+      ctx.fillRect(c.x - size/2, c.y - size/2, size, size);
+    } else {
+      ctx.fillStyle = "#fff";
+      ctx.shadowColor = "#fff";
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, size/2, 0, Math.PI*2);
+      ctx.fill();
     }
-  }
-  
-  checkWinCondition();
-  renderArena();
+    ctx.restore();
+
+    // Kollision mit Spieler
+    let pDist = Math.hypot(player.x - c.x, player.y - c.y);
+    if (pDist < player.radius + size) {
+      collectibles.splice(index, 1);
+      player.score += c.type === 'data' ? 10 : 25;
+      document.getElementById("ui-score").textContent = player.score;
+    }
+  });
+
+  // 3. BOTS LOGIC (INTELLIGENT MOVEMENT & AUTO-FIRE)
+  bots.forEach(b => {
+    if (!b.alive) return;
+
+    b.x += b.vx; b.y += b.vy;
+    if (b.x < 20 || b.x > width - 20) b.vx *= -1;
+    if (b.y < 20 || b.y > height - 20) b.vy *= -1;
+
+    // Render Bot Orb
+    ctx.save();
+    ctx.shadowBlur = 12; ctx.shadowColor = b.color;
+    ctx.fillStyle = b.color;
+    ctx.beginPath(); ctx.arc(b.x, b.y, 10, 0, Math.PI * 2); ctx.fill();
+    
+    // Clean Vector Name-Tag
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(b.name, b.x, b.y - 18);
+    ctx.restore();
+
+    // Bot schießt zufällig auf den Spieler
+    if (Math.random() < 0.015) {
+      let bAngle = Math.atan2(player.y - b.y, player.x - b.x) + (Math.random() - 0.5) * 0.2;
+      fireLaser(b.x, b.y, bAngle, false, b.name);
+    }
+  });
+
+  // 4. LASER ENGINE
+  lasers.forEach((l, lIdx) => {
+    l.x += l.vx; l.y += l.vy;
+    l.life--;
+
+    ctx.save();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = l.isPlayer ? varColor("--accent-blue") : varColor("--accent-red");
+    ctx.shadowBlur = 8; ctx.shadowColor = ctx.strokeStyle;
+    ctx.beginPath(); ctx.moveTo(l.x, l.y); ctx.lineTo(l.x - l.vx*1.5, l.y - l.vy*1.5); ctx.stroke();
+    ctx.restore();
+
+    if (l.life <= 0) { lasers.splice(lIdx, 1); return; }
+
+    // Kollision prüfen
+    if (l.isPlayer) {
+      bots.forEach(b => {
+        if (b.alive && Math.hypot(b.x - l.x, b.y - l.y) < 14) {
+          b.alive = false;
+          createExplosion(b.x, b.y, b.color);
+          lasers.splice(lIdx, 1);
+          player.kills++;
+          document.getElementById("ui-kills").textContent = player.kills;
+          updateLeaderboard();
+          
+          // Respawn Bot nach 3 Sekunden
+          setTimeout(() => { b.alive = true; b.x = Math.random()*width; b.y = Math.random()*height; updateLeaderboard(); }, 3000);
+        }
+      });
+    } else {
+      // Trifft den Spieler
+      if (Math.hypot(player.x - l.x, player.y - l.y) < player.radius) {
+        createExplosion(player.x, player.y, varColor("--accent-red"));
+        lasers.splice(lIdx, 1);
+        player.score = Math.max(0, player.score - 50);
+        document.getElementById("ui-score").textContent = player.score;
+      }
+    }
+  });
+
+  // 5. PARTIKEL EFFEKTE
+  particles.forEach((p, pIdx) => {
+    p.x += p.vx; p.y += p.vy;
+    p.alpha -= 0.02;
+    if(p.alpha <= 0) { particles.splice(pIdx, 1); return; }
+
+    ctx.save();
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  });
+
+  requestAnimationFrame(loop);
 }
 
-function checkWinCondition() {
-  let alivePlayers = players.filter(p => !p.dead);
-  if (alivePlayers.length === 1) {
-    setTimeout(() => {
-      alert(`👑 ${alivePlayers[0].name} HAT DEN SERVER-BEEF GEWONNEN!`);
-      // Reset
-      players.forEach(p => { p.hp = 100; p.points = 0; p.dead = false; p.protected = false; });
-      renderArena();
-    }, 100);
-  }
+function varColor(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-// PANIC BUTTON TRICK
+// PANIC-FALLBACK MECHANISMUS
 function togglePanic() {
   if (isPanic) {
     isPanic = false;
     document.getElementById('main-body').className = "game-mode";
-    document.getElementById('arena-grid').style.display = "grid";
-    document.getElementById('game-header').style.display = "block";
     document.getElementById('tarn-view').style.display = "none";
+    document.getElementById('game-hud').style.display = "flex";
+    document.getElementById('game-lb').style.display = "block";
+    document.getElementById('game-tip').style.display = "block";
+    canvas.style.display = "block";
+    loop();
   } else {
     if (window.electronAPI && typeof window.electronAPI.minimizeApp === 'function') {
       window.electronAPI.minimizeApp();
@@ -261,21 +361,24 @@ function togglePanic() {
     }
     isPanic = true;
     document.getElementById('main-body').className = "tarn-mode";
-    document.getElementById('arena-grid').style.display = "none";
-    document.getElementById('game-header').style.display = "none";
     document.getElementById('tarn-view').style.display = "block";
+    document.getElementById('game-hud').style.display = "none";
+    document.getElementById('game-lb').style.display = "none";
+    document.getElementById('game-tip').style.display = "none";
+    canvas.style.display = "none";
   }
 }
 
-window.addEventListener('keydown', function(e) {
+window.addEventListener('keydown', (e) => {
   if (e.code === 'Space') {
     e.preventDefault();
     togglePanic();
   }
 });
 
-// Start
-renderArena();
+// Init
+updateLeaderboard();
+loop();
 </script>
 
 </body>
