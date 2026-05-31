@@ -3,18 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QUAPS ATTACK - Season 11: The True Story</title>
+  <title>QUAPS ATTACK - Season 11 Boardroom</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     :root {
-      --background: #0a0a12;
-      --panel: #131324;
-      --border: #444466;
+      --background: #0b0b14;
+      --panel: #141424;
+      --border: #3f3f5f;
       --primary: #55ff55;
       --gold: #ffaa00;
       --diamond: #55ffff;
       --red: #ff5555;
-      --purple: #aa55ff;
     }
 
     body.game-mode {
@@ -22,80 +21,114 @@
       color: #ffffff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      padding: 10px;
+      padding: 20px;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       user-select: none;
-      overflow: hidden;
     }
 
     .game-container {
       background: var(--panel);
       border: 4px solid var(--border);
       border-radius: 12px;
-      padding: 15px;
-      text-align: center;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.9);
-      max-width: 850px;
+      padding: 20px;
+      max-width: 900px;
       width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+      text-align: center;
     }
 
     h1 {
       font-family: 'Press Start 2P', monospace;
       color: var(--diamond);
-      font-size: 1.1rem;
-      margin: 0 0 10px 0;
-      text-shadow: 3px 3px #000;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px #000;
     }
 
-    .ticker-box {
+    /* STATUS ANZEIGEN */
+    .game-phase-box {
       background: #000;
       border: 2px solid var(--border);
-      padding: 8px;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      font-family: monospace;
-      font-size: 0.9rem;
-      color: var(--primary);
-      font-weight: bold;
-      min-height: 20px;
-    }
-
-    .stats-bar {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.65rem;
-      background: rgba(0,0,0,0.5);
       padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-      gap: 5px;
-    }
-
-    canvas {
-      background: #161626;
-      border: 3px solid #000;
-      border-radius: 6px;
-      display: block;
-      margin: 0 auto;
-      box-shadow: inset 0 0 30px rgba(0,0,0,0.9);
-    }
-
-    .controls-hint {
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-family: 'Press Start 2P', monospace;
       font-size: 0.75rem;
-      color: #8888aa;
-      margin-top: 8px;
-      font-family: monospace;
-      line-height: 1.4;
+      color: var(--gold);
+    }
+
+    .ticker {
+      background: rgba(255,255,255,0.05);
+      border-left: 4px solid var(--primary);
+      padding: 10px;
+      margin-bottom: 20px;
+      text-align: left;
+      font-size: 0.9rem;
+      min-height: 40px;
+      color: #e0e0ff;
+    }
+
+    /* SPIELER GRID */
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    @media (max-width: 600px) {
+      .players-grid { grid-template-columns: 1fr; }
+    }
+
+    .player-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 15px;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .player-card:hover {
+      border-color: var(--primary);
+      background: rgba(85, 255, 85, 0.05);
+    }
+    .player-card.active {
+      border-color: var(--gold);
+      box-shadow: 0 0 10px var(--gold);
+    }
+    .player-card.dead {
+      border-color: var(--red) !important;
+      background: rgba(255, 55, 55, 0.1) !important;
+      opacity: 0.6;
+    }
+
+    .player-name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.75rem;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .player-status {
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+
+    /* AKTIONEN BOX */
+    .action-panel {
+      background: #07070d;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
     }
 
     .btn {
-      background: #252538;
+      background: #222236;
       border: 2px solid var(--border);
       color: #fff;
       padding: 10px 20px;
@@ -103,24 +136,25 @@
       font-size: 0.7rem;
       cursor: pointer;
       border-radius: 4px;
-      margin-top: 10px;
+      margin: 5px;
       box-shadow: 0 4px 0 #000;
     }
-    .btn:hover { background: #353552; color: var(--gold); }
-    .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
+    .btn:hover:not(:disabled) { background: #323252; color: var(--diamond); }
+    .btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
+    .btn:disabled { background: #111; color: #444; border-color: #222; cursor: not-allowed; box-shadow: none; }
 
-    .panic-info {
-      background: rgba(255,55,55,0.1);
-      border: 1px dashed var(--red);
-      color: var(--red);
-      padding: 6px;
+    .panic-btn {
+      background: none;
+      border: none;
+      color: #444;
       font-size: 0.6rem;
-      font-family: 'Press Start 2P', monospace;
-      margin-top: 12px;
-      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 25px;
+      display: block;
+      width: 100%;
     }
 
-    /* TARNMODUS FALLBACK FÜR WEBBROWSER */
+    /* BROWSER TARNUNG FALLBACK */
     body.tarn-mode { background: #ffffff !important; color: #202122 !important; font-family: sans-serif !important; padding: 40px !important; display: block !important; }
     .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; }
     .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; margin-bottom: 20px; font-family: 'Georgia', serif; color: #000; }
@@ -129,93 +163,110 @@
 <body class="game-mode" id="main-body">
 
   <div class="game-container" id="game-view">
-    <h1>QA11: BEEF OVERLORD</h1>
+    <h1>QUAPS ATTACK S11: THE BEEF SIMULATOR</h1>
     
-    <!-- LIVE-TICKER FÜR STORY-SPRÜCHE -->
-    <div class="ticker-box" id="story-ticker">
-      Louis versucht, die Log-Dateien aufzuklären...
+    <div class="game-phase-box" id="phase-display">
+      PHASE: REKRUTIERUNG & ROLLENVERGABE
     </div>
 
-    <div class="stats-bar">
-      <div>BEWEISE: <span id="ui-score" style="color: var(--diamond);">0</span></div>
-      <div>LEBEN: <span id="ui-lives" style="color: var(--red);">❤❤❤</span></div>
-      <div>BUFF: <span id="ui-buff" style="color: var(--primary);">Kein</span></div>
-      <div>STATUS: <span id="ui-status" style="color: var(--gold);">Unschuldig</span></div>
+    <div class="ticker" id="game-ticker">
+      Willkommen bei Season 11. Verteilt die Plätze im Raum, wählt nacheinander eure Namen aus und startet die geheimen Ermittlungen!
     </div>
 
-    <!-- SPIELOBERFLÄCHE -->
-    <canvas id="gameCanvas" width="800" height="420"></canvas>
-
-    <div class="controls-hint">
-      <strong>STEUERUNG:</strong> <span style="color: #fff;">WASD / Pfeiltasten</span>.<br>
-      Sammle <span style="color: var(--diamond);">Log-Dateien</span>. Nutze <span style="color: #d2b48c;">Mikas Pale-Oak</span> (Schutz) & <span style="color: #ff00ff;">Jonas</span> (Cleart das Feld). Weiche <span style="color: var(--red);">Joschi, Giorgio & Nils</span> aus!
+    <!-- DAS SPIELER-GRID -->
+    <div class="players-grid" id="players-container">
+      <!-- Wird per JS dynamisch generiert -->
     </div>
 
-    <button class="btn" id="start-btn" onclick="resetGame()">OPERATION LOGS STARTEN</button>
-    
-    <div class="panic-info">🚨 LEERTASTE = HÄLT DIE APP BLITZSCHNELL UND UNSICHTBAR IM HINTERGRUND!</div>
-    
-    <div style="margin-top: 10px;">
-      <a href="index.html" style="color: #555; font-size: 0.6rem; font-family: 'Press Start 2P'; text-decoration: none;">◀ HUB</a>
+    <!-- AKTIONSMENÜ -->
+    <div class="action-panel">
+      <div id="action-text" style="font-weight: bold; margin-bottom: 10px; font-family: monospace;">Spieler-Setup ausführen:</div>
+      <div id="buttons-container">
+        <button class="btn" onclick="startGame()">BEEF STARTEN (NACHT 1)</button>
+      </div>
     </div>
+
+    <button class="panic-btn" onclick="togglePanic()">Notfall-Modus (Oder Leertaste hämmern)</button>
   </div>
 
-  <!-- BROWSER TARNUNG FALLBACK -->
+  <!-- LEHRER-ABLENKUNG (FALLBACK) -->
   <div id="tarn-view" class="tarn-content" style="display: none;">
     <div class="tarn-header">Gemeindeordnung (Niedersachsen) [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]</div>
     <p>Aus Wikipedia, der freien Enzyklopädie</p>
-    <p>Die Richtlinien zur Entlastung kommunaler Haushalte sind im niedersächsischen Kommunalverfassungsgesetz festgeschrieben [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
+    <p>Die Haushaltsaufsicht der Kommunen im Landkreis Vechta regelt wirtschaftliche Synergien autonom [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
   </div>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-
-let score = 0;
-let lives = 3;
-let gameOver = true;
 let isPanic = false;
-let gameLoopId = null;
+let gameStarted = false;
+let currentPhase = "SETUP"; // SETUP, NIGHT_CHOOSE, NIGHT_ACTION, DAY_DISCUSSION, DAY_VOTE
+let activePlayerIndex = 0;
+let selectedTargetIndex = null;
 
-// Buff-System
-let invulnerableTimer = 0; // Mikas Pale Oak Buff
-
-// SPIELER (Louis 🛠)
-const player = {
-  x: canvas.width / 2,
-  y: canvas.height / 2,
-  size: 20,
-  speed: 5.5
+// Echte Rollen-Definitionen basierend auf eurem Server-Beef
+const ROLES = {
+  GRIEFER: { name: "Griefer (Joschi)", desc: "Zünde jede Nacht heimlich das Haus eines Mitspielers an. Verwirre am Tag alle!" },
+  ADMIN: { name: "Admin (Giorgio)", desc: "Du kannst jede Nacht einen Spieler bannen. Erwischst du den Griefer, gewinnst du. Erwischst du einen Unschuldigen, verlierst du Rechte." },
+  ERMITTLER: { name: "Ermittler (Louis)", desc: "Prüfe jede Nacht die CoreProtect-Logs eines Spielers, um seine wahre Rolle zu sehen." },
+  HOLZBAUER: { name: "Holzbaron (Mika)", desc: "Beschütze jede Nacht das Haus eines Spielers mit unbrennbarem Pale Oak Holz." },
+  ZEUGE: { name: "Zeuge (Jonas)", desc: "Du bist neutral. Wenn du angegriffen wirst, erfährst du am Tag sofort, wer es war." },
+  ANWALT: { name: "Server-Anwalt (Nils)", desc: "Deine Stimme zählt bei der täglichen Abstimmung doppelt!" }
 };
 
-// Listen für Entities
-let items = [];     // Beweise/Logs
-let allies = [];    // Mika, Jonas
-let enemies = [];   // Joschi, Giorgio, Nils
-let projectiles = []; // Feuerzeuge, Ban-Blitze
+// Spielerliste
+let players = [
+  { name: "Louis", role: ROLES.ERMITTLER, alive: true, status: "Bereit", housesBurned: 0 },
+  { name: "Mika", role: ROLES.HOLZBAUER, alive: true, status: "Bereit", housesBurned: 0 },
+  { name: "Giorgio", role: ROLES.ADMIN, alive: true, status: "Bereit", housesBurned: 0 },
+  { name: "Joschi", role: ROLES.GRIEFER, alive: true, status: "Bereit", housesBurned: 0 },
+  { name: "Jonas", role: ROLES.ZEUGE, alive: true, status: "Bereit", housesBurned: 0 },
+  { name: "Nils", role: ROLES.ANWALT, alive: true, status: "Bereit", housesBurned: 0 }
+];
 
-const keys = {};
-window.addEventListener("keydown", e => {
-  if (e.code === "Space") {
-    e.preventDefault();
-    handlePanicToggle();
-  } else {
-    keys[e.key.toLowerCase()] = true;
-    keys[e.code] = true;
-  }
-});
-window.addEventListener("keyup", e => {
-  keys[e.key.toLowerCase()] = false;
-  keys[e.code] = false;
-});
+// Runden-Aktionen
+let nightActions = {
+  burnedTarget: null,
+  protectedTarget: null,
+  bannedTarget: null
+};
 
-function handlePanicToggle() {
+function initUI() {
+  const container = document.getElementById("players-container");
+  container.innerHTML = "";
+  
+  players.forEach((p, idx) => {
+    const card = document.createElement("div");
+    card.className = `player-card ${!p.alive ? 'dead' : ''} ${gameStarted && idx === activePlayerIndex && currentPhase.startsWith('NIGHT') ? 'active' : ''}`;
+    card.onclick = () => selectPlayer(idx);
+    
+    card.innerHTML = `
+      <div class="player-name">${p.name}</div>
+      <div class="player-status" id="status-${idx}">${p.status}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function selectPlayer(idx) {
+  if (currentPhase === "SETUP" || !players[idx].alive) return;
+  
+  selectedTargetIndex = idx;
+  // Visuelles Highlight bei Auswahl
+  const cards = document.querySelectorAll(".player-card");
+  cards.forEach((c, i) => {
+    if(i === idx) c.style.borderColor = "var(--diamond)";
+    else if (i !== activePlayerIndex || !currentPhase.startsWith('NIGHT')) c.style.borderColor = "var(--border)";
+  });
+
+  document.getElementById("action-text").textContent = `Ziel ausgewählt: ${players[idx].name}. Wähle jetzt deine Aktion unten!`;
+}
+
+function togglePanic() {
   if (isPanic) {
     isPanic = false;
     document.getElementById('main-body').className = "game-mode";
     document.getElementById('game-view').style.display = "block";
     document.getElementById('tarn-view').style.display = "none";
-    if (!gameOver) gameLoop();
   } else {
     if (window.electronAPI && typeof window.electronAPI.minimizeApp === 'function') {
       window.electronAPI.minimizeApp();
@@ -228,269 +279,201 @@ function handlePanicToggle() {
   }
 }
 
-function updateTicker(text) {
-  document.getElementById("story-ticker").textContent = text;
-}
-
-function resetGame() {
-  score = 0;
-  lives = 3;
-  invulnerableTimer = 0;
-  gameOver = false;
-  items = [];
-  allies = [];
-  enemies = [];
-  projectiles = [];
-  player.x = canvas.width / 2;
-  player.y = canvas.height / 2;
-  
-  document.getElementById("start-btn").blur();
-  document.getElementById("start-btn").textContent = "NEUSTART";
-  updateTicker("Louis durchsucht den Server nach Beweisen... 🕵️‍♂️");
-
-  // Spawne erste Logs
-  for(let i=0; i<4; i++) spawnItem();
-  
-  // Spawne die Charaktere
-  spawnEnemy("joschi");
-  spawnEnemy("giorgio");
-  spawnEnemy("nils");
-  
-  if(gameLoopId) cancelAnimationFrame(gameLoopId);
-  gameLoop();
-}
-
-function spawnItem() {
-  items.push({
-    x: Math.random() * (canvas.width - 30) + 15,
-    y: Math.random() * (canvas.height - 30) + 15,
-    size: 10
-  });
-}
-
-function spawnEnemy(type) {
-  let x = Math.random() * canvas.width;
-  let y = type === "giorgio" ? 30 : Math.random() * canvas.height;
-  enemies.push({
-    x, y,
-    type,
-    size: 22,
-    vx: (Math.random() - 0.5) * 3,
-    vy: (Math.random() - 0.5) * 3,
-    lastAction: 0
-  });
-}
-
-function spawnAlly(type) {
-  allies.push({
-    x: Math.random() * (canvas.width - 40) + 20,
-    y: Math.random() * (canvas.height - 40) + 20,
-    type,
-    size: 18,
-    life: 300 // Verschwindet nach Zeit
-  });
-}
-
-function getStatus(score) {
-  if (score < 8) return "Beschuldigt";
-  if (score < 20) return "Gegenbeweis bereit";
-  if (score < 40) return "Schilder-Krieg Meister";
-  return "SERVER-OVERLORD 👑";
-}
-
-// MAIN LOOP
-function gameLoop() {
-  if (gameOver || isPanic) return;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Timers
-  if (invulnerableTimer > 0) invulnerableTimer--;
-
-  // 1. LOUIS BEWEGUNG
-  if (keys['w'] || keys['ArrowUp']) player.y -= player.speed;
-  if (keys['s'] || keys['ArrowDown']) player.y += player.speed;
-  if (keys['a'] || keys['ArrowLeft']) player.x -= player.speed;
-  if (keys['d'] || keys['ArrowRight']) player.x += player.speed;
-
-  if (player.x < 0) player.x = 0;
-  if (player.x > canvas.width - player.size) player.x = canvas.width - player.size;
-  if (player.y < 0) player.y = 0;
-  if (player.y > canvas.height - player.size) player.y = canvas.height - player.size;
-
-  // LOUIS ZEICHNEN (Mit Aura wenn Buff aktiv)
-  if (invulnerableTimer > 0) {
-    ctx.fillStyle = "rgba(85, 255, 255, 0.4)";
-    ctx.fillRect(player.x - 4, player.y - 4, player.size + 8, player.size + 8);
+window.addEventListener('keydown', function(e) {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    togglePanic();
   }
-  ctx.fillStyle = "#55ff55"; // Louis-Grün
-  ctx.fillRect(player.x, player.y, player.size, player.size);
-  ctx.fillStyle = "#fff"; // Augen
-  ctx.fillRect(player.x + 3, player.y + 4, 3, 3);
-  ctx.fillRect(player.x + 13, player.y + 4, 3, 3);
-  ctx.fillStyle = "#000"; ctx.fillRect(player.x + 4, player.y + 5, 1, 1); ctx.fillRect(player.x + 14, player.y + 5, 1, 1);
+});
 
-  // 2. ITEMS (LOG-DATEIEN & DIAS) WERTEN
-  items.forEach((item, index) => {
-    ctx.fillStyle = varColor("--diamond");
-    ctx.fillRect(item.x, item.y, item.size, item.size + 4);
-    ctx.fillStyle = "#fff"; // Zeilen auf dem Papier
-    ctx.fillRect(item.x + 2, item.y + 2, item.size - 4, 2);
-    ctx.fillRect(item.x + 2, item.y + 6, item.size - 4, 2);
+// SPIEL LOGIK START
+function startGame() {
+  gameStarted = true;
+  // Rollen mischen wäre möglich, aber wir behalten eure festen Signaturen für maximalen Spaß!
+  startNightTurn(0);
+}
 
-    // Kollision Louis mit Log
-    if (player.x < item.x + item.size && player.x + player.size > item.x && player.y < item.y + item.size && player.y + player.size > item.y) {
-      items.splice(index, 1);
-      score++;
-      spawnItem();
-      if(Math.random() < 0.15) updateTicker("Louis: 'Ich hab die CoreProtect-Einträge gefunden!'");
-    }
-  });
-
-  // 3. ALLIIERTE VERARBEITEN (Mika & Jonas)
-  allies.forEach((ally, index) => {
-    ally.life--;
-    if(ally.life <= 0) { allies.splice(index, 1); return; }
-
-    if (ally.type === "mika") {
-      ctx.fillStyle = "#d2b48c"; // Holz-Zentrale
-      ctx.fillRect(ally.x, ally.y, ally.size, ally.size);
-      ctx.fillStyle = "#4a2f13"; ctx.fillRect(ally.x + 4, ally.y + 4, ally.size - 8, ally.size - 8);
-    } else {
-      ctx.fillStyle = "#ff55ff"; // Jonas der neutrale Zeuge
-      ctx.fillRect(ally.x, ally.y, ally.size, ally.size);
-    }
-
-    // Kollision mit Louis
-    if (player.x < ally.x + ally.size && player.x + player.size > ally.x && player.y < ally.y + ally.size && player.y + player.size > ally.y) {
-      if (ally.type === "mika") {
-        invulnerableTimer = 250; // Unverwundbar!
-        updateTicker("Mika stellt Pale Oak bereit! Louis ist kurz geschützt! 🪵");
-      } else if (ally.type === "jonas") {
-        projectiles = []; // Cleart alle Angriffe!
-        updateTicker("Jonas sagt: 'Beruhigt euch!' -> Alle Angriffe gelöscht! 🕊");
-      }
-      allies.splice(index, 1);
-    }
-  });
-
-  // 4. GEGNER STEUERUNG (Joschi, Giorgio, Nils)
-  enemies.forEach(en => {
-    en.x += en.vx; en.y += en.vy;
-    if (en.x < 0 || en.x > canvas.width - en.size) en.vx *= -1;
-    if (en.y < 0 || en.y > canvas.height - en.size) en.vy *= -1;
-
-    let now = Date.now();
-
-    if (en.type === "joschi") {
-      ctx.fillStyle = "#ffaa00"; ctx.fillRect(en.x, en.y, en.size, en.size);
-      ctx.fillStyle = "#ff5555"; ctx.fillRect(en.x + 4, en.y - 4, en.size - 8, 4); // Feuerzeug-Aufsatz
-      
-      // Joschi wirft Feuerzeuge
-      if (now - en.lastAction > 1400) {
-        projectiles.push({ x: en.x, y: en.y, vx: (player.x - en.x) / 50, vy: (player.y - en.y) / 50, type: "fire", size: 8 });
-        en.lastAction = now;
-        if(Math.random() < 0.2) updateTicker("Joschi: 'Gleich brennt das nächste Haus!' 🔥");
-      }
-    } 
-    else if (en.type === "giorgio") {
-      ctx.fillStyle = "#ff5555"; ctx.fillRect(en.x, en.y, en.size, en.size); // Roter Admin-Kopf
-      ctx.fillStyle = "#000"; ctx.fillRect(en.x + 4, en.y + 4, en.size - 8, en.size - 8);
-
-      // Giorgio schießt Ban-Blitze von oben nach unten
-      if (now - en.lastAction > 2000) {
-        projectiles.push({ x: en.x + 8, y: en.y + 20, vx: 0, vy: 5, type: "ban", size: 12 });
-        en.lastAction = now;
-        if(Math.random() < 0.3) updateTicker("Giorgio: 'Ich banne euch alle gleich!' 🚫");
-      }
-    } 
-    else if (en.type === "nils") {
-      ctx.fillStyle = "#aaaaaa"; ctx.fillRect(en.x, en.y, en.size, en.size); // Nils der Ermittler
-      
-      // Nils läuft aggressiver direkt auf Louis zu
-      let dx = player.x - en.x; let dy = player.y - en.y;
-      let dist = Math.sqrt(dx*dx + dy*dy);
-      if(dist > 0) { en.x += (dx/dist) * 1.5; en.y += (dy/dist) * 1.5; }
-
-      if (now - en.lastAction > 3500) {
-        updateTicker("Nils: 'Louis, du bist safe schuldig!' 🕵️‍♂️");
-        en.lastAction = now;
-      }
-
-      // Direkte Kollision mit Nils kostet Leben
-      if (invulnerableTimer <= 0 && player.x < en.x + en.size && player.x + player.size > en.x && player.y < en.y + en.size && player.y + player.size > en.y) {
-        lives--; en.x = 0; // Setzt Nils zurück
-        if (lives <= 0) triggerGameOver();
-      }
-    }
-  });
-
-  // 5. PROJEKTILE (ANGRIFFE) PRÜFEN
-  projectiles.forEach((pj, index) => {
-    pj.x += pj.vx; pj.y += pj.vy;
-
-    if (pj.type === "fire") {
-      ctx.fillStyle = varColor("--gold"); ctx.fillRect(pj.x, pj.y, pj.size, pj.size);
-    } else {
-      ctx.fillStyle = varColor("--purple"); // Ban-Strahl
-      ctx.fillRect(pj.x, pj.y, 4, pj.size);
-    }
-
-    // Aus dem Screen?
-    if (pj.x < -10 || pj.x > canvas.width + 10 || pj.y < -10 || pj.y > canvas.height + 10) {
-      projectiles.splice(index, 1); return;
-    }
-
-    // Treffer bei Louis?
-    if (invulnerableTimer <= 0 && player.x < pj.x + pj.size && player.x + player.size > pj.x && player.y < pj.y + pj.size && player.y + player.size > pj.y) {
-      projectiles.splice(index, 1);
-      lives--;
-      updateTicker("Aua! Du wurdest von einer Beschuldigung/Angriff getroffen!");
-      if (lives <= 0) triggerGameOver();
-    }
-  });
-
-  // UI Aktualisierungen
-  document.getElementById("ui-score").textContent = score;
-  document.getElementById("ui-lives").textContent = "❤".repeat(lives) + "🖤".repeat(3 - lives);
-  document.getElementById("ui-buff").textContent = invulnerableTimer > 0 ? "PALE OAK AKTIV" : "Kein";
-  document.getElementById("ui-status").textContent = getStatus(score);
-
-  // Electron Rich Presence
-  if (window.electronAPI && Math.random() < 0.005) {
-    window.electronAPI.updateStatus(`Klärt den Server-Beef auf (Beweise: ${score}) 🕵️‍♂️`);
+function startNightTurn(playerIdx) {
+  selectedTargetIndex = null;
+  
+  // Finde den nächsten lebenden Spieler für die Nachtaktion
+  if (playerIdx >= players.length) {
+    evaluateNight();
+    return;
+  }
+  
+  activePlayerIndex = playerIdx;
+  if (!players[playerIdx].alive) {
+    startNightTurn(playerIdx + 1);
+    return;
   }
 
-  gameLoopId = requestAnimationFrame(gameLoop);
+  currentPhase = "NIGHT_CHOOSE";
+  document.getElementById("phase-display").textContent = `🌙 NACHTPHASE - GEHEIMER ZUG`;
+  document.getElementById("game-ticker").textContent = `Übergib die Maus lautlos an [ ${players[playerIdx].name} ]. Alle anderen weggucken!`;
+  
+  initUI();
+
+  const btnContainer = document.getElementById("buttons-container");
+  btnContainer.innerHTML = `<button class="btn" onclick="revealNightAction(${playerIdx})">ROLLE & AKTIONEN ANZEIGEN</button>`;
+  document.getElementById("action-text").textContent = "Bereitmachen für den geheimen Zug...";
 }
 
-function triggerGameOver() {
-  gameOver = true;
-  ctx.fillStyle = "rgba(0,0,0,0.85)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = varColor("--red");
-  ctx.font = "18px 'Press Start 2P'";
-  ctx.fillText("VOM SERVER GEBANNT!", canvas.width / 2 - 190, canvas.height / 2 - 10);
-  ctx.font = "10px 'Press Start 2P'";
-  ctx.fillStyle = "#fff";
-  ctx.fillText(`Du hast ${score} Beweise gesichert, bevor Giorgio den Banhammer schwang.`, canvas.width / 2 - 250, canvas.height / 2 + 30);
-  updateTicker("Giorgio hat den Ban-Knopf gedrückt. Startet die nächste Revisions-Runde!");
+function revealNightAction(idx) {
+  currentPhase = "NIGHT_ACTION";
+  const p = players[idx];
+  document.getElementById("game-ticker").textContent = `Deine Rolle: ${p.role.name}\nZiel: ${p.role.desc}`;
+  
+  const btnContainer = document.getElementById("buttons-container");
+  btnContainer.innerHTML = "";
+
+  document.getElementById("action-text").textContent = "Wähle oben einen Mitspieler aus und klicke deine Fähigkeit:";
+
+  // Spezifische Buttons je nach Rolle generieren
+  if (p.role === ROLES.GRIEFER) {
+    btnContainer.innerHTML = `<button class="btn" onclick="executeAction('burn')">🔥 Bude anstecken!</button>`;
+  } else if (p.role === ROLES.ADMIN) {
+    btnContainer.innerHTML = `<button class="btn" onclick="executeAction('ban')">🚫 Banhammer schwingen</button>`;
+  } else if (p.role === ROLES.ERMITTLER) {
+    btnContainer.innerHTML = `<button class="btn" onclick="executeAction('inspect')">🕵️‍♂️ CoreProtect Logs prüfen</button>`;
+  } else if (p.role === ROLES.HOLZBAUER) {
+    btnContainer.innerHTML = `<button class="btn" onclick="executeAction('protect')">🪵 Pale Oak Schutz setzen</button>`;
+  } else {
+    // Zeuge oder Anwalt haben passive Rollen nachts
+    btnContainer.innerHTML = `<button class="btn" onclick="executeAction('idle')">💤 Unauffällig schlafen gehen</button>`;
+  }
 }
 
-function varColor(name) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+function executeAction(actionType) {
+  if (actionType !== 'idle' && selectedTargetIndex === null) {
+    alert("Wähle zuerst oben ein Ziel aus!");
+    return;
+  }
+
+  const actor = players[activePlayerIndex];
+  
+  if (actionType === 'burn') nightActions.burnedTarget = selectedTargetIndex;
+  if (actionType === 'protect') nightActions.protectedTarget = selectedTargetIndex;
+  if (actionType === 'ban') nightActions.bannedTarget = selectedTargetIndex;
+  if (actionType === 'inspect') {
+    const target = players[selectedTargetIndex];
+    alert(`[COREPROTECT LOGS]: ${target.name} ist in Wahrheit: ${target.role.name}`);
+  }
+
+  // Nächster Spieler ist dran
+  startNightTurn(activePlayerIndex + 1);
 }
 
-// Spawne Verbündete (Mika & Jonas) alle paar Sekunden zufällig
-setInterval(() => {
-  if (!gameOver && !isPanic) {
-    if(Math.random() > 0.5) {
-      spawnAlly("mika");
+// AUSWERTUNG DER NACHT
+function evaluateNight() {
+  currentPhase = "DAY_DISCUSSION";
+  document.getElementById("phase-display").textContent = `☀️ TAGPHASE - DER SERVER-BEEF KOCHT`;
+  
+  let report = "Der Server startet neu... Folgendes ist passiert:\n";
+  
+  // 1. Check Holz-Schutz vs Brandstiftung
+  if (nightActions.burnedTarget !== null) {
+    let target = players[nightActions.burnedTarget];
+    if (nightActions.burnedTarget === nightActions.protectedTarget) {
+      report += `🔥 BRANDANSCHLAG VERHINDERT: Jemand wollte die Base von ${target.name} anzünden, aber Mikas Pale Oak Holz war feuerfest! | `;
     } else {
-      spawnAlly("jonas");
+      target.housesBurned++;
+      report += `🔥 SCHADEN: Das Haus von ${target.name} brennt lichterloh! Schilder wurden überall verteilt! | `;
+      if(target.role === ROLES.ZEUGE) {
+        report += `👁 ZEUGE: Jonas hat Joschi weglaufen sehen! | `;
+      }
     }
   }
-}, 5000);
+
+  // 2. Check Admin Ban
+  if (nightActions.bannedTarget !== null) {
+    let target = players[nightActions.bannedTarget];
+    if (target.role === ROLES.GRIEFER) {
+      report += `🚫 ABSOLUTER WIN: Giorgio hat den wahren Griefer (${target.name}) gebannt! DIE INSEL IST SICHER! Gg!`;
+      target.alive = false;
+      target.status = "GEBANNT";
+      endGame(true);
+      return;
+    } else {
+      report += `❌ ADMIN-FAIL: Giorgio hat den unschuldigen ${target.name} gebannt! Was für ein Machtmissbrauch! | `;
+      target.alive = false;
+      target.status = "FÄLSCHLICH GEBANNT";
+    }
+  }
+
+  if (nightActions.burnedTarget === null && nightActions.bannedTarget === null) {
+    report += "Ruhige Nacht auf dem Server. Fast schon zu ruhig...";
+  }
+
+  // Reset Nacht-Aktionen
+  nightActions = { burnedTarget: null, protectedTarget: null, bannedTarget: null };
+
+  // Lebende checken
+  let grieferAlive = players.some(p => p.role === ROLES.GRIEFER && p.alive);
+  if (!grieferAlive) {
+    report += "\n\n🎉 DIE ERMITTLER GEWINNEN! Der Griefer wurde unschädlich gemacht!";
+    document.getElementById("game-ticker").textContent = report;
+    endGame(true);
+    return;
+  }
+
+  document.getElementById("game-ticker").textContent = report;
+  
+  // UI für die Diskussion updaten
+  players.forEach((p, idx) => {
+    if (p.alive) p.status = `Häuser brennen: ${p.housesBurned}`;
+  });
+  initUI();
+
+  const btnContainer = document.getElementById("buttons-container");
+  btnContainer.innerHTML = `<button class="btn" onclick="startVoting()">VOTING-PHASE STARTEN</button>`;
+  document.getElementById("action-text").textContent = "Diskutiert jetzt lautlos per Zettel oder Chat im Unterricht. Wer fliegt vom Server?";
+}
+
+// VOTING STARTEN
+function startVoting() {
+  currentPhase = "DAY_VOTE";
+  document.getElementById("phase-display").textContent = `⚖️ SERVER-ABSTIMMUNG`;
+  document.getElementById("game-ticker").textContent = "Wählt jetzt oben den Hauptverdächtigen aus, den ihr kollektiv für 1 Runde muten oder kicken wollt!";
+  
+  const btnContainer = document.getElementById("buttons-container");
+  btnContainer.innerHTML = `<button class="btn" onclick="confirmVote()">KICK-VOTE BESTÄTIGEN</button>`;
+}
+
+function confirmVote() {
+  if (selectedTargetIndex === null) {
+    alert("Wählt jemanden aus!");
+    return;
+  }
+
+  let target = players[selectedTargetIndex];
+  target.alive = false;
+  target.status = "DURCH VOTE GEKICKT";
+  
+  let msg = `${target.name} wurde vom Server gevotet! `;
+  if (target.role === ROLES.GRIEFER) {
+    msg += "Er war tatsächlich der Griefer! Der Server hat gewonnen! 🎉";
+    document.getElementById("game-ticker").textContent = msg;
+    endGame(true);
+  } else {
+    msg += `Fehlentscheidung! Er war unschuldiger ${target.role.name}. Der Beef geht weiter...`;
+    document.getElementById("game-ticker").textContent = msg;
+    initUI();
+    
+    // Nächste Nacht starten
+    const btnContainer = document.getElementById("buttons-container");
+    btnContainer.innerHTML = `<button class="btn" onclick="startNightTurn(0)">NÄCHSTE NACHT STARTEN</button>`;
+  }
+}
+
+function endGame(win) {
+  const btnContainer = document.getElementById("buttons-container");
+  btnContainer.innerHTML = `<button class="btn" onclick="location.reload()">NEUES GAME STARTEN</button>`;
+  document.getElementById("action-text").textContent = "Das Spiel ist vorbei.";
+  initUI();
+}
+
+initUI();
 </script>
 
 </body>
