@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QA11 - Anti-Langeweile-Zentrale</title>
+  <title id="page-title">Wirtschaft & Sozialkunde - Analyse 8. Klasse</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -16,7 +16,8 @@
       --muted: #aaaaaa;
     }
 
-    body {
+    /* NORMALES GAME-DESIGN */
+    body.game-mode {
       background-color: var(--background);
       color: #ffffff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -26,6 +27,7 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     .game-layout {
@@ -77,6 +79,7 @@
       font-family: monospace;
       margin: 0;
       font-weight: bold;
+      line-height: 1.4;
     }
 
     .score-display {
@@ -104,24 +107,19 @@
       height: 130px;
       border-radius: 50%;
       outline: none;
-      transition: transform 0.05s;
+      transition: transform 0.05s, background 0.2s;
       box-shadow: 0 5px 0 #2e2e2e;
       margin: 10px 0;
     }
 
+    .click-target:hover { background: #6c6c6c; color: #fff; }
     .click-target:active {
       transform: translateY(4px);
       box-shadow: 0 1px 0 #2e2e2e;
     }
 
     /* Shop Items */
-    .shop-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      text-align: left;
-    }
-
+    .shop-list { display: flex; flex-direction: column; gap: 12px; text-align: left; }
     .shop-item {
       background: rgba(0,0,0,0.4);
       border: 1px solid var(--border);
@@ -145,9 +143,21 @@
       cursor: pointer;
       border-radius: 4px;
     }
-
     .buy-btn:hover:not(:disabled) { background: #5a5a5a; color: var(--diamond); }
     .buy-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
+
+    .panic-btn {
+      background: #aa0000;
+      color: white;
+      border: 2px solid #000;
+      padding: 10px 15px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      cursor: pointer;
+      margin-top: 15px;
+      border-radius: 4px;
+      width: 100%;
+    }
 
     .back-link {
       display: inline-block;
@@ -158,132 +168,208 @@
       font-size: 0.65rem;
     }
     .back-link:hover { color: var(--diamond); }
+
+    /* 🚨 TARNMODUS DESIGN (FALLBACK FÜR WEBBROWSER) */
+    body.tarn-mode {
+      background: #ffffff !important;
+      color: #202122 !important;
+      font-family: sans-serif !important;
+      padding: 40px !important;
+      display: block !important;
+    }
+
+    .tarn-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    .tarn-header {
+      font-size: 2rem;
+      border-bottom: 1px solid #a2a9b1;
+      padding-bottom: 5px;
+      margin-bottom: 20px;
+      font-family: 'Georgia', serif;
+      color: #000;
+    }
   </style>
 </head>
-<body>
+<body class="game-mode" id="main-body">
 
-<div class="game-layout">
-  
-  <!-- LINKE SEITE: CLICKER & MEMES -->
-  <div class="panel">
-    <h1>⛏ QA11 MINI-GAME</h1>
+  <!-- SPIEL INHALT -->
+  <div class="game-layout" id="game-view">
     
-    <div class="meme-box">
-      <p id="meme-text">"Klicke auf die Kelle, um das Server-Drama anzuheizen..."</p>
-    </div>
-
-    <div class="score-display">
-      DIAMANTEN: <span id="click-score" style="color: var(--diamond);">0</span>
-    </div>
-    <div class="cps-display">
-      pro Sekunde (CPS): <span id="cps-score" style="color: var(--primary);">0</span>
-    </div>
-    
-    <button onclick="triggerClicker()" class="click-target">⛏</button>
-    
-    <div style="font-size: 0.8rem; color: var(--muted); margin-top: 15px;" id="tool-text">
-      Aktuelles Werkzeug: Holz-Spitzhacke (+1 pro Klick)
-    </div>
-
-    <a href="index.html" class="back-link">◀ ZURÜCK ZUM HUB</a>
-  </div>
-
-  <!-- RECHTE SEITE: DER SHOP -->
-  <div class="panel">
-    <h2>🛒 UPGRADES & UTILS</h2>
-    <div class="shop-list">
+    <!-- LINKE SEITE: CLICKER & MEMES -->
+    <div class="panel">
+      <h1>⛏ QA11 MINI-GAME</h1>
       
-      <!-- WERKZEUG UPGRADE -->
-      <div class="shop-item">
-        <div class="shop-info">
-          <strong id="tool-name">Stein-Spitzhacke</strong>
-          <span id="tool-desc">Klick-Power +1 (Aktuell: +1)</span>
-        </div>
-        <button class="buy-btn" id="btn-upgrade-tool" onclick="upgradeTool()">Cost: 25</button>
+      <div class="meme-box">
+        <p id="meme-text">"Klicke auf die Kelle, um das Server-Drama anzuheizen..."</p>
       </div>
 
-      <!-- AUTOFARM 1 -->
-      <div class="shop-item">
-        <div class="shop-info">
-          <strong>Minen-Zombie 🧟</strong>
-          <span>+0.5 Dias pro Sekunde</span>
-        </div>
-        <button class="buy-btn" id="btn-buy-zombie" onclick="buyAutoFarm('zombie', 15, 0.5)">Cost: 15</button>
+      <div class="score-display">
+        DIAMANTEN: <span id="click-score" style="color: var(--diamond);">0</span>
+      </div>
+      <div class="cps-display">
+        Forschungsrate (CPS): <span id="cps-score" style="color: var(--primary);">0</span>
+      </div>
+      
+      <button onclick="triggerClicker()" class="click-target">⛏</button>
+      
+      <div style="font-size: 0.8rem; color: var(--muted); margin-top: 15px;" id="tool-text">
+        Modus: Manuelle Datenerfassung (+1)
       </div>
 
-      <!-- AUTOFARM 2 -->
-      <div class="shop-item">
-        <div class="shop-info">
-          <strong>Sklaven-Golem 🤖</strong>
-          <span>+4.0 Dias pro Sekunde</span>
-        </div>
-        <button class="buy-btn" id="btn-buy-golem" onclick="buyAutoFarm('golem', 100, 4.0)">Cost: 100</button>
-      </div>
+      <!-- PANIK KNOPF -->
+      <button class="panic-btn" onclick="togglePanic()">🚨 DESKTOP TARNEN (LEERTASTE)</button>
+      <br>
+      <a href="index.html" class="back-link">◀ ZURÜCK ZUM HUB</a>
+    </div>
 
-      <!-- AUTOFARM 3 -->
-      <div class="shop-item">
-        <div class="shop-info">
-          <strong>Mikas Log-Fabrik 🪵</strong>
-          <span>+25.0 Dias pro Sekunde</span>
+    <!-- RECHTE SEITE: SHOP -->
+    <div class="panel">
+      <h2>🛒 UPGRADES & EFFIZIENZ</h2>
+      <div class="shop-list">
+        
+        <div class="shop-item">
+          <div class="shop-info">
+            <strong id="tool-name">Besseres Skript</strong>
+            <span id="tool-desc">Klick-Ertrag +1</span>
+          </div>
+          <button class="buy-btn" id="btn-upgrade-tool" onclick="upgradeTool()">Cost: 25</button>
         </div>
-        <button class="buy-btn" id="btn-buy-factory" onclick="buyAutoFarm('factory', 500, 25.0)">Cost: 500</button>
-      </div>
 
+        <div class="shop-item">
+          <div class="shop-info">
+            <strong>KI-Bot 🧟</strong>
+            <span>+0.5 Einheiten / Sek</span>
+          </div>
+          <button class="buy-btn" id="btn-buy-zombie" onclick="buyAutoFarm('zombie', 15, 0.5)">Cost: 15</button>
+        </div>
+
+        <div class="shop-item">
+          <div class="shop-info">
+            <strong>Server-Skript 🤖</strong>
+            <span>+4.0 Einheiten / Sek</span>
+          </div>
+          <button class="buy-btn" id="btn-buy-golem" onclick="buyAutoFarm('golem', 100, 4.0)">Cost: 100</button>
+        </div>
+
+        <div class="shop-item">
+          <div class="shop-info">
+            <strong>Mikas Holz-Zentrale 🪵</strong>
+            <span>+25.0 Einheiten / Sek</span>
+          </div>
+          <button class="buy-btn" id="btn-buy-factory" onclick="buyAutoFarm('factory', 500, 25.0)">Cost: 500</button>
+        </div>
+
+      </div>
     </div>
   </div>
 
-</div>
+
+  <!-- 🚨 TARN-INHALT (WIKIPEDIA SITE - WIRD NUR IM NORMALEN BROWSER ALS FALLBACK GEZEIGT) -->
+  <div id="tarn-view" class="tarn-content" style="display: none;">
+    <div class="tarn-header">Gemeindeordnung (Niedersachsen) [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]</div>
+    <p>Aus Wikipedia, der freien Enzyklopädie</p>
+    <p>Die <strong>Gemeindeordnung</strong> regelt die Verfassung, Verwaltung und die wirtschaftlichen Grundlagen der Kommunen und Gemeinden im Bundesland Niedersachsen [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]. Sie stellt die gesetzliche Basis für die kommunale Selbstverwaltung dar, wie sie im Grundgesetz verankert ist.</p>
+    <h3>1. Aufgaben des Bürgermeisters</h3>
+    <p>Der Hauptverwaltungsbeamte (in Gemeinden meist der Bürgermeister genannt) leitet die Kommunalverwaltung und vertritt die Gemeinde nach außen [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]. Er bereitet die Beschlüsse des Gemeinderates vor und führt diese unter Einhaltung des Haushaltsplans aus. Zu den wirtschaftlichen Kernaufgaben gehört die Erstellung des jährlichen Haushalts- und Ergebnisplanes der Kommune.</p>
+    <h3>2. Struktur des Gemeinderates</h3>
+    <p>Der Rat einer Gemeinde ist das oberste Beschluss- und Kontrollorgan. Die Anzahl der Ratsmitglieder richtet sich nach der Einwohnerzahl der jeweiligen Kommune. Er entscheidet über Satzungen, öffentliche Abgaben (Gewerbesteuer, Grundsteuer) und strategische Investitionen in die lokale Infrastruktur.</p>
+    <p style="color: #777; font-size: 0.8rem; margin-top: 50px;">Zuletzt bearbeitet am 18. Mai 2026 um 14:22 Uhr. (Drücke Leertaste zum Zurückkehren)</p>
+  </div>
+
 
 <script>
-// Spiel-Variablen
 let diamonds = 0;
 let diamondsPerClick = 1;
 let totalCps = 0;
+let isPanic = false;
 
-// Werkzeug Stufen
 const TOOLS = [
-  { name: "Holz-Spitzhacke", power: 1, cost: 0 },
-  { name: "Stein-Spitzhacke", power: 2, cost: 25 },
-  { name: "Eisen-Spitzhacke", power: 5, cost: 120 },
-  { name: "Diamant-Spitzhacke", power: 12, cost: 450 },
-  { name: "Netherite-Spitzhacke", power: 35, cost: 1500 },
-  { name: "Louis OP-Spitzhacke 🛠", power: 100, cost: 5000 }
+  { name: "Besseres Skript", power: 1, cost: 0 },
+  { name: "Automatisches Makro", power: 2, cost: 25 },
+  { name: "Daten-Parser", power: 5, cost: 120 },
+  { name: "Cloud-Schnittstelle", power: 12, cost: 450 },
+  { name: "Louis High-End API 🛠", power: 35, cost: 1500 }
 ];
 let currentToolIndex = 0;
 
-// Autofarm Preise & Besitzstände
 let shopItems = {
   zombie: { count: 0, cost: 15 },
   golem: { count: 0, cost: 100 },
   factory: { count: 0, cost: 500 }
 };
 
-// Die Insider-Sprüche
 const QA_MEMES = [
   "Mika: 'WO SIND MEINE PALE OAK LOGS?!'",
   "Joschi steht schon mit dem Feuerzeug vor Giorgios Haus... 🔥",
   "Giorgio: 'Ich war das safe nicht, Jungs!'",
   "Nils wird mal wieder grundlos als Hauptverdächtiger hingestellt. 🕵️‍♂️",
-  "Louis: 'Ich hab die Schilder von Joschi genau gesehen!' (Oder auch nicht... 🤫)",
+  "Louis: 'Ich hab die Schilder von Joschi genau gesehen!'",
   "Wer braucht schon CoreProtect, wenn man wild beschuldigen kann?",
-  "Season 11 läuft seit 2 Tagen und die erste Base brennt fast.",
-  "Ein normales Gespräch auf Quaps Attack existiert nicht.",
-  "Joschi: 'Ich platziere Schilder, wo ich will!'"
+  "Season 11 läuft seit 2 Tagen und die erste Base brennt fast."
 ];
 
-// Manueller Klick
+// 🚨 COMPACT PANIC-FUNKTION (Minimiert per Electron oder zeigt Wikipedia)
+function togglePanic() {
+  if (isPanic) return;
+
+  // Wenn Electron läuft, App komplett minimieren
+  if (window.electronAPI && typeof window.electronAPI.minimizeApp === 'function') {
+    window.electronAPI.minimizeApp();
+    return;
+  }
+
+  // Fallback für normalen Browser (Wikipedia-Tarnung)
+  isPanic = true;
+  const body = document.getElementById('main-body');
+  const gameView = document.getElementById('game-view');
+  const tarnView = document.getElementById('tarn-view');
+  const title = document.getElementById('page-title');
+
+  body.className = "tarn-mode";
+  gameView.style.display = "none";
+  tarnView.style.display = "block";
+  title.textContent = "Gemeindeordnung (Niedersachsen) – Wikipedia [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]";
+}
+
+// LEERTASTE REAKTION
+window.addEventListener('keydown', function(e) {
+  if (e.code === 'Space') {
+    e.preventDefault(); 
+    
+    if (isPanic) {
+      // Wenn im Browser-Tarnmodus, schalte zurück
+      isPanic = false;
+      const body = document.getElementById('main-body');
+      const gameView = document.getElementById('game-view');
+      const tarnView = document.getElementById('tarn-view');
+      const title = document.getElementById('page-title');
+      
+      body.className = "game-mode";
+      gameView.style.display = "grid";
+      tarnView.style.display = "none";
+      title.textContent = "Wirtschaft & Sozialkunde - Analyse 8. Klasse";
+    } else {
+      togglePanic();
+    }
+  }
+});
+
 function triggerClicker() {
+  if (isPanic) return; 
   diamonds += diamondsPerClick;
   updateUI();
   playSound("xp.mp3");
 
-  // Zufallschance auf einen Spruch bei jedem Klick (15% Chance)
   if (Math.random() < 0.15) {
     showNewMeme();
   }
 }
 
-// Upgrade Werkzeug kaufen
 function upgradeTool() {
   let nextTool = TOOLS[currentToolIndex + 1];
   if (nextTool && diamonds >= nextTool.cost) {
@@ -295,44 +381,36 @@ function upgradeTool() {
   }
 }
 
-// Autofarm kaufen
 function buyAutoFarm(key, baseCost, cpsValue) {
   let item = shopItems[key];
   if (diamonds >= item.cost) {
     diamonds -= item.cost;
     item.count++;
     totalCps += cpsValue;
-    // Preis steigt um 20% pro gekauftem Item
     item.cost = Math.round(item.cost * 1.2);
     playSound("xp.mp3");
     updateUI();
   }
 }
 
-// Update der Benutzeroberfläche
 function updateUI() {
   document.getElementById('click-score').textContent = Math.floor(diamonds);
   document.getElementById('cps-score').textContent = totalCps.toFixed(1);
-  
-  // Werkzeug Text
-  document.getElementById('tool-text').textContent = `Aktuelles Werkzeug: ${TOOLS[currentToolIndex].name} (+${diamondsPerClick} pro Klick)`;
+  document.getElementById('tool-text').textContent = `Aktuelles Werkzeug: ${TOOLS[currentToolIndex].name} (+${diamondsPerClick})`;
 
-  // Nächstes Werkzeug im Shop anzeigen
   let nextTool = TOOLS[currentToolIndex + 1];
   const toolBtn = document.getElementById('btn-upgrade-tool');
   if (nextTool) {
     document.getElementById('tool-name').textContent = nextTool.name;
-    document.getElementById('tool-desc').textContent = `Klick-Power +${nextTool.power - diamondsPerClick}`;
+    document.getElementById('tool-desc').textContent = `Klick-Ertrag +${nextTool.power - diamondsPerClick}`;
     toolBtn.textContent = `Cost: ${nextTool.cost}`;
     toolBtn.disabled = diamonds < nextTool.cost;
   } else {
     document.getElementById('tool-name').textContent = "MAXED OUT";
-    document.getElementById('tool-desc').textContent = "Du hast das beste Werkzeug!";
     toolBtn.textContent = "---";
     toolBtn.disabled = true;
   }
 
-  // Autofarm Buttons aktivieren/deaktivieren
   document.getElementById('btn-buy-zombie').textContent = `Cost: ${shopItems.zombie.cost} (${shopItems.zombie.count})`;
   document.getElementById('btn-buy-zombie').disabled = diamonds < shopItems.zombie.cost;
 
@@ -343,7 +421,6 @@ function updateUI() {
   document.getElementById('btn-buy-factory').disabled = diamonds < shopItems.factory.cost;
 }
 
-// Neues Meme einblenden
 function showNewMeme() {
   const memeTextEl = document.getElementById('meme-text');
   if (memeTextEl) {
@@ -352,33 +429,32 @@ function showNewMeme() {
   }
 }
 
-// Sound-Engine
 function playSound(file) {
+  if (isPanic) return; 
   try {
     const audio = new Audio(file);
-    audio.volume = 0.3;
+    audio.volume = 0.2;
     audio.play();
   } catch (e) {}
 }
 
-// LOOP FÜR DIE PASSIVEN DIAMANTEN (Läuft alle 100ms für flüssige Animation)
+// PASSIVER COMPUTE LOOP (Rechnet auch im minimierten Zustand heimlich weiter!)
 setInterval(function() {
   if (totalCps > 0) {
     diamonds += totalCps / 10;
-    document.getElementById('click-score').textContent = Math.floor(diamonds);
-    
-    // Buttons auch im Loop prüfen, falls man passiv genug Geld kriegt
-    let nextTool = TOOLS[currentToolIndex + 1];
-    if (nextTool) document.getElementById('btn-upgrade-tool').disabled = diamonds < nextTool.cost;
-    document.getElementById('btn-buy-zombie').disabled = diamonds < shopItems.zombie.cost;
-    document.getElementById('btn-buy-golem').disabled = diamonds < shopItems.golem.cost;
-    document.getElementById('btn-buy-factory').disabled = diamonds < shopItems.factory.cost;
+    if (!isPanic) {
+      document.getElementById('click-score').textContent = Math.floor(diamonds);
+      let nextTool = TOOLS[currentToolIndex + 1];
+      if (nextTool) document.getElementById('btn-upgrade-tool').disabled = diamonds < nextTool.cost;
+      document.getElementById('btn-buy-zombie').disabled = diamonds < shopItems.zombie.cost;
+      document.getElementById('btn-buy-golem').disabled = diamonds < shopItems.golem.cost;
+      document.getElementById('btn-buy-factory').disabled = diamonds < shopItems.factory.cost;
+    }
   }
 }, 100);
 
-// Electron Status
 if (window.electronAPI) {
-  window.electronAPI.updateStatus("Grindet im QA11 Diamond-Clicker 🕹");
+  window.electronAPI.updateStatus("Liest Fachartikel über Wirtschaftspolitik 📚");
 }
 </script>
 
