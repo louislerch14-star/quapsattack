@@ -1152,6 +1152,31 @@ function showPage(id) {
   document.getElementById('btn-' + id).classList.add('active');
   window.scrollTo(0, 0);
   setTimeout(initReveal, 50);
+
+  /* ⌨ DYNAMISCHE DISCORD RICH PRESENCE ERWEITERUNG */
+  if (window.electronAPI) {
+    let rpcText = "Im Hauptmenü 📋"; // Standard-Text
+
+    if (id === 'home') {
+      rpcText = "Chillt in der Base 🏡";
+    } else if (id === 'pinnwand') {
+      rpcText = "Liest die Pinnwand 💬";
+    } else if (id === 'bewerbungen' || id === 'bewerbung') {
+      rpcText = "Schaut sich Bewerbungen an 📝";
+    } else if (id === 'downloads') {
+      rpcText = "Schaut sich Downloads an 📂";
+    } else if (id === 'clips' || id === 'clip') {
+      rpcText = "Reicht Videos ein 📹";
+    } else if (id === 'bilder' || id === 'bild') {
+      rpcText = "Beantragt Grieferschutz 🖼";
+    } else if (id === 'projekte') {
+      rpcText = "Plant Riesen-Projekte 🏗";
+    } else {
+      rpcText = "Erkundet Bereich: " + id.toUpperCase();
+    }
+
+    window.electronAPI.updateStatus(rpcText);
+  }
 }
 
 function initReveal() {
@@ -1298,7 +1323,6 @@ async function sendImageToDiscord() {
     btn.disabled = false; 
   }
 }
-
 </script>
 </body>
 </html>
