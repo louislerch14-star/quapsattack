@@ -3,269 +3,256 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QUAPS ATTACK - Season 11 Boardroom</title>
+  <title>QUAPS CLICK-WAR S11</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     :root {
-      --background: #0b0b14;
-      --panel: #141424;
-      --border: #3f3f5f;
-      --primary: #55ff55;
-      --gold: #ffaa00;
-      --diamond: #55ffff;
+      --bg: #080810;
+      --panel: #121220;
+      --border: #333355;
+      --green: #55ff55;
       --red: #ff5555;
+      --blue: #55ffff;
+      --gold: #ffaa00;
     }
 
     body.game-mode {
-      background-color: var(--background);
-      color: #ffffff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
       margin: 0;
-      padding: 20px;
+      padding: 15px;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       min-height: 100vh;
       user-select: none;
     }
 
-    .game-container {
-      background: var(--panel);
-      border: 4px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      max-width: 900px;
-      width: 100%;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+    .header-zone {
       text-align: center;
+      margin-bottom: 15px;
     }
 
-    h1 {
-      font-family: 'Press Start 2P', monospace;
-      color: var(--diamond);
-      font-size: 1.3rem;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px #000;
-    }
+    h1 { font-size: 1.2rem; color: var(--blue); margin: 0 0 5px 0; text-shadow: 2px 2px #000; }
+    .subtitle { font-size: 0.6rem; color: #888; font-family: sans-serif; }
 
-    /* STATUS ANZEIGEN */
-    .game-phase-box {
-      background: #000;
-      border: 2px solid var(--border);
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.75rem;
-      color: var(--gold);
-    }
-
-    .ticker {
-      background: rgba(255,255,255,0.05);
-      border-left: 4px solid var(--primary);
-      padding: 10px;
-      margin-bottom: 20px;
-      text-align: left;
-      font-size: 0.9rem;
-      min-height: 40px;
-      color: #e0e0ff;
-    }
-
-    /* SPIELER GRID */
-    .players-grid {
+    /* ACTION GRID */
+    .arena {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    @media (max-width: 600px) {
-      .players-grid { grid-template-columns: 1fr; }
-    }
-
-    .player-card {
-      background: rgba(0, 0, 0, 0.3);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      padding: 15px;
-      transition: all 0.2s;
-      cursor: pointer;
-      position: relative;
-    }
-    .player-card:hover {
-      border-color: var(--primary);
-      background: rgba(85, 255, 85, 0.05);
-    }
-    .player-card.active {
-      border-color: var(--gold);
-      box-shadow: 0 0 10px var(--gold);
-    }
-    .player-card.dead {
-      border-color: var(--red) !important;
-      background: rgba(255, 55, 55, 0.1) !important;
-      opacity: 0.6;
-    }
-
-    .player-name {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.75rem;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-
-    .player-status {
-      font-size: 0.8rem;
-      color: #aaa;
-    }
-
-    /* AKTIONEN BOX */
-    .action-panel {
-      background: #07070d;
-      border: 2px dashed var(--border);
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 20px;
-    }
-
-    .btn {
-      background: #222236;
-      border: 2px solid var(--border);
-      color: #fff;
-      padding: 10px 20px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.7rem;
-      cursor: pointer;
-      border-radius: 4px;
-      margin: 5px;
-      box-shadow: 0 4px 0 #000;
-    }
-    .btn:hover:not(:disabled) { background: #323252; color: var(--diamond); }
-    .btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
-    .btn:disabled { background: #111; color: #444; border-color: #222; cursor: not-allowed; box-shadow: none; }
-
-    .panic-btn {
-      background: none;
-      border: none;
-      color: #444;
-      font-size: 0.6rem;
-      cursor: pointer;
-      margin-top: 25px;
-      display: block;
+      max-width: 950px;
       width: 100%;
     }
 
-    /* BROWSER TARNUNG FALLBACK */
-    body.tarn-mode { background: #ffffff !important; color: #202122 !important; font-family: sans-serif !important; padding: 40px !important; display: block !important; }
-    .tarn-content { max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.6; }
-    .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; margin-bottom: 20px; font-family: 'Georgia', serif; color: #000; }
+    @media (max-width: 700px) { .arena { grid-template-columns: 1fr; } }
+
+    .base-card {
+      background: var(--panel);
+      border: 4px solid var(--border);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      position: relative;
+      transition: transform 0.1s;
+    }
+
+    .base-card:active { transform: scale(0.98); }
+    .base-card.dead { border-color: var(--red); background: #200a0a; opacity: 0.5; }
+
+    .name { font-size: 0.8rem; margin-bottom: 10px; color: #fff; }
+    
+    /* HP BALKEN */
+    .hp-container {
+      background: #000;
+      border: 2px solid #000;
+      height: 15px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .hp-bar { background: var(--green); height: 100%; width: 100%; transition: width 0.2s; }
+
+    .points { font-size: 0.7rem; color: var(--gold); margin: 10px 0; }
+
+    /* AKTIONEN INNERHALB DER CARD */
+    .btn-farm {
+      background: #224422;
+      border: 2px solid var(--green);
+      color: #fff;
+      padding: 8px 0;
+      width: 100%;
+      font-family: 'Press Start 2P';
+      font-size: 0.6rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .btn-farm:hover { background: #336633; }
+
+    .attack-zone {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .btn-action {
+      background: #333344;
+      border: 1px solid var(--border);
+      color: #ccc;
+      padding: 5px 0;
+      font-family: 'Press Start 2P';
+      font-size: 0.5rem;
+      cursor: pointer;
+    }
+    .btn-action:hover:not(:disabled) { background: #444466; color: #fff; }
+    .btn-action:disabled { background: #111; color: #444; border-color: #222; cursor: not-allowed; }
+    .btn-action.atk { border-color: var(--red); }
+    .btn-action.atk:hover:not(:disabled) { background: #552222; }
+
+    /* TARNUNG */
+    body.tarn-mode { background: #fff !important; color: #202122 !important; font-family: sans-serif !important; padding: 40px !important; display: block !important; }
+    .tarn-content { max-width: 800px; margin: 0 auto; }
+    .tarn-header { font-size: 2rem; border-bottom: 1px solid #a2a9b1; padding-bottom: 5px; font-family: 'Georgia', serif; }
   </style>
 </head>
 <body class="game-mode" id="main-body">
 
-  <div class="game-container" id="game-view">
-    <h1>QUAPS ATTACK S11: THE BEEF SIMULATOR</h1>
-    
-    <div class="game-phase-box" id="phase-display">
-      PHASE: REKRUTIERUNG & ROLLENVERGABE
-    </div>
-
-    <div class="ticker" id="game-ticker">
-      Willkommen bei Season 11. Verteilt die Plätze im Raum, wählt nacheinander eure Namen aus und startet die geheimen Ermittlungen!
-    </div>
-
-    <!-- DAS SPIELER-GRID -->
-    <div class="players-grid" id="players-container">
-      <!-- Wird per JS dynamisch generiert -->
-    </div>
-
-    <!-- AKTIONSMENÜ -->
-    <div class="action-panel">
-      <div id="action-text" style="font-weight: bold; margin-bottom: 10px; font-family: monospace;">Spieler-Setup ausführen:</div>
-      <div id="buttons-container">
-        <button class="btn" onclick="startGame()">BEEF STARTEN (NACHT 1)</button>
-      </div>
-    </div>
-
-    <button class="panic-btn" onclick="togglePanic()">Notfall-Modus (Oder Leertaste hämmern)</button>
+  <div class="header-zone" id="game-header">
+    <h1>QUAPS S11: CLICK-WAR</h1>
+    <div class="subtitle">Klicken zum Farmen. Punkte nutzen, um andere zu sabotieren oder sich zu schützen! (Leertaste = Tarnung)</div>
   </div>
 
-  <!-- LEHRER-ABLENKUNG (FALLBACK) -->
+  <!-- DIE ARENA -->
+  <div class="arena" id="arena-grid">
+    <!-- Wird per JS gebaut -->
+  </div>
+
+  <!-- WIKIPEDIA TARNUNG -->
   <div id="tarn-view" class="tarn-content" style="display: none;">
     <div class="tarn-header">Gemeindeordnung (Niedersachsen) [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.]</div>
     <p>Aus Wikipedia, der freien Enzyklopädie</p>
-    <p>Die Haushaltsaufsicht der Kommunen im Landkreis Vechta regelt wirtschaftliche Synergien autonom [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
+    <p>Die kommunale Selbstverwaltung im Landkreis Vechta umfasst operative Richtlinien zur Haushaltskonsolidierung [cite: Explicit declaration during a request for questions for a local government visit. Conversation Date: 2026-05., Discussion regarding a visit to the mayor of Bakum and observations of the German Air Force in the Vechta/Cloppenburg area. Conversation Date: 2026-01 to 2026-05.].</p>
   </div>
 
 <script>
 let isPanic = false;
-let gameStarted = false;
-let currentPhase = "SETUP"; // SETUP, NIGHT_CHOOSE, NIGHT_ACTION, DAY_DISCUSSION, DAY_VOTE
-let activePlayerIndex = 0;
-let selectedTargetIndex = null;
 
-// Echte Rollen-Definitionen basierend auf eurem Server-Beef
-const ROLES = {
-  GRIEFER: { name: "Griefer (Joschi)", desc: "Zünde jede Nacht heimlich das Haus eines Mitspielers an. Verwirre am Tag alle!" },
-  ADMIN: { name: "Admin (Giorgio)", desc: "Du kannst jede Nacht einen Spieler bannen. Erwischst du den Griefer, gewinnst du. Erwischst du einen Unschuldigen, verlierst du Rechte." },
-  ERMITTLER: { name: "Ermittler (Louis)", desc: "Prüfe jede Nacht die CoreProtect-Logs eines Spielers, um seine wahre Rolle zu sehen." },
-  HOLZBAUER: { name: "Holzbaron (Mika)", desc: "Beschütze jede Nacht das Haus eines Spielers mit unbrennbarem Pale Oak Holz." },
-  ZEUGE: { name: "Zeuge (Jonas)", desc: "Du bist neutral. Wenn du angegriffen wirst, erfährst du am Tag sofort, wer es war." },
-  ANWALT: { name: "Server-Anwalt (Nils)", desc: "Deine Stimme zählt bei der täglichen Abstimmung doppelt!" }
-};
-
-// Spielerliste
+// Alle Spieler direkt auf einen Blick
 let players = [
-  { name: "Louis", role: ROLES.ERMITTLER, alive: true, status: "Bereit", housesBurned: 0 },
-  { name: "Mika", role: ROLES.HOLZBAUER, alive: true, status: "Bereit", housesBurned: 0 },
-  { name: "Giorgio", role: ROLES.ADMIN, alive: true, status: "Bereit", housesBurned: 0 },
-  { name: "Joschi", role: ROLES.GRIEFER, alive: true, status: "Bereit", housesBurned: 0 },
-  { name: "Jonas", role: ROLES.ZEUGE, alive: true, status: "Bereit", housesBurned: 0 },
-  { name: "Nils", role: ROLES.ANWALT, alive: true, status: "Bereit", housesBurned: 0 }
+  { id: 0, name: "Louis 🛠", hp: 100, points: 0, protected: false, dead: false },
+  { id: 1, name: "Mika 🪵", hp: 100, points: 0, protected: false, dead: false },
+  { id: 2, name: "Giorgio 🚫", hp: 100, points: 0, protected: false, dead: false },
+  { id: 3, name: "Joschi 🔥", hp: 100, points: 0, protected: false, dead: false },
+  { id: 4, name: "Jonas 🕊", hp: 100, points: 0, protected: false, dead: false },
+  { id: 5, name: "Nils 🕵️‍♂️", hp: 100, points: 0, protected: false, dead: false }
 ];
 
-// Runden-Aktionen
-let nightActions = {
-  burnedTarget: null,
-  protectedTarget: null,
-  bannedTarget: null
-};
+// Ausgewähltes Angriffsziel im Gedächtnis behalten
+let selectedTarget = null;
 
-function initUI() {
-  const container = document.getElementById("players-container");
-  container.innerHTML = "";
-  
-  players.forEach((p, idx) => {
+function renderArena() {
+  const grid = document.getElementById("arena-grid");
+  grid.innerHTML = "";
+
+  players.forEach((p) => {
     const card = document.createElement("div");
-    card.className = `player-card ${!p.alive ? 'dead' : ''} ${gameStarted && idx === activePlayerIndex && currentPhase.startsWith('NIGHT') ? 'active' : ''}`;
-    card.onclick = () => selectPlayer(idx);
+    card.className = `base-card ${p.dead ? 'dead' : ''}`;
     
+    // HP Balken Farbe ändern bei wenig Leben
+    let hpColor = "var(--green)";
+    if (p.hp < 40) hpColor = "var(--gold)";
+    if (p.hp < 20) hpColor = "var(--red)";
+
     card.innerHTML = `
-      <div class="player-name">${p.name}</div>
-      <div class="player-status" id="status-${idx}">${p.status}</div>
+      <div class="name">${p.name} ${p.protected ? '🛡️' : ''}</div>
+      <div class="hp-container">
+        <div class="hp-bar" style="width: ${p.hp}%; background: ${hpColor};"></div>
+      </div>
+      <div class="points">💎 ${p.points}</div>
+      
+      <button class="btn-farm" ${p.dead ? 'disabled' : ''} onclick="farmPoints(${p.id})">+ FARMEN</button>
+      
+      <div class="attack-zone">
+        <button class="btn-action atk" ${p.dead || p.points < 10 ? 'disabled' : ''} onclick="triggerAttack(${p.id})">SABOTIEREN (10)</button>
+        <button class="btn-action" ${p.dead || p.points < 15 ? 'disabled' : ''} onclick="buyShield(${p.id})">SCHUTZ (15)</button>
+      </div>
     `;
-    container.appendChild(card);
+    grid.appendChild(card);
   });
 }
 
-function selectPlayer(idx) {
-  if (currentPhase === "SETUP" || !players[idx].alive) return;
+function farmPoints(id) {
+  players[id].points += 2;
+  renderArena();
+}
+
+function buyShield(id) {
+  if (players[id].points >= 15) {
+    players[id].points -= 15;
+    players[id].protected = true;
+    renderArena();
+  }
+}
+
+function triggerAttack(attackerId) {
+  if (players[attackerId].points < 10) return;
   
-  selectedTargetIndex = idx;
-  // Visuelles Highlight bei Auswahl
-  const cards = document.querySelectorAll(".player-card");
-  cards.forEach((c, i) => {
-    if(i === idx) c.style.borderColor = "var(--diamond)";
-    else if (i !== activePlayerIndex || !currentPhase.startsWith('NIGHT')) c.style.borderColor = "var(--border)";
-  });
+  // Prompt für schnelles Ziel-Eintippen per ID oder Klick (Simpel per Prompt gelöst um Platz zu sparen)
+  let targetName = prompt(`Wen willst du sabotieren?\nTyp eins: Louis, Mika, Giorgio, Joschi, Jonas, Nils`).toLowerCase().trim();
+  
+  let target = players.find(p => p.name.toLowerCase().includes(targetName) && !p.dead);
+  
+  if (!target) {
+    alert("Spieler nicht gefunden oder bereits tot!");
+    return;
+  }
+  
+  if (target.id === attackerId) {
+    alert("Du kannst dich nicht selbst angreifen!");
+    return;
+  }
 
-  document.getElementById("action-text").textContent = `Ziel ausgewählt: ${players[idx].name}. Wähle jetzt deine Aktion unten!`;
+  // Abzug der Punkte beim Angreifer
+  players[attackerId].points -= 10;
+
+  // Schaden berechnen
+  if (target.protected) {
+    target.protected = false; // Schild bricht
+    alert(`Schutz von ${target.name} wurde zerstört!`);
+  } else {
+    target.hp -= 25;
+    if (target.hp <= 0) {
+      target.hp = 0;
+      target.dead = true;
+      target.points = 0;
+    }
+  }
+  
+  checkWinCondition();
+  renderArena();
 }
 
+function checkWinCondition() {
+  let alivePlayers = players.filter(p => !p.dead);
+  if (alivePlayers.length === 1) {
+    setTimeout(() => {
+      alert(`👑 ${alivePlayers[0].name} HAT DEN SERVER-BEEF GEWONNEN!`);
+      // Reset
+      players.forEach(p => { p.hp = 100; p.points = 0; p.dead = false; p.protected = false; });
+      renderArena();
+    }, 100);
+  }
+}
+
+// PANIC BUTTON TRICK
 function togglePanic() {
   if (isPanic) {
     isPanic = false;
     document.getElementById('main-body').className = "game-mode";
-    document.getElementById('game-view').style.display = "block";
+    document.getElementById('arena-grid').style.display = "grid";
+    document.getElementById('game-header').style.display = "block";
     document.getElementById('tarn-view').style.display = "none";
   } else {
     if (window.electronAPI && typeof window.electronAPI.minimizeApp === 'function') {
@@ -274,7 +261,8 @@ function togglePanic() {
     }
     isPanic = true;
     document.getElementById('main-body').className = "tarn-mode";
-    document.getElementById('game-view').style.display = "none";
+    document.getElementById('arena-grid').style.display = "none";
+    document.getElementById('game-header').style.display = "none";
     document.getElementById('tarn-view').style.display = "block";
   }
 }
@@ -286,194 +274,8 @@ window.addEventListener('keydown', function(e) {
   }
 });
 
-// SPIEL LOGIK START
-function startGame() {
-  gameStarted = true;
-  // Rollen mischen wäre möglich, aber wir behalten eure festen Signaturen für maximalen Spaß!
-  startNightTurn(0);
-}
-
-function startNightTurn(playerIdx) {
-  selectedTargetIndex = null;
-  
-  // Finde den nächsten lebenden Spieler für die Nachtaktion
-  if (playerIdx >= players.length) {
-    evaluateNight();
-    return;
-  }
-  
-  activePlayerIndex = playerIdx;
-  if (!players[playerIdx].alive) {
-    startNightTurn(playerIdx + 1);
-    return;
-  }
-
-  currentPhase = "NIGHT_CHOOSE";
-  document.getElementById("phase-display").textContent = `🌙 NACHTPHASE - GEHEIMER ZUG`;
-  document.getElementById("game-ticker").textContent = `Übergib die Maus lautlos an [ ${players[playerIdx].name} ]. Alle anderen weggucken!`;
-  
-  initUI();
-
-  const btnContainer = document.getElementById("buttons-container");
-  btnContainer.innerHTML = `<button class="btn" onclick="revealNightAction(${playerIdx})">ROLLE & AKTIONEN ANZEIGEN</button>`;
-  document.getElementById("action-text").textContent = "Bereitmachen für den geheimen Zug...";
-}
-
-function revealNightAction(idx) {
-  currentPhase = "NIGHT_ACTION";
-  const p = players[idx];
-  document.getElementById("game-ticker").textContent = `Deine Rolle: ${p.role.name}\nZiel: ${p.role.desc}`;
-  
-  const btnContainer = document.getElementById("buttons-container");
-  btnContainer.innerHTML = "";
-
-  document.getElementById("action-text").textContent = "Wähle oben einen Mitspieler aus und klicke deine Fähigkeit:";
-
-  // Spezifische Buttons je nach Rolle generieren
-  if (p.role === ROLES.GRIEFER) {
-    btnContainer.innerHTML = `<button class="btn" onclick="executeAction('burn')">🔥 Bude anstecken!</button>`;
-  } else if (p.role === ROLES.ADMIN) {
-    btnContainer.innerHTML = `<button class="btn" onclick="executeAction('ban')">🚫 Banhammer schwingen</button>`;
-  } else if (p.role === ROLES.ERMITTLER) {
-    btnContainer.innerHTML = `<button class="btn" onclick="executeAction('inspect')">🕵️‍♂️ CoreProtect Logs prüfen</button>`;
-  } else if (p.role === ROLES.HOLZBAUER) {
-    btnContainer.innerHTML = `<button class="btn" onclick="executeAction('protect')">🪵 Pale Oak Schutz setzen</button>`;
-  } else {
-    // Zeuge oder Anwalt haben passive Rollen nachts
-    btnContainer.innerHTML = `<button class="btn" onclick="executeAction('idle')">💤 Unauffällig schlafen gehen</button>`;
-  }
-}
-
-function executeAction(actionType) {
-  if (actionType !== 'idle' && selectedTargetIndex === null) {
-    alert("Wähle zuerst oben ein Ziel aus!");
-    return;
-  }
-
-  const actor = players[activePlayerIndex];
-  
-  if (actionType === 'burn') nightActions.burnedTarget = selectedTargetIndex;
-  if (actionType === 'protect') nightActions.protectedTarget = selectedTargetIndex;
-  if (actionType === 'ban') nightActions.bannedTarget = selectedTargetIndex;
-  if (actionType === 'inspect') {
-    const target = players[selectedTargetIndex];
-    alert(`[COREPROTECT LOGS]: ${target.name} ist in Wahrheit: ${target.role.name}`);
-  }
-
-  // Nächster Spieler ist dran
-  startNightTurn(activePlayerIndex + 1);
-}
-
-// AUSWERTUNG DER NACHT
-function evaluateNight() {
-  currentPhase = "DAY_DISCUSSION";
-  document.getElementById("phase-display").textContent = `☀️ TAGPHASE - DER SERVER-BEEF KOCHT`;
-  
-  let report = "Der Server startet neu... Folgendes ist passiert:\n";
-  
-  // 1. Check Holz-Schutz vs Brandstiftung
-  if (nightActions.burnedTarget !== null) {
-    let target = players[nightActions.burnedTarget];
-    if (nightActions.burnedTarget === nightActions.protectedTarget) {
-      report += `🔥 BRANDANSCHLAG VERHINDERT: Jemand wollte die Base von ${target.name} anzünden, aber Mikas Pale Oak Holz war feuerfest! | `;
-    } else {
-      target.housesBurned++;
-      report += `🔥 SCHADEN: Das Haus von ${target.name} brennt lichterloh! Schilder wurden überall verteilt! | `;
-      if(target.role === ROLES.ZEUGE) {
-        report += `👁 ZEUGE: Jonas hat Joschi weglaufen sehen! | `;
-      }
-    }
-  }
-
-  // 2. Check Admin Ban
-  if (nightActions.bannedTarget !== null) {
-    let target = players[nightActions.bannedTarget];
-    if (target.role === ROLES.GRIEFER) {
-      report += `🚫 ABSOLUTER WIN: Giorgio hat den wahren Griefer (${target.name}) gebannt! DIE INSEL IST SICHER! Gg!`;
-      target.alive = false;
-      target.status = "GEBANNT";
-      endGame(true);
-      return;
-    } else {
-      report += `❌ ADMIN-FAIL: Giorgio hat den unschuldigen ${target.name} gebannt! Was für ein Machtmissbrauch! | `;
-      target.alive = false;
-      target.status = "FÄLSCHLICH GEBANNT";
-    }
-  }
-
-  if (nightActions.burnedTarget === null && nightActions.bannedTarget === null) {
-    report += "Ruhige Nacht auf dem Server. Fast schon zu ruhig...";
-  }
-
-  // Reset Nacht-Aktionen
-  nightActions = { burnedTarget: null, protectedTarget: null, bannedTarget: null };
-
-  // Lebende checken
-  let grieferAlive = players.some(p => p.role === ROLES.GRIEFER && p.alive);
-  if (!grieferAlive) {
-    report += "\n\n🎉 DIE ERMITTLER GEWINNEN! Der Griefer wurde unschädlich gemacht!";
-    document.getElementById("game-ticker").textContent = report;
-    endGame(true);
-    return;
-  }
-
-  document.getElementById("game-ticker").textContent = report;
-  
-  // UI für die Diskussion updaten
-  players.forEach((p, idx) => {
-    if (p.alive) p.status = `Häuser brennen: ${p.housesBurned}`;
-  });
-  initUI();
-
-  const btnContainer = document.getElementById("buttons-container");
-  btnContainer.innerHTML = `<button class="btn" onclick="startVoting()">VOTING-PHASE STARTEN</button>`;
-  document.getElementById("action-text").textContent = "Diskutiert jetzt lautlos per Zettel oder Chat im Unterricht. Wer fliegt vom Server?";
-}
-
-// VOTING STARTEN
-function startVoting() {
-  currentPhase = "DAY_VOTE";
-  document.getElementById("phase-display").textContent = `⚖️ SERVER-ABSTIMMUNG`;
-  document.getElementById("game-ticker").textContent = "Wählt jetzt oben den Hauptverdächtigen aus, den ihr kollektiv für 1 Runde muten oder kicken wollt!";
-  
-  const btnContainer = document.getElementById("buttons-container");
-  btnContainer.innerHTML = `<button class="btn" onclick="confirmVote()">KICK-VOTE BESTÄTIGEN</button>`;
-}
-
-function confirmVote() {
-  if (selectedTargetIndex === null) {
-    alert("Wählt jemanden aus!");
-    return;
-  }
-
-  let target = players[selectedTargetIndex];
-  target.alive = false;
-  target.status = "DURCH VOTE GEKICKT";
-  
-  let msg = `${target.name} wurde vom Server gevotet! `;
-  if (target.role === ROLES.GRIEFER) {
-    msg += "Er war tatsächlich der Griefer! Der Server hat gewonnen! 🎉";
-    document.getElementById("game-ticker").textContent = msg;
-    endGame(true);
-  } else {
-    msg += `Fehlentscheidung! Er war unschuldiger ${target.role.name}. Der Beef geht weiter...`;
-    document.getElementById("game-ticker").textContent = msg;
-    initUI();
-    
-    // Nächste Nacht starten
-    const btnContainer = document.getElementById("buttons-container");
-    btnContainer.innerHTML = `<button class="btn" onclick="startNightTurn(0)">NÄCHSTE NACHT STARTEN</button>`;
-  }
-}
-
-function endGame(win) {
-  const btnContainer = document.getElementById("buttons-container");
-  btnContainer.innerHTML = `<button class="btn" onclick="location.reload()">NEUES GAME STARTEN</button>`;
-  document.getElementById("action-text").textContent = "Das Spiel ist vorbei.";
-  initUI();
-}
-
-initUI();
+// Start
+renderArena();
 </script>
 
 </body>
