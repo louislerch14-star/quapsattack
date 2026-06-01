@@ -4,51 +4,70 @@
     <meta charset="UTF-8">
     <title>QuapsHub // Gruppen-Zentrale</title>
     <style>
-        /* Quaps Attack Design Style */
+        /* QuapsHub Premium Design */
         body { background: #0f0f0f; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; }
-        .sidebar { width: 240px; background: #161616; height: 100vh; border-right: 1px solid #333; padding: 20px; }
-        main { flex: 1; padding: 40px; overflow-y: auto; }
-        h1 { font-size: 32px; margin-bottom: 5px; }
+        .sidebar { width: 260px; background: #161616; height: 100vh; border-right: 1px solid #333; padding: 25px; flex-shrink: 0; }
+        main { flex: 1; padding: 40px; overflow-y: auto; max-width: 1000px; }
+        h1 { font-size: 38px; margin-bottom: 10px; font-weight: 800; }
         h1 span { color: #ffcc00; }
-        .mc-panel { background: #1a1a1a; border: 1px solid #333; padding: 20px; border-radius: 4px; margin-bottom: 20px; }
-        .mc-panel-title { color: #ffcc00; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .mc-input { width: 100%; background: #0f0f0f; border: 1px solid #333; padding: 10px; color: #fff; margin-bottom: 10px; box-sizing: border-box; }
-        .mc-action { background: #004a99; color: #fff; border: none; padding: 10px 20px; cursor: pointer; width: 100%; font-weight: bold; }
+        
+        .mc-panel { background: #1a1a1a; border: 1px solid #333; padding: 25px; border-radius: 6px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .mc-panel-title { color: #ffcc00; font-size: 18px; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; text-transform: uppercase; }
+        
+        .mc-label { display: block; font-size: 12px; color: #aaa; margin-bottom: 5px; font-weight: bold; }
+        .mc-input { width: 100%; background: #0f0f0f; border: 1px solid #444; padding: 12px; color: #fff; margin-bottom: 15px; border-radius: 4px; box-sizing: border-box; }
+        
+        .file-upload-wrapper { border: 1px dashed #444; padding: 15px; text-align: center; cursor: pointer; margin-bottom: 15px; color: #777; transition: 0.3s; }
+        .file-upload-wrapper:hover { border-color: #ffcc00; color: #ffcc00; }
+        
+        .mc-action { background: #004a99; color: #fff; border: none; padding: 14px; cursor: pointer; width: 100%; font-weight: bold; border-radius: 4px; font-size: 14px; }
         .mc-action:hover { background: #0066cc; }
-        .group-card { border: 1px solid #333; padding: 15px; margin-bottom: 10px; cursor: pointer; }
-        .group-card:hover { border-color: #ffcc00; }
+        
+        .group-card { border: 1px solid #333; padding: 20px; margin-bottom: 15px; background: #161616; transition: 0.3s; border-left: 4px solid #004a99; }
+        .group-card:hover { border-left-color: #ffcc00; background: #1a1a1a; }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar aus deinem Design -->
     <nav class="sidebar">
-        <div style="color: #ffcc00; font-weight: bold; margin-bottom: 20px;">QUAPS HUB // v2.6</div>
-        <div onclick="window.location.href='index.html'" style="cursor: pointer; margin-bottom: 10px;">HOME</div>
-        <div style="color: #00ffcc;">GRUPPEN-ZENTRALE</div>
+        <div style="color: #ffcc00; font-weight: bold; font-size: 20px; margin-bottom: 30px;">QUAPS HUB // v2.6</div>
+        <div onclick="window.location.href='index.html'" style="cursor: pointer; padding: 10px 0; border-bottom: 1px solid #222;">HOME</div>
+        <div style="color: #00ffcc; padding: 10px 0; font-weight: bold;">GRUPPEN-ZENTRALE</div>
     </nav>
 
     <main>
         <div class="hero">
             <h1>GRUPPEN<span>ZENTRALE</span></h1>
-            <p>Koordiniere deine Teams und Projekte.</p>
+            <p style="color: #888;">Verwalte deine Projekte. Erstelle ein Dashboard, bearbeite Aufgaben und bau dein Team auf.</p>
         </div>
 
-        <!-- Erstellungs-Panel -->
         <div class="mc-panel">
-            <div class="mc-panel-title">NEUE GRUPPE ANLEGEN</div>
-            <input type="text" id="g-name" class="mc-input" placeholder="Gruppen-Name...">
-            <input type="text" id="g-desc" class="mc-input" placeholder="Ziel der Gruppe...">
+            <div class="mc-panel-title">GRUPPE INITIALISIEREN</div>
+            <label class="mc-label">PROJEKT NAME</label>
+            <input type="text" id="g-name" class="mc-input" placeholder="z.B. Quaps SMP // Redstone">
+            
+            <label class="mc-label">BESCHREIBUNG</label>
+            <input type="text" id="g-desc" class="mc-input" placeholder="Was ist das Ziel?">
+            
+            <label class="mc-label">PASSWORT (Für Zugriff)</label>
+            <input type="password" id="g-pass" class="mc-input" placeholder="Sicheres Passwort">
+
+            <label class="mc-label">LOGO HOCHLADEN</label>
+            <div class="file-upload-wrapper" onclick="document.getElementById('g-file').click()">
+                Klicke hier, um ein Gruppen-Logo auszuwählen
+                <input type="file" id="g-file" style="display: none;">
+            </div>
+
             <button class="mc-action" onclick="createGroup()">▶ PROJEKT STARTEN</button>
         </div>
 
-        <!-- Dashboard-Anzeige -->
         <div class="mc-panel">
-            <div class="mc-panel-title">DEINE PROJEKTE</div>
+            <div class="mc-panel-title">DEINE AKTIVEN PROJEKTE</div>
             <div id="groups-container">
                 <div class="group-card" onclick="enterGroup('SMP')">
-                    <strong>Quaps SMP // Technik</strong><br>
-                    <small>Status: Aktiv</small>
+                    <strong>Quaps SMP // Technik</strong>
+                    <p style="color: #777; font-size: 13px;">Koordination für den Server und Bauprojekte.</p>
+                    <small style="color: #00ffcc;">[BEITRETEN]</small>
                 </div>
             </div>
         </div>
@@ -57,13 +76,16 @@
     <script>
         function createGroup() {
             const name = document.getElementById('g-name').value;
-            alert("Gruppe " + name + " wurde initialisiert!");
-            // Hier kommt später die Supabase-Anbindung rein
+            if(!name) return alert("Bitte Namen eingeben!");
+            alert("Initialisiere Projekt: " + name + "... Verbindung zu Supabase wird hergestellt.");
         }
 
         function enterGroup(id) {
-            // Logik für das individuelle Gruppen-Dashboard
-            window.location.href = "group-board.html?id=" + id;
+            // Hier kommt der Passwort-Check
+            const pass = prompt("Gruppen-Passwort erforderlich:");
+            if(pass) {
+                window.location.href = "group-board.html?id=" + id;
+            }
         }
     </script>
 </body>
