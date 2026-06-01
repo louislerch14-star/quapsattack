@@ -2,87 +2,39 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>QuapsHub // Gruppen-Zentrale</title>
+    <title>QuapsHub // Debug-Modus</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --bg: #0f0f0f; --panel: #1a1a1a; --gold: #f5c518; --border: #333; --text: #fff; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; display: flex; }
-        .sidebar { width: 260px; background: #161616; height: 100vh; border-right: 1px solid var(--border); padding: 25px; }
-        main { flex: 1; padding: 40px; }
-        .mc-panel { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 8px; margin-bottom: 20px; }
-        .mc-panel-title { color: var(--gold); font-weight: bold; margin-bottom: 15px; cursor: pointer; border-bottom: 1px solid var(--border); padding-bottom: 10px; display: block; }
-        .mc-input { width: 100%; background: #000; border: 1px solid #444; padding: 12px; color: #fff; margin-bottom: 10px; border-radius: 4px; box-sizing: border-box; }
-        .mc-action { background: #004a99; color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; border-radius: 4px; display: block; }
-        #create-section { display: none; margin-top: 15px; }
+        body { background: #000; color: #fff; font-family: sans-serif; padding: 40px; }
+        .mc-input { display: block; width: 100%; margin: 10px 0; padding: 10px; background: #222; border: 1px solid #444; color: #fff; }
+        .mc-action { padding: 15px; background: #004a99; color: #fff; border: none; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
 
-<nav class="sidebar">
-    <div style="font-weight:bold; color:var(--gold); margin-bottom:30px;">QUAPS HUB</div>
-</nav>
-
-<main>
-    <h1>GRUPPEN<span>ZENTRALE</span></h1>
-
-    <div class="mc-panel">
-        <div class="mc-panel-title" id="toggle-btn">+ NEUE GRUPPE INITIALISIEREN</div>
-        
-        <div id="create-section">
-            <input type="text" id="g-name" class="mc-input" placeholder="Gruppen-Name">
-            <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
-            <input type="password" id="g-pass" class="mc-input" placeholder="Passwort">
-            <input type="file" id="g-file" class="mc-input">
-            <button id="submit-group" class="mc-action">▶ PROJEKT STARTEN</button>
-        </div>
+    <div style="max-width: 400px;">
+        <h3>FEHLER-CHECK-TOOL</h3>
+        <input type="text" id="g-name" class="mc-input" placeholder="Name">
+        <input type="password" id="g-pass" class="mc-input" placeholder="Passwort">
+        <button id="test-btn" class="mc-action">TEST-KLICK</button>
     </div>
-</main>
 
-<script>
-    const supabaseUrl = 'https://sdwelvinfbqxivvxnjkh.supabase.co';
-    const supabaseKey = 'sb_publishable_p84c6F4Q0-uwjYoOujrMgw_0EdclXik';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    <script>
+        // Check 1: Wird das Skript überhaupt geladen?
+        console.log("Skript geladen!");
 
-    // 1. Reiter-Logik
-    document.getElementById('toggle-btn').addEventListener('click', () => {
-        const sect = document.getElementById('create-section');
-        sect.style.display = (sect.style.display === 'block') ? 'none' : 'block';
-    });
-
-    // 2. Button-Logik (Robust)
-    document.getElementById('submit-group').addEventListener('click', async () => {
-        const name = document.getElementById('g-name').value;
-        const desc = document.getElementById('g-desc').value;
-        const pass = document.getElementById('g-pass').value;
-        const file = document.getElementById('g-file').files[0];
-
-        if(!name || !pass) return alert("Name und Passwort sind Pflicht!");
-
-        try {
-            let imageUrl = null;
-            if(file) {
-                const { data: imgData, error: imgError } = await supabase.storage
-                    .from('gruppen-logos')
-                    .upload(`logo_${Date.now()}`, file);
-                if(imgError) throw imgError;
-                imageUrl = imgData.path;
+        document.getElementById('test-btn').addEventListener('click', () => {
+            console.log("Button wurde geklickt!");
+            alert("Button funktioniert! Wenn du das siehst, liegt der Fehler nicht am Button, sondern an der Supabase-Verbindung.");
+            
+            // Check 2: Supabase Zugriff
+            try {
+                const supabase = supabase.createClient('https://sdwelvinfbqxivvxnjkh.supabase.co', 'sb_publishable_p84c6F4Q0-uwjYoOujrMgw_0EdclXik');
+                console.log("Supabase bereit:", supabase);
+            } catch(e) {
+                console.error("Supabase Fehler:", e);
             }
-            
-            const { error } = await supabase.from('groups').insert([{
-                name: name,
-                description: desc,
-                password: pass,
-                image_url: imageUrl
-            }]);
-            
-            if(error) throw error;
-            alert("Gruppe erfolgreich erstellt!");
-            location.reload();
-        } catch(err) {
-            console.error(err);
-            alert("Fehler: " + err.message);
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
