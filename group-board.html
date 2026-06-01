@@ -2,41 +2,76 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>QuapsHub // Gruppen-Dashboard</title>
+    <title>QuapsHub // Gruppen-Board</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Übernimm hier wieder dein CSS aus der groups.html */
-        body { background: #0f0f0f; color: #fff; font-family: 'Inter', sans-serif; display: flex; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 40px; }
-        .widget-panel { background: #1a1a1a; border: 1px solid #333; padding: 20px; border-radius: 8px; }
+        /* CSS FEST INTEGRIERT */
+        :root { --bg: #0a0a0a; --panel: #161616; --gold: #f5c518; --text: #fff; --border: #333; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; display: flex; }
+        
+        .sidebar { width: 260px; background: var(--panel); height: 100vh; border-right: 1px solid var(--border); padding: 25px; }
+        main { flex: 1; padding: 40px; }
+        
+        .widget-area { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .widget { background: var(--panel); border: 1px solid var(--border); padding: 20px; border-radius: 8px; }
+        
+        h1 { color: var(--gold); }
+        .input-box { background: #000; border: 1px solid #444; padding: 10px; color: #fff; width: 100%; margin-bottom: 10px; }
+        .btn { background: var(--gold); color: #000; padding: 10px; border: none; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <main id="dashboard" class="dashboard-grid">
-        </main>
+<nav class="sidebar">
+    <h2 id="group-name">Gruppe laden...</h2>
+    <hr style="border:0; border-top:1px solid #333;">
+    <h3>Neues Widget:</h3>
+    <input type="text" id="w-title" class="input-box" placeholder="Titel (z.B. To-Do)">
+    <textarea id="w-content" class="input-box" placeholder="Inhalt"></textarea>
+    <button class="btn" onclick="addWidget()">HINZUFÜGEN</button>
+</nav>
 
-    <script>
-        const supabase = supabase.createClient('URL', 'KEY');
-        const groupId = new URLSearchParams(window.location.search).get('id');
+<main>
+    <h1 id="group-title">Board</h1>
+    <div id="widgets-container" class="widget-area"></div>
+</main>
 
-        async function loadDashboard() {
-            const { data: widgets } = await supabase
-                .from('group_widgets')
-                .select('*')
-                .eq('group_id', groupId);
+<script>
+    // DEINE INITIALISIERUNG
+    const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            const container = document.getElementById('dashboard');
-            widgets.forEach(w => {
-                const div = document.createElement('div');
-                div.className = 'widget-panel';
-                // Hier rendern wir die Widgets basierend auf dem Typ
-                div.innerHTML = `<h3>${w.title}</h3><p>${w.data.content || 'Kein Inhalt'}</p>`;
-                container.appendChild(div);
-            });
-        }
-        
-        loadDashboard();
-    </script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const groupId = urlParams.get('id');
+
+    async function initBoard() {
+        // Gruppe laden
+        const { data: group } = await supabaseClient.from('groups').select('*').eq('id', groupId).single();
+        document.getElementById('group-name').innerText = group.name;
+        document.getElementById('group-title').innerText = group.name + " Board";
+
+        // Widgets laden
+        const { data: widgets } = await supabaseClient.from('group_widgets').select('*').eq('group_id', groupId);
+        const container = document.getElementById('widgets-container');
+        container.innerHTML = widgets.map(w => `
+            <div class="widget">
+                <h3>${w.title}</h3>
+                <p>${w.content}</p>
+            </div>
+        `).join('');
+    }
+
+    async function addWidget() {
+        await supabaseClient.from('group_widgets').insert([{
+            group_id: groupId,
+            title: document.getElementById('w-title').value,
+            content: document.getElementById('w-content').value
+        }]);
+        location.reload();
+    }
+
+    initBoard();
+</script>
 </body>
 </html>
