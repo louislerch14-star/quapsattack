@@ -1,75 +1,35 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>QuapsHub // Gruppen-Zentrale</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root { --panel: #1a1a1a; --gold: #f5c518; --border: #333; --bg: #0f0f0f; }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; display: flex; margin: 0; }
-        .sidebar { width: 260px; background: #161616; border-right: 1px solid var(--border); height: 100vh; padding: 25px; }
-        main { flex: 1; padding: 40px; }
-        
-        /* Das Panel für das Erstellen */
-        .mc-panel { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 6px; margin-bottom: 25px; }
-        .mc-panel-title { color: var(--gold); font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; cursor: pointer; }
-        .mc-input { width: 100%; background: #000; border: 1px solid #444; padding: 12px; color: #fff; margin-bottom: 15px; border-radius: 4px; box-sizing: border-box; }
-        .mc-action { background: #004a99; color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; border-radius: 4px; }
-        
-        #create-section { display: none; } /* Reiter ist standardmäßig zu */
-    </style>
-</head>
-<body>
-
-<nav class="sidebar">
-    <div style="font-weight:bold; color:var(--gold); margin-bottom:30px;">QUAPS HUB</div>
-    <div onclick="location.href='index.html'" style="cursor:pointer; padding: 10px 0;">HOME</div>
-</nav>
-
-<main>
-    <h1>GRUPPEN<span>ZENTRALE</span></h1>
-
-    <div class="mc-panel">
-        <div class="mc-panel-title" onclick="document.getElementById('create-section').style.display='block'">
-            + NEUE GRUPPE ERSTELLEN (KLICK MICH)
-        </div>
-        
-        <div id="create-section">
-            <input type="text" id="g-name" class="mc-input" placeholder="Gruppen-Name">
-            <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
-            <input type="password" id="g-pass" class="mc-input" placeholder="Passwort">
-            <input type="file" id="g-file" class="mc-input">
-            <button class="mc-action" onclick="createGroup()">GRUPPE INITIALISIEREN</button>
-        </div>
+<div class="mc-panel">
+    <div class="mc-panel-title" onclick="toggleCreate()">+ NEUE GRUPPE INITIALISIEREN</div>
+    <div id="create-section" style="display: none;">
+        <input type="text" id="g-name" class="mc-input" placeholder="Name">
+        <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
+        <input type="password" id="g-pass" class="mc-input" placeholder="Passwort">
+        <input type="file" id="g-file" class="mc-input">
+        <button class="mc-action" onclick="createGroup()">▶ PROJEKT STARTEN</button>
     </div>
-
-    <div id="groups-container">
-        </div>
-</main>
+</div>
 
 <script>
-    const supabase = supabase.createClient('URL', 'KEY');
+    function toggleCreate() {
+        const section = document.getElementById('create-section');
+        section.style.display = (section.style.display === 'none') ? 'block' : 'none';
+    }
 
     async function createGroup() {
         const name = document.getElementById('g-name').value;
         const file = document.getElementById('g-file').files[0];
         
-        if(!name) return alert("Namen eingeben!");
-
-        // Upload Bild
-        const { data: img } = await supabase.storage.from('gruppen-logos').upload(`logo_${Date.now()}`, file);
+        // Storage Upload
+        const { data: imgData } = await supabase.storage.from('gruppen-logos').upload(`logo_${Date.now()}`, file);
         
-        // Save DB
+        // Insert
         await supabase.from('groups').insert([{
             name: name,
             description: document.getElementById('g-desc').value,
             password: document.getElementById('g-pass').value,
-            image_url: img.path
+            image_url: imgData.path
         }]);
-        
-        alert("Gruppe " + name + " erfolgreich erstellt!");
+        alert("Gruppe " + name + " aktiv!");
         location.reload();
     }
 </script>
-</body>
-</html>
