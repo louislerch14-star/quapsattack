@@ -7,58 +7,57 @@
 </head>
 <body>
 
-<main>
-    <div class="hero">
-        <h1>GRUPPEN<span>ZENTRALE</span></h1>
-        <p class="hero-sub">Aktive Projekte und Team-Koordination.</p>
-    </div>
+    <!-- VIDEO BACKGROUND -->
+    <div class="video-bg"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&controls=0&mute=1"></iframe></div>
 
-    <!-- ERSTELLUNGS-PANEL (Sieht aus wie dein Gieferschutz-Block) -->
-    <div class="mc-panel">
-        <div class="mc-panel-title">GRUPPEN-INITIALISIERUNG</div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div>
-                <label class="mc-label">NAME & PROJEKT</label>
-                <input type="text" id="g-name" class="mc-input" placeholder="z.B. Quaps SMP // Technik">
-                <input type="text" id="g-desc" class="mc-input" placeholder="Ziel der Gruppe...">
+    <!-- SIDEBAR (Hier exakt deinen Code aus index.html einfügen) -->
+    <nav class="sidebar">
+        <!-- Dein Sidebar-Logo & Buttons -->
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <div class="hero">
+            <h1>GRUPPEN<span>ZENTRALE</span></h1>
+            <p class="hero-sub">Erstelle Gruppen und arbeite mit deinem Team.</p>
+        </div>
+
+        <!-- PANEL: GRUPPE ERSTELLEN -->
+        <div class="mc-panel">
+            <div class="mc-panel-title">NEUE GRUPPE ANLEGEN</div>
+            
+            <label class="mc-label">GRUPPEN NAME</label>
+            <input type="text" id="g-name" class="mc-input" placeholder="Name...">
+            
+            <label class="mc-label">BESCHREIBUNG</label>
+            <input type="text" id="g-desc" class="mc-input" placeholder="Worum geht es hier?">
+            
+            <label class="mc-label">LOGO HOCHLADEN</label>
+            <div class="file-upload-wrapper">
+                <label class="file-upload-label" id="file-label">DATEI AUSWÄHLEN</label>
+                <input type="file" id="g-file" class="file-upload-input" onchange="document.getElementById('file-label').innerText=this.files[0].name">
             </div>
-            <div>
-                <label class="mc-label">SICHERHEIT & LOGO</label>
-                <input type="password" id="g-pass" class="mc-input" placeholder="Passwort...">
-                <div class="file-upload-wrapper">
-                    <label class="file-upload-label" id="file-label">PROJEKT-LOGO LADEN</label>
-                    <input type="file" id="g-file" class="file-upload-input" onchange="updateLabel(this)">
-                </div>
+
+            <button class="mc-action" style="width:100%; margin-top: 15px;" onclick="createGroup()">▶ GRUPPE ERSTELLEN</button>
+        </div>
+
+        <!-- PANEL: DEINE GRUPPEN -->
+        <div class="mc-panel">
+            <div class="mc-panel-title">DEINE GRUPPEN</div>
+            <div id="groups-container">
+                <!-- Hier werden die Gruppen mit JS geladen -->
             </div>
         </div>
-        <button class="mc-action" style="width: 100%;" onclick="createGroup()">▶ PROJEKT STARTEN</button>
-    </div>
+    </main>
 
-    <!-- ÜBERSICHTS-PANEL (Hier passiert die Arbeit) -->
-    <div class="mc-panel">
-        <div class="mc-panel-title">DEINE GRUPPEN-ÜBERSICHT</div>
-        
-        <div class="shoutbox-list" id="groups-container">
-            <!-- Gruppen-Einträge erscheinen hier als klickbare Zeilen -->
-            <div class="shoutbox-msg">
-                <span class="msg-user">[SYSTEM]</span>
-                Keine aktiven Gruppen gefunden. Starte oben ein Projekt.
-            </div>
-        </div>
-    </div>
-</main>
-
-<script>
-    function updateLabel(input) {
-        document.getElementById('file-label').innerText = input.files[0].name;
-    }
-
-    // Die Funktion, die das echte Dashboard lädt
-    function enterGroup(id) {
-        // Hier wird dein No-Code-Editor geladen
-        console.log("Wechsle in das Arbeits-Dashboard für Gruppe: " + id);
-    }
-</script>
+    <script>
+        // Supabase Einbindung fehlt hier noch bei dir
+        async function createGroup() {
+            const name = document.getElementById('g-name').value;
+            const desc = document.getElementById('g-desc').value;
+            // Supabase Logic kommt hier rein...
+            alert("Gruppe '" + name + "' wird erstellt!");
+        }
+    </script>
 </body>
 </html>
