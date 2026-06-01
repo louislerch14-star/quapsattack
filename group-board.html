@@ -2,76 +2,84 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>QuapsHub // Gruppen-Board</title>
+    <title>QuapsHub // Arbeitszentrale</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* CSS FEST INTEGRIERT */
-        :root { --bg: #0a0a0a; --panel: #161616; --gold: #f5c518; --text: #fff; --border: #333; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; display: flex; }
-        
-        .sidebar { width: 260px; background: var(--panel); height: 100vh; border-right: 1px solid var(--border); padding: 25px; }
+        :root { --bg: #0a0a0a; --panel: #161616; --gold: #f5c518; --text: #fff; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; margin: 0; }
+        .sidebar { width: 300px; background: var(--panel); height: 100vh; padding: 20px; border-right: 1px solid #333; }
         main { flex: 1; padding: 40px; }
-        
-        .widget-area { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .widget { background: var(--panel); border: 1px solid var(--border); padding: 20px; border-radius: 8px; }
-        
-        h1 { color: var(--gold); }
-        .input-box { background: #000; border: 1px solid #444; padding: 10px; color: #fff; width: 100%; margin-bottom: 10px; }
-        .btn { background: var(--gold); color: #000; padding: 10px; border: none; cursor: pointer; font-weight: bold; }
+        .widget { background: #1a1a1a; padding: 15px; border: 1px solid #333; border-radius: 8px; margin-bottom: 10px; position: relative; }
+        .delete-btn { color: #ff4d4d; cursor: pointer; float: right; font-weight: bold; }
+        .input-box { width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #444; margin-bottom: 10px; box-sizing: border-box; }
+        .btn { background: var(--gold); color: #000; padding: 10px; width: 100%; border: none; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <nav class="sidebar">
-    <h2 id="group-name">Gruppe laden...</h2>
-    <hr style="border:0; border-top:1px solid #333;">
-    <h3>Neues Widget:</h3>
-    <input type="text" id="w-title" class="input-box" placeholder="Titel (z.B. To-Do)">
-    <textarea id="w-content" class="input-box" placeholder="Inhalt"></textarea>
-    <button class="btn" onclick="addWidget()">HINZUFÜGEN</button>
+    <h3>GRUPPEN AUSWÄHLEN</h3>
+    <select id="group-select" class="input-box" onchange="switchGroup()">
+        <option value="">Gruppe wählen...</option>
+    </select>
+    <hr style="border:0; border-top:1px solid #333; margin: 20px 0;">
+    <h3>WIDGET HINZUFÜGEN</h3>
+    <input type="text" id="w-title" class="input-box" placeholder="Titel">
+    <button class="btn" onclick="addWidget()">SPEICHERN</button>
 </nav>
 
 <main>
-    <h1 id="group-title">Board</h1>
-    <div id="widgets-container" class="widget-area"></div>
+    <h1 id="page-title">Bitte Gruppe wählen</h1>
+    <div id="board" class="widget-grid"></div>
 </main>
 
 <script>
-    // DEINE INITIALISIERUNG
-    const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = supabase.createClient('https://sdwelvinfbqxivvxnjkh.supabase.co', 'DEIN_ANON_KEY');
+    
+    // 1. Gruppen in Dropdown laden
+    async function init() {
+        const { data } = await supabase.from('groups').select('*');
+        const select = document.getElementById('group-select');
+        data.forEach(g => {
+            select.innerHTML += `<option value="${g.id}">${g.name}</option>`;
+        });
+    }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const groupId = urlParams.get('id');
+    // 2. Gruppe wechseln
+    async function switchGroup() {
+        const id = document.getElementById('group-select').value;
+        if(!id) return;
+        window.location.href = `group-board.html?id=${id}`;
+    }
 
-    async function initBoard() {
-        // Gruppe laden
-        const { data: group } = await supabaseClient.from('groups').select('*').eq('id', groupId).single();
-        document.getElementById('group-name').innerText = group.name;
-        document.getElementById('group-title').innerText = group.name + " Board";
-
-        // Widgets laden
-        const { data: widgets } = await supabaseClient.from('group_widgets').select('*').eq('group_id', groupId);
-        const container = document.getElementById('widgets-container');
-        container.innerHTML = widgets.map(w => `
+    // 3. Board für die aktive Gruppe laden
+    async function loadBoard() {
+        const id = new URLSearchParams(window.location.search).get('id');
+        if(!id) return;
+        
+        const { data: widgets } = await supabase.from('group_widgets').select('*').eq('group_id', id);
+        document.getElementById('board').innerHTML = widgets.map(w => `
             <div class="widget">
+                <span class="delete-btn" onclick="del(${w.id})">X</span>
                 <h3>${w.title}</h3>
-                <p>${w.content}</p>
             </div>
         `).join('');
     }
 
+    // 4. Widget erstellen
     async function addWidget() {
-        await supabaseClient.from('group_widgets').insert([{
-            group_id: groupId,
-            title: document.getElementById('w-title').value,
-            content: document.getElementById('w-content').value
-        }]);
+        const id = new URLSearchParams(window.location.search).get('id');
+        await supabase.from('group_widgets').insert([{ group_id: id, title: document.getElementById('w-title').value }]);
         location.reload();
     }
 
-    initBoard();
+    async function del(id) {
+        await supabase.from('group_widgets').delete().eq('id', id);
+        location.reload();
+    }
+
+    init();
+    loadBoard();
 </script>
 </body>
 </html>
