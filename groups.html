@@ -5,59 +5,52 @@
     <title>QuapsHub // Gruppen-Zentrale</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* CSS FEST INTEGRIERT */
         :root { --bg: #0f0f0f; --panel: #1a1a1a; --gold: #f5c518; --border: #333; --text: #fff; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; display: flex; }
-        
-        .sidebar { width: 260px; background: #161616; height: 100vh; border-right: 1px solid var(--border); padding: 25px; box-sizing: border-box; }
+        .sidebar { width: 260px; background: #161616; height: 100vh; border-right: 1px solid var(--border); padding: 25px; }
         main { flex: 1; padding: 40px; }
-        
-        h1 { color: #fff; font-size: 2.5rem; }
-        h1 span { color: var(--gold); }
-        
         .mc-panel { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 8px; margin-bottom: 20px; }
         .mc-panel-title { color: var(--gold); font-weight: bold; margin-bottom: 15px; cursor: pointer; border-bottom: 1px solid var(--border); padding-bottom: 10px; display: block; }
-        
         .mc-input { width: 100%; background: #000; border: 1px solid #444; padding: 12px; color: #fff; margin-bottom: 10px; border-radius: 4px; box-sizing: border-box; }
-        .mc-action { background: #004a99; color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; border-radius: 4px; }
-        
+        .mc-action { background: #004a99; color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; border-radius: 4px; display: block; }
         #create-section { display: none; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <nav class="sidebar">
-    <div style="font-weight:bold; color:var(--gold); margin-bottom:30px;">QUAPS HUB // ZENTRALE</div>
-    <div onclick="location.href='index.html'" style="cursor:pointer; padding: 10px 0; border-bottom: 1px solid var(--border);">HOME</div>
+    <div style="font-weight:bold; color:var(--gold); margin-bottom:30px;">QUAPS HUB</div>
 </nav>
 
 <main>
     <h1>GRUPPEN<span>ZENTRALE</span></h1>
 
     <div class="mc-panel">
-        <div class="mc-panel-title" onclick="document.getElementById('create-section').style.display='block'">
-            + NEUE GRUPPE ERSTELLEN
-        </div>
+        <div class="mc-panel-title" id="toggle-btn">+ NEUE GRUPPE INITIALISIEREN</div>
         
         <div id="create-section">
             <input type="text" id="g-name" class="mc-input" placeholder="Gruppen-Name">
             <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
             <input type="password" id="g-pass" class="mc-input" placeholder="Passwort">
             <input type="file" id="g-file" class="mc-input">
-            <button class="mc-action" onclick="createGroup()">▶ PROJEKT STARTEN</button>
+            <button id="submit-group" class="mc-action">▶ PROJEKT STARTEN</button>
         </div>
     </div>
-
-    <div id="groups-container"></div>
 </main>
 
 <script>
-    // Supabase Konfiguration eingebaut
     const supabaseUrl = 'https://sdwelvinfbqxivvxnjkh.supabase.co';
     const supabaseKey = 'sb_publishable_p84c6F4Q0-uwjYoOujrMgw_0EdclXik';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function createGroup() {
+    // 1. Reiter-Logik
+    document.getElementById('toggle-btn').addEventListener('click', () => {
+        const sect = document.getElementById('create-section');
+        sect.style.display = (sect.style.display === 'block') ? 'none' : 'block';
+    });
+
+    // 2. Button-Logik (Robust)
+    document.getElementById('submit-group').addEventListener('click', async () => {
         const name = document.getElementById('g-name').value;
         const desc = document.getElementById('g-desc').value;
         const pass = document.getElementById('g-pass').value;
@@ -65,22 +58,31 @@
 
         if(!name || !pass) return alert("Name und Passwort sind Pflicht!");
 
-        let imageUrl = null;
-        if(file) {
-            const { data: imgData } = await supabase.storage.from('gruppen-logos').upload(`logo_${Date.now()}`, file);
-            imageUrl = imgData ? imgData.path : null;
+        try {
+            let imageUrl = null;
+            if(file) {
+                const { data: imgData, error: imgError } = await supabase.storage
+                    .from('gruppen-logos')
+                    .upload(`logo_${Date.now()}`, file);
+                if(imgError) throw imgError;
+                imageUrl = imgData.path;
+            }
+            
+            const { error } = await supabase.from('groups').insert([{
+                name: name,
+                description: desc,
+                password: pass,
+                image_url: imageUrl
+            }]);
+            
+            if(error) throw error;
+            alert("Gruppe erfolgreich erstellt!");
+            location.reload();
+        } catch(err) {
+            console.error(err);
+            alert("Fehler: " + err.message);
         }
-        
-        const { error } = await supabase.from('groups').insert([{
-            name: name,
-            description: desc,
-            password: pass,
-            image_url: imageUrl
-        }]);
-        
-        if(error) { alert("Fehler: " + error.message); } 
-        else { alert("Gruppe erstellt!"); location.reload(); }
-    }
+    });
 </script>
 </body>
 </html>
