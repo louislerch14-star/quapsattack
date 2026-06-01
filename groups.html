@@ -1,58 +1,54 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>QuapsHub // Gruppen-Zentrale</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    /* Kurze CSS-Ergänzung für das Upload-Design */
-    .file-upload-label { border: 2px dashed var(--border); padding: 15px; text-align: center; display: block; cursor: pointer; color: var(--muted); }
-    .file-upload-input { display: none; }
-  </style>
+    <meta charset="UTF-8">
+    <title>QuapsHub // Gruppen-Zentrale</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --bg: #0a0a0a; --panel: #1a1a1a; --gold: #f5c518; --border: #333; --text: #f0f0f0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; margin: 0; }
+        .sidebar { width: 280px; background: #121212; border-right: 1px solid var(--border); height: 100vh; padding: 25px; }
+        main { flex: 1; padding: 50px; }
+        .mc-panel { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 20px; }
+        .mc-input { width: 100%; background: #000; border: 1px solid var(--border); padding: 12px; color: #fff; margin-bottom: 10px; border-radius: 6px; }
+        .mc-action { background: var(--gold); color: #000; padding: 12px; font-weight: bold; cursor: pointer; border: none; width: 100%; border-radius: 6px; }
+        .group-card { border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 15px; }
+        .group-card:hover { border-color: var(--gold); }
+    </style>
 </head>
 <body>
 
-  <nav class="sidebar">...</nav>
+<nav class="sidebar">
+    <div style="font-weight:bold; margin-bottom:30px;">GRUPPEN ERSTELLEN</div>
+    <input type="text" id="g-name" class="mc-input" placeholder="Name...">
+    <input type="text" id="g-desc" class="mc-input" placeholder="Ziel...">
+    <input type="password" id="g-pass" class="mc-input" placeholder="Passwort...">
+    <input type="file" id="g-file" style="display:none;" onchange="document.getElementById('file-label').innerText=this.files[0].name">
+    <label for="g-file" id="file-label" class="mc-input" style="cursor:pointer; text-align:center;">BILD WÄHLEN</label>
+    <button class="mc-action" onclick="createGroup()">GRUPPE STARTEN</button>
+</nav>
 
-  <main>
-    <div class="hero">
-      <h1>GRUPPEN<span>ZENTRALE</span></h1>
-    </div>
+<main>
+    <h1>GRUPPEN<span>ZENTRALE</span></h1>
+    <div id="groups-container" class="mc-panel"></div>
+</main>
 
-    <div class="mc-panel">
-      <div class="mc-panel-title">NEUE GRUPPE ERSTELLEN</div>
-      <input type="text" id="g-name" class="mc-input" placeholder="Gruppen-Name">
-      <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
-      <input type="password" id="g-pass" class="mc-input" placeholder="Passwort">
-      
-      <label class="file-upload-label" id="file-label" onclick="document.getElementById('g-file').click()">📁 LOGO HOCHLADEN</label>
-      <input type="file" id="g-file" class="file-upload-input" onchange="document.getElementById('file-label').textContent=this.files[0].name">
-      
-      <button class="mc-action full" onclick="createGroup()">▶ GRUPPE STARTEN</button>
-    </div>
-
-    <div id="groups-container" class="download-grid"></div>
-  </main>
-
-  <script>
+<script>
     const supabase = supabase.createClient('URL', 'KEY');
 
     async function createGroup() {
-      const file = document.getElementById('g-file').files[0];
-      const name = document.getElementById('g-name').value;
-      
-      // 1. Upload
-      const { data: uploadData } = await supabase.storage.from('gruppen-logos').upload(`logo_${Date.now()}`, file);
-      
-      // 2. DB Insert
-      await supabase.from('groups').insert([{
-        name: name,
-        description: document.getElementById('g-desc').value,
-        password: document.getElementById('g-pass').value,
-        image_url: uploadData.path
-      }]);
-      location.reload();
+        const file = document.getElementById('g-file').files[0];
+        // 1. Bild in 'gruppen-logos' hochladen
+        const { data: imgData } = await supabase.storage.from('gruppen-logos').upload(`logo_${Date.now()}`, file);
+        // 2. Eintrag in 'groups' Tabelle
+        await supabase.from('groups').insert([{
+            name: document.getElementById('g-name').value,
+            description: document.getElementById('g-desc').value,
+            password: document.getElementById('g-pass').value,
+            image_url: imgData.path
+        }]);
+        alert("Gruppe erstellt!");
     }
-  </script>
+</script>
 </body>
 </html>
