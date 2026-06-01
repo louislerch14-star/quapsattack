@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Quaps Gruppen-Zentrale</title>
+  <style>
+    body { background: #121212; color: white; font-family: sans-serif; padding: 20px; }
+    .nav { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .group-card { background: #1e1e1e; padding: 15px; border-radius: 8px; border: 1px solid #444; margin-bottom: 10px; }
+    .editor { background: #252525; padding: 20px; border-radius: 8px; margin-top: 20px; }
+    input, textarea { width: 100%; padding: 8px; margin: 5px 0; background: #333; color: #fff; border: none; }
+    button { padding: 10px 20px; background: #5865F2; border: none; color: white; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="nav" id="group-tabs"></div>
+
+  <h1>Gruppen-Übersicht</h1>
+  <div id="group-list"></div>
+
+  <div class="editor">
+    <h2>Neue Gruppe erstellen</h2>
+    <input type="text" id="g-name" placeholder="Gruppen Name">
+    <input type="password" id="g-pass" placeholder="Passwort festlegen">
+    <button onclick="createGroup()">Gruppe erstellen</button>
+  </div>
+
+<script>
+  let groups = JSON.parse(localStorage.getItem('myGroups')) || [];
+
+  function createGroup() {
+    const name = document.getElementById('g-name').value;
+    const pass = document.getElementById('g-pass').value;
+    groups.push({ name, pass, items: [] });
+    localStorage.setItem('myGroups', JSON.stringify(groups));
+    render();
+  }
+
+  function render() {
+    const list = document.getElementById('group-list');
+    list.innerHTML = '';
+    groups.forEach(g => {
+      list.innerHTML += `
+        <div class="group-card">
+          <h3>${g.name}</h3>
+          <button onclick="joinGroup('${g.name}')">Beitreten</button>
+        </div>
+      `;
+    });
+  }
+
+  function joinGroup(name) {
+    const p = prompt("Passwort:");
+    const g = groups.find(x => x.name === name);
+    if(g && g.pass === p) {
+      alert("Beigetreten!");
+      // Hier würde jetzt der Editor für diese Gruppe erscheinen
+    } else {
+      alert("Falsches Passwort!");
+    }
+  }
+
+  render();
+</script>
+</body>
+</html>
