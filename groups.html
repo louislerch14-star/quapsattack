@@ -2,61 +2,68 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
     <title>QuapsHub // Gruppen-Zentrale</title>
+    <style>
+        /* Quaps Attack Design Style */
+        body { background: #0f0f0f; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; }
+        .sidebar { width: 240px; background: #161616; height: 100vh; border-right: 1px solid #333; padding: 20px; }
+        main { flex: 1; padding: 40px; overflow-y: auto; }
+        h1 { font-size: 32px; margin-bottom: 5px; }
+        h1 span { color: #ffcc00; }
+        .mc-panel { background: #1a1a1a; border: 1px solid #333; padding: 20px; border-radius: 4px; margin-bottom: 20px; }
+        .mc-panel-title { color: #ffcc00; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .mc-input { width: 100%; background: #0f0f0f; border: 1px solid #333; padding: 10px; color: #fff; margin-bottom: 10px; box-sizing: border-box; }
+        .mc-action { background: #004a99; color: #fff; border: none; padding: 10px 20px; cursor: pointer; width: 100%; font-weight: bold; }
+        .mc-action:hover { background: #0066cc; }
+        .group-card { border: 1px solid #333; padding: 15px; margin-bottom: 10px; cursor: pointer; }
+        .group-card:hover { border-color: #ffcc00; }
+    </style>
 </head>
 <body>
 
-    <!-- VIDEO BACKGROUND -->
-    <div class="video-bg"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&controls=0&mute=1"></iframe></div>
-
-    <!-- SIDEBAR (Hier exakt deinen Code aus index.html einfügen) -->
+    <!-- Sidebar aus deinem Design -->
     <nav class="sidebar">
-        <!-- Dein Sidebar-Logo & Buttons -->
+        <div style="color: #ffcc00; font-weight: bold; margin-bottom: 20px;">QUAPS HUB // v2.6</div>
+        <div onclick="window.location.href='index.html'" style="cursor: pointer; margin-bottom: 10px;">HOME</div>
+        <div style="color: #00ffcc;">GRUPPEN-ZENTRALE</div>
     </nav>
 
-    <!-- MAIN CONTENT -->
     <main>
         <div class="hero">
             <h1>GRUPPEN<span>ZENTRALE</span></h1>
-            <p class="hero-sub">Erstelle Gruppen und arbeite mit deinem Team.</p>
+            <p>Koordiniere deine Teams und Projekte.</p>
         </div>
 
-        <!-- PANEL: GRUPPE ERSTELLEN -->
+        <!-- Erstellungs-Panel -->
         <div class="mc-panel">
             <div class="mc-panel-title">NEUE GRUPPE ANLEGEN</div>
-            
-            <label class="mc-label">GRUPPEN NAME</label>
-            <input type="text" id="g-name" class="mc-input" placeholder="Name...">
-            
-            <label class="mc-label">BESCHREIBUNG</label>
-            <input type="text" id="g-desc" class="mc-input" placeholder="Worum geht es hier?">
-            
-            <label class="mc-label">LOGO HOCHLADEN</label>
-            <div class="file-upload-wrapper">
-                <label class="file-upload-label" id="file-label">DATEI AUSWÄHLEN</label>
-                <input type="file" id="g-file" class="file-upload-input" onchange="document.getElementById('file-label').innerText=this.files[0].name">
-            </div>
-
-            <button class="mc-action" style="width:100%; margin-top: 15px;" onclick="createGroup()">▶ GRUPPE ERSTELLEN</button>
+            <input type="text" id="g-name" class="mc-input" placeholder="Gruppen-Name...">
+            <input type="text" id="g-desc" class="mc-input" placeholder="Ziel der Gruppe...">
+            <button class="mc-action" onclick="createGroup()">▶ PROJEKT STARTEN</button>
         </div>
 
-        <!-- PANEL: DEINE GRUPPEN -->
+        <!-- Dashboard-Anzeige -->
         <div class="mc-panel">
-            <div class="mc-panel-title">DEINE GRUPPEN</div>
+            <div class="mc-panel-title">DEINE PROJEKTE</div>
             <div id="groups-container">
-                <!-- Hier werden die Gruppen mit JS geladen -->
+                <div class="group-card" onclick="enterGroup('SMP')">
+                    <strong>Quaps SMP // Technik</strong><br>
+                    <small>Status: Aktiv</small>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
-        // Supabase Einbindung fehlt hier noch bei dir
-        async function createGroup() {
+        function createGroup() {
             const name = document.getElementById('g-name').value;
-            const desc = document.getElementById('g-desc').value;
-            // Supabase Logic kommt hier rein...
-            alert("Gruppe '" + name + "' wird erstellt!");
+            alert("Gruppe " + name + " wurde initialisiert!");
+            // Hier kommt später die Supabase-Anbindung rein
+        }
+
+        function enterGroup(id) {
+            // Logik für das individuelle Gruppen-Dashboard
+            window.location.href = "group-board.html?id=" + id;
         }
     </script>
 </body>
