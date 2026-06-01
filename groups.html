@@ -2,87 +2,78 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css"> <!-- Nutzt dein vorhandenes CSS -->
   <title>QuapsHub // Gruppen-Zentrale</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #a8ff78; --diamond: #44d4d4; --gold: #f5c518;
-      --bg: #0a0a0a; --panel: #1a1a1a; --border: #333;
-    }
-    body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; padding: 40px; }
-    
-    /* Header & Button Styles wie in index.html */
-    .header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; }
-    h1 { font-family: 'Press Start 2P', monospace; font-size: 1.2rem; color: var(--diamond); }
-    
-    .mc-btn { background: var(--panel); border: 1px solid var(--border); color: var(--primary); padding: 12px 24px; cursor: pointer; font-family: 'Press Start 2P', monospace; font-size: 0.6rem; transition: 0.2s; }
-    .mc-btn:hover { background: var(--primary); color: #000; }
-
-    /* Karten Design */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; padding: 20px; }
-    .card img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; }
-
-    /* Professional Overlay */
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
-    .modal-content { background: var(--panel); padding: 40px; border: 2px solid var(--border); border-radius: 16px; width: 400px; }
-    input { width: 100%; background: #000; border: 1px solid var(--border); padding: 12px; margin: 10px 0; color: #fff; box-sizing: border-box; }
-  </style>
 </head>
 <body>
+  <div class="video-bg"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&controls=0&mute=1"></iframe></div>
 
-<div class="header-bar">
-  <h1>GRUPPEN-ZENTRALE</h1>
-  <button class="mc-btn" onclick="document.getElementById('modal').style.display='flex'">+ NEUE GRUPPE</button>
-</div>
+  <!-- Hier würde dein Sidebar-Code hinkommen -->
 
-<div class="grid" id="groups-container"></div>
+  <main>
+    <div class="header-bar">
+      <h1>GRUPPEN-ZENTRALE</h1>
+      <button class="mc-action" onclick="showModal('create-modal')">+ GRUPPE ERSTELLEN</button>
+    </div>
 
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <h2 style="font-family: 'Press Start 2P'; font-size: 0.8rem; color: var(--gold);">GRUPPEN-SETUP</h2>
-    <input type="text" id="name" placeholder="Gruppen-Name">
-    <input type="text" id="desc" placeholder="Beschreibung">
-    <input type="text" id="img" placeholder="Bild-URL">
-    <input type="password" id="pass" placeholder="Passwort">
-    <button class="mc-btn" style="width:100%" onclick="createGroup()">SPEICHERN & SYNCHRONISIEREN</button>
-    <button class="mc-btn" style="width:100%; margin-top:10px; border-color:red" onclick="document.getElementById('modal').style.display='none'">ABBRECHEN</button>
+    <div class="download-grid" id="groups-container"></div>
+  </main>
+
+  <!-- MODAL: GRUPPE ERSTELLEN -->
+  <div id="create-modal" class="paypol-modal-overlay">
+    <div class="mc-panel" style="width: 450px;">
+      <div class="mc-panel-title">GRUPPEN-SETUP</div>
+      <input type="text" id="g-name" class="mc-input" placeholder="Gruppen-Name">
+      <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
+      
+      <div class="file-upload-wrapper">
+        <label class="file-upload-label" id="file-label">LOGO HOCHLADEN (DRAG & DROP)</label>
+        <input type="file" id="g-file" class="file-upload-input" onchange="previewFile()">
+      </div>
+      <div id="file-preview" class="file-name-preview"></div>
+
+      <input type="password" id="g-pass" class="mc-input" placeholder="Gruppen-Passwort">
+      <button class="mc-action full" onclick="createGroup()">GRUPPE STARTEN</button>
+      <button class="mc-action full" style="margin-top:10px; border-color:#ff5555; color:#ff5555;" onclick="hideModal('create-modal')">ABBRECHEN</button>
+    </div>
   </div>
-</div>
 
 <script>
-  // Supabase Verbindung
-  const supabase = supabase.createClient('DEINE_URL', 'DEIN_KEY');
+  // Supabase Initialisierung
+  const supabase = supabase.createClient('URL', 'KEY');
 
-  async function createGroup() {
-    const { error } = await supabase.from('groups').insert([{ 
-      name: document.getElementById('name').value,
-      description: document.getElementById('desc').value,
-      image_url: document.getElementById('img').value || 'https://via.placeholder.com/300',
-      password: document.getElementById('pass').value 
-    }]);
-    if(!error) location.reload();
+  function previewFile() {
+    const file = document.getElementById('g-file').files[0];
+    document.getElementById('file-preview').innerText = "Datei bereit: " + file.name;
+    document.getElementById('file-preview').style.display = 'block';
   }
 
+  async function createGroup() {
+    const file = document.getElementById('g-file').files[0];
+    // Upload zum Supabase Storage (Pfad: groups/name_timestamp)
+    const { data: uploadData } = await supabase.storage.from('group-assets').upload(`logo-${Date.now()}`, file);
+    
+    // Gruppe in DB speichern
+    await supabase.from('groups').insert([{
+      name: document.getElementById('g-name').value,
+      description: document.getElementById('g-desc').value,
+      image_url: uploadData.path,
+      password: document.getElementById('g-pass').value
+    }]);
+    location.reload();
+  }
+
+  // Dashboard-Logik: Rendert Karten im QuapsHub-Design
   async function loadGroups() {
     const { data } = await supabase.from('groups').select('*');
     document.getElementById('groups-container').innerHTML = data.map(g => `
-      <div class="card">
-        <img src="${g.image_url}">
-        <h3 style="font-family:'Press Start 2P'; font-size:0.7rem;">${g.name}</h3>
-        <p style="color:var(--muted); font-size:0.9rem;">${g.description}</p>
-        <button class="mc-btn" onclick="join(${g.id}, '${g.password}')">BEITRETEN</button>
+      <div class="mc-panel download-card">
+        <img src="${g.image_url}" style="width:100%; height:120px; object-fit:cover; border-radius:8px;">
+        <h3 class="download-card-title">${g.name}</h3>
+        <p style="color:var(--muted); margin-bottom:20px;">${g.description}</p>
+        <button class="mc-action full" onclick="enterGroup('${g.id}')">ZUM DASHBOARD</button>
       </div>
     `).join('');
-  }
-
-  function join(id, pass) {
-    const p = prompt("Gruppen-Passwort:");
-    if(p === pass) {
-      alert("Erfolgreich eingeloggt!");
-      // Hier könnte man jetzt das Gruppen-Board laden
-    } else { alert("Falsches Passwort!"); }
   }
 
   loadGroups();
