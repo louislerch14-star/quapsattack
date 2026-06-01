@@ -7,50 +7,58 @@
 </head>
 <body>
 
-    <!-- Video Background bleibt konsistent mit index.html -->
-    <div class="video-bg"><iframe src="..."></iframe></div>
+<main>
+    <div class="hero">
+        <h1>GRUPPEN<span>ZENTRALE</span></h1>
+        <p class="hero-sub">Aktive Projekte und Team-Koordination.</p>
+    </div>
 
-    <!-- Sidebar & Layout kommen von deiner index.html -->
-    <main>
-        <div class="hero">
-            <h1>GRUPPEN<span>ZENTRALE</span></h1>
-            <p class="hero-sub">Erstelle Teams, verwalte Projekte und koordiniere dich mit deinen Partnern.</p>
-        </div>
-
-        <!-- Gruppen-Erstellung Panel -->
-        <div class="mc-panel">
-            <div class="mc-panel-title">NEUE GRUPPE ERSTELLEN</div>
-            <label class="mc-label">GRUPPEN NAME</label>
-            <input type="text" id="g-name" class="mc-input" placeholder="Projektname...">
-            
-            <label class="mc-label">LOGO HOCHLADEN</label>
-            <div class="file-upload-wrapper">
-                <label class="file-upload-label" id="file-label">DATEI AUSWÄHLEN</label>
-                <input type="file" id="g-file" class="file-upload-input" onchange="updateName(this)">
-            </div>
-            
-            <button class="mc-action" onclick="createGroup()" style="margin-top: 15px;">GRUPPE INITIALISIEREN</button>
-        </div>
-
-        <!-- Aktive Gruppen Grid -->
-        <div class="download-grid" id="groups-container">
-            <!-- Gruppenkarten laden hier rein -->
-        </div>
-    </main>
-
-    <script>
-        // Logik für Gruppen-Dashboard:
-        // 1. Gruppe erstellen (Supabase insert)
-        // 2. Gruppen-Dashboard (No-Code Editor für Todo-Listen & Infos)
+    <!-- ERSTELLUNGS-PANEL (Sieht aus wie dein Gieferschutz-Block) -->
+    <div class="mc-panel">
+        <div class="mc-panel-title">GRUPPEN-INITIALISIERUNG</div>
         
-        async function createGroup() {
-            // Hier kommt deine Supabase Logik rein
-            console.log("Gruppe wird in der Datenbank initialisiert...");
-        }
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <label class="mc-label">NAME & PROJEKT</label>
+                <input type="text" id="g-name" class="mc-input" placeholder="z.B. Quaps SMP // Technik">
+                <input type="text" id="g-desc" class="mc-input" placeholder="Ziel der Gruppe...">
+            </div>
+            <div>
+                <label class="mc-label">SICHERHEIT & LOGO</label>
+                <input type="password" id="g-pass" class="mc-input" placeholder="Passwort...">
+                <div class="file-upload-wrapper">
+                    <label class="file-upload-label" id="file-label">PROJEKT-LOGO LADEN</label>
+                    <input type="file" id="g-file" class="file-upload-input" onchange="updateLabel(this)">
+                </div>
+            </div>
+        </div>
+        <button class="mc-action" style="width: 100%;" onclick="createGroup()">▶ PROJEKT STARTEN</button>
+    </div>
 
-        function updateName(input) {
-            document.getElementById('file-label').innerText = input.files[0].name;
-        }
-    </script>
+    <!-- ÜBERSICHTS-PANEL (Hier passiert die Arbeit) -->
+    <div class="mc-panel">
+        <div class="mc-panel-title">DEINE GRUPPEN-ÜBERSICHT</div>
+        
+        <div class="shoutbox-list" id="groups-container">
+            <!-- Gruppen-Einträge erscheinen hier als klickbare Zeilen -->
+            <div class="shoutbox-msg">
+                <span class="msg-user">[SYSTEM]</span>
+                Keine aktiven Gruppen gefunden. Starte oben ein Projekt.
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    function updateLabel(input) {
+        document.getElementById('file-label').innerText = input.files[0].name;
+    }
+
+    // Die Funktion, die das echte Dashboard lädt
+    function enterGroup(id) {
+        // Hier wird dein No-Code-Editor geladen
+        console.log("Wechsle in das Arbeits-Dashboard für Gruppe: " + id);
+    }
+</script>
 </body>
 </html>
