@@ -9,17 +9,14 @@
         :root { --primary: #a8ff78; --gold: #f5c518; --bg: #0a0a0a; --panel: #1a1a1a; --border: #333; }
         body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; display: flex; margin: 0; }
         
-        /* Sidebar Design */
         .sidebar { width: 260px; background: #161616; height: 100vh; border-right: 2px solid var(--border); padding: 25px; }
         .nav-item { cursor: pointer; padding: 15px 0; color: #aaa; font-family: 'Press Start 2P', monospace; font-size: 0.6rem; }
         .nav-item:hover { color: var(--primary); }
         
-        /* Formular Bereich */
         #create-form { display: none; margin-top: 20px; padding: 15px; border: 1px solid var(--border); border-radius: 8px; }
         .mc-input { width: 100%; background: #000; border: 1px solid var(--border); padding: 10px; color: #fff; margin-bottom: 10px; box-sizing: border-box; }
         .mc-action { background: var(--primary); color: #000; border: none; padding: 10px; cursor: pointer; width: 100%; font-weight: bold; }
 
-        /* Main Dashboard */
         main { flex: 1; padding: 40px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
         .group-card { background: var(--panel); border: 1px solid var(--border); padding: 20px; border-radius: 12px; }
@@ -36,7 +33,6 @@
         <input type="text" id="g-name" class="mc-input" placeholder="Name">
         <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
         <input type="password" id="g-pass" class="mc-input" placeholder="Passwort">
-        <input type="file" id="g-file" class="mc-input">
         <button class="mc-action" onclick="saveGroup()">SPEICHERN</button>
     </div>
 </nav>
@@ -49,37 +45,38 @@
 <script>
     const supabase = supabase.createClient('https://sdwelvinfbqxivvxnjkh.supabase.co', 'sb_publishable_p84c6F4Q0-uwjYoOujrMgw_0EdclXik');
 
-    // 1. Gruppen laden
     async function fetchGroups() {
-        const { data } = await supabase.from('groups').select('*');
+        const { data, error } = await supabase.from('groups').select('*');
+        if (error) console.error("Fehler beim Laden:", error);
+        
         const grid = document.getElementById('groups-grid');
-        grid.innerHTML = data.map(g => `
-            <div class="group-card">
-                <h3>${g.name}</h3>
-                <p>${g.description}</p>
-                <button onclick="location.href='group-board.html?id=${g.id}'">ÖFFNEN</button>
-            </div>
-        `).join('');
+        if (data) {
+            grid.innerHTML = data.map(g => `
+                <div class="group-card">
+                    <h3>${g.name}</h3>
+                    <p>${g.description}</p>
+                    <button onclick="location.href='group-board.html?id=${g.id}'">ÖFFNEN</button>
+                </div>
+            `).join('');
+        }
     }
 
-    // 2. Gruppe speichern
     async function saveGroup() {
         const name = document.getElementById('g-name').value;
-        const file = document.getElementById('g-file').files[0];
-        let imgPath = null;
-        
-        if(file) {
-            const { data } = await supabase.storage.from('gruppen-logos').upload(Date.now().toString(), file);
-            imgPath = data.path;
-        }
+        const desc = document.getElementById('g-desc').value;
+        const pass = document.getElementById('g-pass').value;
 
-        await supabase.from('groups').insert([{ 
+        const { error } = await supabase.from('groups').insert([{ 
             name: name, 
-            description: document.getElementById('g-desc').value, 
-            password: document.getElementById('g-pass').value,
-            image_url: imgPath 
+            description: desc, 
+            password: pass 
         }]);
-        location.reload();
+
+        if (error) {
+            alert("Fehler beim Speichern: " + error.message);
+        } else {
+            location.reload();
+        }
     }
 
     fetchGroups();
