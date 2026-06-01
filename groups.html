@@ -2,56 +2,69 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>QuapsHub // Zentrale</title>
+    <title>QuapsHub // Gruppen-Zentrale</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background: #0a0a0a; color: #fff; font-family: sans-serif; display: flex; }
-        .sidebar { width: 260px; background: #161616; padding: 25px; height: 100vh; border-right: 1px solid #333; }
-        .mc-input { width: 100%; background: #000; border: 1px solid #444; padding: 10px; color: #fff; margin-bottom: 10px; }
-        .mc-action { background: #a8ff78; color: #000; border: none; padding: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+        :root { --bg: #0a0a0a; --panel: #161616; --gold: #f5c518; --text: #fff; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; margin: 0; }
+        .sidebar { width: 260px; background: var(--panel); height: 100vh; padding: 25px; border-right: 1px solid #333; }
+        main { flex: 1; padding: 40px; }
+        .mc-input { width: 100%; background: #000; border: 1px solid #444; padding: 10px; color: #fff; margin-bottom: 10px; display: block; box-sizing: border-box; }
+        .btn { background: var(--gold); color: #000; padding: 10px; width: 100%; border: none; cursor: pointer; font-weight: bold; }
+        .group-card { background: var(--panel); border: 1px solid #333; padding: 20px; border-radius: 8px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <nav class="sidebar">
-    <h3>GRUPPEN ERSTELLEN</h3>
-    <input type="text" id="g-name" class="mc-input" placeholder="Name">
+    <h3>GRUPPEN</h3>
+    <input type="text" id="g-name" class="mc-input" placeholder="Gruppenname">
     <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
     <input type="password" id="g-pass" class="mc-input" placeholder="Passwort">
-    <button id="save-btn" class="mc-action">SPEICHERN</button>
+    <button class="btn" onclick="createNewGroup()">GRUPPE ERSTELLEN</button>
+    <hr style="margin:20px 0; border:0; border-top:1px solid #333;">
+    <div id="sidebar-list"></div>
 </nav>
 
-<main style="padding: 40px; flex: 1;">
-    <div id="groups-list"></div>
+<main>
+    <h1>ÜBERSICHT</h1>
+    <div id="main-grid"></div>
 </main>
 
 <script>
-    // WICHTIG: Hier muss ein Key rein, der mit "sb_" beginnt!
-    const URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
-    const KEY = "HIER_DEN_SB_KEY_EINFÜGEN"; 
-    const supabase = supabase.createClient(URL, KEY);
+    // DEINE INITIALISIERUNG AUS DER INDEX.HTML
+    const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.getElementById('save-btn').addEventListener('click', async () => {
-        const { error } = await supabase.from('groups').insert([{
+    async function createNewGroup() {
+        const { data, error } = await supabaseClient.from('groups').insert([{
             name: document.getElementById('g-name').value,
             description: document.getElementById('g-desc').value,
             password: document.getElementById('g-pass').value
-        }]);
-        
-        if (error) {
-            alert("FEHLER: " + error.message);
-            console.error(error);
-        } else {
-            alert("Erfolg!");
-            location.reload();
-        }
-    });
+        }]).select();
 
-    async function load() {
-        const { data } = await supabase.from('groups').select('*');
-        document.getElementById('groups-list').innerHTML = data.map(g => `<div>${g.name}</div>`).join('');
+        if (error) {
+            alert("Fehler: " + error.message);
+        } else {
+            // Automatischer Redirect in die neue Gruppe
+            window.location.href = `group-board.html?id=${data[0].id}`;
+        }
     }
-    load();
+
+    async function loadGroups() {
+        const { data } = await supabaseClient.from('groups').select('*');
+        const list = document.getElementById('main-grid');
+        list.innerHTML = data.map(g => `
+            <div class="group-card">
+                <h3>${g.name}</h3>
+                <p>${g.description}</p>
+                <button class="btn" onclick="window.location.href='group-board.html?id=${g.id}'">ÖFFNEN</button>
+            </div>
+        `).join('');
+    }
+
+    loadGroups();
 </script>
 </body>
 </html>
