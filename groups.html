@@ -2,37 +2,47 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>QuapsHub // Debug-Modus</title>
+    <title>QuapsHub // Zentrale</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; padding: 40px; }
-        .mc-input { display: block; width: 100%; margin: 10px 0; padding: 10px; background: #222; border: 1px solid #444; color: #fff; }
-        .mc-action { padding: 15px; background: #004a99; color: #fff; border: none; cursor: pointer; width: 100%; }
+        body { background: #0f0f0f; color: #fff; font-family: sans-serif; padding: 40px; }
+        .mc-input { display: block; width: 100%; margin: 10px 0; padding: 12px; background: #222; border: 1px solid #444; color: #fff; border-radius: 4px; }
+        .mc-action { padding: 15px; background: #004a99; color: #fff; border: none; cursor: pointer; width: 100%; border-radius: 4px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div style="max-width: 400px;">
-        <h3>FEHLER-CHECK-TOOL</h3>
+    <div style="max-width: 500px;">
+        <h1>GRUPPEN ERSTELLEN</h1>
         <input type="text" id="g-name" class="mc-input" placeholder="Name">
+        <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
         <input type="password" id="g-pass" class="mc-input" placeholder="Passwort">
-        <button id="test-btn" class="mc-action">TEST-KLICK</button>
+        <button id="btn-save" class="mc-action">GRUPPE SPEICHERN</button>
     </div>
 
     <script>
-        // Check 1: Wird das Skript überhaupt geladen?
-        console.log("Skript geladen!");
+        const supabase = supabase.createClient(
+            'https://sdwelvinfbqxivvxnjkh.supabase.co', 
+            'sb_publishable_p84c6F4Q0-uwjYoOujrMgw_0EdclXik'
+        );
 
-        document.getElementById('test-btn').addEventListener('click', () => {
-            console.log("Button wurde geklickt!");
-            alert("Button funktioniert! Wenn du das siehst, liegt der Fehler nicht am Button, sondern an der Supabase-Verbindung.");
-            
-            // Check 2: Supabase Zugriff
-            try {
-                const supabase = supabase.createClient('https://sdwelvinfbqxivvxnjkh.supabase.co', 'sb_publishable_p84c6F4Q0-uwjYoOujrMgw_0EdclXik');
-                console.log("Supabase bereit:", supabase);
-            } catch(e) {
-                console.error("Supabase Fehler:", e);
+        document.getElementById('btn-save').addEventListener('click', async () => {
+            const name = document.getElementById('g-name').value;
+            const desc = document.getElementById('g-desc').value;
+            const pass = document.getElementById('g-pass').value;
+
+            console.log("Versuche zu speichern:", name);
+
+            const { data, error } = await supabase.from('groups').insert([
+                { name: name, description: desc, password: pass }
+            ]);
+
+            if (error) {
+                alert("FEHLER: " + error.message);
+                console.error(error);
+            } else {
+                alert("Erfolgreich gespeichert!");
+                location.reload();
             }
         });
     </script>
