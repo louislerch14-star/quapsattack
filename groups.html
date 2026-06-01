@@ -1,82 +1,56 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="style.css"> <!-- Nutzt dein vorhandenes CSS -->
-  <title>QuapsHub // Gruppen-Zentrale</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>QuapsHub // Gruppen-Zentrale</title>
 </head>
 <body>
-  <div class="video-bg"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&controls=0&mute=1"></iframe></div>
 
-  <!-- Hier würde dein Sidebar-Code hinkommen -->
+    <!-- Video Background bleibt konsistent mit index.html -->
+    <div class="video-bg"><iframe src="..."></iframe></div>
 
-  <main>
-    <div class="header-bar">
-      <h1>GRUPPEN-ZENTRALE</h1>
-      <button class="mc-action" onclick="showModal('create-modal')">+ GRUPPE ERSTELLEN</button>
-    </div>
+    <!-- Sidebar & Layout kommen von deiner index.html -->
+    <main>
+        <div class="hero">
+            <h1>GRUPPEN<span>ZENTRALE</span></h1>
+            <p class="hero-sub">Erstelle Teams, verwalte Projekte und koordiniere dich mit deinen Partnern.</p>
+        </div>
 
-    <div class="download-grid" id="groups-container"></div>
-  </main>
+        <!-- Gruppen-Erstellung Panel -->
+        <div class="mc-panel">
+            <div class="mc-panel-title">NEUE GRUPPE ERSTELLEN</div>
+            <label class="mc-label">GRUPPEN NAME</label>
+            <input type="text" id="g-name" class="mc-input" placeholder="Projektname...">
+            
+            <label class="mc-label">LOGO HOCHLADEN</label>
+            <div class="file-upload-wrapper">
+                <label class="file-upload-label" id="file-label">DATEI AUSWÄHLEN</label>
+                <input type="file" id="g-file" class="file-upload-input" onchange="updateName(this)">
+            </div>
+            
+            <button class="mc-action" onclick="createGroup()" style="margin-top: 15px;">GRUPPE INITIALISIEREN</button>
+        </div>
 
-  <!-- MODAL: GRUPPE ERSTELLEN -->
-  <div id="create-modal" class="paypol-modal-overlay">
-    <div class="mc-panel" style="width: 450px;">
-      <div class="mc-panel-title">GRUPPEN-SETUP</div>
-      <input type="text" id="g-name" class="mc-input" placeholder="Gruppen-Name">
-      <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
-      
-      <div class="file-upload-wrapper">
-        <label class="file-upload-label" id="file-label">LOGO HOCHLADEN (DRAG & DROP)</label>
-        <input type="file" id="g-file" class="file-upload-input" onchange="previewFile()">
-      </div>
-      <div id="file-preview" class="file-name-preview"></div>
+        <!-- Aktive Gruppen Grid -->
+        <div class="download-grid" id="groups-container">
+            <!-- Gruppenkarten laden hier rein -->
+        </div>
+    </main>
 
-      <input type="password" id="g-pass" class="mc-input" placeholder="Gruppen-Passwort">
-      <button class="mc-action full" onclick="createGroup()">GRUPPE STARTEN</button>
-      <button class="mc-action full" style="margin-top:10px; border-color:#ff5555; color:#ff5555;" onclick="hideModal('create-modal')">ABBRECHEN</button>
-    </div>
-  </div>
+    <script>
+        // Logik für Gruppen-Dashboard:
+        // 1. Gruppe erstellen (Supabase insert)
+        // 2. Gruppen-Dashboard (No-Code Editor für Todo-Listen & Infos)
+        
+        async function createGroup() {
+            // Hier kommt deine Supabase Logik rein
+            console.log("Gruppe wird in der Datenbank initialisiert...");
+        }
 
-<script>
-  // Supabase Initialisierung
-  const supabase = supabase.createClient('URL', 'KEY');
-
-  function previewFile() {
-    const file = document.getElementById('g-file').files[0];
-    document.getElementById('file-preview').innerText = "Datei bereit: " + file.name;
-    document.getElementById('file-preview').style.display = 'block';
-  }
-
-  async function createGroup() {
-    const file = document.getElementById('g-file').files[0];
-    // Upload zum Supabase Storage (Pfad: groups/name_timestamp)
-    const { data: uploadData } = await supabase.storage.from('group-assets').upload(`logo-${Date.now()}`, file);
-    
-    // Gruppe in DB speichern
-    await supabase.from('groups').insert([{
-      name: document.getElementById('g-name').value,
-      description: document.getElementById('g-desc').value,
-      image_url: uploadData.path,
-      password: document.getElementById('g-pass').value
-    }]);
-    location.reload();
-  }
-
-  // Dashboard-Logik: Rendert Karten im QuapsHub-Design
-  async function loadGroups() {
-    const { data } = await supabase.from('groups').select('*');
-    document.getElementById('groups-container').innerHTML = data.map(g => `
-      <div class="mc-panel download-card">
-        <img src="${g.image_url}" style="width:100%; height:120px; object-fit:cover; border-radius:8px;">
-        <h3 class="download-card-title">${g.name}</h3>
-        <p style="color:var(--muted); margin-bottom:20px;">${g.description}</p>
-        <button class="mc-action full" onclick="enterGroup('${g.id}')">ZUM DASHBOARD</button>
-      </div>
-    `).join('');
-  }
-
-  loadGroups();
-</script>
+        function updateName(input) {
+            document.getElementById('file-label').innerText = input.files[0].name;
+        }
+    </script>
 </body>
 </html>
