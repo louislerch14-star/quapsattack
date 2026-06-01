@@ -6,58 +6,57 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #a8ff78; --diamond: #44d4d4; --gold: #f5c518;
-      --bg: #0a0a0a; --panel: #1a1a1a; --border: #333;
-    }
-    body { background: var(--bg); color: #fff; font-family: 'VT323', monospace; margin: 0; padding: 20px; }
+    :root { --primary: #a8ff78; --gold: #f5c518; --bg: #0a0a0a; --panel: #1a1a1a; --border: #333; }
+    body { background: var(--bg); color: #fff; font-family: 'VT323', monospace; padding: 40px; }
     
-    /* Minecraft-Style Design übernommen */
+    /* Layout */
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
     .mc-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 30px; margin-bottom: 24px; }
     .mc-panel-title { font-family: 'Press Start 2P', monospace; font-size: 0.65rem; color: var(--gold); margin-bottom: 20px; }
     
-    .mc-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 16px; border-radius: 12px; color: #fff; margin-bottom: 15px; font-size: 1rem; }
-    .mc-action { display: inline-block; background: #222; color: var(--primary); font-family: 'Press Start 2P', monospace; font-size: 0.55rem; padding: 14px 28px; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); transition: 0.2s; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .group-card { background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 20px; border-radius: 12px; }
+    
+    .mc-action { background: #222; color: var(--primary); font-family: 'Press Start 2P', monospace; font-size: 0.55rem; padding: 14px 28px; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); }
     .mc-action:hover { background: #fff; color: #000; }
-
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    .group-card { background: rgba(20, 20, 20, 0.8); border: 1px solid var(--border); padding: 20px; border-radius: 12px; }
-    .list-item { background: rgba(0,0,0,0.3); padding: 10px; margin: 5px 0; border-radius: 8px; border-left: 3px solid var(--primary); }
+    
+    /* Modal / Editor Styles */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
+    .mc-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 16px; border-radius: 12px; color: #fff; margin-bottom: 15px; }
   </style>
 </head>
 <body>
 
+<div class="header-bar">
+  <h1>Gruppen-Übersicht</h1>
+  <button class="mc-action" onclick="document.getElementById('create-modal').style.display='flex'">▶ GRUPPE ERSTELLEN</button>
+</div>
+
 <div class="mc-panel">
-  <div class="mc-panel-title">👥 GRUPPEN-ZENTRALE</div>
   <div id="groups-container" class="grid"></div>
 </div>
 
-<div class="mc-panel" id="editor-ui" style="display:none;">
-  <div class="mc-panel-title" id="active-group-title">GRUPPE</div>
-  <input type="text" id="new-item" class="mc-input" placeholder="Neues Item/Todo hinzufügen...">
-  <button class="mc-action" onclick="addItem()">▶ HINZUFÜGEN</button>
-  <div id="items-list" style="margin-top: 20px;"></div>
-</div>
-
-<div class="mc-panel">
-  <div class="mc-panel-title">➕ NEUE GRUPPE ANLEGEN</div>
-  <input type="text" id="g-name" class="mc-input" placeholder="Gruppen Name">
-  <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
-  <input type="text" id="g-img" class="mc-input" placeholder="Bild URL">
-  <input type="password" id="g-pass" class="mc-input" placeholder="Gruppen-Passwort">
-  <button class="mc-action" onclick="createGroup()">▶ GRUPPE ERSTELLEN</button>
+<div id="create-modal" class="modal">
+  <div class="mc-panel" style="width: 400px;">
+    <div class="mc-panel-title">NEUE GRUPPE</div>
+    <input type="text" id="g-name" class="mc-input" placeholder="Name">
+    <input type="text" id="g-desc" class="mc-input" placeholder="Beschreibung">
+    <input type="text" id="g-img" class="mc-input" placeholder="Bild-URL (optional)">
+    <input type="password" id="g-pass" class="mc-input" placeholder="Passwort festlegen">
+    <button class="mc-action" onclick="createGroup()">▶ SPEICHERN</button>
+    <button class="mc-action" style="color:red" onclick="document.getElementById('create-modal').style.display='none'">ABBRECHEN</button>
+  </div>
 </div>
 
 <script>
-  // Füge hier deine Supabase Daten ein
   const supabase = supabase.createClient('URL', 'KEY');
-  let currentGroupId = null;
 
   async function createGroup() {
+    // Hier wird das Supabase Insert ausgeführt
     await supabase.from('groups').insert([{ 
       name: document.getElementById('g-name').value,
       description: document.getElementById('g-desc').value,
-      image_url: document.getElementById('g-img').value,
+      image_url: document.getElementById('g-img').value || 'https://via.placeholder.com/150',
       password: document.getElementById('g-pass').value 
     }]);
     location.reload();
@@ -67,34 +66,12 @@
     const { data } = await supabase.from('groups').select('*');
     document.getElementById('groups-container').innerHTML = data.map(g => `
       <div class="group-card">
-        <img src="${g.image_url}" style="width:50px; border-radius:8px;">
+        <img src="${g.image_url}" style="width:100%; height:150px; object-fit:cover; border-radius:8px;">
         <h3>${g.name}</h3>
-        <p>${g.description}</p>
-        <button class="mc-action" onclick="joinGroup(${g.id}, '${g.password}', '${g.name}')">BEITRETEN</button>
+        <p style="color:#aaa; font-size:1.1rem;">${g.description}</p>
+        <button class="mc-action" onclick="alert('Hier kommt der Gruppen-Editor rein!')">BEITRETEN</button>
       </div>
     `).join('');
-  }
-
-  function joinGroup(id, pass, name) {
-    const p = prompt("Gruppen-Passwort:");
-    if(p === pass) {
-      currentGroupId = id;
-      document.getElementById('editor-ui').style.display = 'block';
-      document.getElementById('active-group-title').innerText = name;
-      loadItems();
-    } else { alert("Falsches Passwort!"); }
-  }
-
-  async function addItem() {
-    const content = document.getElementById('new-item').value;
-    await supabase.from('group_content').insert([{ group_id: currentGroupId, content: content }]);
-    document.getElementById('new-item').value = '';
-    loadItems();
-  }
-
-  async function loadItems() {
-    const { data } = await supabase.from('group_content').select('*').eq('group_id', currentGroupId);
-    document.getElementById('items-list').innerHTML = data.map(i => `<div class="list-item">${i.content}</div>`).join('');
   }
 
   loadGroups();
