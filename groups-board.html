@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>QuapsHub // Gruppen-Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Übernimm hier wieder dein CSS aus der groups.html */
+        body { background: #0f0f0f; color: #fff; font-family: 'Inter', sans-serif; display: flex; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 40px; }
+        .widget-panel { background: #1a1a1a; border: 1px solid #333; padding: 20px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <main id="dashboard" class="dashboard-grid">
+        </main>
+
+    <script>
+        const supabase = supabase.createClient('URL', 'KEY');
+        const groupId = new URLSearchParams(window.location.search).get('id');
+
+        async function loadDashboard() {
+            const { data: widgets } = await supabase
+                .from('group_widgets')
+                .select('*')
+                .eq('group_id', groupId);
+
+            const container = document.getElementById('dashboard');
+            widgets.forEach(w => {
+                const div = document.createElement('div');
+                div.className = 'widget-panel';
+                // Hier rendern wir die Widgets basierend auf dem Typ
+                div.innerHTML = `<h3>${w.title}</h3><p>${w.data.content || 'Kein Inhalt'}</p>`;
+                container.appendChild(div);
+            });
+        }
+        
+        loadDashboard();
+    </script>
+</body>
+</html>
