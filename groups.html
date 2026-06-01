@@ -5,29 +5,23 @@
     <title>QuapsHub // Gruppen-Zentrale</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* KOMPLETTES DESIGN - KEINE EXTERNE DATEI NÖTIG */
+        /* CSS FEST INTEGRIERT */
         :root { --bg: #0f0f0f; --panel: #1a1a1a; --gold: #f5c518; --border: #333; --text: #fff; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; display: flex; }
         
-        /* Sidebar */
-        .sidebar { width: 260px; background: #161616; height: 100vh; border-right: 1px solid var(--border); padding: 25px; }
-        
-        /* Main Area */
+        .sidebar { width: 260px; background: #161616; height: 100vh; border-right: 1px solid var(--border); padding: 25px; box-sizing: border-box; }
         main { flex: 1; padding: 40px; }
+        
         h1 { color: #fff; font-size: 2.5rem; }
         h1 span { color: var(--gold); }
         
-        /* Panels */
         .mc-panel { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 8px; margin-bottom: 20px; }
-        .mc-panel-title { color: var(--gold); font-weight: bold; margin-bottom: 15px; cursor: pointer; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .mc-panel-title { color: var(--gold); font-weight: bold; margin-bottom: 15px; cursor: pointer; border-bottom: 1px solid var(--border); padding-bottom: 10px; display: block; }
         
-        /* Inputs & Buttons */
         .mc-input { width: 100%; background: #000; border: 1px solid #444; padding: 12px; color: #fff; margin-bottom: 10px; border-radius: 4px; box-sizing: border-box; }
-        .mc-action { background: #004a99; color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; border-radius: 4px; margin-top: 10px; }
-        .mc-action:hover { background: #0066cc; }
+        .mc-action { background: #004a99; color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; border-radius: 4px; }
         
-        /* Hidden Section */
-        #create-section { display: none; }
+        #create-section { display: none; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -58,8 +52,10 @@
 </main>
 
 <script>
-    // Supabase Setup
-    const supabase = supabase.createClient('DEINE_SUPABASE_URL', 'DEIN_SUPABASE_KEY');
+    // Supabase Konfiguration eingebaut
+    const supabaseUrl = 'https://sdwelvinfbqxivvxnjkh.supabase.co';
+    const supabaseKey = 'sb_publishable_p84c6F4Q0-uwjYoOujrMgw_0EdclXik';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     async function createGroup() {
         const name = document.getElementById('g-name').value;
@@ -69,15 +65,17 @@
 
         if(!name || !pass) return alert("Name und Passwort sind Pflicht!");
 
-        // 1. Bild in Storage
-        const { data: imgData } = await supabase.storage.from('gruppen-logos').upload(`logo_${Date.now()}`, file);
+        let imageUrl = null;
+        if(file) {
+            const { data: imgData } = await supabase.storage.from('gruppen-logos').upload(`logo_${Date.now()}`, file);
+            imageUrl = imgData ? imgData.path : null;
+        }
         
-        // 2. Datenbank Eintrag
         const { error } = await supabase.from('groups').insert([{
             name: name,
             description: desc,
             password: pass,
-            image_url: imgData ? imgData.path : null
+            image_url: imageUrl
         }]);
         
         if(error) { alert("Fehler: " + error.message); } 
