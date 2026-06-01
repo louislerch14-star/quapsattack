@@ -3,65 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <title>Quaps Gruppen-Zentrale</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { background: #121212; color: white; font-family: sans-serif; padding: 20px; }
-    .nav { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-    .group-card { background: #1e1e1e; padding: 15px; border-radius: 8px; border: 1px solid #444; margin-bottom: 10px; }
-    .editor { background: #252525; padding: 20px; border-radius: 8px; margin-top: 20px; }
-    input, textarea { width: 100%; padding: 8px; margin: 5px 0; background: #333; color: #fff; border: none; }
-    button { padding: 10px 20px; background: #5865F2; border: none; color: white; cursor: pointer; }
+    :root { --panel: #14182d; --accent: #5865F2; }
+    body { background: #0b0c10; color: #fff; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+    .nav { display: flex; gap: 10px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px; }
+    .group-card { background: var(--panel); border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 15px; }
+    .btn { background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+    input { width: 100%; padding: 10px; margin: 5px 0; background: #1a1e35; border: 1px solid #444; color: white; border-radius: 4px; }
+    .list-item { background: #1a1e35; padding: 10px; margin: 5px 0; border-radius: 4px; }
   </style>
 </head>
 <body>
 
-  <div class="nav" id="group-tabs"></div>
+  <div class="nav">
+    <button class="btn" onclick="showSection('overview')">Gruppen-Übersicht</button>
+    <button class="btn" onclick="showSection('create')">Gruppe erstellen</button>
+  </div>
 
-  <h1>Gruppen-Übersicht</h1>
-  <div id="group-list"></div>
+  <div id="overview">
+    <h1>Alle Gruppen</h1>
+    <div id="groups-container"></div>
+  </div>
 
-  <div class="editor">
-    <h2>Neue Gruppe erstellen</h2>
-    <input type="text" id="g-name" placeholder="Gruppen Name">
-    <input type="password" id="g-pass" placeholder="Passwort festlegen">
-    <button onclick="createGroup()">Gruppe erstellen</button>
+  <div id="create" style="display:none;">
+    <h1>Neue Gruppe erstellen</h1>
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="desc" placeholder="Beschreibung">
+    <input type="text" id="img" placeholder="Bild-URL">
+    <input type="password" id="pass" placeholder="Passwort">
+    <button class="btn" onclick="saveGroup()">Speichern</button>
+  </div>
+
+  <div id="editor" style="display:none;">
+    <h2 id="active-group-name">Gruppe</h2>
+    <input type="text" id="new-item" placeholder="Neues To-Do oder Item">
+    <button class="btn" onclick="addItem()">Hinzufügen</button>
+    <div id="items-list"></div>
   </div>
 
 <script>
-  let groups = JSON.parse(localStorage.getItem('myGroups')) || [];
+  // ERSETZE DURCH DEINE SUPABASE DATEN
+  const supabase = supabase.createClient('DEINE_URL', 'DEIN_KEY');
+  let currentGroupId = null;
 
-  function createGroup() {
-    const name = document.getElementById('g-name').value;
-    const pass = document.getElementById('g-pass').value;
-    groups.push({ name, pass, items: [] });
-    localStorage.setItem('myGroups', JSON.stringify(groups));
-    render();
+  async function saveGroup() {
+    await supabase.from('groups').insert([{ 
+      name: document.getElementById('name').value,
+      description: document.getElementById('desc').value,
+      image_url: document.getElementById('img').value,
+      password: document.getElementById('pass').value 
+    }]);
+    alert("Erstellt!");
+    location.reload();
   }
 
-  function render() {
-    const list = document.getElementById('group-list');
-    list.innerHTML = '';
-    groups.forEach(g => {
-      list.innerHTML += `
-        <div class="group-card">
-          <h3>${g.name}</h3>
-          <button onclick="joinGroup('${g.name}')">Beitreten</button>
-        </div>
-      `;
-    });
+  async function loadGroups() {
+    const { data } = await supabase.from('groups').select('*');
+    const container = document.getElementById('groups-container');
+    container.innerHTML = data.map(g => `
+      <div class="group-card">
+        <h3>${g.name}</h3>
+        <p>${g.description}</p>
+        <button class="btn" onclick="joinGroup(${g.id}, '${g.password}', '${g.name}')">Beitreten</button>
+      </div>
+    `).join('');
   }
 
-  function joinGroup(name) {
-    const p = prompt("Passwort:");
-    const g = groups.find(x => x.name === name);
-    if(g && g.pass === p) {
-      alert("Beigetreten!");
-      // Hier würde jetzt der Editor für diese Gruppe erscheinen
-    } else {
-      alert("Falsches Passwort!");
-    }
+  function joinGroup(id, pass, name) {
+    const input = prompt("Passwort:");
+    if(input === pass) {
+      currentGroupId = id;
+      document.getElementById('overview').style.display = 'none';
+      document.getElementById('create').style.display = 'none';
+      document.getElementById('editor').style.display = 'block';
+      document.getElementById('active-group-name').innerText = name;
+      loadItems();
+    } else { alert("Falsch!"); }
   }
 
-  render();
+  async function addItem() {
+    const content = document.getElementById('new-item').value;
+    await supabase.from('group_content').insert([{ group_id: currentGroupId, content, type: 'todo' }]);
+    loadItems();
+  }
+
+  async function loadItems() {
+    const { data } = await supabase.from('group_content').select('*').eq('group_id', currentGroupId);
+    document.getElementById('items-list').innerHTML = data.map(i => `<div class="list-item">${i.content}</div>`).join('');
+  }
+
+  function showSection(s) {
+    document.getElementById('overview').style.display = s === 'overview' ? 'block' : 'none';
+    document.getElementById('create').style.display = s === 'create' ? 'block' : 'none';
+  }
+
+  loadGroups();
 </script>
 </body>
 </html>
