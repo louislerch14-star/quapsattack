@@ -4,65 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chillcraft Dashboard</title>
+    <!-- Supabase Client Library laden -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { 
             font-family: 'Segoe UI', sans-serif; 
             background: url('chillcraft.png') no-repeat center center fixed; 
             background-size: cover; 
-            margin: 0; 
-            padding: 20px; 
-            color: white;
+            margin: 0; padding: 40px 20px; color: white;
         }
-        .dashboard { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 20px; 
-            max-width: 1000px; 
-            margin: 0 auto; 
-        }
-        .widget { 
-            background: rgba(0, 0, 0, 0.7); 
-            padding: 20px; 
-            border-radius: 15px; 
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        h2 { color: #5bc0de; margin-top: 0; }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 10px; }
-        .footer { text-align: center; margin-top: 30px; color: #aaa; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto; }
+        .widget { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s; }
+        .widget:hover { background: rgba(255, 255, 255, 0.1); }
+        h2 { color: #5bc0de; margin-top: 0; border-bottom: 2px solid #5bc0de; display: inline-block; padding-bottom: 5px; }
+        input[type="text"], textarea { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: none; background: rgba(0,0,0,0.3); color: white; box-sizing: border-box; }
+        .checkbox-group { margin: 15px 0; font-size: 0.9em; }
+        button { background: #5bc0de; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        button:hover { background: #48a1bb; }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
-    <!-- Widget Über uns -->
+    <!-- Bestehende Widgets -->
     <div class="widget">
         <h2>Über uns</h2>
-        <p>Willkommen bei Chillcraft! Hier zählt nur entspanntes Gameplay. Technik, Magie und eine gemütliche Welt warten auf dich. Kein Stress, nur Spaß.</p>
+        <p>Willkommen bei Chillcraft! Hier zählt nur entspanntes Gameplay. Technik und eine gemütliche Welt warten auf dich.</p>
     </div>
 
-    <!-- Widget Modliste -->
+    <!-- Bewerbungs-Widget -->
     <div class="widget">
-        <h2>Mod-Kern</h2>
-        <ul>
-            <li><strong>Create:</strong> Mechanische Automation.</li>
-            <li><strong>CC: Tweaked:</strong> Programmieren & Computer.</li>
-            <li><strong>Farmer's Delight:</strong> Koch- & Farming-System.</li>
-            <li><strong>Mahou Tsukai:</strong> Magie ohne Grind.</li>
-        </ul>
-    </div>
-
-    <!-- Widget Performance -->
-    <div class="widget">
-        <h2>Performance</h2>
-        <p>Optimiert mit Embeddium, ModernFix & mehr. Damit läuft das Modpack auch auf dem kleinsten Toaster-Laptop flüssig!</p>
+        <h2>Bewerbung</h2>
+        <form id="applyForm">
+            <input type="text" id="username" placeholder="Dein Minecraft Name" required>
+            <textarea id="message" placeholder="Warum möchtest du mitspielen?" rows="3" required></textarea>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="rules" required> <label for="rules">Ich halte mich an die Regeln.</label><br>
+                <input type="checkbox" id="behavior" required> <label for="behavior">Ich benehme mich und akzeptiere Konsequenzen bei Fehlverhalten.</label>
+            </div>
+            
+            <button type="submit">Bewerbung absenden</button>
+        </form>
     </div>
 </div>
 
-<div class="footer">
-    <p>PS: germany ai</p>
-</div>
+<script>
+    // Supabase Setup
+    const supabase = supabase.createClient('https://sdwelvinfbqxivvxnjkh.supabase.co', 'sb_publishable_p84c6F4Q0-uwjYoOujrMgw_0EdclXik');
+
+    document.getElementById('applyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const message = document.getElementById('message').value;
+
+        const { data, error } = await supabase.from('applications').insert([{ username, message }]);
+        
+        if (error) alert('Fehler beim Senden: ' + error.message);
+        else alert('Bewerbung erfolgreich abgesendet!');
+    });
+</script>
 
 </body>
 </html>
