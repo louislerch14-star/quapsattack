@@ -2,68 +2,90 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chillcraft Dashboard</title>
-    <!-- Supabase Client Library laden -->
+    <title>Chillcraft | Portal</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: url('chillcraft.png') no-repeat center center fixed; 
-            background-size: cover; 
-            margin: 0; padding: 40px 20px; color: white;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #050508 100%); 
+            color: #d1d1d1; font-family: 'Segoe UI', sans-serif; 
+            margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; 
         }
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto; }
-        .widget { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s; }
-        .widget:hover { background: rgba(255, 255, 255, 0.1); }
-        h2 { color: #5bc0de; margin-top: 0; border-bottom: 2px solid #5bc0de; display: inline-block; padding-bottom: 5px; }
-        input[type="text"], textarea { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: none; background: rgba(0,0,0,0.3); color: white; box-sizing: border-box; }
-        .checkbox-group { margin: 15px 0; font-size: 0.9em; }
-        button { background: #5bc0de; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-        button:hover { background: #48a1bb; }
+        .panel { 
+            background: rgba(15, 15, 25, 0.8); 
+            backdrop-filter: blur(25px); 
+            border: 1px solid rgba(91, 192, 222, 0.2); 
+            padding: 40px; border-radius: 20px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6); 
+            width: 100%; max-width: 450px;
+        }
+        h2 { color: #5bc0de; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; font-size: 1.5em; }
+        input[type="text"] { 
+            width: 100%; background: #0a0a0f; border: 1px solid #333; 
+            padding: 15px; border-radius: 10px; color: white; margin-bottom: 20px; box-sizing: border-box; 
+        }
+        .rules-box { 
+            background: #0a0a0f; padding: 15px; border-radius: 10px; 
+            font-size: 0.85em; color: #aaa; margin-bottom: 20px; 
+            border-left: 4px solid #5bc0de; height: 100px; overflow-y: auto;
+        }
+        .checkbox-container { font-size: 0.85em; margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px; }
+        button { 
+            width: 100%; padding: 15px; border: none; border-radius: 10px; 
+            background: #5bc0de; color: #000; font-weight: bold; cursor: pointer; transition: 0.3s; 
+        }
+        button:hover { background: #48a1bb; box-shadow: 0 0 15px rgba(91, 192, 222, 0.3); }
     </style>
 </head>
 <body>
 
-<div class="dashboard">
-    <!-- Bestehende Widgets -->
-    <div class="widget">
-        <h2>Über uns</h2>
-        <p>Willkommen bei Chillcraft! Hier zählt nur entspanntes Gameplay. Technik und eine gemütliche Welt warten auf dich.</p>
-    </div>
+<div class="panel">
+    <h2>Chillcraft Bewerbung</h2>
+    <form id="appForm">
+        <input type="text" id="username" placeholder="Minecraft Username" required>
+        
+        <div class="rules-box">
+            <strong>Regelwerk:</strong><br>
+            1. Kein Griefing oder Diebstahl.<br>
+            2. Freundlicher Umgangston im Chat.<br>
+            3. Nutzung technischer Mods nur gemäß Server-Vorgaben.<br>
+            4. Respektiere die Privatsphäre anderer Spieler.
+        </div>
 
-    <!-- Bewerbungs-Widget -->
-    <div class="widget">
-        <h2>Bewerbung</h2>
-        <form id="applyForm">
-            <input type="text" id="username" placeholder="Dein Minecraft Name" required>
-            <textarea id="message" placeholder="Warum möchtest du mitspielen?" rows="3" required></textarea>
-            
-            <div class="checkbox-group">
-                <input type="checkbox" id="rules" required> <label for="rules">Ich halte mich an die Regeln.</label><br>
-                <input type="checkbox" id="behavior" required> <label for="behavior">Ich benehme mich und akzeptiere Konsequenzen bei Fehlverhalten.</label>
-            </div>
-            
-            <button type="submit">Bewerbung absenden</button>
-        </form>
-    </div>
+        <div class="checkbox-container">
+            <input type="checkbox" id="wantsToJoin" required>
+            <label for="wantsToJoin">Ich möchte dem Chillcraft-Projekt beitreten.</label>
+        </div>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="rulesAccepted" required>
+            <label for="rulesAccepted">Ich halte mich an die Regeln. Falls ich mich nicht benehme, akzeptiere ich die Konsequenzen.</label>
+        </div>
+        
+        <button type="submit">Bewerbung absenden</button>
+    </form>
 </div>
 
 <script>
-    // Supabase Setup
     const supabase = supabase.createClient('https://sdwelvinfbqxivvxnjkh.supabase.co', 'sb_publishable_p84c6F4Q0-uwjYoOujrMgw_0EdclXik');
+    const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1516491466329821336/Kf-C8wKjPtu4ConzMHByApjapBMNIznOqgz4rNv4604XwWCFLwgH5u5O3BFtbrnOW_fY';
 
-    document.getElementById('applyForm').addEventListener('submit', async (e) => {
+    document.getElementById('appForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('username').value;
-        const message = document.getElementById('message').value;
 
-        const { data, error } = await supabase.from('applications').insert([{ username, message }]);
-        
-        if (error) alert('Fehler beim Senden: ' + error.message);
-        else alert('Bewerbung erfolgreich abgesendet!');
+        // 1. Speichern in Supabase
+        await supabase.from('applications').insert([{ username: username, message: "Bewerbung eingegangen" }]);
+
+        // 2. Benachrichtigung an Discord
+        await fetch(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: "📩 **Neue Chillcraft-Bewerbung**\n👤 Spieler: " + username + "\nStatus: Wartet auf Prüfung." })
+        });
+
+        alert("Deine Bewerbung wurde erfolgreich abgesendet!");
+        document.getElementById('appForm').reset();
     });
 </script>
-
 </body>
 </html>
