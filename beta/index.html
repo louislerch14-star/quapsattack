@@ -3,155 +3,136 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuapsHub</title>
+  <title>QuapsHub // V3</title>
   
-  <link rel="icon" type="image/jpeg" href="unnamed.jpg">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   
   <style>
   :root {
-    --primary: #a8ff78;
-    --diamond: #44d4d4;
-    --gold:    #f5c518;
-    --bg:      #0a0a0a;
-    --panel:   #1a1a1a;
-    --panel2:  #222222;
-    --border:  #333333;
-    --text:    #f0f0f0;
-    --muted:   #aaaaaa;
-    --trust-green: #00b67a;
-    --paypol-blue: #003087;
+    --primary: #a8ff78; /* Standard: Green */
+    --bg-grad: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
+    --panel: #1e1e1e;
+    --text: #ffffff;
+    --muted: #888888;
+    --border: #333333;
   }
 
-  /* Design-Update: Clean Dark Mode */
-  body { font-family: 'VT323', monospace; background: var(--bg); color: var(--text); min-height: 100vh; }
-  h1, h2, .mc-btn, .mc-action { font-family: 'Press Start 2P', monospace; text-transform: uppercase; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   
-  /* Farbwechsler Sidebar */
-  .color-swapper { padding: 20px; display: flex; gap: 10px; justify-content: center; border-bottom: 2px solid var(--border); }
-  .swatch { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border); }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-grad);
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+  }
 
-  .sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: var(--panel2); border-right: 2px solid var(--border); z-index: 100; display: flex; flex-direction: column; }
-  .mc-btn { display: block; width: 100%; background: transparent; color: var(--muted); padding: 16px 20px; border: none; cursor: pointer; text-align: left; font-size: 0.6rem; border-left: 3px solid transparent; }
-  .mc-btn.active { background: rgba(255,255,255,0.05); color: #fff; border-left-color: var(--primary); }
-  
-  main { margin-left: 240px; padding: 40px; }
-  .page { display: none; }
-  .page.active { display: block; }
-  
-  .mc-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 20px; }
-  .mc-input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border); color: #fff; margin-bottom: 10px; border-radius: 8px; }
-  .mc-action { background: var(--primary); color: #000; padding: 10px 20px; border: none; cursor: pointer; font-size: 0.5rem; font-weight: bold; border-radius: 6px; }
-  
-  /* Rest deines ursprünglichen Designs beibehalten für die Funktion */
-  .mc-cookie-banner { position: fixed; bottom: 20px; right: 20px; background: #212121; padding: 15px; border: 2px solid #000; z-index: 1000; }
-  .paypol-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 2000; }
-  .paypol-modal-overlay.show { display: flex; }
-  </style>
+  /* Sidebar */
+  .sidebar {
+    width: 260px;
+    background: #0d0d0d;
+    border-right: 1px solid var(--border);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .logo { font-weight: 800; font-size: 1.5rem; margin-bottom: 20px; color: var(--primary); }
+
+  .nav-btn {
+    display: block;
+    padding: 12px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.3s;
+    font-weight: 500;
+  }
+  .nav-btn:hover { background: var(--panel); color: #fff; }
+  .nav-btn.active { background: var(--panel); color: var(--primary); border-color: var(--primary); }
+
+  /* Color Switcher */
+  .theme-box { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
+  .theme-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
+  .color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .color-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+  .color-dot:hover { transform: scale(1.1); }
+
+  /* Content */
+  main { flex: 1; padding: 40px; }
+  .card {
+    background: var(--panel);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  h1 { font-weight: 800; margin-bottom: 10px; }
+  p { color: var(--muted); margin-bottom: 20px; }
+</style>
 </head>
 <body>
 
 <div class="sidebar">
-  <div style="padding: 20px; font-family:'Press Start 2P'; color: var(--primary);">QUAPS HUB</div>
+  <div class="logo">QUAPS HUB</div>
   
-  <div class="color-swapper">
-    <div class="swatch" style="background: #a8ff78;" onclick="document.documentElement.style.setProperty('--primary', '#a8ff78')"></div>
-    <div class="swatch" style="background: #44d4d4;" onclick="document.documentElement.style.setProperty('--primary', '#44d4d4')"></div>
-    <div class="swatch" style="background: #f5c518;" onclick="document.documentElement.style.setProperty('--primary', '#f5c518')"></div>
-    <div class="swatch" style="background: #ff5555;" onclick="document.documentElement.style.setProperty('--primary', '#ff5555')"></div>
+  <button class="nav-btn active" onclick="showPage('home')">🏠 Startseite</button>
+  <button class="nav-btn" onclick="showPage('clips')">🎬 Clips</button>
+  <button class="nav-btn" onclick="showPage('upload')">📤 Upload</button>
+  
+  <div class="theme-box">
+    <div class="theme-label">Design Farbe</div>
+    <div class="color-grid">
+      <div class="color-dot" style="background: #a8ff78;" onclick="changeTheme('#a8ff78')"></div>
+      <div class="color-dot" style="background: #44d4d4;" onclick="changeTheme('#44d4d4')"></div>
+      <div class="color-dot" style="background: #f5c518;" onclick="changeTheme('#f5c518')"></div>
+      <div class="color-dot" style="background: #ff5555;" onclick="changeTheme('#ff5555')"></div>
+    </div>
   </div>
-
-  <button class="mc-btn active" onclick="showPage('home')" id="btn-home">HOME</button>
-  <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">CLIP UPLOAD</button>
-  <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload">BILDER UPLOAD</button>
-  <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">DOWNLOADS</button>
-  <button class="mc-btn" onclick="logout()">LOGOUT</button>
 </div>
 
 <main>
-  <div id="home" class="page active">
-    <h1>Moin, Spieler.</h1>
-    <div class="mc-panel">
-      <div id="pinnwand-box">Lade Pinnwand...</div>
-      <input type="text" id="pinnwand-input" class="mc-input">
-      <button onclick="postToPinnwand()" class="mc-action">SENDEN</button>
+  <div id="home" class="page">
+    <div class="card">
+      <h1>Willkommen im QuapsHub</h1>
+      <p>Hier geht's rund, bro. Check das neue, saubere Design ab!</p>
+    </div>
+  </div>
+  
+  <div id="clips" class="page" style="display:none;">
+    <div class="card">
+      <h1>Clip Archiv</h1>
+      <p>Kein Pixel, nur purer Content.</p>
     </div>
   </div>
 
-  <div id="upload" class="page">
-    <h1>Clip einsenden</h1>
-    <div class="mc-panel">
-      <input type="text" id="uploaderName" class="mc-input" readonly>
-      <input type="text" id="clipTitle" class="mc-input" placeholder="Titel">
-      <input type="text" id="clipLink" class="mc-input" placeholder="Link">
-      <button onclick="sendToDiscord()" id="submitBtn" class="mc-action">SENDEN</button>
-      <div id="statusMsg" style="display:none; color:var(--primary);">Erfolgreich!</div>
+  <div id="upload" class="page" style="display:none;">
+    <div class="card">
+      <h1>Upload</h1>
+      <p>Lade deinen Shit hier hoch.</p>
     </div>
-  </div>
-
-  <div id="image-upload" class="page">
-    <h1>Bilder Upload</h1>
-    <div class="mc-panel">
-      <input type="text" id="imageUploaderName" class="mc-input" readonly>
-      <input type="text" id="imageDescription" class="mc-input" placeholder="Beschreibung">
-      <input type="file" id="baseImageFile" class="mc-input" accept="image/*">
-      <button onclick="sendImageToDiscord()" id="imgSubmitBtn" class="mc-action">BILD SENDEN</button>
-      <div id="imgStatusMsg" style="display:none; color:var(--primary);">Bild gesendet!</div>
-    </div>
-  </div>
-
-  <div id="downloads" class="page">
-    <h1>Downloads</h1>
-    <div class="mc-panel" id="download-list-container"></div>
   </div>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// --- ALTE LOGIK KOMPLETT ÜBERNOMMEN ---
-const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
-const NEW_DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1509916610008322128/3UyMxJGsobkWgUWaVh_fAa-K36T9Uax_LGBjbNrjliz37rp7JB-qYp7A39e8IfvCa2Dy";
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).style.display = 'block';
+    event.currentTarget.classList.add('active');
+  }
 
-// DEINE FUNKTIONEN BLEIBEN HIER 1:1
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-async function sendImageToDiscord() {
-  const name = document.getElementById('imageUploaderName').value;
-  const description = document.getElementById('imageDescription').value;
-  const fileInput = document.getElementById('baseImageFile');
-  const btn = document.getElementById('imgSubmitBtn');
-  const msg = document.getElementById('imgStatusMsg');
-
-  if (fileInput.files.length === 0) { alert('Bild wählen!'); return; }
-  btn.disabled = true;
-
-  const formData = new FormData();
-  const file = fileInput.files[0];
-  formData.append('files[0]', file, `base_upload.${file.name.split('.').pop()}`);
-
-  const payload = {
-    username: 'QuapsHub Base-Schutz',
-    embeds: [{
-      title: '🖼 Neues Base-Bild',
-      fields: [{ name: 'Spieler', value: name }, { name: 'Info', value: description }]
-    }]
-  };
-  formData.append('payload_json', JSON.stringify(payload));
-
-  await fetch(NEW_DISCORD_WEBHOOK, { method: 'POST', body: formData });
-  msg.style.display = 'block';
-  btn.disabled = false;
-}
-
-// ... HIER KANNST DU JETZT DEINEN WEITEREN ORIGINAL-CODE EINSETZEN ...
-// (Ich hab das Skript hier nur gekürzt dargestellt, damit die Antwort nicht zu lang wird,
-// aber du kopierst einfach dein altes <script> unten rein!)
+  function changeTheme(color) {
+    document.documentElement.style.setProperty('--primary', color);
+  }
 </script>
+
 </body>
 </html>
