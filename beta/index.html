@@ -74,26 +74,30 @@
     background: linear-gradient(to bottom, rgba(9, 9, 11, 0.85) 0%, rgba(9, 9, 11, 0.6) 50%, rgba(9, 9, 11, 0.95) 100%);
   }
 
-  /* ── SIDEBAR NAVBAR ── */
+  /* ── TOP NAVBAR (EHEMALS SIDEBAR) ── */
   .sidebar {
     position: fixed;
     top: 0; left: 0;
-    width: 260px;
-    height: 100vh;
+    width: 100%;
+    height: 70px;
     background: rgba(9, 9, 11, 0.7); 
     backdrop-filter: blur(16px);
-    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     z-index: 100;
     display: flex;
-    flex-direction: column;
-    padding: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
   }
 
   .sidebar-logo {
-    padding: 30px 20px;
-    border-bottom: 1px solid var(--border);
+    padding: 0;
+    border: none;
     background: transparent;
-    text-align: center;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
   }
   .sidebar-logo .logo-text {
     font-size: 1.2rem;
@@ -103,68 +107,68 @@
     letter-spacing: 1px;
   }
   .sidebar-logo .logo-sub {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--muted);
-    margin-top: 6px;
-    display: block;
-    font-weight: 400;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
+    margin: 0;
   }
 
   .sidebar-section {
-    padding: 20px 0;
-    flex: 1;
+    padding: 0;
+    flex: unset;
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    margin-right: 30px;
   }
 
   .mc-btn {
-    display: block;
-    width: 100%;
+    display: inline-block;
+    width: auto;
     background: transparent;
     color: var(--muted);
     font-size: 0.9rem;
-    padding: 12px 24px;
+    padding: 8px 16px;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
-    text-align: left;
+    text-align: center;
     transition: all 0.2s ease;
-    border-left: 2px solid transparent;
     font-weight: 500;
   }
   .mc-btn:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--text);
-    border-left-color: var(--border);
   }
   .mc-btn.active {
     background: rgba(59, 130, 246, 0.1);
     color: var(--primary);
-    border-left-color: var(--primary);
   }
 
   .logout-btn {
-    margin-top: auto;
-    margin-bottom: 20px;
+    margin: 0;
     color: #ef4444 !important; 
   }
-  .logout-btn:hover { background: rgba(239, 68, 68, 0.05); border-left-color: #ef4444; }
+  .logout-btn:hover { background: rgba(239, 68, 68, 0.08); }
 
-  /* ── PROFILE AREA IN SIDEBAR ── */
+  /* ── PROFILE AREA IN NAVBAR ── */
   .sidebar-profile {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 20px;
-    border-top: 1px solid var(--border);
+    padding: 0 0 0 30px;
+    border-top: none;
+    border-left: 1px solid var(--border);
     background: transparent;
   }
   .profile-avatar {
     width: 36px;
     height: 36px;
-    border-radius: 8px; /* Eckiger, moderner Look */
+    border-radius: 8px;
     border: 1px solid var(--border);
     object-fit: cover;
     background: var(--panel);
@@ -179,14 +183,12 @@
     font-weight: 600;
     color: var(--text);
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   .profile-status-wrapper {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-top: 4px;
+    margin-top: 2px;
   }
   .status-dot {
     width: 6px;
@@ -202,10 +204,12 @@
 
   /* ── MAIN CONTENT ── */
   main {
-    margin-left: 260px;
-    padding: 60px 50px 80px;
+    margin-left: 0; /* Weg, da Sidebar jetzt oben ist */
+    padding: 110px 50px 80px; /* Extra padding-top für die Navbar */
     position: relative;
     z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
   }
 
   .page { display: none; }
@@ -238,7 +242,7 @@
     background: rgba(24, 24, 27, 0.6);
     backdrop-filter: blur(12px);
     border: 1px solid var(--border);
-    border-radius: 12px; /* Weniger rund, erwachsener */
+    border-radius: 12px;
     padding: 30px;
     margin-bottom: 24px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -484,15 +488,28 @@
     display: none;
   }
 
-  /* ── RESPONSIVE ── */
+  /* ── RESPONSIVE FÜR DIE NAVBAR ── */
   @media (max-width: 800px) {
-    .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); backdrop-filter: none; background: var(--bg); }
-    .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 12px; }
-    .mc-btn { width: auto; border-left: none; border-bottom: 2px solid transparent; padding: 8px 16px; }
-    .mc-btn:hover, .mc-btn.active { border-left-color: transparent; border-bottom-color: var(--text); background: transparent; }
-    .logout-btn { margin-top: 0; margin-bottom: 0; }
-    .sidebar-profile { border-top: none; padding: 12px; }
-    main { margin-left: 0; padding: 20px 15px; }
+    .sidebar { 
+      height: auto; 
+      flex-direction: column; 
+      padding: 15px; 
+      gap: 15px;
+    }
+    .sidebar-section { 
+      margin: 0; 
+      width: 100%; 
+      flex-wrap: wrap; 
+      justify-content: center;
+    }
+    .sidebar-profile { 
+      border-left: none; 
+      border-top: 1px solid var(--border); 
+      padding: 15px 0 0 0; 
+      width: 100%; 
+      justify-content: center;
+    }
+    main { padding: 180px 20px 80px; } /* Mehr Platz für die aufgefaltete Navbar */
   }
 
 
