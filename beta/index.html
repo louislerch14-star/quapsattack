@@ -5,194 +5,105 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QuapsHub</title>
   
-  <link rel="icon" type="image/jpeg" href="unnamed.jpg">
-  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
   
   <style>
-  :root {
-    --primary: #a8ff78; /* Standard XP-Grün */
-    --diamond: #44d4d4;
-    --gold:    #f5c518;
-    --bg:      #0a0a0a;
-    --panel:   #1a1a1a;
-    --panel2:  #222222;
-    --border:  #333333;
-    --text:    #f0f0f0;
-    --muted:   #aaaaaa;
-  }
+    :root {
+      --primary: #a8ff78;
+      --bg: #0a0a0a;
+      --panel: #1a1a1a;
+      --text: #ffffff;
+      --muted: #888888;
+    }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  
-  body {
-    font-family: 'Outfit', sans-serif; /* Neue Schriftart */
-    background: var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
-    min-height: 100vh;
-  }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
 
-  h1, h2, h3, .mc-font, .mc-btn, .mc-action, .mc-panel-title {
-    font-family: 'Press Start 2P', monospace;
-    text-transform: uppercase;
-  }
+    /* Layout */
+    .sidebar { width: 250px; background: #111; border-right: 1px solid #333; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    .content { flex: 1; padding: 40px; overflow-y: auto; }
 
-  /* ── SIDEBAR ── */
-  .sidebar {
-    position: fixed;
-    top: 0; left: 0;
-    width: 240px;
-    height: 100vh;
-    background: var(--panel2);
-    border-right: 2px solid var(--border);
-    display: flex;
-    flex-direction: column;
-  }
+    /* Sidebar Elemente */
+    .logo { font-family: 'Press Start 2P', cursive; font-size: 1.2rem; margin-bottom: 20px; color: var(--primary); }
+    .nav-btn { background: none; border: none; color: var(--text); padding: 10px; cursor: pointer; text-align: left; font-size: 1rem; width: 100%; transition: 0.3s; }
+    .nav-btn:hover { color: var(--primary); }
 
-  .sidebar-logo {
-    padding: 30px 20px;
-    border-bottom: 2px solid var(--border);
-    background: var(--panel);
-    text-align: center;
-  }
-  .logo-text { font-size: 0.9rem; color: var(--primary); display: block; }
-  .logo-sub { font-size: 0.8rem; color: var(--muted); margin-top: 8px; display: block; }
+    /* Farbwähler */
+    .color-swapper { display: flex; gap: 10px; margin-top: auto; }
+    .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #333; }
 
-  .sidebar-section { padding: 20px 0; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    /* Content Styling */
+    h1 { font-family: 'Press Start 2P', cursive; font-size: 1.5rem; margin-bottom: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+    .card { background: var(--panel); padding: 20px; border-radius: 10px; border: 1px solid #333; }
 
-  .mc-btn {
-    display: block; width: 100%; background: transparent; color: var(--muted);
-    font-size: 0.5rem; padding: 16px 20px; border: none; cursor: pointer; text-align: left;
-    transition: 0.2s; border-left: 3px solid transparent;
-  }
-  .mc-btn:hover, .mc-btn.active { background: rgba(255,255,255,0.05); color: #fff; border-left-color: var(--primary); }
-
-  /* ── FARB-SWITCHER ── */
-  .color-picker { padding: 20px; border-top: 2px solid var(--border); display: flex; gap: 10px; justify-content: center; }
-  .swatch { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid #444; }
-
-  /* ── MAIN ── */
-  main { margin-left: 240px; padding: 60px; position: relative; }
-  .page { display: none; }
-  .page.active { display: block; }
-
-  .mc-panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 25px;
-    margin-bottom: 20px;
-  }
-  .mc-panel-title { font-size: 0.6rem; color: var(--gold); margin-bottom: 20px; }
-
-  .mc-action {
-    display: inline-block; background: var(--panel2); color: var(--primary);
-    font-size: 0.5rem; padding: 12px 20px; border-radius: 6px; cursor: pointer;
-    border: 1px solid var(--border); text-decoration: none;
-  }
-  .mc-action:hover { background: var(--primary); color: #000; }
-
-  /* ── PINNWAND ── */
-  .shoutbox-list { max-height: 200px; overflow-y: auto; margin-bottom: 15px; }
-  .shoutbox-msg { padding: 8px; background: rgba(0,0,0,0.3); margin-bottom: 5px; font-size: 0.9rem; }
-  .mc-input {
-    width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border);
-    padding: 12px; color: #fff; border-radius: 6px; margin-bottom: 10px;
-  }
-
+    .page { display: none; }
+    .active { display: block; }
   </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="sidebar-logo">
-    <span class="logo-text">QUAPS HUB</span>
-    <span class="logo-sub">v2.7</span>
+<aside class="sidebar">
+  <div class="logo">QUAPS HUB</div>
+  <button class="nav-btn" onclick="showPage('home')">🏠 HOME</button>
+  <button class="nav-btn" onclick="showPage('clips')">🎬 CLIPS</button>
+  <button class="nav-btn" onclick="showPage('downloads')">💾 DOWNLOADS</button>
+  <button class="nav-btn" onclick="showPage('apply')">📝 BEWERBUNGEN</button>
+  
+  <div class="color-swapper">
+    <div class="swatch" style="background: #a8ff78;" onclick="setCol('#a8ff78')"></div>
+    <div class="swatch" style="background: #44d4d4;" onclick="setCol('#44d4d4')"></div>
+    <div class="swatch" style="background: #ff5555;" onclick="setCol('#ff5555')"></div>
   </div>
+</aside>
 
-  <div class="sidebar-section">
-    <button class="mc-btn active" onclick="showPage('home')">HOME</button>
-    <button class="mc-btn" onclick="showPage('clips')">CLIP-ARCHIV</button>
-    <button class="mc-btn" onclick="showPage('upload')">CLIP UPLOAD</button>
-    <button class="mc-btn" onclick="showPage('downloads')">DOWNLOADS</button>
-    <button class="mc-btn" onclick="showPage('admin-apply')">BEWERBUNGEN</button>
-  </div>
-
-  <div class="color-picker">
-    <div class="swatch" style="background: #a8ff78;" onclick="changeColor('#a8ff78')"></div>
-    <div class="swatch" style="background: #44d4d4;" onclick="changeColor('#44d4d4')"></div>
-    <div class="swatch" style="background: #ff5555;" onclick="changeColor('#ff5555')"></div>
-    <div class="swatch" style="background: #f5c518;" onclick="changeColor('#f5c518')"></div>
-  </div>
-</div>
-
-<main>
+<main class="content">
+  <!-- Home Page -->
   <div id="home" class="page active">
-    <h1>Dashboard</h1>
-    <div class="mc-panel">
-      <div class="mc-panel-title">💬 QUAPS PINNWAND</div>
-      <div class="shoutbox-list" id="pinnwand-box">Lade Nachrichten...</div>
-      <input type="text" id="pinnwand-input" class="mc-input" placeholder="Schreib was...">
-      <button onclick="postToPinnwand()" class="mc-action">SENDEN</button>
+    <h1>DASHBOARD</h1>
+    <div class="card">
+      <p>Willkommen zurück! Check die neuesten Clips im Archiv.</p>
     </div>
   </div>
 
+  <!-- Clips Page -->
   <div id="clips" class="page">
-    <h1>Clip Archiv</h1>
-    <p>Hier sind alle Clips.</p>
-  </div>
-
-  <div id="upload" class="page">
-    <h1>Clip Upload</h1>
-    <div class="mc-panel">
-      <input type="text" id="clipTitle" class="mc-input" placeholder="Titel">
-      <button onclick="alert('Upload funktioniert')" class="mc-action">SENDEN</button>
+    <h1>CLIP ARCHIV</h1>
+    <div class="grid">
+      <div class="card"><h3>Clip 01</h3><p>Mega Rasiert im Game</p></div>
+      <div class="card"><h3>Clip 02</h3><p>Der Fail des Jahres</p></div>
+      <div class="card"><h3>Clip 03</h3><p>Epic Win Moment</p></div>
     </div>
   </div>
 
+  <!-- Downloads Page -->
   <div id="downloads" class="page">
-    <h1>Downloads</h1>
-    <div class="mc-panel">Keine Downloads vorhanden.</div>
+    <h1>DOWNLOADS</h1>
+    <div class="card">
+      <p>Hier gibt es keine Downloads aktuell.</p>
+    </div>
   </div>
 
-  <div id="admin-apply" class="page">
-    <h1>Bewerbungen</h1>
-    <div class="mc-panel">Keine offenen Bewerbungen.</div>
+  <!-- Apply Page -->
+  <div id="apply" class="page">
+    <h1>BEWERBUNGEN</h1>
+    <div class="card">
+      <p>Status: Keine offenen Bewerbungen.</p>
+    </div>
   </div>
 </main>
 
 <script>
-// Farb-Switcher Logik
-function changeColor(color) {
-  document.documentElement.style.setProperty('--primary', color);
-  localStorage.setItem('quaps-color', color);
-}
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
 
-// Initialisiere gespeicherte Farbe
-const savedColor = localStorage.getItem('quaps-color');
-if (savedColor) changeColor(savedColor);
-
-// Page Navigation
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelector(`[onclick="showPage('${id}')"]`).classList.add('active');
-}
-
-// Pinnwand Dummy
-async function postToPinnwand() {
-  const input = document.getElementById('pinnwand-input');
-  if(!input.value) return;
-  const box = document.getElementById('pinnwand-box');
-  const div = document.createElement('div');
-  div.className = 'shoutbox-msg';
-  div.textContent = "Du: " + input.value;
-  box.appendChild(div);
-  input.value = '';
-}
+  function setCol(c) {
+    document.documentElement.style.setProperty('--primary', c);
+  }
 </script>
 
 </body>
