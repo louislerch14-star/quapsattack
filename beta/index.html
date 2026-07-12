@@ -4,106 +4,160 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QuapsHub</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #a8ff78;
+      --diamond: #44d4d4;
+      --gold: #f5c518;
       --bg: #0a0a0a;
       --panel: #1a1a1a;
-      --text: #ffffff;
-      --muted: #888888;
+      --panel2: #222222;
+      --border: #333333;
+      --text: #f0f0f0;
+      --muted: #aaaaaa;
+      --trust-green: #00b67a;
+      --paypol-blue: #003087;
+      --paypol-cyan: #0079c1;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
-    /* Layout */
-    .sidebar { width: 250px; background: #111; border-right: 1px solid #333; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
-    .content { flex: 1; padding: 40px; overflow-y: auto; }
+    body {
+      font-family: 'VT323', monospace;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      min-height: 100vh;
+      font-size: 1.2rem;
+      line-height: 1.6;
+    }
 
-    /* Sidebar Elemente */
-    .logo { font-family: 'Press Start 2P', cursive; font-size: 1.2rem; margin-bottom: 20px; color: var(--primary); }
-    .nav-btn { background: none; border: none; color: var(--text); padding: 10px; cursor: pointer; text-align: left; font-size: 1rem; width: 100%; transition: 0.3s; }
-    .nav-btn:hover { color: var(--primary); }
+    h1, h2, h3, .mc-font, .mc-btn, .mc-action {
+      font-family: 'Press Start 2P', monospace;
+      text-transform: uppercase;
+    }
 
-    /* Farbwähler */
-    .color-swapper { display: flex; gap: 10px; margin-top: auto; }
+    /* ── VIDEO BACKGROUND ── */
+    .video-bg { position: fixed; inset: 0; z-index: -1; background: #0d1117; }
+    .video-bg iframe { position: absolute; top: 50%; left: 50%; width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; transform: translate(-50%, -50%); pointer-events: none; filter: brightness(0.12) saturate(0.3); }
+    .video-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,0.9) 100%); }
+
+    /* ── SIDEBAR ── */
+    .sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: var(--panel2); border-right: 2px solid var(--border); z-index: 100; display: flex; flex-direction: column; }
+    .sidebar-logo { padding: 30px 20px; border-bottom: 2px solid var(--border); background: var(--panel); text-align: center; }
+    .logo-text { font-size: 1rem; color: var(--primary); display: block; }
+    .logo-sub { font-family: 'VT323', monospace; font-size: 1rem; color: var(--muted); margin-top: 8px; display: block; }
+
+    .sidebar-section { padding: 20px 0; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .mc-btn { display: block; width: 100%; background: transparent; color: var(--muted); font-size: 0.6rem; padding: 16px 20px; border: none; cursor: pointer; text-align: left; transition: 0.2s; border-left: 3px solid transparent; }
+    .mc-btn:hover, .mc-btn.active { background: rgba(168, 255, 120, 0.08); color: #fff; border-left-color: var(--primary); }
+
+    /* ── COLOR SWAPPER ── */
+    .color-swapper { display: flex; gap: 10px; padding: 15px 20px; border-top: 2px solid var(--border); }
     .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #333; }
 
-    /* Content Styling */
-    h1 { font-family: 'Press Start 2P', cursive; font-size: 1.5rem; margin-bottom: 20px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-    .card { background: var(--panel); padding: 20px; border-radius: 10px; border: 1px solid #333; }
-
+    /* ── CONTENT ── */
+    main { margin-left: 240px; padding: 60px 50px; z-index: 1; }
     .page { display: none; }
-    .active { display: block; }
+    .page.active { display: block; }
+
+    .mc-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 30px; margin-bottom: 24px; }
+    .mc-action { background: var(--panel2); color: var(--primary); font-size: 0.55rem; padding: 14px 28px; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); }
+    .mc-action:hover { background: #fff; color: #000; }
+    
+    .download-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .download-card { background: rgba(20, 20, 20, 0.8); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+
+    @media (max-width: 800px) { .sidebar { width: 100%; height: auto; } main { margin-left: 0; } }
   </style>
 </head>
 <body>
 
-<aside class="sidebar">
-  <div class="logo">QUAPS HUB</div>
-  <button class="nav-btn" onclick="showPage('home')">🏠 HOME</button>
-  <button class="nav-btn" onclick="showPage('clips')">🎬 CLIPS</button>
-  <button class="nav-btn" onclick="showPage('downloads')">💾 DOWNLOADS</button>
-  <button class="nav-btn" onclick="showPage('apply')">📝 BEWERBUNGEN</button>
+<div class="video-bg"><iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0"></iframe></div>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-text">QUAPS<br>HUB</span>
+    <span class="logo-sub">ATTACK EDITION</span>
+  </div>
+  <div class="sidebar-section">
+    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">HOME</button>
+    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">CLIP-ARCHIV</button>
+    <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">WELTEN-DOWNLOADS</button>
+    <button class="mc-btn" onclick="showPage('apply')" id="btn-apply">BEWERBUNGEN</button>
+  </div>
   
   <div class="color-swapper">
     <div class="swatch" style="background: #a8ff78;" onclick="setCol('#a8ff78')"></div>
     <div class="swatch" style="background: #44d4d4;" onclick="setCol('#44d4d4')"></div>
     <div class="swatch" style="background: #ff5555;" onclick="setCol('#ff5555')"></div>
   </div>
-</aside>
+</div>
 
-<main class="content">
-  <!-- Home Page -->
+<main>
   <div id="home" class="page active">
     <h1>DASHBOARD</h1>
-    <div class="card">
-      <p>Willkommen zurück! Check die neuesten Clips im Archiv.</p>
+    <div class="mc-panel">
+      <div class="mc-panel-title">💬 QUAPS PINNWAND</div>
+      <div id="pinnwand-box" style="margin-bottom: 20px;">Lade Nachrichten...</div>
+      <div style="display: flex; gap: 10px;">
+        <input type="text" id="pinnwand-input" class="mc-input" placeholder="Schreib was..." style="flex:1; padding:10px; background:#000; color:#fff; border:1px solid #333;">
+        <button onclick="postToPinnwand()" class="mc-action">SENDEN</button>
+      </div>
     </div>
   </div>
 
-  <!-- Clips Page -->
   <div id="clips" class="page">
     <h1>CLIP ARCHIV</h1>
-    <div class="grid">
-      <div class="card"><h3>Clip 01</h3><p>Mega Rasiert im Game</p></div>
-      <div class="card"><h3>Clip 02</h3><p>Der Fail des Jahres</p></div>
-      <div class="card"><h3>Clip 03</h3><p>Epic Win Moment</p></div>
-    </div>
+    <div class="mc-panel">
+        <p>Hier sind die legendären Clips.</p>
+        </div>
   </div>
 
-  <!-- Downloads Page -->
   <div id="downloads" class="page">
     <h1>DOWNLOADS</h1>
-    <div class="card">
-      <p>Hier gibt es keine Downloads aktuell.</p>
-    </div>
+    <div class="download-grid" id="download-list-container">
+        </div>
   </div>
 
-  <!-- Apply Page -->
   <div id="apply" class="page">
     <h1>BEWERBUNGEN</h1>
-    <div class="card">
-      <p>Status: Keine offenen Bewerbungen.</p>
-    </div>
+    <div class="mc-panel">Status: Keine neuen Bewerbungen.</div>
   </div>
 </main>
 
 <script>
+  // Farbwechsler-Logik
+  function setCol(c) {
+    document.documentElement.style.setProperty('--primary', c);
+  }
+
+  // Seiten-Navigation
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
   }
 
-  function setCol(c) {
-    document.documentElement.style.setProperty('--primary', c);
+  // Beispiel-Daten für Downloads
+  const PROJECT_DOWNLOADS = [
+    { id: "world1", title: "Quaps Hauptwelt", size: "5.0 GB" },
+  ];
+
+  function renderDownloadList() {
+    const container = document.getElementById('download-list-container');
+    container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
+      <div class="download-card">
+        <h3>${proj.title}</h3>
+        <p>Größe: ${proj.size}</p>
+        <button class="mc-action" style="margin-top:10px;">DOWNLOAD</button>
+      </div>
+    `).join('');
   }
+
+  // Initialisierung
+  window.onload = () => renderDownloadList();
 </script>
 
 </body>
