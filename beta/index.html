@@ -11,9 +11,7 @@
       --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       --sidebar-rgba: rgba(0, 0, 0, 0.4);
       --accent-purple: #7b2cbf;
-      --diamond: #44d4d4;
       --text-white: #ffffff;
-      --text-muted: #aaaaaa;
       --paypal-blue: #003087;
       --paypal-action: #0070ba;
       --trust-green: #00b67a;
@@ -31,24 +29,11 @@
     .mc-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
     .mc-btn.active { background: var(--accent-purple); color: #fff; box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4); }
 
-    /* MAIN CONTENT */
+    /* MAIN */
     main { flex: 1; padding: 40px; overflow-y: auto; }
     .page { display: none; }
     .page.active { display: block; }
     .glass-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(5px); margin-bottom: 20px; }
-
-    /* PAYPOL STYLING (Echt-Look) */
-    .paypol-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
-    .paypol-modal-overlay.show { display: flex; }
-    .paypol-box { background: #fff; color: #333; width: 400px; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .paypol-header { background: var(--paypal-blue); padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-    .paypol-logo-p1 { color: #fff; font-weight: 800; font-size: 1.4rem; }
-    .paypol-logo-p2 { color: #00d0ff; font-weight: 800; font-size: 1.4rem; }
-    .paypol-body { padding: 20px; }
-    .paypol-btn { background: var(--paypal-action); color: white; border: none; padding: 12px; width: 100%; border-radius: 25px; font-weight: 600; cursor: pointer; margin-top: 15px; }
-    .paypol-trust-footer-bar { background: #f8f8f8; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #ddd; }
-    .trast-star-icon { color: var(--trust-green); }
-    .trast-badge { background: var(--trust-green); color: white; padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -58,63 +43,35 @@
       <span class="logo-text">QUAPS<br>HUB</span>
       <span class="logo-sub">ATTACK EDITION // v2.6</span>
     </div>
-    <div class="sidebar-section">
-      <button class="mc-btn active" onclick="showPage('home')" id="btn-home">HOME</button>
-      <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">CLIP-ARCHIV</button>
-      <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">CLIP UPLOAD</button>
-      <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload">BILDER UP-LOAD</button>
-      <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">DOWNLOADS</button>
-      <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">BEWERBUNGEN</button>
-      <button class="mc-btn" onclick="logout()" style="color: #ff6b6b; margin-top: auto;">LOGOUT</button>
-    </div>
+    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">HOME</button>
+    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">CLIP-ARCHIV</button>
+    <button class="mc-btn" onclick="logout()" style="color: #ff6b6b; margin-top: auto;">LOGOUT</button>
   </div>
 
   <main>
     <div id="home" class="page active">
         <h1>Dashboard</h1>
-        <div class="glass-card">Hier geht's rund, Digger!</div>
+        <div class="glass-card">Willkommen zurück, Digger! Alles läuft.</div>
     </div>
     <div id="clips" class="page"><h1>Clips</h1></div>
-    <div id="upload" class="page"><h1>Upload</h1></div>
-    <div id="image-upload" class="page"><h1>Image Upload</h1></div>
-    <div id="downloads" class="page"><h1>Downloads</h1></div>
-    <div id="admin-apply" class="page"><h1>Bewerbungen</h1></div>
   </main>
-
-  <div class="paypol-modal-overlay" id="paypolModal">
-    <div class="paypol-box">
-      <div class="paypol-header">
-        <div class="paypol-logo-area">
-          <span class="paypol-logo-p1">Pay</span><span class="paypol-logo-p2">Pol</span>
-        </div>
-      </div>
-      <div class="paypol-body">
-        <h3 id="paypolItemName">Projekt Download</h3>
-        <button class="paypol-btn" onclick="verifyPaypolCode()">Sicher bezahlen</button>
-      </div>
-      <div class="paypol-trust-footer-bar">
-        <div class="trast-logo">
-          <span class="trast-star-icon">★</span> Trastpilod
-        </div>
-        <span class="trast-badge">VERIFIED</span>
-      </div>
-    </div>
-  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Deine JS-Logik hier...
+    const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     function showPage(id) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       document.getElementById('btn-' + id).classList.add('active');
     }
-    
-    function logout() { console.log("Logout!"); }
-    
-    function verifyPaypolCode() {
-        alert("Wird verifiziert...");
+
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'login.html';
     }
   </script>
 </body>
