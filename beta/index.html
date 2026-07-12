@@ -3,136 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuapsHub</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <title>QuapsHub // Attack</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg-color: #0a0a0a;
-      --sidebar-bg: #0f0f0f;
-      --text-main: #e0e0e0;
-      --text-dim: #999999;
-      --accent: #4a5568; /* Ein dezentes Grau-Blau */
-      --active-bg: #1a1a1a;
-      --border: #222222;
+      /* Gradient Background */
+      --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      --sidebar-rgba: rgba(15, 15, 30, 0.8);
+      --accent-color: #7b2cbf; /* Ein sattes Lila/Violett */
+      --text-white: #ffffff;
+      --text-muted: #a0a0c0;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #121212 0%, #050505 100%);
-      color: var(--text-main);
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-white);
       display: flex;
       min-height: 100vh;
     }
 
-    /* Sidebar - Clean & Modern */
+    /* Sidebar - Schlicht & Coloriert */
     .sidebar {
-      width: 280px;
-      background: var(--sidebar-bg);
-      border-right: 1px solid var(--border);
+      width: 260px;
+      background: var(--sidebar-rgba);
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255,255,255,0.1);
+      padding: 30px 20px;
       display: flex;
       flex-direction: column;
-      padding: 30px 20px;
     }
 
-    .sidebar-logo { margin-bottom: 40px; }
-    .logo-text { font-size: 1.4rem; font-weight: 700; color: #fff; }
-    .logo-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 5px; }
+    .logo { margin-bottom: 50px; }
+    .logo h2 { font-size: 1.5rem; letter-spacing: 2px; color: var(--text-white); }
+    .logo span { font-size: 0.7rem; color: var(--accent-color); font-weight: 700; }
 
-    .mc-btn {
+    .nav-btn {
       width: 100%;
-      padding: 14px;
+      padding: 15px;
+      margin-bottom: 10px;
       background: transparent;
       border: 1px solid transparent;
-      color: var(--text-dim);
+      color: var(--text-muted);
       text-align: left;
       font-size: 0.9rem;
+      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.2s;
-      border-radius: 8px;
-      margin-bottom: 6px;
+      transition: all 0.3s ease;
     }
-    .mc-btn:hover { background: #161616; color: #fff; }
-    .mc-btn.active { background: #1a1a1a; color: #fff; border: 1px solid var(--border); }
+    .nav-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .nav-btn.active {
+      background: var(--accent-color);
+      color: white;
+      box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4);
+    }
 
-    /* Main Content */
-    main { flex: 1; padding: 50px; overflow-y: auto; }
-    .page { display: none; }
-    .page.active { display: block; }
-    
-    .content-card {
-      background: #0f0f0f;
-      border: 1px solid var(--border);
+    main { flex: 1; padding: 50px; }
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
       padding: 30px;
-      border-radius: 12px;
-      margin-bottom: 30px;
+      border-radius: 20px;
+      backdrop-filter: blur(5px);
     }
-
-    h1 { font-size: 2rem; margin-bottom: 20px; }
-    
-    /* Buttons */
-    .mc-action {
-      background: #fff;
-      color: #000;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      margin-top: 15px;
-    }
-    .mc-action:hover { background: #e0e0e0; }
-
-    /* Status Bar in der Sidebar */
-    .sidebar-profile { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
   </style>
 </head>
 <body>
 
   <div class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-text">QuapsHub</div>
-      <div class="logo-sub">ATTACK EDITION // v2.6</div>
+    <div class="logo">
+      <h2>QUAPS</h2>
+      <span>ATTACK EDITION</span>
     </div>
 
-    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">Home</button>
-    <button class="mc-btn" onclick="window.location.href='langeweile.html'" id="btn-langeweile">🕹 Langeweile?</button>
-    <button class="mc-btn" onclick="window.location.href='chillcraft-index.html'" id="btn-chillcraft">Chillcraft</button>
-    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">Clip-Archiv</button>
-    <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">Clip Upload</button>
-    <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload">Bild Upload</button>
-    <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">Downloads</button>
-    <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">Bewerbungen</button>
-    <button class="mc-btn" onclick="logout()" id="btn-logout" style="color: #ff6b6b;">Logout</button>
-
-    <div class="sidebar-profile">
-      <span id="sidebar-user-name" style="font-size: 0.8rem; color: var(--text-dim);">SPIELER</span>
-    </div>
+    <button class="nav-btn active" onclick="showPage('home')" id="btn-home">Home</button>
+    <button class="nav-btn" onclick="showPage('clips')" id="btn-clips">Clips & Upload</button>
+    <button class="nav-btn" onclick="showPage('downloads')" id="btn-downloads">Downloads</button>
+    <button class="nav-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">Bewerbung</button>
+    <button class="nav-btn" onclick="logout()" style="margin-top: auto; border: 1px solid rgba(255,50,50,0.3); color: #ff6b6b;">Logout</button>
   </div>
 
   <main>
     <div id="home" class="page active">
-      <h1>Willkommen, <span id="user-name-display">Spieler</span>.</h1>
-      <div class="content-card">Dashboard ist bereit.</div>
+      <div class="card">
+        <h1>Willkommen zurück.</h1>
+        <p>Das Dashboard ist bereit.</p>
+      </div>
     </div>
+    </main>
 
-    <div id="clips" class="page"><h1>Clip Archiv</h1></div>
-    <div id="upload" class="page"><h1>Clip Upload</h1></div>
-    <div id="image-upload" class="page"><h1>Bild Upload</h1></div>
-    <div id="downloads" class="page"><h1>Downloads</h1></div>
-    <div id="admin-apply" class="page"><h1>Bewerbungen</h1></div>
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // [Hier kommt dein gesamter JavaScript-Code, den du mir gegeben hast]
-    // Ich hab ihn hier unten nur kurz als Platzhalter gelassen, kopier deinen kompletten Block hier rein:
-    
-    // ... DEIN JS CODE ...
-    
+    // FÜGE DEINEN SCRIPT-BLOCK HIER EIN!
   </script>
 </body>
 </html>
