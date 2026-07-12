@@ -17,50 +17,47 @@
   --bg: #09090b;
   --surface: #141417;
   --panel: #1e1e23;
-  --primary: #8b5cf6;      /* Violett */
+  --primary: #8b5cf6;
   --accent: #c084fc;
   --text: #f8fafc;
   --muted: #94a3b8;
   --border: #2d2d37;
-  --error: #f43f5e;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; height: 100%; }
+html { height: 100%; }
 
+/* WICHTIG: Body und HTML fixieren */
 body {
   font-family: 'Inter', -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
-  min-height: 100vh;
-  margin: 0;
+  height: 100vh; 
+  overflow: hidden; /* verhindert das Scrollen des ganzen Bildschirms */
   display: grid;
   grid-template-columns: 260px 1fr;
 }
 
-/* ── LAYOUT FIX: GRID ── */
+/* Sidebar bleibt stehen */
 .sidebar {
   background: var(--surface);
   border-right: 1px solid var(--border);
-  height: 100vh;
-  position: sticky;
-  top: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
 
+/* WICHTIG: Main-Bereich bekommt Scroll-Funktion */
 main {
+  height: 100%;
+  overflow-y: auto; /* Hier scrollt es jetzt */
   padding: 40px;
-  overflow-y: auto;
-  max-width: 1200px;
-  width: 100%;
 }
 
-/* ── SIDEBAR STUFF ── */
+/* Rest vom Styling */
 .sidebar-logo { padding: 30px 24px; border-bottom: 1px solid var(--border); }
 .logo-text { font-size: 1.25rem; font-weight: 800; color: #fff; }
 .logo-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
-
 .sidebar-section { padding: 20px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
 
 .mc-btn {
@@ -78,7 +75,6 @@ main {
 .mc-btn:hover { background: rgba(139, 92, 246, 0.1); color: var(--primary); }
 .mc-btn.active { background: var(--primary); color: white; }
 
-/* ── CONTENT PANELS ── */
 .mc-panel {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -87,77 +83,14 @@ main {
   margin-bottom: 24px;
 }
 
-.mc-panel-title {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-
-/* ── ACTIONS & INPUTS ── */
-.mc-action {
-  display: inline-block;
-  background: var(--primary);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: transform 0.1s;
-}
-.mc-action:hover { background: var(--accent); }
-.mc-action:active { transform: scale(0.98); }
-
-.mc-input {
-  width: 100%;
-  padding: 12px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: white;
-  margin-bottom: 16px;
-}
-.mc-input:focus { border-color: var(--primary); outline: none; }
-
-/* ── COOKIE BANNER ── */
-.mc-cookie-banner {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 320px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
-  display: none;
-}
-.mc-cookie-banner.show { display: block; }
-.mc-cookie-buttons { display: flex; gap: 8px; margin-top: 16px; }
-.mc-cookie-btn {
-  flex: 1; padding: 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600;
-}
-.mc-cookie-btn.accept { background: var(--primary); color: white; }
-.mc-cookie-btn.decline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
-
-/* ── MODALS (PAYPOL) ── */
-.paypol-modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
-  display: none; align-items: center; justify-content: center; z-index: 999;
-}
-.paypol-modal-overlay.show { display: flex; }
-.paypol-box {
-  background: white; color: #111; width: 100%; max-width: 400px;
-  border-radius: 12px; overflow: hidden; padding: 24px;
-}
-
-/* ── MOBILE RESPONSIVE FIX ── */
+/* Mobile Responsive */
 @media (max-width: 768px) {
-  body { grid-template-columns: 1fr; }
-  .sidebar { height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
-  main { padding: 20px; }
+  body { 
+    grid-template-columns: 1fr; 
+    overflow-y: auto; /* Auf Handy wieder normal scrollen */
+  }
+  .sidebar { height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  main { height: auto; overflow-y: visible; padding: 20px; }
 }
   </style>
 </head>
