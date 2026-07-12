@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quaps Attack Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #a8ff78; --gold: #f5c518; --bg: #0a0a0a; --panel: #1a1a1a; --border: #333333; --text: #f0f0f0; --muted: #aaaaaa; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'VT323', monospace; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; font-size: 1.3rem; overflow: hidden; }
+        .login-overlay { width: 100%; max-width: 420px; padding: 20px; z-index: 1; }
+        .login-card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center; }
+        .logo-text { font-family: 'Press Start 2P', monospace; font-size: 1.1rem; color: var(--primary); margin-bottom: 30px; }
+        .mc-label { font-family: 'Press Start 2P', monospace; font-size: 0.45rem; color: var(--gold); display: block; text-align: left; margin-bottom: 6px; }
+        input { display: block; width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 14px; border-radius: 10px; color: #fff; margin-bottom: 18px; font-family: inherit; font-size: 1.1rem; }
+        button { display: block; width: 100%; background: #222222; color: var(--primary); font-family: 'Press Start 2P', monospace; font-size: 0.55rem; padding: 14px; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); }
+        .hidden { display: none !important; }
+        #message { margin-top: 15px; font-size: 1rem; min-height: 24px; }
+    </style>
+</head>
+<body>
+
+    <div class="login-overlay">
+        <div class="login-card">
+            <h1 class="logo-text" id="formTitle">QUAPS LOGIN!</h1>
+            <form id="authForm">
+                <label class="mc-label">E-Mail</label>
+                <input type="email" id="email" required>
+                <label class="mc-label">Passwort</label>
+                <input type="password" id="password" required>
+                <button type="submit" id="loginBtn">LOGIN // MAIL</button>
+                <button type="button" id="signUpSubmitBtn" class="hidden">REGISTER ACCOUNT</button>
+            </form>
+            <button class="secondary-btn" id="switchToRegisterBtn" style="background:transparent; color:white; border:none; margin-top:10px; cursor:pointer;">Noch kein Account?</button>
+            <button class="secondary-btn hidden" id="switchToLoginBtn" style="background:transparent; color:white; border:none; margin-top:10px; cursor:pointer;">Zum Login</button>
+            <div id="message"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseClient = supabase.createClient("https://sdwelvinfbqxivvxnjkh.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE");
+
+        // ANTI-BOUNCE: Check ob schon eingeloggt
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) window.location.href = 'index.html';
+        });
+
+        // Form Logic...
+        const authForm = document.getElementById('authForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const signUpSubmitBtn = document.getElementById('signUpSubmitBtn');
+        const switchToRegisterBtn = document.getElementById('switchToRegisterBtn');
+        const switchToLoginBtn = document.getElementById('switchToLoginBtn');
+
+        switchToRegisterBtn.addEventListener('click', () => {
+            document.getElementById('formTitle').textContent = "QUAPS REGISTRATION!";
+            loginBtn.classList.add('hidden');
+            switchToRegisterBtn.classList.add('hidden');
+            signUpSubmitBtn.classList.remove('hidden');
+            switchToLoginBtn.classList.remove('hidden');
+        });
+
+        switchToLoginBtn.addEventListener('click', () => {
+            document.getElementById('formTitle').textContent = "QUAPS LOGIN!";
+            signUpSubmitBtn.classList.add('hidden');
+            switchToLoginBtn.classList.add('hidden');
+            loginBtn.classList.remove('hidden');
+            switchToRegisterBtn.classList.remove('hidden');
+        });
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const { error } = await supabaseClient.auth.signInWithPassword({
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+            });
+            if (error) alert(error.message);
+            else window.location.href = 'index.html';
+        });
+
+        signUpSubmitBtn.addEventListener('click', async () => {
+            const { error } = await supabaseClient.auth.signUp({
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+            });
+            if (error) alert(error.message);
+            else alert("Check deine Mails, Digga!");
+        });
+    </script>
+</body>
+</html>
