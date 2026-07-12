@@ -9,80 +9,130 @@
   
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-      --sidebar-bg: #121212;
+      --bg-color: #0a0a0a;
+      --sidebar-bg: #0f0f0f;
       --text-main: #e0e0e0;
-      --text-dim: #a0a0a0;
-      --accent: #5c6bc0;
-      --border: #2a2a2a;
+      --text-dim: #999999;
+      --accent: #4a5568; /* Ein dezentes Grau-Blau */
+      --active-bg: #1a1a1a;
+      --border: #222222;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--bg-gradient);
+      background: linear-gradient(135deg, #121212 0%, #050505 100%);
       color: var(--text-main);
       display: flex;
       min-height: 100vh;
-      overflow-x: hidden;
     }
 
-    /* Video Background (gedimmt) */
-    .video-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.05; pointer-events: none; }
-    .video-bg iframe { width: 100%; height: 100%; object-fit: cover; }
-
-    /* Saubere Sidebar */
+    /* Sidebar - Clean & Modern */
     .sidebar {
-      width: 260px;
+      width: 280px;
       background: var(--sidebar-bg);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      padding: 20px;
+      padding: 30px 20px;
     }
 
-    .sidebar-logo { padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-    .logo-text { font-size: 1.2rem; font-weight: 600; color: #fff; }
-    .logo-sub { font-size: 0.75rem; color: var(--text-dim); display: block; margin-top: 5px; }
+    .sidebar-logo { margin-bottom: 40px; }
+    .logo-text { font-size: 1.4rem; font-weight: 700; color: #fff; }
+    .logo-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 5px; }
 
     .mc-btn {
       width: 100%;
-      padding: 12px 15px;
+      padding: 14px;
       background: transparent;
-      border: none;
+      border: 1px solid transparent;
       color: var(--text-dim);
       text-align: left;
       font-size: 0.9rem;
       cursor: pointer;
       transition: all 0.2s;
-      border-radius: 6px;
-      margin-bottom: 4px;
+      border-radius: 8px;
+      margin-bottom: 6px;
     }
-    .mc-btn:hover { background: #1a1a1a; color: #fff; }
-    .mc-btn.active { background: var(--accent); color: #fff; }
+    .mc-btn:hover { background: #161616; color: #fff; }
+    .mc-btn.active { background: #1a1a1a; color: #fff; border: 1px solid var(--border); }
 
     /* Main Content */
-    main { flex: 1; padding: 40px; overflow-y: auto; }
+    main { flex: 1; padding: 50px; overflow-y: auto; }
+    .page { display: none; }
+    .page.active { display: block; }
     
-    /* Karten-Style */
-    .glass-card {
-      background: #161616;
+    .content-card {
+      background: #0f0f0f;
       border: 1px solid var(--border);
-      padding: 25px;
+      padding: 30px;
       border-radius: 12px;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
-    .mc-panel-title { font-size: 0.8rem; font-weight: 600; color: var(--text-dim); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
-    
-    /* Input & Button */
-    .mc-input { background: #0a0a0a; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 6px; width: 100%; margin-bottom: 10px; }
-    .mc-action { background: var(--accent); color: #fff; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-    .mc-action:hover { opacity: 0.9; }
 
+    h1 { font-size: 2rem; margin-bottom: 20px; }
+    
+    /* Buttons */
+    .mc-action {
+      background: #fff;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 15px;
+    }
+    .mc-action:hover { background: #e0e0e0; }
+
+    /* Status Bar in der Sidebar */
+    .sidebar-profile { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
   </style>
 </head>
 <body>
 
-  </body>
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">QuapsHub</div>
+      <div class="logo-sub">ATTACK EDITION // v2.6</div>
+    </div>
+
+    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">Home</button>
+    <button class="mc-btn" onclick="window.location.href='langeweile.html'" id="btn-langeweile">🕹 Langeweile?</button>
+    <button class="mc-btn" onclick="window.location.href='chillcraft-index.html'" id="btn-chillcraft">Chillcraft</button>
+    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">Clip-Archiv</button>
+    <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">Clip Upload</button>
+    <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload">Bild Upload</button>
+    <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">Downloads</button>
+    <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">Bewerbungen</button>
+    <button class="mc-btn" onclick="logout()" id="btn-logout" style="color: #ff6b6b;">Logout</button>
+
+    <div class="sidebar-profile">
+      <span id="sidebar-user-name" style="font-size: 0.8rem; color: var(--text-dim);">SPIELER</span>
+    </div>
+  </div>
+
+  <main>
+    <div id="home" class="page active">
+      <h1>Willkommen, <span id="user-name-display">Spieler</span>.</h1>
+      <div class="content-card">Dashboard ist bereit.</div>
+    </div>
+
+    <div id="clips" class="page"><h1>Clip Archiv</h1></div>
+    <div id="upload" class="page"><h1>Clip Upload</h1></div>
+    <div id="image-upload" class="page"><h1>Bild Upload</h1></div>
+    <div id="downloads" class="page"><h1>Downloads</h1></div>
+    <div id="admin-apply" class="page"><h1>Bewerbungen</h1></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // [Hier kommt dein gesamter JavaScript-Code, den du mir gegeben hast]
+    // Ich hab ihn hier unten nur kurz als Platzhalter gelassen, kopier deinen kompletten Block hier rein:
+    
+    // ... DEIN JS CODE ...
+    
+  </script>
+</body>
 </html>
