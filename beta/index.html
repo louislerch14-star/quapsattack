@@ -3,108 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QUAPS HUB // DASHBOARD</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>QUAPS HUB // REBUILT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
     :root {
       --primary: #a8ff78;
       --bg: #0a0a0a;
-      --panel: #1a1a1a;
+      --panel: rgba(26, 26, 26, 0.8);
       --border: #333333;
       --text: #f0f0f0;
+      --muted: #aaaaaa;
     }
 
-    body { font-family: 'VT323', monospace; background: var(--bg); color: var(--text); margin: 0; display: flex; min-height: 100vh; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'VT323', monospace; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+
+    /* Video Background */
+    .video-bg { position: fixed; inset: 0; z-index: -1; background: #000; }
+    .video-bg iframe { position: absolute; top: 50%; left: 50%; width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; transform: translate(-50%, -50%); pointer-events: none; filter: brightness(0.12) saturate(0.3); }
+    .video-bg::after { content: ''; position: absolute; inset: 0; background: rgba(10,10,10,0.8); }
 
     /* Sidebar */
-    .sidebar { width: 240px; background: #151515; border-right: 2px solid var(--border); padding: 20px; }
-    .nav-btn { display: block; width: 100%; background: none; border: none; color: #fff; padding: 15px; text-align: left; cursor: pointer; font-family: 'Press Start 2P', sans-serif; font-size: 0.6rem; border-left: 3px solid transparent; }
-    .nav-btn:hover, .nav-btn.active { border-left-color: var(--primary); background: rgba(168, 255, 120, 0.1); }
+    .sidebar { width: 240px; background: rgba(15, 15, 15, 0.95); border-right: 2px solid var(--border); display: flex; flex-direction: column; z-index: 100; }
+    .sidebar-logo { padding: 30px 20px; border-bottom: 2px solid var(--border); text-align: center; }
+    .logo-text { font-family: 'Press Start 2P'; font-size: 0.9rem; color: var(--primary); }
+    
+    .sidebar-section { padding: 20px 0; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .mc-btn { display: block; width: 100%; background: transparent; color: var(--muted); padding: 15px 20px; border: none; cursor: pointer; text-align: left; font-family: 'Press Start 2P'; font-size: 0.5rem; border-left: 3px solid transparent; }
+    .mc-btn:hover, .mc-btn.active { background: rgba(255,255,255,0.05); color: #fff; border-left-color: var(--primary); }
+
+    /* Farbwechsler */
+    .color-swapper { padding: 20px; border-top: 2px solid var(--border); display: flex; gap: 10px; justify-content: center; }
+    .swatch { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border); }
 
     /* Main */
-    main { padding: 40px; flex: 1; }
+    main { margin-left: 240px; padding: 40px; flex: 1; }
     .page { display: none; }
     .page.active { display: block; }
-    
-    .panel { background: var(--panel); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-    .input-box { width: 100%; padding: 10px; background: #000; border: 1px solid var(--border); color: #fff; margin-bottom: 10px; }
-    .action-btn { background: var(--primary); color: #000; padding: 10px 20px; border: none; cursor: pointer; font-weight: bold; }
-    
-    /* Link Style */
-    .dl-link { display: inline-block; background: var(--primary); color: #000; padding: 10px 20px; text-decoration: none; font-weight: bold; }
+    .mc-panel { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 20px; }
+    .mc-action { background: var(--primary); color: #000; padding: 10px 20px; border: none; cursor: pointer; font-family: 'Press Start 2P'; font-size: 0.5rem; }
+    .mc-input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border); color: #fff; margin-bottom: 10px; }
   </style>
 </head>
 <body>
 
+<div class="video-bg">
+  <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0" frameborder="0" allow="autoplay"></iframe>
+</div>
+
 <div class="sidebar">
-  <h2 style="font-family:'Press Start 2P'; font-size: 1rem; color: var(--primary); margin-bottom: 30px;">QUAPS HUB</h2>
-  <button class="nav-btn active" onclick="showPage('home')">HOME</button>
-  <button class="nav-btn" onclick="showPage('downloads')">DOWNLOADS</button>
+  <div class="sidebar-logo"><span class="logo-text">QUAPS HUB</span></div>
+  <div class="sidebar-section">
+    <button class="mc-btn active" onclick="showPage('home')">HOME</button>
+    <button class="mc-btn" onclick="showPage('downloads')">DOWNLOADS</button>
+  </div>
+  <div class="color-swapper">
+    <div class="swatch" style="background: #a8ff78;" onclick="setCol('#a8ff78')"></div>
+    <div class="swatch" style="background: #44d4d4;" onclick="setCol('#44d4d4')"></div>
+    <div class="swatch" style="background: #f5c518;" onclick="setCol('#f5c518')"></div>
+    <div class="swatch" style="background: #ff5555;" onclick="setCol('#ff5555')"></div>
+  </div>
 </div>
 
 <main>
   <div id="home" class="page active">
-    <h1>PINNWAND</h1>
-    <div class="panel">
-      <div id="pinnwand-output" style="margin-bottom: 20px; min-height: 100px;">Lade Nachrichten...</div>
-      <input type="text" id="name-input" class="input-box" placeholder="Dein Name">
-      <input type="text" id="msg-input" class="input-box" placeholder="Deine Nachricht">
-      <button class="action-btn" onclick="postMessage()">POSTEN</button>
+    <h1>QUAPS PINNWAND</h1>
+    <div class="mc-panel">
+      <div id="pinnwand-box" style="margin-bottom: 15px; max-height: 200px; overflow-y: auto;">Lädt...</div>
+      <input type="text" id="p-input" class="mc-input" placeholder="Nachricht schreiben...">
+      <button onclick="postPinnwand()" class="mc-action">SENDEN</button>
     </div>
   </div>
 
   <div id="downloads" class="page">
     <h1>DOWNLOADS</h1>
-    <div class="panel">
-      <h3>Quaps Attack Season 10</h3>
-      <p>Hier gehts zum Download:</p><br>
-      <a href="https://drive.google.com/file/d/18DLzMxDv_NbOSHvoSwV66zVyC049QcFl/view?usp=drive_link" target="_blank" class="dl-link">DOWNLOAD QA10 WELT</a>
+    <div class="mc-panel">
+      <h3>Season 10 Welt</h3>
+      <button class="mc-action" onclick="alert('Download-Logik aktiv!')">DOWNLOAD STARTEN</button>
     </div>
   </div>
 </main>
 
 <script>
-  // 1. HIER DEINE DATEN REIN!
-  const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
-  const SUPABASE_ANON_KEY = "DEIN_ECHTER_ANON_KEY_HIER_REIN"; // NICHT das JWT verwenden!
-
+  // 1. SETUP
+  const SUPABASE_URL = "DEINE_URL";
+  const SUPABASE_ANON_KEY = "DEIN_KEY";
   const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // 2. FUNKTIONEN
+  function setCol(c) {
+    document.documentElement.style.setProperty('--primary', c);
+  }
 
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
   }
 
-  async function loadMessages() {
-    try {
-      const { data, error } = await supabase.from('pinnwand').select('*').order('created_at', { ascending: false });
-      if (error) throw error;
-      const box = document.getElementById('pinnwand-output');
-      box.innerHTML = data.map(m => `<div style="margin-bottom:10px;"><b>${m.name}</b>: ${m.nachricht}</div>`).join('');
-    } catch (e) {
-      document.getElementById('pinnwand-output').innerHTML = "Fehler: " + e.message;
-      console.error(e);
-    }
+  async function loadPinnwand() {
+    const { data } = await supabase.from('pinnwand').select('*').order('created_at', { ascending: false });
+    const box = document.getElementById('pinnwand-box');
+    box.innerHTML = data ? data.map(m => `<div><b>${m.name}</b>: ${m.nachricht}</div>`).join('') : "Leer.";
   }
 
-  async function postMessage() {
-    const name = document.getElementById('name-input').value;
-    const msg = document.getElementById('msg-input').value;
-    if(!name || !msg) return alert("Beides ausfüllen, bro!");
-    
-    const { error } = await supabase.from('pinnwand').insert([{ name: name, nachricht: msg }]);
-    if (error) alert("Fehler beim Senden: " + error.message);
-    else {
-      document.getElementById('msg-input').value = '';
-      loadMessages();
-    }
+  async function postPinnwand() {
+    const text = document.getElementById('p-input').value;
+    if(!text) return;
+    await supabase.from('pinnwand').insert([{ name: 'Spieler', nachricht: text }]);
+    document.getElementById('p-input').value = '';
+    loadPinnwand();
   }
 
-  window.onload = loadMessages;
+  window.onload = loadPinnwand;
 </script>
 
 </body>
