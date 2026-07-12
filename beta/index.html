@@ -2,62 +2,53 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QuapsHub // Attack Edition</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      /* Theme Farben */
-      --bg-dark: #0f0c29;
+      --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      --sidebar-rgba: rgba(0, 0, 0, 0.4);
       --accent-purple: #7b2cbf;
+      --diamond: #44d4d4;
       --text-white: #ffffff;
-      /* PayPol & Trastpilod Branding */
+      --text-muted: #aaaaaa;
       --paypal-blue: #003087;
       --paypal-action: #0070ba;
       --trust-green: #00b67a;
     }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      color: var(--text-white);
-      margin: 0; display: flex; min-height: 100vh;
-    }
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg-gradient); color: var(--text-white); margin: 0; display: flex; min-height: 100vh; overflow-x: hidden; }
 
-    /* --- SIDEBAR & LAYOUT --- */
-    .sidebar { width: 280px; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.1); }
+    /* SIDEBAR */
+    .sidebar { width: 280px; background: var(--sidebar-rgba); backdrop-filter: blur(15px); border-right: 1px solid rgba(255,255,255,0.1); padding: 30px; display: flex; flex-direction: column; }
     .sidebar-logo { margin-bottom: 40px; }
-    .logo-text { font-size: 1.5rem; font-weight: 800; display: block; }
+    .logo-text { font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
     .logo-sub { color: var(--accent-purple); font-size: 0.7rem; font-weight: 700; }
-    
-    .mc-btn { width: 100%; padding: 14px; background: transparent; border: none; color: #ccc; text-align: left; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 5px; }
-    .mc-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .mc-btn { width: 100%; padding: 14px; background: transparent; border: 1px solid transparent; color: #ccc; text-align: left; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 5px; font-weight: 500; }
+    .mc-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
     .mc-btn.active { background: var(--accent-purple); color: #fff; box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4); }
 
+    /* MAIN CONTENT */
     main { flex: 1; padding: 40px; overflow-y: auto; }
     .page { display: none; }
     .page.active { display: block; }
+    .glass-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(5px); margin-bottom: 20px; }
 
-    /* --- PAYPOL MODAL (PayPal Stil) --- */
-    .paypol-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 999; }
+    /* PAYPOL STYLING (Echt-Look) */
+    .paypol-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
     .paypol-modal-overlay.show { display: flex; }
-    .paypol-box { background: #fff; color: #333; width: 420px; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-    
+    .paypol-box { background: #fff; color: #333; width: 400px; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .paypol-header { background: var(--paypal-blue); padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-    .paypol-logo-area { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; }
-    .paypol-logo-p1 { color: #fff; }
-    .paypol-logo-p2 { color: #00d0ff; }
-    
-    .paypol-btn { background: var(--paypal-action); color: white; border: none; padding: 15px; width: 100%; border-radius: 50px; font-weight: 600; cursor: pointer; }
-    .paypol-btn:hover { background: #005ea6; }
-
-    /* --- TRASTPILOD FOOTER (Trustpilot Stil) --- */
+    .paypol-logo-p1 { color: #fff; font-weight: 800; font-size: 1.4rem; }
+    .paypol-logo-p2 { color: #00d0ff; font-weight: 800; font-size: 1.4rem; }
+    .paypol-body { padding: 20px; }
+    .paypol-btn { background: var(--paypal-action); color: white; border: none; padding: 12px; width: 100%; border-radius: 25px; font-weight: 600; cursor: pointer; margin-top: 15px; }
     .paypol-trust-footer-bar { background: #f8f8f8; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #ddd; }
-    .trast-logo { color: #000; font-weight: 700; font-size: 0.9rem; }
-    .trast-star-icon { color: var(--trust-green); font-size: 1.2rem; }
-    .trast-badge { background: var(--trust-green); color: white; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; font-weight: bold; }
-
-    /* Hier kommen restliche Styles für Cards, Inputs etc. hin... */
+    .trast-star-icon { color: var(--trust-green); }
+    .trast-badge { background: var(--trust-green); color: white; padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -67,18 +58,28 @@
       <span class="logo-text">QUAPS<br>HUB</span>
       <span class="logo-sub">ATTACK EDITION // v2.6</span>
     </div>
-    <button class="mc-btn active" onclick="showPage('home')">HOME</button>
-    <button class="mc-btn" onclick="showPage('clips')">CLIP-ARCHIV</button>
-    <button class="mc-btn" onclick="showPage('downloads')">DOWNLOADS</button>
-    <button class="mc-btn" onclick="showPage('admin-apply')">BEWERBUNGEN</button>
-    <button class="mc-btn" onclick="logout()" style="color: #ff6b6b; margin-top: auto;">LOGOUT</button>
+    <div class="sidebar-section">
+      <button class="mc-btn active" onclick="showPage('home')" id="btn-home">HOME</button>
+      <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">CLIP-ARCHIV</button>
+      <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">CLIP UPLOAD</button>
+      <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload">BILDER UP-LOAD</button>
+      <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">DOWNLOADS</button>
+      <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">BEWERBUNGEN</button>
+      <button class="mc-btn" onclick="logout()" style="color: #ff6b6b; margin-top: auto;">LOGOUT</button>
+    </div>
   </div>
 
   <main>
     <div id="home" class="page active">
         <h1>Dashboard</h1>
-        </div>
-    </main>
+        <div class="glass-card">Hier geht's rund, Digger!</div>
+    </div>
+    <div id="clips" class="page"><h1>Clips</h1></div>
+    <div id="upload" class="page"><h1>Upload</h1></div>
+    <div id="image-upload" class="page"><h1>Image Upload</h1></div>
+    <div id="downloads" class="page"><h1>Downloads</h1></div>
+    <div id="admin-apply" class="page"><h1>Bewerbungen</h1></div>
+  </main>
 
   <div class="paypol-modal-overlay" id="paypolModal">
     <div class="paypol-box">
@@ -87,7 +88,7 @@
           <span class="paypol-logo-p1">Pay</span><span class="paypol-logo-p2">Pol</span>
         </div>
       </div>
-      <div style="padding: 20px;">
+      <div class="paypol-body">
         <h3 id="paypolItemName">Projekt Download</h3>
         <button class="paypol-btn" onclick="verifyPaypolCode()">Sicher bezahlen</button>
       </div>
@@ -100,8 +101,21 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    /* DEIN JAVASCRIPT HIER EINFÜGEN */
+    // Deine JS-Logik hier...
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.getElementById('btn-' + id).classList.add('active');
+    }
+    
+    function logout() { console.log("Logout!"); }
+    
+    function verifyPaypolCode() {
+        alert("Wird verifiziert...");
+    }
   </script>
 </body>
 </html>
