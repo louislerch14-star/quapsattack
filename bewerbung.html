@@ -4,115 +4,97 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QuapsAttack - Server Bewerbung</title>
-  <style>
-    body {
-      background-color: #1a1a1a;
-      color: #fff;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      padding: 40px 20px;
-      margin: 0;
-    }
-    .apply-container {
-      max-width: 600px;
-      margin: 0 auto;
-      background: #222;
-      border: 3px solid #555;
-      padding: 30px;
-      border-radius: 4px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-    }
-    h1 {
-      color: #ffaa00;
-      text-align: center;
-      margin-bottom: 30px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      text-shadow: 2px 2px #000;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      color: #aaa;
-      margin-bottom: 8px;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-    .mc-input, .mc-textarea {
-      width: 100%;
-      padding: 12px;
-      background: #111;
-      border: 2px solid #555;
-      color: #fff;
-      border-radius: 4px;
-      box-sizing: border-box;
-      font-size: 1rem;
-    }
-    .mc-input:focus, .mc-textarea:focus {
-      border-color: #ffaa00;
-      outline: none;
-    }
-    .rules-box {
-      background: #151515;
-      border: 2px solid #444;
-      padding: 15px;
-      max-height: 150px;
-      overflow-y: auto;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
-      color: #ccc;
-      line-height: 1.5;
-    }
-    .checkbox-group {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 14px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .checkbox-group input {
-      margin-right: 12px;
-      margin-top: 3px;
-      transform: scale(1.2);
-      cursor: pointer;
-    }
-    .checkbox-group span {
-      font-size: 0.95rem;
-      color: #ddd;
-    }
-    .mc-btn {
-      width: 100%;
-      background: #444;
-      color: #888;
-      border: 2px solid #555;
-      padding: 15px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: not-allowed;
-      text-transform: uppercase;
-      margin-top: 20px;
-      transition: all 0.2s;
-    }
-    .mc-btn.enabled {
-      background: #4e9a06;
-      border-color: #73d216;
-      color: #fff;
-      cursor: pointer;
-      text-shadow: 1px 1px #000;
-    }
-    .mc-btn.enabled:hover {
-      background: #5caf07;
-    }
-    .status-msg {
-      margin-top: 15px;
-      text-align: center;
-      font-weight: bold;
-      display: none;
-      padding: 10px;
-      border-radius: 4px;
-    }
-  </style>
+<style>
+  body {
+    background: radial-gradient(circle at center, #2c2c2c 0%, #1a1a1a 100%);
+    color: #fff;
+    font-family: 'Press Start 2P', 'Segoe UI', Arial, sans-serif; /* Minecraft-Vibe! */
+    padding: 40px 20px;
+    margin: 0;
+    min-height: 100vh;
+  }
+  .apply-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: rgba(20, 20, 20, 0.9);
+    border: 4px solid #444;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,255,255,0.05);
+  }
+  h1 {
+    color: #ffd700; /* Gold */
+    text-align: center;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    text-shadow: 3px 3px #000;
+  }
+  .form-group { margin-bottom: 25px; }
+  label {
+    display: block;
+    color: #ffd700;
+    margin-bottom: 10px;
+    font-size: 0.7rem; /* Retro-Look */
+  }
+  .mc-input, .mc-textarea {
+    width: 100%;
+    padding: 15px;
+    background: #000;
+    border: 2px solid #555;
+    color: #fff;
+    border-radius: 4px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 1rem;
+    transition: 0.3s;
+  }
+  .mc-input:focus, .mc-textarea:focus {
+    border-color: #ffd700;
+    outline: none;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  }
+  .rules-box {
+    background: #0d0d0d;
+    border: 2px solid #333;
+    padding: 15px;
+    height: 120px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    font-size: 0.8rem;
+    color: #aaa;
+    font-family: sans-serif;
+  }
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
+    cursor: pointer;
+  }
+  .checkbox-group input { margin-right: 15px; transform: scale(1.4); }
+  .mc-btn {
+    width: 100%;
+    background: #222;
+    color: #555;
+    border: 3px solid #444;
+    padding: 18px;
+    font-size: 0.8rem;
+    cursor: not-allowed;
+    text-transform: uppercase;
+    font-family: 'Press Start 2P', sans-serif;
+    transition: 0.3s;
+  }
+  .mc-btn.enabled {
+    background: #5caf07;
+    border-color: #73d216;
+    color: #fff;
+    cursor: pointer;
+    text-shadow: 1px 1px #000;
+  }
+  .mc-btn.enabled:hover {
+    background: #6cc408;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(115, 210, 22, 0.4);
+  }
+</style>
 </head>
 <body>
 
@@ -137,27 +119,27 @@
     <div class="rules-box">
       <strong>1. Griefer Schutz:</strong> Das Griefen des Spawns ist strengstens untersagt.<br>
       <strong>2. Modifikationen:</strong> Hacks, X-Ray oder unfaire Client Modifikationen führen zum sofortigen Bann.<br>
-      <strong>3. QA11 Extra:</strong> Schicke ein Bild von deiner Base und sie steht unter Grieferschutz.<br>
+      <!--<strong>3. QA11 Extra:</strong> Schicke ein Bild von deiner Base und sie steht unter Grieferschutz.<br>-->
     </div>
 
     <label class="checkbox-group">
       <input type="checkbox" id="checkRules" onchange="checkFormValidity()">
-      <span>Ich respektiere die Regeln und habe das Regelwerk oben aufmerksam gelesen.</span>
+      <span>Ich respektiere die Regeln und habe das Regelwerk oben aufmerksam gelesen._.</span>
     </label>
 
     <label class="checkbox-group">
       <input type="checkbox" id="checkPlayers" onchange="checkFormValidity()">
-      <span>Ich respektiere alle Mitspieler und verhalte mich im Chat stets reif und freundlich.</span>
+      <span>Ich respektiere alle Mitspieler und verhalte mich freundlich:)</span>
     </label>
 
     <label class="checkbox-group">
       <input type="checkbox" id="checkStealing" onchange="checkFormValidity()">
-      <span>Ich schwöre, ich werde mich immer stets brav benehmen.</span>
+      <span>Ich schwöre, ich werde mich immer stets brav benehmen:|</span>
     </label>
 
     <label class="checkbox-group">
       <input type="checkbox" id="checkBetteln" onchange="checkFormValidity()">
-      <span>Ich werde das Admin Team niemals nach Rechten (OP), Items oder Rängen anbetteln.</span>
+      <span>Ich werde den Admin niemals nach Rechten (OP), Items oder anderen anbetteln;-;</span>
     </label>
 
     <button type="submit" id="submitBtn" class="mc-btn" disabled>Bewerbung absenden</button>
