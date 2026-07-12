@@ -7,7 +7,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
   
   <style>
     :root {
@@ -19,6 +19,7 @@
       --diamond: #44d4d4;
       --muted: #aaaaaa;
       --trust-green: #00b67a;
+      --gold: #f5c518;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,21 +35,22 @@
 
     /* Sidebar */
     .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; z-index: 100; }
-    .sidebar-logo { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); text-align: center; }
+    .sidebar-logo { margin-bottom: 30px; padding-bottom: 20px; border-border-bottom: 1px solid var(--border); text-align: center; }
     .logo-text { font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: 2px; }
     .sidebar-section { flex: 1; display: flex; flex-direction: column; gap: 10px; }
     .mc-btn { background: transparent; color: #ccc; border: none; padding: 12px; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem; transition: 0.2s; border-radius: 8px; width: 100%; }
-    .mc-btn:hover, .mc-btn.active { color: #fff; background: var(--primary); color: #000; }
+    .mc-btn:hover, .mc-btn.active { color: #000; background: var(--primary); }
     
     /* Layout */
     main { margin-left: 260px; padding: 40px; }
-    .page { display: none; }
-    .page.active { display: block; }
+    .page { display: none; opacity: 0; transition: opacity 0.3s; }
+    .page.active { display: block; opacity: 1; }
 
     /* UI Elements */
     .glass-card { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 30px; margin-bottom: 20px; backdrop-filter: blur(10px); }
     .hero { margin-bottom: 40px; }
     .hero h1 { font-size: 2.5rem; font-weight: 800; }
+    .hero span { color: var(--primary); }
     .hero-sub { color: var(--muted); font-size: 1.1rem; }
     
     .mc-panel-title { font-weight: 800; font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 20px; color: var(--primary); }
@@ -60,15 +62,21 @@
     .theme-picker { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: center; }
     .color-dot { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; }
 
-    /* Paypol Modal Styling */
+    /* Paypol Modal */
     .paypol-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 1000; }
     .paypol-modal-overlay.show { display: flex; }
     .paypol-box { background: #0a0a0a; border: 1px solid var(--border); width: 400px; padding: 30px; border-radius: 15px; position: relative; }
     .paypol-btn { width: 100%; background: #00b67a; color: #fff; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
     /* Cookie Banner */
-    .mc-cookie-banner { position: fixed; bottom: 20px; right: 20px; width: 350px; background: #1a1a1a; padding: 20px; border: 1px solid var(--border); border-radius: 10px; }
+    .mc-cookie-banner { position: fixed; bottom: 20px; right: 20px; width: 350px; background: #1a1a1a; padding: 20px; border: 1px solid var(--border); border-radius: 10px; display: none; }
+    .mc-cookie-banner.show { display: block; }
     .mc-cookie-btn { cursor: pointer; display: inline-block; padding: 8px 15px; background: #333; margin-top: 10px; border-radius: 5px; }
+
+    /* Animations */
+    @keyframes cinematicScrollUp { from { transform: translateY(100%); } to { transform: translateY(-100%); } }
+    [data-reveal] { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+    [data-reveal].revealed { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
@@ -82,6 +90,7 @@
     <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">CLIP-ARCHIV</button>
     <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">UPLOAD</button>
     <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload">BASE-SCHUTZ</button>
+    <button class="mc-btn" onclick="logout()">EXIT</button>
   </div>
   
   <div class="theme-picker">
@@ -92,39 +101,44 @@
 </div>
 
 <main>
+  <!-- Home Page -->
   <div id="home" class="page active">
     <div class="hero">
       <h1>Moin, <br><span id="user-name-display">Spieler</span>.</h1>
       <p class="hero-sub">Willkommen im Quaps Attack Dashboard.</p>
     </div>
-
     <div class="glass-card">
       <div class="mc-panel-title">📜 REGELN</div>
       <p>▶ Das Griefen ist untersagt.<br>▶ Hacks führen zum Bann.</p>
     </div>
-
-    <div class="glass-card" style="border-color: var(--diamond);">
-      <div class="mc-panel-title" style="color: var(--diamond);">🛡 BASE-SCHUTZ</div>
-      <button onclick="showPage('image-upload')" class="mc-action" style="color: var(--diamond); border-color: var(--diamond);">▶ JETZT BILD HOCHLADEN</button>
+    <div class="glass-card">
+        <div class="mc-panel-title">💬 QUAPS PINNWAND</div>
+        <div id="pinnwand-box"></div>
+        <input type="text" id="pinnwand-input" class="mc-input" placeholder="Schreib was...">
+        <button onclick="postToPinnwand()" id="pinnwand-btn" class="mc-action">SENDEN</button>
     </div>
   </div>
 
+  <!-- Upload Page -->
   <div id="upload" class="page">
-    <div class="hero">
-      <h1>Clip <span>einsenden</span></h1>
-    </div>
+    <div class="hero"><h1>Clip <span>einsenden</span></h1></div>
     <div class="glass-card">
+      <input class="mc-input" id="uploaderName" type="text" readonly>
       <input class="mc-input" id="clipTitle" placeholder="Titel">
-      <button onclick="sendToDiscord()" class="mc-action full">▶ AN DISCORD SENDEN</button>
+      <input class="mc-input" id="clipLink" placeholder="Link">
+      <button onclick="sendToDiscord()" id="submitBtn" class="mc-action full">▶ AN DISCORD SENDEN</button>
+      <div id="statusMsg" style="display:none; color:var(--primary); margin-top:10px;">Erfolgreich!</div>
     </div>
   </div>
   
+  <!-- Image Upload Page -->
   <div id="image-upload" class="page">
-    <div class="hero">
-      <h1>Bilder <span>Upload</span></h1>
-    </div>
+    <div class="hero"><h1>Base <span>Schutz</span></h1></div>
     <div class="glass-card">
-      <button onclick="sendImageToDiscord()" class="mc-action full" style="color: var(--diamond);">▶ BILD SENDEN</button>
+        <input class="mc-input" id="imageUploaderName" type="text" readonly>
+        <input class="mc-input" id="imageDescription" placeholder="Beschreibung">
+        <input type="file" id="baseImageFile" onchange="previewImageFileName()">
+        <button onclick="sendImageToDiscord()" id="imgSubmitBtn" class="mc-action full" style="color: var(--diamond);">▶ BILD SENDEN</button>
     </div>
   </div>
 </main>
@@ -136,13 +150,22 @@
 
 <div class="paypol-modal-overlay" id="paypolModal">
   <div class="paypol-box">
-    <div class="mc-panel-title">PAYPOL GATEWAY</div>
-    <button class="paypol-btn" onclick="verifyPaypolCode()">VERIFIZIEREN</button>
+    <div id="cinematic-intro-screen" style="display:none;"></div>
+    <div class="mc-panel-title" id="paypolItemName">PAYPOL GATEWAY</div>
+    <div id="paypol-step-2">
+        <input type="text" id="paypolCode" class="mc-input" placeholder="Code eingeben">
+        <button id="paypolBtn" class="paypol-btn" onclick="verifyPaypolCode()">VERIFIZIEREN</button>
+        <div id="paypolError" style="color:red; display:none;">Falscher Code!</div>
+    </div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // Theme Logik
+  const supabaseClient = supabase.createClient("https://sdwelvinfbqxivvxnjkh.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE");
+  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
+  const NEW_DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1509916610008322128/3UyMxJGsobkWgUWaVh_fAa-K36T9Uax_LGBjbNrjliz37rp7JB-qYp7A39e8IfvCa2Dy";
+
   function setTheme(color) {
     document.documentElement.style.setProperty('--primary', color);
     document.body.style.background = `linear-gradient(135deg, #050505 0%, ${color}33 100%)`;
@@ -154,17 +177,28 @@
     if (savedTheme) setTheme(savedTheme);
   }
 
+  window.addEventListener('DOMContentLoaded', () => {
+    loadTheme();
+    initReveal();
+    setTimeout(() => { document.getElementById('cookie-banner').classList.add('show'); }, 2000);
+  });
+
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    document.getElementById('btn-' + id).classList.add('active');
+    initReveal();
   }
 
-  function handleCookie(accepted) { document.getElementById('cookie-banner').style.display = 'none'; }
-  function verifyPaypolCode() { alert("Check..."); }
-  function sendToDiscord() { alert("Gesendet!"); }
-  function sendImageToDiscord() { alert("Bild gesendet!"); }
+  function initReveal() {
+    const els = document.querySelectorAll('.page.active [data-reveal]');
+    els.forEach(el => el.classList.add('revealed'));
+  }
 
-  window.addEventListener('DOMContentLoaded', loadTheme);
+  function handleCookie(accepted) { document.getElementById('cookie-banner').classList.remove('show'); }
+  function logout() { window.location.href = 'login.html'; }
+  // ... restliche Funktionen aus deinem Skript-Block hier einfügen ...
 </script>
 </body>
 </html>
