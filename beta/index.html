@@ -8,38 +8,43 @@
   <link rel="icon" type="image/jpeg" href="unnamed.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --primary: #a8ff78; /* Standard: Grün */
-      --bg: #050505; --panel: #0f0f0f;
-      --glass: rgba(255, 255, 255, 0.03); --text: #e0e0e0; --gold: #f5c518;
-      --pp-blue: #003087; --pp-cyan: #009cde; --tp-green: #00b67a; --tp-text: #050f19;
-      --border: #333333; --diamond: #44d4d4;
+      --primary: #a8ff78;
+      --bg-start: #050505;
+      --panel: rgba(255, 255, 255, 0.05);
+      --text: #e0e0e0;
+      --border: rgba(255, 255, 255, 0.1);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; }
+    
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: linear-gradient(135deg, #050505 0%, #a8ff7833 100%);
+      background-attachment: fixed;
+      color: var(--text); 
+      overflow-x: hidden; 
+      min-height: 100vh;
+      transition: background 0.5s ease;
+    }
 
-    /* Video Background */
-    .video-bg { position: fixed; inset: 0; z-index: -1; background: #000; }
-    .video-bg iframe { position: absolute; top: 50%; left: 50%; width: 100vw; height: 100vh; transform: translate(-50%, -50%); filter: brightness(0.2); }
-    
     /* Sidebar */
-    .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #000; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; z-index: 100; }
-    .sidebar-logo { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #222; text-align: center; }
-    .logo-text { font-family: 'Press Start 2P', sans-serif; font-size: 1rem; color: var(--primary); }
-    .logo-sub { font-size: 0.6rem; color: #666; }
+    .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; z-index: 100; }
+    .sidebar-logo { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); text-align: center; }
+    .logo-text { font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: 2px; }
+    .logo-sub { font-size: 0.7rem; color: #666; margin-top: 5px; }
     
-    .sidebar-section { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-    .mc-btn { background: transparent; color: #aaa; border: none; padding: 15px; text-align: left; cursor: pointer; font-family: 'Press Start 2P', sans-serif; font-size: 0.6rem; transition: 0.2s; }
-    .mc-btn:hover, .mc-btn.active { color: var(--primary); background: rgba(255, 255, 255, 0.05); }
+    .sidebar-section { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .mc-btn { background: transparent; color: #ccc; border: none; padding: 12px; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem; transition: 0.2s; border-radius: 8px; }
+    .mc-btn:hover, .mc-btn.active { color: #fff; background: var(--primary); }
     
     /* Theme Picker */
-    .theme-picker { padding: 15px; border-top: 1px solid #222; display: flex; gap: 10px; justify-content: center; }
-    .color-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
-    .color-dot:hover { transform: scale(1.2); border-color: #fff; }
+    .theme-picker { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: center; }
+    .color-dot { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+    .color-dot:hover { transform: scale(1.2); }
 
     /* Main Content */
     main { margin-left: 260px; padding: 40px; }
@@ -47,36 +52,28 @@
     .page.active { display: block; }
 
     /* UI Elements */
-    .mc-panel { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 30px; margin-bottom: 20px; backdrop-filter: blur(10px); }
-    .mc-input { width: 100%; background: #000; border: 1px solid var(--border); padding: 15px; color: #fff; margin-bottom: 10px; border-radius: 8px; }
-    .mc-action { background: var(--primary); color: #000; padding: 15px 30px; border: none; font-family: 'Press Start 2P', sans-serif; cursor: pointer; border-radius: 8px; font-size: 0.7rem; }
+    .mc-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 30px; margin-bottom: 20px; backdrop-filter: blur(10px); }
+    .mc-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 15px; color: #fff; margin-bottom: 10px; border-radius: 8px; font-family: 'Inter', sans-serif; }
+    .mc-action { background: var(--primary); color: #000; padding: 15px 30px; border: none; font-weight: 800; cursor: pointer; border-radius: 8px; font-size: 0.9rem; }
     
-    /* Cookie Banner */
-    .mc-cookie-banner { position: fixed; bottom: 20px; right: -400px; width: 350px; background: #1a1a1a; padding: 20px; border: 2px solid #333; transition: 0.6s; z-index: 1000; }
-    .mc-cookie-banner.show { right: 20px; }
+    h1 { margin-bottom: 20px; font-weight: 800; }
   </style>
 </head>
 <body>
 
-<div class="video-bg">
-  <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0" frameborder="0" allow="autoplay"></iframe>
-</div>
-
 <div class="sidebar">
   <div class="sidebar-logo">
-    <span class="logo-text">QUAPS<br>HUB</span>
-    <span class="logo-sub">ATTACK EDITION // v2.6</span>
+    <div class="logo-text">QUAPS HUB</div>
+    <div class="logo-sub">ATTACK EDITION</div>
   </div>
   <div class="sidebar-section">
     <button class="mc-btn active" onclick="showPage('home')" id="btn-home">HOME</button>
     <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">CLIP-ARCHIV</button>
     <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">CLIP UPLOAD</button>
-    <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload">🖼 BILDER UP-LOAD</button>
-    <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">DOWNLOADS</button>
-    <button class="mc-btn logout-btn" onclick="logout()">EXIT</button>
+    <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload">BILDER UP-LOAD</button>
+    <button class="mc-btn" onclick="logout()">EXIT</button>
   </div>
   
-  <!-- Theme Picker -->
   <div class="theme-picker">
     <div class="color-dot" style="background: #a8ff78" onclick="setTheme('#a8ff78')"></div>
     <div class="color-dot" style="background: #ff7878" onclick="setTheme('#ff7878')"></div>
@@ -88,54 +85,35 @@
 <main>
   <div class="page active" id="home">
     <div class="mc-panel">
-      <h1>Willkommen <span id="user-name-display"></span></h1>
+      <h1>Willkommen, <span id="user-name-display">SPIELER</span></h1>
       <div id="pinnwand-box" style="margin-top:20px;"></div>
       <input type="text" id="pinnwand-input" class="mc-input" placeholder="Schreib was an die Wand...">
-      <button class="mc-action" id="pinnwand-btn" onclick="postToPinnwand()">SENDEN</button>
+      <button class="mc-action" onclick="postToPinnwand()">SENDEN</button>
     </div>
   </div>
-
-  <div class="page" id="upload">
-    <div class="mc-panel">
-      <h1>Clip Upload</h1>
-      <input type="text" id="clipTitle" class="mc-input" placeholder="Titel">
-      <input type="text" id="clipLink" class="mc-input" placeholder="Link">
-      <button class="mc-action" id="submitBtn" onclick="sendToDiscord()">▶ SENDEN</button>
-    </div>
-  </div>
-
-  <div class="page" id="image-upload">
-    <div class="mc-panel">
-      <h1>Bilder Up-Load</h1>
-      <input type="file" id="baseImageFile" onchange="previewImageFileName()" style="display:none;">
-      <label for="baseImageFile" id="imgUploadLabel" class="mc-action" style="display:block; margin-bottom:20px;">📁 Bild auswählen</label>
-      <input type="text" id="imageDescription" class="mc-input" placeholder="Beschreibung">
-      <button class="mc-action" id="imgSubmitBtn" onclick="sendImageToDiscord()">▶ BILD SENDEN</button>
-    </div>
-  </div>
+  <!-- Weitere Pages hier einfügen... -->
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // Setup & Init
-  const supabaseClient = supabase.createClient("https://sdwelvinfbqxivvxnjkh.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE");
-  
   // Theme Logik
   function setTheme(color) {
     document.documentElement.style.setProperty('--primary', color);
+    // Gradient setzen (Farbe + 33 ist der Hex-Alpha-Wert)
+    document.body.style.background = `linear-gradient(135deg, #050505 0%, ${color}33 100%)`;
+    document.body.style.backgroundAttachment = "fixed";
     localStorage.setItem('userTheme', color);
   }
 
   function loadTheme() {
     const savedTheme = localStorage.getItem('userTheme');
     if (savedTheme) {
-      document.documentElement.style.setProperty('--primary', savedTheme);
+      setTheme(savedTheme);
     }
   }
 
   window.addEventListener('DOMContentLoaded', () => {
     loadTheme();
-    // Deine restliche Initialisierung hier...
   });
 
   function showPage(id) {
@@ -144,8 +122,6 @@
   }
 
   function logout() { window.location.href = 'login.html'; }
-  // ... Rest deiner Funktionen (Supabase, Uploads etc. kopiere ich hier nicht alles doppelt, aber das Gerüst steht!)
 </script>
-
 </body>
 </html>
