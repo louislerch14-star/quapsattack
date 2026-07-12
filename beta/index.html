@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuapsHub</title>
+  <title>QUAPS HUB // DASHBOARD</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
     :root {
       --primary: #a8ff78;
@@ -16,148 +18,118 @@
       --border: #333333;
       --text: #f0f0f0;
       --muted: #aaaaaa;
-      --trust-green: #00b67a;
-      --paypol-blue: #003087;
-      --paypol-cyan: #0079c1;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
     body {
       font-family: 'VT323', monospace;
-      background: var(--bg);
+      background: linear-gradient(135deg, #0a0a0a, #151515);
       color: var(--text);
-      overflow-x: hidden;
       min-height: 100vh;
-      font-size: 1.2rem;
-      line-height: 1.6;
+      display: flex;
     }
 
-    h1, h2, h3, .mc-font, .mc-btn, .mc-action {
-      font-family: 'Press Start 2P', monospace;
-      text-transform: uppercase;
-    }
-
-    /* ── VIDEO BACKGROUND ── */
-    .video-bg { position: fixed; inset: 0; z-index: -1; background: #0d1117; }
-    .video-bg iframe { position: absolute; top: 50%; left: 50%; width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; transform: translate(-50%, -50%); pointer-events: none; filter: brightness(0.12) saturate(0.3); }
-    .video-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,0.9) 100%); }
-
-    /* ── SIDEBAR ── */
-    .sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; background: var(--panel2); border-right: 2px solid var(--border); z-index: 100; display: flex; flex-direction: column; }
+    /* Sidebar */
+    .sidebar { width: 240px; height: 100vh; background: var(--panel2); border-right: 2px solid var(--border); display: flex; flex-direction: column; position: fixed; }
     .sidebar-logo { padding: 30px 20px; border-bottom: 2px solid var(--border); background: var(--panel); text-align: center; }
-    .logo-text { font-size: 1rem; color: var(--primary); display: block; }
-    .logo-sub { font-family: 'VT323', monospace; font-size: 1rem; color: var(--muted); margin-top: 8px; display: block; }
-
+    .logo-text { font-family: 'Press Start 2P', monospace; font-size: 0.8rem; color: var(--primary); display: block; }
     .sidebar-section { padding: 20px 0; flex: 1; display: flex; flex-direction: column; gap: 10px; }
-    .mc-btn { display: block; width: 100%; background: transparent; color: var(--muted); font-size: 0.6rem; padding: 16px 20px; border: none; cursor: pointer; text-align: left; transition: 0.2s; border-left: 3px solid transparent; }
-    .mc-btn:hover, .mc-btn.active { background: rgba(168, 255, 120, 0.08); color: #fff; border-left-color: var(--primary); }
+    .mc-btn { display: block; width: 100%; background: transparent; color: var(--muted); font-size: 0.6rem; font-family: 'Press Start 2P', monospace; padding: 16px 20px; border: none; cursor: pointer; text-align: left; border-left: 3px solid transparent; }
+    .mc-btn:hover, .mc-btn.active { background: rgba(255,255,255,0.05); color: #fff; border-left-color: var(--primary); }
+    
+    /* Farbwechsler */
+    .color-swapper { display: flex; gap: 10px; padding: 15px 20px; border-top: 2px solid var(--border); justify-content: center; }
+    .swatch { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid #333; }
 
-    /* ── COLOR SWAPPER ── */
-    .color-swapper { display: flex; gap: 10px; padding: 15px 20px; border-top: 2px solid var(--border); }
-    .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #333; }
-
-    /* ── CONTENT ── */
-    main { margin-left: 240px; padding: 60px 50px; z-index: 1; }
+    /* Content */
+    main { margin-left: 240px; padding: 50px; width: calc(100% - 240px); }
     .page { display: none; }
     .page.active { display: block; }
 
-    .mc-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 30px; margin-bottom: 24px; }
-    .mc-action { background: var(--panel2); color: var(--primary); font-size: 0.55rem; padding: 14px 28px; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); }
-    .mc-action:hover { background: #fff; color: #000; }
-    
-    .download-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-    .download-card { background: rgba(20, 20, 20, 0.8); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .mc-panel { background: rgba(26, 26, 26, 0.8); border: 1px solid var(--border); border-radius: 12px; padding: 30px; margin-bottom: 24px; }
+    .mc-input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 8px; margin-bottom: 10px; font-family: 'VT323', monospace; }
+    .mc-action { background: var(--panel2); color: var(--primary); padding: 10px 20px; border: 1px solid var(--primary); cursor: pointer; font-family: 'Press Start 2P', monospace; font-size: 0.5rem; }
+    .mc-action:hover { background: var(--primary); color: #000; }
 
-    @media (max-width: 800px) { .sidebar { width: 100%; height: auto; } main { margin-left: 0; } }
+    /* Downloads */
+    .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .download-card { background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 20px; border-radius: 12px; }
   </style>
 </head>
 <body>
 
-<div class="video-bg"><iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0"></iframe></div>
-
 <div class="sidebar">
   <div class="sidebar-logo">
     <span class="logo-text">QUAPS<br>HUB</span>
-    <span class="logo-sub">ATTACK EDITION</span>
   </div>
   <div class="sidebar-section">
-    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">HOME</button>
-    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">CLIP-ARCHIV</button>
+    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">HOME / PINNWAND</button>
     <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">WELTEN-DOWNLOADS</button>
-    <button class="mc-btn" onclick="showPage('apply')" id="btn-apply">BEWERBUNGEN</button>
   </div>
-  
   <div class="color-swapper">
     <div class="swatch" style="background: #a8ff78;" onclick="setCol('#a8ff78')"></div>
     <div class="swatch" style="background: #44d4d4;" onclick="setCol('#44d4d4')"></div>
-    <div class="swatch" style="background: #ff5555;" onclick="setCol('#ff5555')"></div>
+    <div class="swatch" style="background: #f5c518;" onclick="setCol('#f5c518')"></div>
   </div>
 </div>
 
 <main>
   <div id="home" class="page active">
-    <h1>DASHBOARD</h1>
+    <h1>QUAPS HUB</h1>
     <div class="mc-panel">
-      <div class="mc-panel-title">💬 QUAPS PINNWAND</div>
-      <div id="pinnwand-box" style="margin-bottom: 20px;">Lade Nachrichten...</div>
-      <div style="display: flex; gap: 10px;">
-        <input type="text" id="pinnwand-input" class="mc-input" placeholder="Schreib was..." style="flex:1; padding:10px; background:#000; color:#fff; border:1px solid #333;">
-        <button onclick="postToPinnwand()" class="mc-action">SENDEN</button>
-      </div>
+      <h3>💬 QUAPS PINNWAND</h3>
+      <div id="pinnwand-box" style="margin: 20px 0; max-height: 200px; overflow-y: auto;">Lädt Nachrichten...</div>
+      <input type="text" id="pinnwand-input" class="mc-input" placeholder="Schreib was auf die Wand...">
+      <button onclick="postToPinnwand()" class="mc-action">SENDEN</button>
     </div>
-  </div>
-
-  <div id="clips" class="page">
-    <h1>CLIP ARCHIV</h1>
-    <div class="mc-panel">
-        <p>Hier sind die legendären Clips.</p>
-        </div>
   </div>
 
   <div id="downloads" class="page">
     <h1>DOWNLOADS</h1>
     <div class="download-grid" id="download-list-container">
-        </div>
-  </div>
-
-  <div id="apply" class="page">
-    <h1>BEWERBUNGEN</h1>
-    <div class="mc-panel">Status: Keine neuen Bewerbungen.</div>
+      <div class="download-card">
+        <h3>Quaps Attack Season 10</h3>
+        <p style="color: var(--muted); margin: 10px 0;">Die legendäre Hauptwelt.</p>
+        <button class="mc-action" onclick="window.open('https://drive.google.com/file/d/18DLzMxDv_NbOSHvoSwV66zVyC049QcFl/view?usp=drive_link', '_blank')">DOWNLOAD</button>
+      </div>
+    </div>
   </div>
 </main>
 
 <script>
-  // Farbwechsler-Logik
+  // Supabase Setup (Dein Key)
+  const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Farbwechsler
   function setCol(c) {
     document.documentElement.style.setProperty('--primary', c);
   }
 
-  // Seiten-Navigation
+  // Navigation
   function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
   }
 
-  // Beispiel-Daten für Downloads
-  const PROJECT_DOWNLOADS = [
-    { id: "world1", title: "Quaps Hauptwelt", size: "5.0 GB" },
-  ];
-
-  function renderDownloadList() {
-    const container = document.getElementById('download-list-container');
-    container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
-      <div class="download-card">
-        <h3>${proj.title}</h3>
-        <p>Größe: ${proj.size}</p>
-        <button class="mc-action" style="margin-top:10px;">DOWNLOAD</button>
-      </div>
-    `).join('');
+  // Pinnwand Logik
+  async function loadPinnwand() {
+    const { data } = await supabase.from('pinnwand').select('*').order('created_at', { ascending: false }).limit(20);
+    const box = document.getElementById('pinnwand-box');
+    if (!data || data.length === 0) { box.innerHTML = "Noch keine Nachrichten."; return; }
+    box.innerHTML = data.map(m => `<div style="padding:5px; border-bottom:1px solid #333;">${m.name}: ${m.nachricht}</div>`).join('');
   }
 
-  // Initialisierung
-  window.onload = () => renderDownloadList();
+  async function postToPinnwand() {
+    const input = document.getElementById('pinnwand-input');
+    if(!input.value) return;
+    await supabase.from('pinnwand').insert([{ name: 'Spieler', nachricht: input.value }]);
+    input.value = '';
+    loadPinnwand();
+  }
+
+  window.onload = () => loadPinnwand();
 </script>
 
 </body>
