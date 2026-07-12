@@ -884,7 +884,6 @@
   </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -926,20 +925,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   isGuestMode = urlParams.get('guest') === 'true';
 
   if (isGuestMode) {
-    // Gast-Modus Einstellungen
     currentGlobalUser = "GAST";
-    
     document.getElementById('user-name-display').textContent = currentGlobalUser;
     document.getElementById('uploaderName').value = currentGlobalUser;
     document.getElementById('imageUploaderName').value = currentGlobalUser;
     document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
-
     disableGuestFeatures();
-    
-    // Gast-Modus Bypass für das Beta-Overlay
     document.getElementById('beta-overlay').style.display = 'none';
   } else {
-    // Normaler Login-Schutz über Supabase
     const { data: { session }, error } = await supabaseClient.auth.getSession();
 
     if (error || !session) {
@@ -955,7 +948,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('imageUploaderName').value = currentGlobalUser;
     document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
-    // 🌟 HIER IST DER NEUE BETA CHECK FÜR EINGELOGGTE SPIELER 🌟
+    // 🌟 KÜNSTLICHE VERZÖGERUNG (1.5 Sekunden)
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
     const { data: profile, error: profError } = await supabaseClient
       .from('profiles')
       .select('is_beta_tester')
@@ -963,17 +958,14 @@ window.addEventListener('DOMContentLoaded', async () => {
       .single();
 
     if (profError || !profile || profile.is_beta_tester !== true) {
-      // Nicht berechtigt -> Reject Panel zeigen
       document.getElementById('beta-loading').style.display = 'none';
       document.getElementById('beta-rejected').style.display = 'block';
-      return; // 🛑 Bricht hier ab, der Rest der Seite wird zwar geladen, aber vom Overlay verdeckt!
+      return; 
     }
 
-    // Wenn er Beta-Tester ist, machen wir das Overlay weg
     document.getElementById('beta-overlay').style.display = 'none';
   }
 
-  // Diese Funktionen werden für berechtigte oder Gäste geladen
   loadPinnwand();
   loadBewerbungen();
   renderDownloadList();
@@ -984,28 +976,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function disableGuestFeatures() {
   const pinnwandBtn = document.getElementById('pinnwand-btn');
-  if (pinnwandBtn) {
-    pinnwandBtn.disabled = true;
-    pinnwandBtn.textContent = "NUR ALS MITGLIED";
-    pinnwandBtn.style.opacity = "0.5";
-    pinnwandBtn.style.cursor = "not-allowed";
-  }
+  if (pinnwandBtn) { pinnwandBtn.disabled = true; pinnwandBtn.textContent = "NUR ALS MITGLIED"; pinnwandBtn.style.opacity = "0.5"; pinnwandBtn.style.cursor = "not-allowed"; }
   
   const clipBtn = document.getElementById('submitBtn');
-  if (clipBtn) {
-    clipBtn.disabled = true;
-    clipBtn.textContent = "NUR ALS MITGLIED";
-    clipBtn.style.opacity = "0.5";
-    clipBtn.style.cursor = "not-allowed";
-  }
+  if (clipBtn) { clipBtn.disabled = true; clipBtn.textContent = "NUR ALS MITGLIED"; clipBtn.style.opacity = "0.5"; clipBtn.style.cursor = "not-allowed"; }
 
   const imgBtn = document.getElementById('imgSubmitBtn');
-  if (imgBtn) {
-    imgBtn.disabled = true;
-    imgBtn.textContent = "NUR ALS MITGLIED";
-    imgBtn.style.opacity = "0.5";
-    imgBtn.style.cursor = "not-allowed";
-  }
+  if (imgBtn) { imgBtn.disabled = true; imgBtn.textContent = "NUR ALS MITGLIED"; imgBtn.style.opacity = "0.5"; imgBtn.style.cursor = "not-allowed"; }
 }
 
 function renderDownloadList() {
@@ -1014,7 +991,6 @@ function renderDownloadList() {
     const buttonHtml = isGuestMode 
       ? `<button class="mc-action" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>▶ NUR ALS MITGLIED</button>`
       : `<button onclick="openPaypolGateway('${proj.id}')" class="mc-action" style="width: 100%;">▶ DOWNLOAD ANFORDERN</button>`;
-
     return `
       <div class="download-card">
         <div>
@@ -1032,38 +1008,27 @@ function renderDownloadList() {
 
 function openPaypolGateway(id) {
   if (isGuestMode) return; 
-
   const project = PROJECT_DOWNLOADS.find(p => p.id === id);
   if (!project) return;
-
   selectedProjectId = id;
   document.getElementById('paypolItemName').textContent = project.title;
   document.getElementById('paypolAmount').value = "5";
   document.getElementById('paypolCode').value = "";
   document.getElementById('paypolError').style.display = "none";
-  
   document.getElementById('paypol-step-2').style.display = "none";
   const btn = document.getElementById('paypolBtn');
   btn.textContent = "Code prüfen & Download starten";
   btn.classList.remove('paypol-btn-unlocked');
-
   document.getElementById('paypolModal').classList.add('show');
-
   const introScreen = document.getElementById('cinematic-intro-screen');
   const scrollText = document.getElementById('cinematic-text-scroll');
-  
   if (project.introText) {
     introScreen.style.display = "flex";
     scrollText.innerHTML = project.introText;
     scrollText.style.animation = "cinematicScrollUp 18s linear forwards";
     playSound("achievement.mp3");
-
-    cinematicTimeout = setTimeout(() => {
-      skipCinematicIntro();
-    }, 18000);
-  } else {
-    introScreen.style.display = "none";
-  }
+    cinematicTimeout = setTimeout(() => { skipCinematicIntro(); }, 18000);
+  } else { introScreen.style.display = "none"; }
 }
 
 function skipCinematicIntro() {
@@ -1078,37 +1043,27 @@ function closePaypolGateway() {
   document.getElementById('cinematic-intro-screen').style.display = "none";
 }
 
-function advanceToCodeStep() {
-  document.getElementById('paypol-step-2').style.display = "block";
-  playSound("xp.mp3");
-}
+function advanceToCodeStep() { document.getElementById('paypol-step-2').style.display = "block"; playSound("xp.mp3"); }
 
 function verifyPaypolCode() {
   if (isGuestMode) return;
-
   const project = PROJECT_DOWNLOADS.find(p => p.id === selectedProjectId);
   if (!project) return;
-
   const inputCode = document.getElementById('paypolCode').value.trim();
   const errorBox = document.getElementById('paypolError');
   const btn = document.getElementById('paypolBtn');
-
   if (VALID_DOWNLOAD_CODES.includes(inputCode)) {
     errorBox.style.display = "none";
     btn.textContent = "✔ VERIFIZIERT - DATEI WIRD GELADEN";
     btn.classList.add('paypol-btn-unlocked');
     playSound("xp.mp3");
-    
     setTimeout(() => {
       const trigger = document.getElementById('hiddenDownloadTrigger');
       trigger.href = project.file;
       trigger.click();
       closePaypolGateway();
     }, 1500);
-  } else {
-    errorBox.style.display = "block";
-    playSound("creeper.mp3");
-  }
+  } else { errorBox.style.display = "block"; playSound("creeper.mp3"); }
 }
 
 function triggerCookieBanner() {
@@ -1124,103 +1079,41 @@ function handleCookie(accepted) {
   playSound(accepted ? "xp.mp3" : "creeper.mp3");
 }
 
-function playSound(file) {
-  try {
-    const audio = new Audio(file);
-    audio.volume = 0.4;
-    audio.play();
-  } catch (e) {}
-}
+function playSound(file) { try { const audio = new Audio(file); audio.volume = 0.4; audio.play(); } catch (e) {} }
 
 async function loadPinnwand() {
-  const { data, error } = await supabaseClient
-    .from('pinnwand')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(30);
-
-  if (error) {
-    document.getElementById('pinnwand-box').innerHTML = `<div style="color: #ff5555;">Fehler beim Laden!</div>`;
-    return;
-  }
-
+  const { data, error } = await supabaseClient.from('pinnwand').select('*').order('created_at', { ascending: false }).limit(30);
+  if (error) { document.getElementById('pinnwand-box').innerHTML = `<div style="color: #ff5555;">Fehler beim Laden!</div>`; return; }
   const box = document.getElementById('pinnwand-box');
-  if (data.length === 0) {
-    box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Noch keine Einträge.</div>`;
-    return;
-  }
-
-  box.innerHTML = data.reverse().map(msg => `
-    <div class="shoutbox-msg">
-      <span class="msg-user">${escapeHtml(msg.name)}:</span>
-      <span>${escapeHtml(msg.nachricht)}</span>
-    </div>
-  `).join('');
+  if (data.length === 0) { box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Noch keine Einträge.</div>`; return; }
+  box.innerHTML = data.reverse().map(msg => `<div class="shoutbox-msg"><span class="msg-user">${escapeHtml(msg.name)}:</span><span>${escapeHtml(msg.nachricht)}</span></div>`).join('');
   box.scrollTop = box.scrollHeight;
 }
 
 async function loadBewerbungen() {
-  const { data, error } = await supabaseClient
-    .from('bewerbungen')
-    .select('*')
-    .order('created_at', { ascending: false });
-
+  const { data, error } = await supabaseClient.from('bewerbungen').select('*').order('created_at', { ascending: false });
   const box = document.getElementById('bewerbungen-liste-box');
-
-  if (error) {
-    box.innerHTML = `<div style="color: #ff5555;">Fehler beim Laden der Bewerbungen!</div>`;
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Aktuell keine Bewerbungen vorhanden.</div>`;
-    return;
-  }
-
+  if (error) { box.innerHTML = `<div style="color: #ff5555;">Fehler beim Laden der Bewerbungen!</div>`; return; }
+  if (!data || data.length === 0) { box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Aktuell keine Bewerbungen vorhanden.</div>`; return; }
   box.innerHTML = data.map(apply => `
     <div style="padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px;">
-      <div style="font-family: 'Press Start 2P', monospace; font-size: 0.6rem; color: var(--gold); margin-bottom: 8px;">
-        Spieler: ${escapeHtml(apply.username || 'Unbekannt')}
-      </div>
-      <div style="font-size: 1.1rem; color: #fff; white-space: pre-wrap;">
-        ${escapeHtml(apply.begruendung || 'Keine Begründung angegeben.')}
-      </div>
-    </div>
-  `).join('');
+      <div style="font-family: 'Press Start 2P', monospace; font-size: 0.6rem; color: var(--gold); margin-bottom: 8px;">Spieler: ${escapeHtml(apply.username || 'Unbekannt')}</div>
+      <div style="font-size: 1.1rem; color: #fff; white-space: pre-wrap;">${escapeHtml(apply.begruendung || 'Keine Begründung angegeben.')}</div>
+    </div>`).join('');
 }
 
 async function postToPinnwand() {
   if (isGuestMode) return; 
-
   const input = document.getElementById('pinnwand-input');
   const btn = document.getElementById('pinnwand-btn');
   const text = input.value.trim();
   if (!text) return;
-
   btn.disabled = true; input.disabled = true;
-
-  const { error } = await supabaseClient
-    .from('pinnwand')
-    .insert([{ name: currentGlobalUser, nachricht: text }]);
-
+  const { error } = await supabaseClient.from('pinnwand').insert([{ name: currentGlobalUser, nachricht: text }]);
   if (error) { alert('Fehler beim Speichern.'); btn.disabled = false; input.disabled = false; return; }
-
-  const payload = {
-    username: 'QuapsHub Pinnwand',
-    avatar_url: 'https://quapsattack.airbusfan.de/unnamed.jpg',
-    content: '📢 **Neue Nachricht an der Wand!**',
-    embeds: [{
-      title: '💬 Quaps Attack Pinnwand',
-      description: `>>> ${text}`,
-      color: 0xa8ff78,
-      fields: [{ name: '👤 Absender', value: `\`${currentGlobalUser}\``, inline: true }]
-    }]
-  };
-
+  const payload = { username: 'QuapsHub Pinnwand', avatar_url: 'https://quapsattack.airbusfan.de/unnamed.jpg', content: '📢 **Neue Nachricht an der Wand!**', embeds: [{ title: '💬 Quaps Attack Pinnwand', description: `>>> ${text}`, color: 0xa8ff78, fields: [{ name: '👤 Absender', value: `\`${currentGlobalUser}\``, inline: true }] }] };
   try { await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch (e) {}
-
-  input.value = ''; btn.disabled = false; input.disabled = false;
-  loadPinnwand();
+  input.value = ''; btn.disabled = false; input.disabled = false; loadPinnwand();
 }
 
 function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
@@ -1234,28 +1127,16 @@ function showPage(id) {
   document.getElementById('btn-' + id).classList.add('active');
   window.scrollTo(0, 0);
   setTimeout(initReveal, 50);
-
   if (window.electronAPI) {
     let rpcText = "Im Hauptmenü 📋"; 
-
-    if (id === 'home') {
-      rpcText = "Chillt in der Base 🏡";
-    } else if (id === 'pinnwand') {
-      rpcText = "Liest die Pinnwand 💬";
-    } else if (id === 'bewerbungen' || id === 'bewerbung') {
-      rpcText = "Schaut sich Bewerbungen an 📝";
-    } else if (id === 'downloads') {
-      rpcText = "Schaut sich Downloads an 📂";
-    } else if (id === 'clips' || id === 'clip') {
-      rpcText = "Reicht Videos ein 📹";
-    } else if (id === 'bilder' || id === 'bild') {
-      rpcText = "Beantragt Grieferschutz 🖼";
-    } else if (id === 'projekte') {
-      rpcText = "Plant Riesen-Projekte 🏗";
-    } else {
-      rpcText = "Erkundet Bereich: " + id.toUpperCase();
-    }
-
+    if (id === 'home') rpcText = "Chillt in der Base 🏡";
+    else if (id === 'pinnwand') rpcText = "Liest die Pinnwand 💬";
+    else if (id === 'bewerbungen' || id === 'bewerbung') rpcText = "Schaut sich Bewerbungen an 📝";
+    else if (id === 'downloads') rpcText = "Schaut sich Downloads an 📂";
+    else if (id === 'clips' || id === 'clip') rpcText = "Reicht Videos ein 📹";
+    else if (id === 'bilder' || id === 'bild') rpcText = "Beantragt Grieferschutz 🖼";
+    else if (id === 'projekte') rpcText = "Plant Riesen-Projekte 🏗";
+    else rpcText = "Erkundet Bereich: " + id.toUpperCase();
     window.electronAPI.updateStatus(rpcText);
   }
 }
@@ -1268,139 +1149,59 @@ function initReveal() {
 
 function togglePlay() {
   const audio = document.getElementById('communitySong');
-  const btn   = document.getElementById('playBtn');
-  const vis   = document.getElementById('visualizer');
+  const btn = document.getElementById('playBtn');
+  const vis = document.getElementById('visualizer');
   if (audio.paused) { audio.play(); btn.textContent = '⏸ SONG PAUSIEREN'; vis.classList.add('playing'); }
   else { audio.pause(); btn.textContent = '▶ SONG ABSPIELEN'; vis.classList.remove('playing'); }
 }
 
 async function sendToDiscord() {
   if (isGuestMode) return; 
-
   const name = document.getElementById('uploaderName').value;
   const title = document.getElementById('clipTitle').value;
   const link = document.getElementById('clipLink').value;
   const btn = document.getElementById('submitBtn');
   const msg = document.getElementById('statusMsg');
-
   if (!title || !link) { alert('Bitte fülle alle Felder aus!'); return; }
   btn.textContent = '... ÜBERTRAGE DATEN'; btn.disabled = true;
-
-  const payload = {
-    username: 'QuapsHub Monitor',
-    embeds: [{
-      title: '📹 Neuer Clip eingereicht',
-      color: 0xa8ff78,
-      fields: [
-        { name: 'Spieler', value: name, inline: true },
-        { name: 'Titel', value: title, inline: true },
-        { name: 'Link', value: link }
-      ]
-    }]
-  };
-
+  const payload = { username: 'QuapsHub Monitor', embeds: [{ title: '📹 Neuer Clip eingereicht', color: 0xa8ff78, fields: [{ name: 'Spieler', value: name, inline: true }, { name: 'Titel', value: title, inline: true }, { name: 'Link', value: link }] }] };
   try {
-    await fetch(DISCORD_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    
+    await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     msg.style.display = 'block';
-    setTimeout(() => {
-      msg.style.display = 'none'; 
-      btn.textContent = '▶ AN DISCORD SENDEN'; 
-      btn.disabled = false;
-      document.getElementById('clipTitle').value = ''; 
-      document.getElementById('clipLink').value = '';
-      showPage('home');
-    }, 3000);
-  } catch { 
-    alert('Übertragung fehlgeschlagen.'); 
-    btn.textContent = '▶ AN DISCORD SENDEN'; 
-    btn.disabled = false; 
-  }
+    setTimeout(() => { msg.style.display = 'none'; btn.textContent = '▶ AN DISCORD SENDEN'; btn.disabled = false; document.getElementById('clipTitle').value = ''; document.getElementById('clipLink').value = ''; showPage('home'); }, 3000);
+  } catch { alert('Übertragung fehlgeschlagen.'); btn.textContent = '▶ AN DISCORD SENDEN'; btn.disabled = false; }
 }
 
 function previewImageFileName() {
   const fileInput = document.getElementById('baseImageFile');
   const display = document.getElementById('imgFileNameDisplay');
   const label = document.getElementById('imgUploadLabel');
-  
-  if (fileInput.files.length > 0) {
-    display.textContent = "Ausgewählt: " + fileInput.files[0].name;
-    display.style.display = "block";
-    label.textContent = "✔ Bild geladen";
-    label.style.borderColor = "var(--diamond)";
-  } else {
-    display.style.display = "none";
-    label.textContent = "📁 Bild auswählen oder hierher ziehen";
-    label.style.borderColor = "var(--border)";
-  }
+  if (fileInput.files.length > 0) { display.textContent = "Ausgewählt: " + fileInput.files[0].name; display.style.display = "block"; label.textContent = "✔ Bild geladen"; label.style.borderColor = "var(--diamond)"; }
+  else { display.style.display = "none"; label.textContent = "📁 Bild auswählen oder hierher ziehen"; label.style.borderColor = "var(--border)"; }
 }
 
 async function sendImageToDiscord() {
   if (isGuestMode) return; 
-
   const name = document.getElementById('imageUploaderName').value;
   const description = document.getElementById('imageDescription').value;
   const fileInput = document.getElementById('baseImageFile');
   const btn = document.getElementById('imgSubmitBtn');
   const msg = document.getElementById('imgStatusMsg');
-
   if (fileInput.files.length === 0) { alert('Bitte wähle ein Bild zum Hochladen aus!'); return; }
   btn.textContent = '... ÜBERTRAGE DATEN'; btn.disabled = true;
-
   const formData = new FormData();
   const file = fileInput.files[0];
-  
   const extension = file.name.split('.').pop();
   const safeFileName = `base_upload.${extension}`;
-
   formData.append('files[0]', file, safeFileName);
-
-  const embed = {
-    title: '🖼 Neues Base-Bild (Grieferschutz-Antrag)',
-    color: 0x44d4d4,
-    fields: [
-      { name: 'Spieler', value: name, inline: true },
-      { name: 'Info / Koordinaten', value: description || 'Keine Beschreibung angegeben.', inline: true }
-    ],
-    image: { 
-      url: `attachment://${safeFileName}` 
-    }
-  };
-
-  const payload = {
-    username: 'QuapsHub Base-Schutz',
-    embeds: [embed]
-  };
-
+  const embed = { title: '🖼 Neues Base-Bild (Grieferschutz-Antrag)', color: 0x44d4d4, fields: [{ name: 'Spieler', value: name, inline: true }, { name: 'Info / Koordinaten', value: description || 'Keine Beschreibung angegeben.', inline: true }], image: { url: `attachment://${safeFileName}` } };
+  const payload = { username: 'QuapsHub Base-Schutz', embeds: [embed] };
   formData.append('payload_json', JSON.stringify(payload));
-
   try {
-    await fetch(NEW_DISCORD_WEBHOOK, {
-      method: 'POST',
-      body: formData
-    });
-    
+    await fetch(NEW_DISCORD_WEBHOOK, { method: 'POST', body: formData });
     msg.style.display = 'block';
-    setTimeout(() => {
-      msg.style.display = 'none'; 
-      btn.textContent = '▶ BILD AN DISCORD SENDEN'; 
-      btn.disabled = false;
-      document.getElementById('imageDescription').value = ''; 
-      document.getElementById('baseImageFile').value = '';
-      document.getElementById('imgFileNameDisplay').style.display = 'none';
-      document.getElementById('imgUploadLabel').textContent = '📁 Bild auswählen oder hierher ziehen';
-      document.getElementById('imgUploadLabel').style.borderColor = 'var(--border)';
-      showPage('home');
-    }, 3000);
-  } catch { 
-    alert('Bilder-Übertragung fehlgeschlagen.'); 
-    btn.textContent = '▶ BILD AN DISCORD SENDEN'; 
-    btn.disabled = false; 
-  }
+    setTimeout(() => { msg.style.display = 'none'; btn.textContent = '▶ BILD AN DISCORD SENDEN'; btn.disabled = false; document.getElementById('imageDescription').value = ''; document.getElementById('baseImageFile').value = ''; document.getElementById('imgFileNameDisplay').style.display = 'none'; document.getElementById('imgUploadLabel').textContent = '📁 Bild auswählen oder hierher ziehen'; document.getElementById('imgUploadLabel').style.borderColor = 'var(--border)'; showPage('home'); }, 3000);
+  } catch { alert('Bilder-Übertragung fehlgeschlagen.'); btn.textContent = '▶ BILD AN DISCORD SENDEN'; btn.disabled = false; }
 }
 </script>
 </body>
