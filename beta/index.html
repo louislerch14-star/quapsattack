@@ -12,195 +12,152 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <style>
-  :root {
-  --primary: #5d5dff; /* Ein schickes, modernes Indigo */
-  --bg: #0f1115;
-  --panel: #1a1d23;
-  --panel2: #22262e;
-  --border: #2d323c;
-  --text: #e2e8f0;
+:root {
+  /* Midnight Violet Palette */
+  --bg: #09090b;
+  --surface: #141417;
+  --panel: #1e1e23;
+  --primary: #8b5cf6;      /* Violett */
+  --accent: #c084fc;
+  --text: #f8fafc;
   --muted: #94a3b8;
-  --success: #10b981;
-  --danger: #ef4444;
-  --paypol-blue: #0070ba;
+  --border: #2d2d37;
+  --error: #f43f5e;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; height: 100%; }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
-  overflow-x: hidden;
   min-height: 100vh;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 260px 1fr;
 }
 
-/* Typography modernisieren */
-h1, h2, h3, .mc-font, .mc-btn, .mc-action {
-  font-family: inherit;
-  font-weight: 700;
-  text-transform: none;
-}
-
-
-
-/* ── SIDEBAR ── */
+/* ── LAYOUT FIX: GRID ── */
 .sidebar {
-  position: fixed;
-  top: 0; left: 0;
-  width: 260px;
-  height: 100vh;
-  background: rgba(26, 29, 35, 0.8);
-  backdrop-filter: blur(12px);
+  background: var(--surface);
   border-right: 1px solid var(--border);
-  z-index: 100;
+  height: 100vh;
+  position: sticky;
+  top: 0;
   display: flex;
   flex-direction: column;
 }
 
-.sidebar-logo {
-  padding: 30px 24px;
-  border-bottom: 1px solid var(--border);
-}
-.sidebar-logo .logo-text {
-  font-size: 1.2rem;
-  color: #fff;
-  font-weight: 800;
-}
-.sidebar-logo .logo-sub {
-  font-size: 0.8rem;
-  color: var(--muted);
-  margin-top: 4px;
+main {
+  padding: 40px;
+  overflow-y: auto;
+  max-width: 1200px;
+  width: 100%;
 }
 
-.sidebar-section {
-  padding: 20px 12px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+/* ── SIDEBAR STUFF ── */
+.sidebar-logo { padding: 30px 24px; border-bottom: 1px solid var(--border); }
+.logo-text { font-size: 1.25rem; font-weight: 800; color: #fff; }
+.logo-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+.sidebar-section { padding: 20px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
 
 .mc-btn {
-  display: block;
   width: 100%;
+  padding: 12px 16px;
   background: transparent;
   color: var(--muted);
-  font-size: 0.9rem;
-  padding: 12px 16px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   text-align: left;
   transition: all 0.2s ease;
+  font-size: 0.95rem;
 }
-.mc-btn:hover {
-  background: rgba(255,255,255,0.05);
-  color: #fff;
-}
-.mc-btn.active {
-  background: var(--primary);
-  color: #fff;
-}
+.mc-btn:hover { background: rgba(139, 92, 246, 0.1); color: var(--primary); }
+.mc-btn.active { background: var(--primary); color: white; }
 
-/* ── MAIN CONTENT ── */
-main {
-  margin-left: 260px;
-  padding: 60px;
-  position: relative;
-  z-index: 1;
-}
-
+/* ── CONTENT PANELS ── */
 .mc-panel {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
 }
 
 .mc-panel-title {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.05em;
   color: var(--muted);
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-/* ── ACTIONS ── */
+/* ── ACTIONS & INPUTS ── */
 .mc-action {
   display: inline-block;
   background: var(--primary);
   color: white;
-  font-size: 0.9rem;
   padding: 12px 24px;
   border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-  text-decoration: none;
-  transition: filter 0.2s;
   border: none;
+  transition: transform 0.1s;
 }
-.mc-action:hover { filter: brightness(1.1); }
+.mc-action:hover { background: var(--accent); }
+.mc-action:active { transform: scale(0.98); }
 
-/* ── MODERN INPUTS ── */
 .mc-input {
   width: 100%;
-  background: #0f1115;
+  padding: 12px;
+  background: var(--bg);
   border: 1px solid var(--border);
-  padding: 14px;
   border-radius: 8px;
-  color: #fff;
-  margin-bottom: 15px;
-  font-size: 1rem;
+  color: white;
+  margin-bottom: 16px;
 }
 .mc-input:focus { border-color: var(--primary); outline: none; }
 
-/* ── COOKIE BANNER (MODERN) ── */
+/* ── COOKIE BANNER ── */
 .mc-cookie-banner {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 360px;
-  background: #1a1d23;
+  bottom: 24px;
+  right: 24px;
+  width: 320px;
+  background: var(--panel);
   border: 1px solid var(--border);
+  border-radius: 12px;
   padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
   display: none;
 }
 .mc-cookie-banner.show { display: block; }
-.mc-cookie-buttons { display: flex; gap: 10px; margin-top: 15px; }
+.mc-cookie-buttons { display: flex; gap: 8px; margin-top: 16px; }
 .mc-cookie-btn {
-  flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600;
+  flex: 1; padding: 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600;
 }
 .mc-cookie-btn.accept { background: var(--primary); color: white; }
 .mc-cookie-btn.decline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
 
-/* ── PAYPOL MODAL (MODERN SAAS LOOK) ── */
+/* ── MODALS (PAYPOL) ── */
 .paypol-modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
-  z-index: 2000; display: none; align-items: center; justify-content: center;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center; z-index: 999;
 }
 .paypol-modal-overlay.show { display: flex; }
-
 .paypol-box {
-  background: white; color: #111; width: 100%; max-width: 440px; border-radius: 16px; overflow: hidden;
-}
-.paypol-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-.paypol-logo-area { font-weight: 800; font-size: 1.4rem; color: var(--paypol-blue); }
-.paypol-body { padding: 24px; }
-.paypol-btn {
-  background: var(--paypol-blue); color: #fff; width: 100%; padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600;
+  background: white; color: #111; width: 100%; max-width: 400px;
+  border-radius: 12px; overflow: hidden; padding: 24px;
 }
 
-/* ── RESPONSIVE ── */
-@media (max-width: 800px) {
-  .sidebar { width: 100%; height: auto; position: relative; border-right: none; }
-  main { margin-left: 0; padding: 20px; }
+/* ── MOBILE RESPONSIVE FIX ── */
+@media (max-width: 768px) {
+  body { grid-template-columns: 1fr; }
+  .sidebar { height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
+  main { padding: 20px; }
 }
   </style>
 </head>
