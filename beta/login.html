@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quaps Attack Login</title>
+    <title>Quaps Attack Login | Community Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #a8ff78; --gold: #f5c518; --bg: #0a0a0a; --panel: #1a1a1a; --border: #333333; --text: #f0f0f0; --muted: #aaaaaa; }
@@ -14,9 +14,16 @@
         .logo-text { font-family: 'Press Start 2P', monospace; font-size: 1.1rem; color: var(--primary); margin-bottom: 30px; }
         .mc-label { font-family: 'Press Start 2P', monospace; font-size: 0.45rem; color: var(--gold); display: block; text-align: left; margin-bottom: 6px; }
         input { display: block; width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 14px; border-radius: 10px; color: #fff; margin-bottom: 18px; font-family: inherit; font-size: 1.1rem; }
-        button { display: block; width: 100%; background: #222222; color: var(--primary); font-family: 'Press Start 2P', monospace; font-size: 0.55rem; padding: 14px; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); }
+        input:focus { border-color: var(--primary); outline: none; }
+        button { display: block; width: 100%; background: #222222; color: var(--primary); font-family: 'Press Start 2P', monospace; font-size: 0.55rem; padding: 14px; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); transition: 0.2s; }
+        button:hover { background: #ffffff; color: #000000; }
         .hidden { display: none !important; }
-        #message { margin-top: 15px; font-size: 1rem; min-height: 24px; }
+        #message { margin-top: 15px; font-size: 1rem; min-height: 24px; color: #ff4d4d; }
+        
+        /* Google Button Style */
+        .google-btn { display: flex; align-items: center; justify-content: center; gap: 12px; color: #44d4d4; margin-top: 15px; }
+        .pixel-google-icon { width: 18px; height: 18px; background: transparent; box-shadow: 4px 0px 0 #ea4335, 6px 0px 0 #ea4335, 8px 0px 0 #ea4335, 10px 0px 0 #ea4335, 12px 0px 0 #ea4335, 2px 2px 0 #ea4335, 14px 2px 0 #ea4335, 0px 4px 0 #ea4335, 0px 6px 0 #ea4335, 0px 8px 0 #4285f4, 0px 10px 0 #4285f4, 0px 12px 0 #fabc05, 2px 14px 0 #fabc05, 4px 16px 0 #34a853, 6px 16px 0 #34a853, 8px 16px 0 #34a853, 10px 16px 0 #34a853, 12px 16px 0 #34a853, 14px 14px 0 #34a853, 16px 12px 0 #4285f4, 16px 10px 0 #4285f4, 16px 8px 0 #4285f4, 14px 8px 0 #4285f4, 12px 8px 0 #4285f4, 10px 8px 0 #4285f4, 8px 8px 0 #4285f4; margin-right: 4px; }
+        .divider { margin: 20px 0; color: #333; font-family: 'Press Start 2P', monospace; font-size: 0.4rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -24,6 +31,7 @@
     <div class="login-overlay">
         <div class="login-card">
             <h1 class="logo-text" id="formTitle">QUAPS LOGIN!</h1>
+            
             <form id="authForm">
                 <label class="mc-label">E-Mail</label>
                 <input type="email" id="email" required>
@@ -32,8 +40,18 @@
                 <button type="submit" id="loginBtn">LOGIN // MAIL</button>
                 <button type="button" id="signUpSubmitBtn" class="hidden">REGISTER ACCOUNT</button>
             </form>
-            <button class="secondary-btn" id="switchToRegisterBtn" style="background:transparent; color:white; border:none; margin-top:10px; cursor:pointer;">Noch kein Account?</button>
-            <button class="secondary-btn hidden" id="switchToLoginBtn" style="background:transparent; color:white; border:none; margin-top:10px; cursor:pointer;">Zum Login</button>
+
+            <button style="background:transparent; border:none; color:var(--muted); margin-top:15px; cursor:pointer;" id="switchToRegisterBtn">Noch kein Account? Registrieren</button>
+            <button class="hidden" style="background:transparent; border:none; color:var(--muted); margin-top:15px; cursor:pointer;" id="switchToLoginBtn">Bereits registriert? Zum Login</button>
+
+            <div id="googleSection">
+                <div class="divider">--------- OR ---------</div>
+                <button class="google-btn" id="googleBtn">
+                    <div class="pixel-google-icon"></div>
+                    SIGN IN WITH GOOGLE
+                </button>
+            </div>
+
             <div id="message"></div>
         </div>
     </div>
@@ -48,16 +66,21 @@
             if (session) window.location.href = 'index.html';
         });
 
-        // Form Logic...
         const authForm = document.getElementById('authForm');
         const loginBtn = document.getElementById('loginBtn');
         const signUpSubmitBtn = document.getElementById('signUpSubmitBtn');
         const switchToRegisterBtn = document.getElementById('switchToRegisterBtn');
         const switchToLoginBtn = document.getElementById('switchToLoginBtn');
+        const googleSection = document.getElementById('googleSection');
+        const googleBtn = document.getElementById('googleBtn');
+        const messageDiv = document.getElementById('message');
+
+        function showMessage(text) { messageDiv.textContent = text; }
 
         switchToRegisterBtn.addEventListener('click', () => {
             document.getElementById('formTitle').textContent = "QUAPS REGISTRATION!";
             loginBtn.classList.add('hidden');
+            googleSection.classList.add('hidden');
             switchToRegisterBtn.classList.add('hidden');
             signUpSubmitBtn.classList.remove('hidden');
             switchToLoginBtn.classList.remove('hidden');
@@ -68,6 +91,7 @@
             signUpSubmitBtn.classList.add('hidden');
             switchToLoginBtn.classList.add('hidden');
             loginBtn.classList.remove('hidden');
+            googleSection.classList.remove('hidden');
             switchToRegisterBtn.classList.remove('hidden');
         });
 
@@ -77,7 +101,7 @@
                 email: document.getElementById('email').value,
                 password: document.getElementById('password').value,
             });
-            if (error) alert(error.message);
+            if (error) showMessage(error.message);
             else window.location.href = 'index.html';
         });
 
@@ -86,8 +110,16 @@
                 email: document.getElementById('email').value,
                 password: document.getElementById('password').value,
             });
-            if (error) alert(error.message);
-            else alert("Check deine Mails, Digga!");
+            if (error) showMessage(error.message);
+            else showMessage("Check deine Mails, Digga!");
+        });
+
+        googleBtn.addEventListener('click', async () => {
+            const { error } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.origin + '/index.html' }
+            });
+            if (error) showMessage("Google Fehler: " + error.message);
         });
     </script>
 </body>
