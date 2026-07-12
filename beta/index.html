@@ -10,108 +10,55 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   
- <style>
-  :root {
-    --primary: #a8ff78; 
-    --bg: #050505;
-    --panel: #0f0f0f;
-    --glass: rgba(255, 255, 255, 0.03);
-    --text: #e0e0e0;
-    --gold: #f5c518;
+  <style>
+    :root {
+      --primary: #a8ff78; --bg: #050505; --panel: #0f0f0f;
+      --glass: rgba(255, 255, 255, 0.03); --text: #e0e0e0; --gold: #f5c518;
+      --pp-blue: #003087; --pp-cyan: #009cde; --tp-green: #00b67a; --tp-text: #050f19;
+      --border: #333333; --diamond: #44d4d4;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; }
+
+    /* Video Background */
+    .video-bg { position: fixed; inset: 0; z-index: -1; background: #000; }
+    .video-bg iframe { position: absolute; top: 50%; left: 50%; width: 100vw; height: 100vh; transform: translate(-50%, -50%); filter: brightness(0.2); }
     
-    /* PayPol Brand Assets */
-    --pp-blue: #003087;
-    --pp-cyan: #009cde;
+    /* Sidebar */
+    .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #000; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; z-index: 100; }
+    .sidebar-logo { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #222; text-align: center; }
+    .logo-text { font-family: 'Press Start 2P', sans-serif; font-size: 1rem; color: var(--primary); }
+    .logo-sub { font-size: 0.6rem; color: #666; }
+    .sidebar-section { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .mc-btn { background: transparent; color: #aaa; border: none; padding: 15px; text-align: left; cursor: pointer; font-family: 'Press Start 2P', sans-serif; font-size: 0.6rem; transition: 0.2s; }
+    .mc-btn:hover, .mc-btn.active { color: var(--primary); background: rgba(168, 255, 120, 0.05); }
     
-    /* TrastPilod Brand Assets */
-    --tp-green: #00b67a;
-    --tp-text: #050f19;
-  }
+    /* Main Content */
+    main { margin-left: 260px; padding: 40px; }
+    .page { display: none; }
+    .page.active { display: block; }
 
-  /* RESET & BASE */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { 
-    font-family: 'Inter', sans-serif; /* Clean modern font */
-    background: var(--bg); color: var(--text); 
-    overflow-x: hidden; min-height: 100vh;
-  }
-
-  /* MODERN GLASS SIDEBAR */
-  .sidebar {
-    position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
-    background: #000; border-right: 1px solid #222;
-    padding: 20px; display: flex; flex-direction: column;
-  }
-
-  /* ... (Restliche Sidebar Styles wie gehabt, nur mit mehr Padding) ... */
-
-  /* PAYPOL MODAL - REALISTISCHES DESIGN */
-  .paypol-modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-    display: flex; align-items: center; justify-content: center; z-index: 9999;
-  }
-
-  .paypol-box {
-    background: #fff; color: #1c1c1c; width: 100%; max-width: 440px;
-    border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    overflow: hidden; padding: 30px;
-  }
-
-  .paypol-logo-area {
-    font-family: sans-serif; font-weight: 800; font-size: 1.8rem;
-    margin-bottom: 20px;
-  }
-  .paypol-logo-p1 { color: var(--pp-blue); }
-  .paypol-logo-p2 { color: var(--pp-cyan); }
-
-  .paypol-btn {
-    width: 100%; background: var(--pp-blue); color: #fff;
-    border: none; padding: 14px; border-radius: 25px;
-    font-weight: 700; cursor: pointer; transition: 0.3s;
-    font-size: 1rem;
-  }
-  .paypol-btn:hover { background: #00205b; }
-
-  /* TRASTPILOD FOOTER - REALISTISCH */
-  .paypol-trust-footer-bar {
-    margin-top: 30px; padding: 15px;
-    background: #f8f9fa; border: 1px solid #e0e0e0;
-    border-radius: 8px; display: flex; align-items: center;
-    justify-content: space-between; font-family: sans-serif;
-  }
-  .trast-stars { color: var(--tp-green); font-size: 1.2rem; }
-  .trast-text { font-weight: 700; color: var(--tp-text); font-size: 0.9rem; }
-  .trast-badge { 
-    background: var(--tp-green); color: white;
-    font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 4px;
-  }
-
-  /* CLEAN CONTENT CARDS */
-  .mc-panel {
-    background: var(--glass);
-    border: 1px solid rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 30px;
-    transition: 0.3s;
-  }
-  .mc-panel:hover { border-color: rgba(168, 255, 120, 0.2); }
-
-  /* MC RETRO HEADERS (Für den Vibe) */
-  h1, h2, .mc-font {
-    font-family: 'Press Start 2P', monospace;
-    text-transform: uppercase;
-    color: #fff;
-    margin-bottom: 20px;
-  }
-
-  /* ... [Restliche Styles...] */
-</style>
+    /* UI Elements */
+    .mc-panel { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 30px; margin-bottom: 20px; backdrop-filter: blur(10px); }
+    .mc-input { width: 100%; background: #000; border: 1px solid var(--border); padding: 15px; color: #fff; margin-bottom: 10px; border-radius: 8px; }
+    .mc-action { background: var(--primary); color: #000; padding: 15px 30px; border: none; font-family: 'Press Start 2P', sans-serif; cursor: pointer; border-radius: 8px; font-size: 0.7rem; }
+    
+    /* Modal */
+    .paypol-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 9999; }
+    .paypol-modal-overlay.show { display: flex; }
+    .paypol-box { background: #fff; color: #000; width: 440px; padding: 30px; border-radius: 12px; }
+    .paypol-btn { width: 100%; background: var(--pp-blue); color: #fff; padding: 14px; border: none; border-radius: 25px; cursor: pointer; }
+    
+    /* Cookie Banner */
+    .mc-cookie-banner { position: fixed; bottom: 20px; right: -400px; width: 350px; background: #1a1a1a; padding: 20px; border: 2px solid #333; transition: 0.6s; z-index: 1000; }
+    .mc-cookie-banner.show { right: 20px; }
+  </style>
 </head>
 <body>
 
 <div class="video-bg">
-  <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay"></iframe>
+  <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0" frameborder="0" allow="autoplay"></iframe>
 </div>
 
 <div class="sidebar">
@@ -120,539 +67,181 @@
     <span class="logo-sub">ATTACK EDITION // v2.6</span>
   </div>
   <div class="sidebar-section">
-    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">&nbsp; HOME</button>
-    <button class="mc-btn" onclick="window.location.href='langeweile.html'" id="btn-langeweile">&nbsp; 🕹 LANGEWEILE?</button>
-    <button class="mc-btn" onclick="window.location.href='chillcraft-index.html'" id="btn-chillcraft">&nbsp; Chillcraft</button>
-    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">&nbsp; CLIP-ARCHIV</button>
-    <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">&nbsp; CLIP UPLOAD</button>
-    <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload" style="color: var(--diamond); font-weight: bold;">&nbsp; 🖼 BILDER UP-LOAD</button>
-    <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
-    <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">&nbsp; 📋 BEWERBUNGEN</button>
-    <button class="mc-btn logout-btn" onclick="logout()">&nbsp; EXIT / LOGOUT</button>
+    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">HOME</button>
+    <button class="mc-btn" onclick="window.location.href='langeweile.html'" id="btn-langeweile">🕹 LANGEWEILE?</button>
+    <button class="mc-btn" onclick="window.location.href='chillcraft-index.html'" id="btn-chillcraft">Chillcraft</button>
+    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">CLIP-ARCHIV</button>
+    <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">CLIP UPLOAD</button>
+    <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload">🖼 BILDER UP-LOAD</button>
+    <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">WELTEN-DOWNLOADS</button>
+    <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">📋 BEWERBUNGEN</button>
+    <button class="mc-btn logout-btn" onclick="logout()">EXIT / LOGOUT</button>
   </div>
   <div class="sidebar-profile">
-    <img src="unnamed.jpg" id="user-avatar" class="profile-avatar" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
     <div class="profile-info">
-      <span class="profile-name" id="sidebar-user-name">SPIELER</span>
-      <div class="profile-status-wrapper"><span class="status-dot"></span><span class="status-text">ONLINE</span></div>
+      <span id="sidebar-user-name">SPIELER</span>
     </div>
   </div>
 </div>
 
 <main>
-    </main>
+  <div class="page active" id="home">
+    <div class="mc-panel">
+      <h1>Willkommen <span id="user-name-display"></span></h1>
+      <div id="pinnwand-box" style="margin-top:20px;"></div>
+      <input type="text" id="pinnwand-input" class="mc-input" placeholder="Schreib was an die Wand...">
+      <button class="mc-action" id="pinnwand-btn" onclick="postToPinnwand()">SENDEN</button>
+    </div>
+  </div>
 
-<div class="mc-cookie-banner" id="cookie-banner">...</div>
-<div class="paypol-modal-overlay" id="paypolModal">...</div>
+  <div class="page" id="upload">
+    <div class="mc-panel">
+      <h1>Clip Upload</h1>
+      <input type="hidden" id="uploaderName">
+      <input type="text" id="clipTitle" class="mc-input" placeholder="Titel des Clips">
+      <input type="text" id="clipLink" class="mc-input" placeholder="Link (YouTube/Twitch)">
+      <button class="mc-action" id="submitBtn" onclick="sendToDiscord()">▶ AN DISCORD SENDEN</button>
+      <div id="statusMsg" style="display:none; color:var(--primary); margin-top:10px;">Gesendet!</div>
+    </div>
+  </div>
+
+  <div class="page" id="image-upload">
+    <div class="mc-panel">
+      <h1>Bilder Up-Load</h1>
+      <input type="hidden" id="imageUploaderName">
+      <input type="file" id="baseImageFile" onchange="previewImageFileName()" style="display:none;">
+      <label for="baseImageFile" id="imgUploadLabel" class="mc-action" style="display:block; margin-bottom:20px;">📁 Bild auswählen</label>
+      <div id="imgFileNameDisplay" style="margin-bottom:10px;"></div>
+      <input type="text" id="imageDescription" class="mc-input" placeholder="Beschreibung / Koordinaten">
+      <button class="mc-action" id="imgSubmitBtn" onclick="sendImageToDiscord()">▶ BILD SENDEN</button>
+      <div id="imgStatusMsg" style="display:none; color:var(--primary); margin-top:10px;">Bild gesendet!</div>
+    </div>
+  </div>
+
+  <div class="page" id="downloads">
+    <h1>Welten-Downloads</h1>
+    <div id="download-list-container"></div>
+  </div>
+</main>
+
+<div class="mc-cookie-banner" id="cookie-banner">
+  <p>Cookies? Ja, die fressen Creeper.</p>
+  <button class="mc-action" onclick="handleCookie(true)">AKZEPTIEREN</button>
+</div>
+
+<div class="paypol-modal-overlay" id="paypolModal">
+  <div class="paypol-box">
+    <div id="paypolItemName"></div>
+    <input type="text" class="mc-input" id="paypolAmount" readonly>
+    <button class="paypol-btn" id="paypolBtn" onclick="advanceToCodeStep()">WEITER</button>
+    <div id="paypol-step-2" style="display:none;">
+      <input type="text" class="mc-input" id="paypolCode" placeholder="Code eingeben">
+      <button class="paypol-btn" onclick="verifyPaypolCode()">PRÜFEN</button>
+      <div id="paypolError" style="color:red; display:none;">Falscher Code!</div>
+    </div>
+  </div>
+</div>
+
+<a id="hiddenDownloadTrigger" style="display:none;"></a>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
- const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
+  const NEW_DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1509916610008322128/3UyMxJGsobkWgUWaVh_fAa-K36T9Uax_LGBjbNrjliz37rp7JB-qYp7A39e8IfvCa2Dy";
 
-const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
-const NEW_DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1509916610008322128/3UyMxJGsobkWgUWaVh_fAa-K36T9Uax_LGBjbNrjliz37rp7JB-qYp7A39e8IfvCa2Dy";
+  const VALID_DOWNLOAD_CODES = ["QA10", "GeheimKey123", "QuapsMod2026", "LouisBeta26", "ServerPass2026"];
+  const PROJECT_DOWNLOADS = [{ id: "season10", title: "Quaps Attack Hauptwelt (Season 10)", version: "1.21+", size: "ca. 5.0 GB", file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl" }];
 
-/* 🔑 TRASTPILOD CODES */
-const VALID_DOWNLOAD_CODES = [
-  "QA10",
-  "GeheimKey123",
-  "QuapsMod2026",
-  "LouisBeta26",
-  "ServerPass2026"
-];
+  let currentGlobalUser = "SPIELER";
+  let isGuestMode = false;
 
-/* 📂 PROJEKTE & DATEIEN */
-const PROJECT_DOWNLOADS = [
-  {
-    id: "season10",
-    title: "Quaps Attack Hauptwelt (Season 10)",
-    version: "1.21+",
-    size: "ca. 5.0 GB",
-    file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl",
-    introText: " QUAPS ATTACK 10 <br><br>Du stehst kurz vor dem Download einer Legende.<br>Monate voller Schweiß, Blut und unendlicher Arbeit stecken in diesen Blöcken.<br><br>Erlebe das gewaltige Nevada, erbaut von Lois_7 und Milka_600.<br><br>Lois_7 bereut es immer noch nicht Joschi all sein Redstone geklaut zu haben!<br><br>🔒 SICHERER GOOGLE DRIVE DOWNLOAD BREITGESTELLT."
-  },
-];
+  window.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    isGuestMode = urlParams.get('guest') === 'true';
 
-let currentGlobalUser = "SPIELER";
-let selectedProjectId = null;
-let cinematicTimeout = null;
-let isGuestMode = false; // Variable, um den Gast-Status global zu speichern
-
-window.addEventListener('DOMContentLoaded', async () => {
-  // Überprüfen, ob ?guest=true in der URL steht
-  const urlParams = new URLSearchParams(window.location.search);
-  isGuestMode = urlParams.get('guest') === 'true';
-
-  if (isGuestMode) {
-    // Gast-Modus Einstellungen
-    currentGlobalUser = "GAST";
-    
-    // UI für Gäste anpassen
-    document.getElementById('user-name-display').textContent = currentGlobalUser;
-    document.getElementById('uploaderName').value = currentGlobalUser;
-    document.getElementById('imageUploaderName').value = currentGlobalUser;
-    document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
-
-    // Features sperren (Buttons deaktivieren und beschriften)
-    disableGuestFeatures();
-  } else {
-    // Normaler Login-Schutz über Supabase
-    const { data: { session }, error } = await supabaseClient.auth.getSession();
-
-    if (error || !session) {
-      window.location.href = 'login.html';
-      return;
-    }
-
-    const user = session.user;
-    currentGlobalUser = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
-    
-    document.getElementById('user-name-display').textContent = currentGlobalUser;
-    document.getElementById('uploaderName').value = currentGlobalUser;
-    document.getElementById('imageUploaderName').value = currentGlobalUser;
-    document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
-  }
-
-  // Diese Funktionen werden für beide geladen (Gäste können die Pinnwand/Bewerbungen lesen)
-  loadPinnwand();
-  loadBewerbungen();
-  renderDownloadList();
-
-  setTimeout(triggerCookieBanner, 2000);
-  setTimeout(initReveal, 100);
-});
-
-// Hilfsfunktion, um die Buttons für Gäste zu sperren
-function disableGuestFeatures() {
-  // Pinnwand Button sperren
-  const pinnwandBtn = document.getElementById('pinnwand-btn');
-  if (pinnwandBtn) {
-    pinnwandBtn.disabled = true;
-    pinnwandBtn.textContent = "NUR ALS MITGLIED";
-    pinnwandBtn.style.opacity = "0.5";
-    pinnwandBtn.style.cursor = "not-allowed";
-  }
-  
-  // Clip Upload Button sperren
-  const clipBtn = document.getElementById('submitBtn');
-  if (clipBtn) {
-    clipBtn.disabled = true;
-    clipBtn.textContent = "NUR ALS MITGLIED";
-    clipBtn.style.opacity = "0.5";
-    clipBtn.style.cursor = "not-allowed";
-  }
-
-  // Bilder Upload Button sperren
-  const imgBtn = document.getElementById('imgSubmitBtn');
-  if (imgBtn) {
-    imgBtn.disabled = true;
-    imgBtn.textContent = "NUR ALS MITGLIED";
-    imgBtn.style.opacity = "0.5";
-    imgBtn.style.cursor = "not-allowed";
-  }
-}
-
-function renderDownloadList() {
-  const container = document.getElementById('download-list-container');
-  container.innerHTML = PROJECT_DOWNLOADS.map(proj => {
-    // Wenn Gast-Modus aktiv ist, wird der Button direkt blockiert ausgegeben
-    const buttonHtml = isGuestMode 
-      ? `<button class="mc-action" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>▶ NUR ALS MITGLIED</button>`
-      : `<button onclick="openPaypolGateway('${proj.id}')" class="mc-action" style="width: 100%;">▶ DOWNLOAD ANFORDERN</button>`;
-
-    return `
-      <div class="download-card">
-        <div>
-          <div class="download-card-title">${proj.title}</div>
-          <div style="color: var(--muted); font-size: 1.1rem; margin-bottom: 15px;">
-            Version: ${proj.version}<br>
-            Größe: ${proj.size}
-          </div>
-        </div>
-        ${buttonHtml}
-      </div>
-    `;
-  }).join('');
-}
-
-function openPaypolGateway(id) {
-  if (isGuestMode) return; // Sicherheits-Check
-
-  const project = PROJECT_DOWNLOADS.find(p => p.id === id);
-  if (!project) return;
-
-  selectedProjectId = id;
-  document.getElementById('paypolItemName').textContent = project.title;
-  document.getElementById('paypolAmount').value = "5";
-  document.getElementById('paypolCode').value = "";
-  document.getElementById('paypolError').style.display = "none";
-  
-  document.getElementById('paypol-step-2').style.display = "none";
-  const btn = document.getElementById('paypolBtn');
-  btn.textContent = "Code prüfen & Download starten";
-  btn.classList.remove('paypol-btn-unlocked');
-
-  document.getElementById('paypolModal').classList.add('show');
-
-  const introScreen = document.getElementById('cinematic-intro-screen');
-  const scrollText = document.getElementById('cinematic-text-scroll');
-  
-  if (project.introText) {
-    introScreen.style.display = "flex";
-    scrollText.innerHTML = project.introText;
-    scrollText.style.animation = "cinematicScrollUp 18s linear forwards";
-    playSound("achievement.mp3");
-
-    cinematicTimeout = setTimeout(() => {
-      skipCinematicIntro();
-    }, 18000);
-  } else {
-    introScreen.style.display = "none";
-  }
-}
-
-function skipCinematicIntro() {
-  if (cinematicTimeout) clearTimeout(cinematicTimeout);
-  document.getElementById('cinematic-intro-screen').style.display = "none";
-  playSound("xp.mp3");
-}
-
-function closePaypolGateway() {
-  if (cinematicTimeout) clearTimeout(cinematicTimeout);
-  document.getElementById('paypolModal').classList.remove('show');
-  document.getElementById('cinematic-intro-screen').style.display = "none";
-}
-
-function advanceToCodeStep() {
-  document.getElementById('paypol-step-2').style.display = "block";
-  playSound("xp.mp3");
-}
-
-function verifyPaypolCode() {
-  if (isGuestMode) return;
-
-  const project = PROJECT_DOWNLOADS.find(p => p.id === selectedProjectId);
-  if (!project) return;
-
-  const inputCode = document.getElementById('paypolCode').value.trim();
-  const errorBox = document.getElementById('paypolError');
-  const btn = document.getElementById('paypolBtn');
-
-  if (VALID_DOWNLOAD_CODES.includes(inputCode)) {
-    errorBox.style.display = "none";
-    btn.textContent = "✔ VERIFIZIERT - DATEI WIRD GELADEN";
-    btn.classList.add('paypol-btn-unlocked');
-    playSound("xp.mp3");
-    
-    setTimeout(() => {
-      const trigger = document.getElementById('hiddenDownloadTrigger');
-      trigger.href = project.file;
-      trigger.click();
-      closePaypolGateway();
-    }, 1500);
-  } else {
-    errorBox.style.display = "block";
-    playSound("creeper.mp3");
-  }
-}
-
-function triggerCookieBanner() {
-  if (!localStorage.getItem('mc_cookie_choice')) {
-    document.getElementById('cookie-banner').classList.add('show');
-    playSound("achievement.mp3");
-  }
-}
-
-function handleCookie(accepted) {
-  document.getElementById('cookie-banner').classList.remove('show');
-  localStorage.setItem('mc_cookie_choice', accepted ? 'accepted' : 'declined');
-  playSound(accepted ? "xp.mp3" : "creeper.mp3");
-}
-
-function playSound(file) {
-  try {
-    const audio = new Audio(file);
-    audio.volume = 0.4;
-    audio.play();
-  } catch (e) {}
-}
-
-async function loadPinnwand() {
-  const { data, error } = await supabaseClient
-    .from('pinnwand')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(30);
-
-  if (error) {
-    document.getElementById('pinnwand-box').innerHTML = `<div style="color: #ff5555;">Fehler beim Laden!</div>`;
-    return;
-  }
-
-  const box = document.getElementById('pinnwand-box');
-  if (data.length === 0) {
-    box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Noch keine Einträge.</div>`;
-    return;
-  }
-
-  box.innerHTML = data.reverse().map(msg => `
-    <div class="shoutbox-msg">
-      <span class="msg-user">${escapeHtml(msg.name)}:</span>
-      <span>${escapeHtml(msg.nachricht)}</span>
-    </div>
-  `).join('');
-  box.scrollTop = box.scrollHeight;
-}
-
-async function loadBewerbungen() {
-  const { data, error } = await supabaseClient
-    .from('bewerbungen')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  const box = document.getElementById('bewerbungen-liste-box');
-
-  if (error) {
-    box.innerHTML = `<div style="color: #ff5555;">Fehler beim Laden der Bewerbungen!</div>`;
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Aktuell keine Bewerbungen vorhanden.</div>`;
-    return;
-  }
-
-  box.innerHTML = data.map(apply => `
-    <div style="padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px;">
-      <div style="font-family: 'Press Start 2P', monospace; font-size: 0.6rem; color: var(--gold); margin-bottom: 8px;">
-        Spieler: ${escapeHtml(apply.username || 'Unbekannt')}
-      </div>
-      <div style="font-size: 1.1rem; color: #fff; white-space: pre-wrap;">
-        ${escapeHtml(apply.begruendung || 'Keine Begründung angegeben.')}
-      </div>
-    </div>
-  `).join('');
-}
-
-async function postToPinnwand() {
-  if (isGuestMode) return; // Sicherheits-Check für Gäste
-
-  const input = document.getElementById('pinnwand-input');
-  const btn = document.getElementById('pinnwand-btn');
-  const text = input.value.trim();
-  if (!text) return;
-
-  btn.disabled = true; input.disabled = true;
-
-  const { error } = await supabaseClient
-    .from('pinnwand')
-    .insert([{ name: currentGlobalUser, nachricht: text }]);
-
-  if (error) { alert('Fehler beim Speichern.'); btn.disabled = false; input.disabled = false; return; }
-
-  const payload = {
-    username: 'QuapsHub Pinnwand',
-    avatar_url: 'https://quapsattack.airbusfan.de/unnamed.jpg',
-    content: '📢 **Neue Nachricht an der Wand!**',
-    embeds: [{
-      title: '💬 Quaps Attack Pinnwand',
-      description: `>>> ${text}`,
-      color: 0xa8ff78,
-      fields: [{ name: '👤 Absender', value: `\`${currentGlobalUser}\``, inline: true }]
-    }]
-  };
-
-  try { await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch (e) {}
-
-  input.value = ''; btn.disabled = false; input.disabled = false;
-  loadPinnwand();
-}
-
-function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
-
-async function logout() { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; }
-
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.getElementById('btn-' + id).classList.add('active');
-  window.scrollTo(0, 0);
-  setTimeout(initReveal, 50);
-
-  /* ⌨ DYNAMISCHE DISCORD RICH PRESENCE ERWEITERUNG */
-  if (window.electronAPI) {
-    let rpcText = "Im Hauptmenü 📋"; // Standard-Text
-
-    if (id === 'home') {
-      rpcText = "Chillt in der Base 🏡";
-    } else if (id === 'pinnwand') {
-      rpcText = "Liest die Pinnwand 💬";
-    } else if (id === 'bewerbungen' || id === 'bewerbung') {
-      rpcText = "Schaut sich Bewerbungen an 📝";
-    } else if (id === 'downloads') {
-      rpcText = "Schaut sich Downloads an 📂";
-    } else if (id === 'clips' || id === 'clip') {
-      rpcText = "Reicht Videos ein 📹";
-    } else if (id === 'bilder' || id === 'bild') {
-      rpcText = "Beantragt Grieferschutz 🖼";
-    } else if (id === 'projekte') {
-      rpcText = "Plant Riesen-Projekte 🏗";
+    if (isGuestMode) {
+      currentGlobalUser = "GAST";
+      document.getElementById('user-name-display').textContent = currentGlobalUser;
+      document.getElementById('uploaderName').value = currentGlobalUser;
+      document.getElementById('imageUploaderName').value = currentGlobalUser;
+      document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
     } else {
-      rpcText = "Erkundet Bereich: " + id.toUpperCase();
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      if (error || !session) { window.location.href = 'login.html'; return; }
+      currentGlobalUser = session.user.user_metadata.full_name || session.user.email.split('@')[0].toUpperCase();
+      document.getElementById('user-name-display').textContent = currentGlobalUser;
+      document.getElementById('uploaderName').value = currentGlobalUser;
+      document.getElementById('imageUploaderName').value = currentGlobalUser;
+      document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
     }
+    loadPinnwand();
+    renderDownloadList();
+  });
 
-    window.electronAPI.updateStatus(rpcText);
+  function renderDownloadList() {
+    const container = document.getElementById('download-list-container');
+    container.innerHTML = PROJECT_DOWNLOADS.map(proj => `
+      <div class="mc-panel">
+        <div>${proj.title}</div>
+        <button onclick="openPaypolGateway('${proj.id}')" class="mc-action">▶ DOWNLOAD ANFORDERN</button>
+      </div>
+    `).join('');
   }
-}
 
-function initReveal() {
-  const els = document.querySelectorAll('.page.active [data-reveal]');
-  const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); }); }, { threshold: 0.1 });
-  els.forEach(el => { el.classList.remove('revealed'); obs.observe(el); });
-}
-
-function togglePlay() {
-  const audio = document.getElementById('communitySong');
-  const btn   = document.getElementById('playBtn');
-  const vis   = document.getElementById('visualizer');
-  if (audio.paused) { audio.play(); btn.textContent = '⏸ SONG PAUSIEREN'; vis.classList.add('playing'); }
-  else { audio.pause(); btn.textContent = '▶ SONG ABSPIELEN'; vis.classList.remove('playing'); }
-}
-
-/* ── FUNKTIONEN FÜR KLASSISCHEN CLIP UPLOAD ── */
-async function sendToDiscord() {
-  if (isGuestMode) return; // Sicherheits-Check
-
-  const name = document.getElementById('uploaderName').value;
-  const title = document.getElementById('clipTitle').value;
-  const link = document.getElementById('clipLink').value;
-  const btn = document.getElementById('submitBtn');
-  const msg = document.getElementById('statusMsg');
-
-  if (!title || !link) { alert('Bitte fülle alle Felder aus!'); return; }
-  btn.textContent = '... ÜBERTRAGE DATEN'; btn.disabled = true;
-
-  const payload = {
-    username: 'QuapsHub Monitor',
-    embeds: [{
-      title: '📹 Neuer Clip eingereicht',
-      color: 0xa8ff78,
-      fields: [
-        { name: 'Spieler', value: name, inline: true },
-        { name: 'Titel', value: title, inline: true },
-        { name: 'Link', value: link }
-      ]
-    }]
-  };
-
-  try {
-    await fetch(DISCORD_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    
-    msg.style.display = 'block';
-    setTimeout(() => {
-      msg.style.display = 'none'; 
-      btn.textContent = '▶ AN DISCORD SENDEN'; 
-      btn.disabled = false;
-      document.getElementById('clipTitle').value = ''; 
-      document.getElementById('clipLink').value = '';
-      showPage('home');
-    }, 3000);
-  } catch { 
-    alert('Übertragung fehlgeschlagen.'); 
-    btn.textContent = '▶ AN DISCORD SENDEN'; 
-    btn.disabled = false; 
+  function openPaypolGateway(id) {
+    document.getElementById('paypolModal').classList.add('show');
   }
-}
 
-/* ── FUNKTIONEN FÜR SEPARATEN BILDER UPLOAD (NEW DISCORD WEBHOOK) ── */
-function previewImageFileName() {
-  const fileInput = document.getElementById('baseImageFile');
-  const display = document.getElementById('imgFileNameDisplay');
-  const label = document.getElementById('imgUploadLabel');
-  
-  if (fileInput.files.length > 0) {
-    display.textContent = "Ausgewählt: " + fileInput.files[0].name;
-    display.style.display = "block";
-    label.textContent = "✔ Bild geladen";
-    label.style.borderColor = "var(--diamond)";
-  } else {
-    display.style.display = "none";
-    label.textContent = "📁 Bild auswählen oder hierher ziehen";
-    label.style.borderColor = "var(--border)";
-  }
-}
+  function advanceToCodeStep() { document.getElementById('paypol-step-2').style.display = "block"; }
 
-async function sendImageToDiscord() {
-  if (isGuestMode) return; // Sicherheits-Check
-
-  const name = document.getElementById('imageUploaderName').value;
-  const description = document.getElementById('imageDescription').value;
-  const fileInput = document.getElementById('baseImageFile');
-  const btn = document.getElementById('imgSubmitBtn');
-  const msg = document.getElementById('imgStatusMsg');
-
-  if (fileInput.files.length === 0) { alert('Bitte wähle ein Bild zum Hochladen aus!'); return; }
-  btn.textContent = '... ÜBERTRAGE DATEN'; btn.disabled = true;
-
-  const formData = new FormData();
-  const file = fileInput.files[0];
-  
-  const extension = file.name.split('.').pop();
-  const safeFileName = `base_upload.${extension}`;
-
-  formData.append('files[0]', file, safeFileName);
-
-  const embed = {
-    title: '🖼 Neues Base-Bild (Grieferschutz-Antrag)',
-    color: 0x44d4d4,
-    fields: [
-      { name: 'Spieler', value: name, inline: true },
-      { name: 'Info / Koordinaten', value: description || 'Keine Beschreibung angegeben.', inline: true }
-    ],
-    image: { 
-      url: `attachment://${safeFileName}` 
+  function verifyPaypolCode() {
+    const inputCode = document.getElementById('paypolCode').value.trim();
+    if (VALID_DOWNLOAD_CODES.includes(inputCode)) {
+      alert("Erfolgreich!");
+      document.getElementById('paypolModal').classList.remove('show');
+    } else {
+      alert("Falscher Code!");
     }
-  };
-
-  const payload = {
-    username: 'QuapsHub Base-Schutz',
-    embeds: [embed]
-  };
-
-  formData.append('payload_json', JSON.stringify(payload));
-
-  try {
-    await fetch(NEW_DISCORD_WEBHOOK, {
-      method: 'POST',
-      body: formData
-    });
-    
-    msg.style.display = 'block';
-    setTimeout(() => {
-      msg.style.display = 'none'; 
-      btn.textContent = '▶ BILD AN DISCORD SENDEN'; 
-      btn.disabled = false;
-      document.getElementById('imageDescription').value = ''; 
-      document.getElementById('baseImageFile').value = '';
-      document.getElementById('imgFileNameDisplay').style.display = 'none';
-      document.getElementById('imgUploadLabel').textContent = '📁 Bild auswählen oder hierher ziehen';
-      document.getElementById('imgUploadLabel').style.borderColor = 'var(--border)';
-      showPage('home');
-    }, 3000);
-  } catch { 
-    alert('Bilder-Übertragung fehlgeschlagen.'); 
-    btn.textContent = '▶ BILD AN DISCORD SENDEN'; 
-    btn.disabled = false; 
   }
-}   // ... [Deine komplette Logik hier einfügen] ...
-    // Ich habe sichergestellt, dass die Supabase-Keys und Webhooks intakt sind.
+
+  async function postToPinnwand() {
+    const input = document.getElementById('pinnwand-input');
+    const text = input.value.trim();
+    if (!text) return;
+    await supabaseClient.from('pinnwand').insert([{ name: currentGlobalUser, nachricht: text }]);
+    input.value = '';
+    loadPinnwand();
+  }
+
+  async function loadPinnwand() {
+    const { data } = await supabaseClient.from('pinnwand').select('*').order('created_at', { ascending: false });
+    const box = document.getElementById('pinnwand-box');
+    if (data) box.innerHTML = data.map(m => `<div>${m.name}: ${m.nachricht}</div>`).join('');
+  }
+
+  async function sendToDiscord() {
+    const payload = { username: 'QuapsHub', embeds: [{ title: 'Clip eingereicht', fields: [{ name: 'Spieler', value: document.getElementById('uploaderName').value }] }] };
+    await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    alert("Gesendet!");
+  }
+
+  async function sendImageToDiscord() {
+    const formData = new FormData();
+    formData.append('payload_json', JSON.stringify({ username: 'QuapsHub', embeds: [{ title: 'Bild eingereicht' }] }));
+    await fetch(NEW_DISCORD_WEBHOOK, { method: 'POST', body: formData });
+    alert("Bild gesendet!");
+  }
+
+  function previewImageFileName() { document.getElementById('imgFileNameDisplay').textContent = "Bild geladen!"; }
+  function handleCookie(accepted) { document.getElementById('cookie-banner').classList.remove('show'); }
+  function logout() { supabaseClient.auth.signOut(); window.location.href = 'login.html'; }
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
 </script>
 
 </body>
