@@ -619,6 +619,17 @@
 </head>
 <body>
 
+<div id="beta-overlay" style="position: fixed; inset: 0; background: rgba(9, 9, 11, 0.95); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+  <div id="beta-loading" class="glass-card mc-panel" style="display: block; text-align: center; border-color: var(--diamond);">
+    <h2 style="margin-bottom: 10px;">Checke Beta-Berechtigungen... 💀</h2>
+    <p style="color: var(--muted);">Einen Moment, bruder.</p>
+  </div>
+  <div id="beta-rejected" class="glass-card mc-panel" style="display: none; border-color: #ef4444; text-align: center;">
+    <h2 style="color: #ef4444; margin-bottom: 10px;">Zugriff verweigert 😢</h2>
+    <p style="color: var(--muted); margin-bottom: 20px;">Sorry digger, dein Account hat leider keine Berechtigung für diese Beta-Phase.</p>
+    <button onclick="logout()" class="mc-action" style="background: transparent; border-color: #ef4444; color: #ef4444;">▶ ZURÜCK ZUM LOGIN</button>
+  </div>
+</div>
 
 <div class="sidebar">
   <div class="sidebar-logo">
@@ -628,11 +639,9 @@
 
   <div class="sidebar-section">
   <button class="mc-btn active" onclick="showPage('home')" id="btn-home">&nbsp; HOME</button> 
-    <!-- <button class="mc-btn" onclick="window.location.href='chillcraft-index.html'" id="btn-langeweile">&nbsp; Chillcraft</button> -->
-  <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">&nbsp; CLIP-ARCHIV</button>
+    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">&nbsp; CLIP-ARCHIV</button>
   <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">&nbsp; CLIP UPLOAD</button>
- <!-- <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload" style="color: var(--diamond); font-weight: bold;">&nbsp; 🖼 BILDER UP-LOAD</button> -->
-  <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
+ <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
   <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">&nbsp; 📋 BEWERBUNGEN</button>
   <button class="mc-btn logout-btn" onclick="logout()">&nbsp; EXIT / LOGOUT</button>
 </div>
@@ -910,10 +919,9 @@ const PROJECT_DOWNLOADS = [
 let currentGlobalUser = "SPIELER";
 let selectedProjectId = null;
 let cinematicTimeout = null;
-let isGuestMode = false; // Variable, um den Gast-Status global zu speichern
+let isGuestMode = false; 
 
 window.addEventListener('DOMContentLoaded', async () => {
-  // Überprüfen, ob ?guest=true in der URL steht
   const urlParams = new URLSearchParams(window.location.search);
   isGuestMode = urlParams.get('guest') === 'true';
 
@@ -921,14 +929,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Gast-Modus Einstellungen
     currentGlobalUser = "GAST";
     
-    // UI für Gäste anpassen
     document.getElementById('user-name-display').textContent = currentGlobalUser;
     document.getElementById('uploaderName').value = currentGlobalUser;
     document.getElementById('imageUploaderName').value = currentGlobalUser;
     document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
-    // Features sperren (Buttons deaktivieren und beschriften)
     disableGuestFeatures();
+    
+    // Gast-Modus Bypass für das Beta-Overlay
+    document.getElementById('beta-overlay').style.display = 'none';
   } else {
     // Normaler Login-Schutz über Supabase
     const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -945,9 +954,26 @@ window.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('uploaderName').value = currentGlobalUser;
     document.getElementById('imageUploaderName').value = currentGlobalUser;
     document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
+
+    // 🌟 HIER IST DER NEUE BETA CHECK FÜR EINGELOGGTE SPIELER 🌟
+    const { data: profile, error: profError } = await supabaseClient
+      .from('profiles')
+      .select('is_beta_tester')
+      .eq('id', user.id)
+      .single();
+
+    if (profError || !profile || profile.is_beta_tester !== true) {
+      // Nicht berechtigt -> Reject Panel zeigen
+      document.getElementById('beta-loading').style.display = 'none';
+      document.getElementById('beta-rejected').style.display = 'block';
+      return; // 🛑 Bricht hier ab, der Rest der Seite wird zwar geladen, aber vom Overlay verdeckt!
+    }
+
+    // Wenn er Beta-Tester ist, machen wir das Overlay weg
+    document.getElementById('beta-overlay').style.display = 'none';
   }
 
-  // Diese Funktionen werden für beide geladen (Gäste können die Pinnwand/Bewerbungen lesen)
+  // Diese Funktionen werden für berechtigte oder Gäste geladen
   loadPinnwand();
   loadBewerbungen();
   renderDownloadList();
@@ -956,9 +982,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   setTimeout(initReveal, 100);
 });
 
-// Hilfsfunktion, um die Buttons für Gäste zu sperren
 function disableGuestFeatures() {
-  // Pinnwand Button sperren
   const pinnwandBtn = document.getElementById('pinnwand-btn');
   if (pinnwandBtn) {
     pinnwandBtn.disabled = true;
@@ -967,7 +991,6 @@ function disableGuestFeatures() {
     pinnwandBtn.style.cursor = "not-allowed";
   }
   
-  // Clip Upload Button sperren
   const clipBtn = document.getElementById('submitBtn');
   if (clipBtn) {
     clipBtn.disabled = true;
@@ -976,7 +999,6 @@ function disableGuestFeatures() {
     clipBtn.style.cursor = "not-allowed";
   }
 
-  // Bilder Upload Button sperren
   const imgBtn = document.getElementById('imgSubmitBtn');
   if (imgBtn) {
     imgBtn.disabled = true;
@@ -989,7 +1011,6 @@ function disableGuestFeatures() {
 function renderDownloadList() {
   const container = document.getElementById('download-list-container');
   container.innerHTML = PROJECT_DOWNLOADS.map(proj => {
-    // Wenn Gast-Modus aktiv ist, wird der Button direkt blockiert ausgegeben
     const buttonHtml = isGuestMode 
       ? `<button class="mc-action" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>▶ NUR ALS MITGLIED</button>`
       : `<button onclick="openPaypolGateway('${proj.id}')" class="mc-action" style="width: 100%;">▶ DOWNLOAD ANFORDERN</button>`;
@@ -1010,7 +1031,7 @@ function renderDownloadList() {
 }
 
 function openPaypolGateway(id) {
-  if (isGuestMode) return; // Sicherheits-Check
+  if (isGuestMode) return; 
 
   const project = PROJECT_DOWNLOADS.find(p => p.id === id);
   if (!project) return;
@@ -1169,7 +1190,7 @@ async function loadBewerbungen() {
 }
 
 async function postToPinnwand() {
-  if (isGuestMode) return; // Sicherheits-Check für Gäste
+  if (isGuestMode) return; 
 
   const input = document.getElementById('pinnwand-input');
   const btn = document.getElementById('pinnwand-btn');
@@ -1214,9 +1235,8 @@ function showPage(id) {
   window.scrollTo(0, 0);
   setTimeout(initReveal, 50);
 
-  /* ⌨ DYNAMISCHE DISCORD RICH PRESENCE ERWEITERUNG */
   if (window.electronAPI) {
-    let rpcText = "Im Hauptmenü 📋"; // Standard-Text
+    let rpcText = "Im Hauptmenü 📋"; 
 
     if (id === 'home') {
       rpcText = "Chillt in der Base 🏡";
@@ -1254,9 +1274,8 @@ function togglePlay() {
   else { audio.pause(); btn.textContent = '▶ SONG ABSPIELEN'; vis.classList.remove('playing'); }
 }
 
-/* ── FUNKTIONEN FÜR KLASSISCHEN CLIP UPLOAD ── */
 async function sendToDiscord() {
-  if (isGuestMode) return; // Sicherheits-Check
+  if (isGuestMode) return; 
 
   const name = document.getElementById('uploaderName').value;
   const title = document.getElementById('clipTitle').value;
@@ -1303,7 +1322,6 @@ async function sendToDiscord() {
   }
 }
 
-/* ── FUNKTIONEN FÜR SEPARATEN BILDER UPLOAD (NEW DISCORD WEBHOOK) ── */
 function previewImageFileName() {
   const fileInput = document.getElementById('baseImageFile');
   const display = document.getElementById('imgFileNameDisplay');
@@ -1322,7 +1340,7 @@ function previewImageFileName() {
 }
 
 async function sendImageToDiscord() {
-  if (isGuestMode) return; // Sicherheits-Check
+  if (isGuestMode) return; 
 
   const name = document.getElementById('imageUploaderName').value;
   const description = document.getElementById('imageDescription').value;
