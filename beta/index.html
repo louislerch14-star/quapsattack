@@ -45,28 +45,7 @@ h1, h2, h3, .mc-font, .mc-btn, .mc-action {
   text-transform: none;
 }
 
-/* ── VIDEO BACKGROUND ── */
-.video-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: #000;
-}
-.video-bg iframe {
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 100vw; height: 56.25vw;
-  min-height: 100vh; min-width: 177.77vh;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  filter: brightness(0.2) saturate(0.5) blur(5px);
-}
-.video-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(15,17,21,0.8), rgba(15,17,21,0.95));
-}
+
 
 /* ── SIDEBAR ── */
 .sidebar {
@@ -227,9 +206,6 @@ main {
 </head>
 <body>
 
-<div class="video-bg">
-  <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay"></iframe>
-</div>
 
 <div class="sidebar">
   <div class="sidebar-logo">
