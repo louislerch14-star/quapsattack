@@ -2,102 +2,106 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuapsHub // Attack</title>
+  <title>QuapsHub // Attack Edition</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      /* Gradient Background */
-      --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      --sidebar-rgba: rgba(15, 15, 30, 0.8);
-      --accent-color: #7b2cbf; /* Ein sattes Lila/Violett */
+      /* Theme Farben */
+      --bg-dark: #0f0c29;
+      --accent-purple: #7b2cbf;
       --text-white: #ffffff;
-      --text-muted: #a0a0c0;
+      /* PayPol & Trastpilod Branding */
+      --paypal-blue: #003087;
+      --paypal-action: #0070ba;
+      --trust-green: #00b67a;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--bg-gradient);
-      background-attachment: fixed;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       color: var(--text-white);
-      display: flex;
-      min-height: 100vh;
+      margin: 0; display: flex; min-height: 100vh;
     }
 
-    /* Sidebar - Schlicht & Coloriert */
-    .sidebar {
-      width: 260px;
-      background: var(--sidebar-rgba);
-      backdrop-filter: blur(15px);
-      border-right: 1px solid rgba(255,255,255,0.1);
-      padding: 30px 20px;
-      display: flex;
-      flex-direction: column;
-    }
+    /* --- SIDEBAR & LAYOUT --- */
+    .sidebar { width: 280px; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.1); }
+    .sidebar-logo { margin-bottom: 40px; }
+    .logo-text { font-size: 1.5rem; font-weight: 800; display: block; }
+    .logo-sub { color: var(--accent-purple); font-size: 0.7rem; font-weight: 700; }
+    
+    .mc-btn { width: 100%; padding: 14px; background: transparent; border: none; color: #ccc; text-align: left; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 5px; }
+    .mc-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .mc-btn.active { background: var(--accent-purple); color: #fff; box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4); }
 
-    .logo { margin-bottom: 50px; }
-    .logo h2 { font-size: 1.5rem; letter-spacing: 2px; color: var(--text-white); }
-    .logo span { font-size: 0.7rem; color: var(--accent-color); font-weight: 700; }
+    main { flex: 1; padding: 40px; overflow-y: auto; }
+    .page { display: none; }
+    .page.active { display: block; }
 
-    .nav-btn {
-      width: 100%;
-      padding: 15px;
-      margin-bottom: 10px;
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--text-muted);
-      text-align: left;
-      font-size: 0.9rem;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .nav-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
-    .nav-btn.active {
-      background: var(--accent-color);
-      color: white;
-      box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4);
-    }
+    /* --- PAYPOL MODAL (PayPal Stil) --- */
+    .paypol-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 999; }
+    .paypol-modal-overlay.show { display: flex; }
+    .paypol-box { background: #fff; color: #333; width: 420px; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+    
+    .paypol-header { background: var(--paypal-blue); padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .paypol-logo-area { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; }
+    .paypol-logo-p1 { color: #fff; }
+    .paypol-logo-p2 { color: #00d0ff; }
+    
+    .paypol-btn { background: var(--paypal-action); color: white; border: none; padding: 15px; width: 100%; border-radius: 50px; font-weight: 600; cursor: pointer; }
+    .paypol-btn:hover { background: #005ea6; }
 
-    main { flex: 1; padding: 50px; }
-    .card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 30px;
-      border-radius: 20px;
-      backdrop-filter: blur(5px);
-    }
+    /* --- TRASTPILOD FOOTER (Trustpilot Stil) --- */
+    .paypol-trust-footer-bar { background: #f8f8f8; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #ddd; }
+    .trast-logo { color: #000; font-weight: 700; font-size: 0.9rem; }
+    .trast-star-icon { color: var(--trust-green); font-size: 1.2rem; }
+    .trast-badge { background: var(--trust-green); color: white; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; font-weight: bold; }
+
+    /* Hier kommen restliche Styles für Cards, Inputs etc. hin... */
   </style>
 </head>
 <body>
 
   <div class="sidebar">
-    <div class="logo">
-      <h2>QUAPS</h2>
-      <span>ATTACK EDITION</span>
+    <div class="sidebar-logo">
+      <span class="logo-text">QUAPS<br>HUB</span>
+      <span class="logo-sub">ATTACK EDITION // v2.6</span>
     </div>
-
-    <button class="nav-btn active" onclick="showPage('home')" id="btn-home">Home</button>
-    <button class="nav-btn" onclick="showPage('clips')" id="btn-clips">Clips & Upload</button>
-    <button class="nav-btn" onclick="showPage('downloads')" id="btn-downloads">Downloads</button>
-    <button class="nav-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">Bewerbung</button>
-    <button class="nav-btn" onclick="logout()" style="margin-top: auto; border: 1px solid rgba(255,50,50,0.3); color: #ff6b6b;">Logout</button>
+    <button class="mc-btn active" onclick="showPage('home')">HOME</button>
+    <button class="mc-btn" onclick="showPage('clips')">CLIP-ARCHIV</button>
+    <button class="mc-btn" onclick="showPage('downloads')">DOWNLOADS</button>
+    <button class="mc-btn" onclick="showPage('admin-apply')">BEWERBUNGEN</button>
+    <button class="mc-btn" onclick="logout()" style="color: #ff6b6b; margin-top: auto;">LOGOUT</button>
   </div>
 
   <main>
     <div id="home" class="page active">
-      <div class="card">
-        <h1>Willkommen zurück.</h1>
-        <p>Das Dashboard ist bereit.</p>
-      </div>
-    </div>
+        <h1>Dashboard</h1>
+        </div>
     </main>
 
+  <div class="paypol-modal-overlay" id="paypolModal">
+    <div class="paypol-box">
+      <div class="paypol-header">
+        <div class="paypol-logo-area">
+          <span class="paypol-logo-p1">Pay</span><span class="paypol-logo-p2">Pol</span>
+        </div>
+      </div>
+      <div style="padding: 20px;">
+        <h3 id="paypolItemName">Projekt Download</h3>
+        <button class="paypol-btn" onclick="verifyPaypolCode()">Sicher bezahlen</button>
+      </div>
+      <div class="paypol-trust-footer-bar">
+        <div class="trast-logo">
+          <span class="trast-star-icon">★</span> Trastpilod
+        </div>
+        <span class="trast-badge">VERIFIED</span>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // FÜGE DEINEN SCRIPT-BLOCK HIER EIN!
+    /* DEIN JAVASCRIPT HIER EINFÜGEN */
   </script>
 </body>
 </html>
