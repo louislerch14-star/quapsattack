@@ -12,616 +12,592 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
-
 :root {
-  /* Modernes, cleanes Farbschema */
-  --primary: #6366f1; /* Frisches Indigo */
-  --diamond: #06b6d4; /* Cyan Accent */
-  --gold:    #f59e0b; /* Warmes Amber */
-  --bg:      #0f172a; /* Slate 900 */
-  --panel:   rgba(30, 41, 59, 0.7); /* Transparente Panels */
-  --panel2:  #1e293b; /* Slate 800 */
-  --border:  #334155; /* Slate 700 */
-  --text:    #f8fafc;
-  --muted:   #94a3b8;
+    /* ── ULTRA CLEAN MODERN THEME ── */
+    --primary: #3b82f6; /* Kühles, professionelles Blau */
+    --primary-hover: #2563eb;
+    --diamond: #0ea5e9; /* Dezentes Cyan für Akzente */
+    --gold:    #fbbf24; /* Abgedunkeltes Gold */
+    --bg:      #09090b; /* Tiefes Zinc-Schwarz (sehr edel) */
+    --panel:   #18181b; /* Zinc 900 - dunkles Grau für Panels */
+    --panel2:  #09090b;
+    --border:  #27272a; /* Zinc 800 - subtile Ränder */
+    --text:    #fafafa; /* Klares Weiß für Text */
+    --muted:   #a1a1aa; /* Zinc 400 - perfekt für Nebentexte */
+    
+    /* ── PAYPOL & TRASTPILOD (KOMPLETT UNANGETASTET) ── */
+    --trust-green: #00b67a;
+    --paypol-blue: #003087;
+    --paypol-cyan: #0079c1;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    /* Cleane System-Schriftart */
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+    font-size: 1rem;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+  }
+
+  h1, h2, h3, .mc-font, .mc-btn, .mc-action {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+  }
+
+  /* ── VIDEO BACKGROUND ── */
+  .video-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: #09090b;
+  }
+  .video-bg iframe {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100vw; height: 56.25vw;
+    min-height: 100vh; min-width: 177.77vh;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    filter: brightness(0.15) saturate(0.2) contrast(1.2);
+  }
+  .video-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(9, 9, 11, 0.85) 0%, rgba(9, 9, 11, 0.6) 50%, rgba(9, 9, 11, 0.95) 100%);
+  }
+
+  /* ── SIDEBAR NAVBAR ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    height: 100vh;
+    background: rgba(9, 9, 11, 0.7); 
+    backdrop-filter: blur(16px);
+    border-right: 1px solid var(--border);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .sidebar-logo {
+    padding: 30px 20px;
+    border-bottom: 1px solid var(--border);
+    background: transparent;
+    text-align: center;
+  }
+  .sidebar-logo .logo-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    display: block;
+    letter-spacing: 1px;
+  }
+  .sidebar-logo .logo-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 6px;
+    display: block;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .sidebar-section {
+    padding: 20px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mc-btn {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding: 12px 24px;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent;
+    font-weight: 500;
+  }
+  .mc-btn:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text);
+    border-left-color: var(--border);
+  }
+  .mc-btn.active {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary);
+    border-left-color: var(--primary);
+  }
+
+  .logout-btn {
+    margin-top: auto;
+    margin-bottom: 20px;
+    color: #ef4444 !important; 
+  }
+  .logout-btn:hover { background: rgba(239, 68, 68, 0.05); border-left-color: #ef4444; }
+
+  /* ── PROFILE AREA IN SIDEBAR ── */
+  .sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    border-top: 1px solid var(--border);
+    background: transparent;
+  }
+  .profile-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px; /* Eckiger, moderner Look */
+    border: 1px solid var(--border);
+    object-fit: cover;
+    background: var(--panel);
+  }
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .profile-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .profile-status-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    background: #10b981; 
+    border-radius: 50%;
+  }
+  .status-text {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    margin-left: 260px;
+    padding: 60px 50px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── MODERN SCROLL REVEAL ── */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  [data-reveal="2"] { transition-delay: 0.1s; }
+  [data-reveal="3"] { transition-delay: 0.2s; }
+  [data-reveal="4"] { transition-delay: 0.3s; }
+  [data-reveal="5"] { transition-delay: 0.4s; }
+
+  [data-reveal].revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── HERO ── */
+  .hero { margin-bottom: 50px; }
+  .hero h1 { font-size: 2.2rem; color: var(--text); margin: 0; font-weight: 700; letter-spacing: -0.5px; }
+  .hero h1 span { color: var(--primary); }
+  .hero-sub { font-size: 1rem; color: var(--muted); margin-top: 8px; font-weight: 400; }
+
+  /* ── CLEAN GLASS PANEL ── */
+  .mc-panel {
+    background: rgba(24, 24, 27, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 12px; /* Weniger rund, erwachsener */
+    padding: 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: border-color 0.3s ease;
+  }
+  .mc-panel:hover { border-color: rgba(255,255,255,0.1); }
+
+  .mc-panel-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .mc-panel-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 14px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+
+  .panel-body .line {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .panel-body .line:last-child { border-bottom: none; }
+  .panel-body .line span { color: var(--text); margin-right: 10px; font-weight: 500; }
+
+  /* ── PINNWAND STYLES ── */
+  .shoutbox-list {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 10px;
+  }
+  .shoutbox-list::-webkit-scrollbar { width: 4px; }
+  .shoutbox-list::-webkit-scrollbar-track { background: transparent; }
+  .shoutbox-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .shoutbox-msg {
+    padding: 12px 16px;
+    background: rgba(9, 9, 11, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+  .shoutbox-msg .msg-user {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-right: 8px;
+  }
+  .shoutbox-form {
+    display: flex;
+    gap: 12px;
+  }
+  .shoutbox-form .mc-input {
+    margin-bottom: 0;
+    flex: 1;
+  }
+
+  /* ── AUDIO VISUALIZER ── */
+  .visualizer { display: flex; gap: 3px; height: 30px; align-items: center; margin: 20px 0; }
+  .vis-bar { width: 4px; height: 10px; background: var(--border); border-radius: 2px; }
+  .playing .vis-bar { animation: modernVis 0.6s infinite alternate ease-in-out; background: var(--primary); }
+  .playing .vis-bar:nth-child(2n) { animation-duration: 0.4s; background: var(--diamond); }
+  @keyframes modernVis { from { height: 10px; } to { height: 30px; } }
+
+  /* ── MODERN ACTION BUTTON ── */
+  .mc-action {
+    display: inline-block;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    text-align: center;
+  }
+  .mc-action:hover { background: transparent; color: var(--text); border-color: var(--text); }
+  .mc-action:disabled { opacity: 0.5; cursor: not-allowed; }
+  .mc-action.full { width: 100%; display: block; }
   
-  /* Paypol & Trastpilod Colors (Unverändert) */
-  --trust-green: #00b67a;
-  --paypol-blue: #003087;
-  --paypol-cyan: #0079c1;
-}
+  .mc-action.primary {
+    background: var(--primary);
+    color: #fff;
+  }
+  .mc-action.primary:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: #fff;
+  }
 
-*, *::before, *::after { 
-  box-sizing: border-box; 
-  margin: 0; 
-  padding: 0; 
-}
+  /* ── VIDEO EMBED ── */
+  .clip-frame {
+    position: relative;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .clip-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+  .op-tag { color: var(--muted); font-size: 0.8rem; margin-right: 15px; font-weight: 500; }
 
-html { 
-  scroll-behavior: smooth; 
-}
+  /* ── CLEAN FORM ── */
+  .mc-input {
+    display: block;
+    width: 100%;
+    background: rgba(9, 9, 11, 0.5);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--text);
+    margin-bottom: 16px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+  .mc-input:focus { border-color: var(--primary); outline: none; background: rgba(9, 9, 11, 0.8); }
+  .mc-input[readonly] { opacity: 0.6; cursor: not-allowed; }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
-  min-height: 100vh;
-  font-size: 1.1rem;
-  line-height: 1.6;
-}
+  .mc-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: block;
+  }
 
-h1, h2, h3, .mc-font, .mc-action {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-}
+  .mc-success {
+    display: none;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 16px;
+    margin-top: 16px;
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
 
-/* ── VIDEO BACKGROUND ── */
-.video-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: #0f172a;
-}
-.video-bg iframe {
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 100vw; height: 56.25vw;
-  min-height: 100vh; min-width: 177.77vh;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  filter: brightness(0.2) saturate(0.5);
-}
-.video-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(15,23,42,0.8) 0%, rgba(15,23,42,0.4) 50%, rgba(15,23,42,0.9) 100%);
-}
+  /* ── DOWNLOAD GRIDS ── */
+  .download-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .download-card {
+    background: rgba(24, 24, 27, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+  }
+  .download-card:hover { border-color: rgba(255,255,255,0.15); background: rgba(24, 24, 27, 0.8); }
+  .download-card-title {
+    font-size: 1.1rem;
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
 
-/* ── SIDEBAR NAVBAR ── */
-.sidebar {
-  position: fixed;
-  top: 0; left: 0;
-  width: 260px;
-  height: 100vh;
-  background: rgba(30, 41, 59, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-right: 1px solid var(--border);
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  box-shadow: 4px 0 24px rgba(0,0,0,0.2);
-}
+  /* ── MINECRAFT COOKIE BANNER STYLE (CLEAN & MODERN) ── */
+  .mc-cookie-banner {
+    position: fixed;
+    bottom: 24px;
+    right: -420px;
+    width: 360px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    font-size: 0.9rem;
+    transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .mc-cookie-banner.show { right: 24px; }
+  .mc-advancement-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .mc-advancement-icon { width: 32px; height: 32px; border-radius: 6px; background: var(--bg); border: 1px solid var(--border); }
+  .mc-advancement-text { display: flex; flex-direction: column; }
+  .mc-advancement-title { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+  .mc-advancement-name { font-size: 1rem; color: var(--text); font-weight: 600; }
+  .mc-cookie-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; line-height: 1.5; }
+  .mc-cookie-buttons { display: flex; gap: 10px; }
+  .mc-cookie-btn {
+    flex: 1; font-weight: 500; font-size: 0.85rem; padding: 10px; text-align: center; cursor: pointer; border-radius: 6px; border: 1px solid var(--border); transition: all 0.2s ease;
+  }
+  .mc-cookie-btn.accept { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .mc-cookie-btn.accept:hover { background: transparent; color: var(--text); border-color: var(--text); }
+  .mc-cookie-btn.decline { background: transparent; color: var(--muted); }
+  .mc-cookie-btn.decline:hover { color: var(--text); border-color: var(--muted); }
 
-.sidebar-logo {
-  padding: 30px 20px;
-  border-bottom: 1px solid var(--border);
-  background: transparent;
-  text-align: center;
-}
-.sidebar-logo .logo-text {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--primary);
-  display: block;
-  letter-spacing: -0.5px;
-}
-.sidebar-logo .logo-sub {
-  font-size: 0.9rem;
-  color: var(--muted);
-  margin-top: 4px;
-  display: block;
-}
+  /* ── FILE UPLOAD WRAPPER ── */
+  .file-upload-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .file-upload-label {
+    display: block;
+    text-align: center;
+    background: rgba(9, 9, 11, 0.3);
+    border: 1px dashed var(--border);
+    padding: 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+  .file-upload-label:hover {
+    border-color: var(--text);
+    color: var(--text);
+  }
+  .file-upload-input {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .file-name-preview {
+    margin-top: -8px;
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+    color: var(--primary);
+    display: none;
+  }
 
-.sidebar-section {
-  padding: 20px 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
+  /* ── RESPONSIVE ── */
+  @media (max-width: 800px) {
+    .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); backdrop-filter: none; background: var(--bg); }
+    .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 12px; }
+    .mc-btn { width: auto; border-left: none; border-bottom: 2px solid transparent; padding: 8px 16px; }
+    .mc-btn:hover, .mc-btn.active { border-left-color: transparent; border-bottom-color: var(--text); background: transparent; }
+    .logout-btn { margin-top: 0; margin-bottom: 0; }
+    .sidebar-profile { border-top: none; padding: 12px; }
+    main { margin-left: 0; padding: 20px 15px; }
+  }
 
-.mc-btn {
-  display: block;
-  width: calc(100% - 20px);
-  margin: 0 10px;
-  background: transparent;
-  color: var(--muted);
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 1rem;
-  padding: 12px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.2s ease;
-}
-.mc-btn:hover {
-  background: rgba(99, 102, 241, 0.1);
-  color: #fff;
-  transform: translateX(4px);
-}
-.mc-btn.active {
-  background: var(--primary);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
 
-.logout-btn {
-  margin-top: auto;
-  margin-bottom: 20px;
-  color: #ef4444 !important;
-}
-.logout-btn:hover { 
-  background: rgba(239, 68, 68, 0.1); 
-  transform: translateX(4px);
-}
+  /* =====================================================================
+     🌟 FAKE PAYPOL & TRASTPILOD GATEWAY MODAL (EXAKT WIE GEWÜNSCHT) 🌟
+     ===================================================================== */
+  .paypol-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Inter', sans-serif;
+  }
+  .paypol-modal-overlay.show { display: flex; }
 
-/* ── PROFILE AREA IN SIDEBAR ── */
-.sidebar-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 20px;
-  border-top: 1px solid var(--border);
-  background: rgba(15, 23, 42, 0.5);
-}
-.profile-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  border: 2px solid var(--border);
-  object-fit: cover;
-  background: var(--panel2);
-}
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.profile-name {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.profile-status-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 2px;
-}
-.status-dot {
-  width: 8px;
-  height: 8px;
-  background: #10b981;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
-}
-.status-text {
-  font-size: 0.8rem;
-  color: #10b981;
-  font-weight: 500;
-}
+  .paypol-box {
+    background: #ffffff;
+    color: #1c1c1c;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    overflow: hidden;
+    animation: paypolPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes paypolPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* ── MAIN CONTENT ── */
-main {
-  margin-left: 260px;
-  padding: 60px 50px 80px;
-  position: relative;
-  z-index: 1;
-  max-width: 1400px;
-}
+  .paypol-header {
+    background: #fcfcfd;
+    padding: 20px 24px;
+    border-bottom: 1px solid #eef0f2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .paypol-logo-area {
+    display: flex;
+    align-items: center;
+    font-style: italic;
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: -1px;
+  }
+  .paypol-logo-p1 { color: var(--paypol-blue); }
+  .paypol-logo-p2 { color: var(--paypol-cyan); }
 
-.page { display: none; }
-.page.active { display: block; animation: fadeIn 0.4s ease forwards; }
+  .paypol-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #9aa1a7; }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+  .paypol-body { padding: 24px; }
 
-/* ── MODERN SCROLL REVEAL ── */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-[data-reveal="2"] { transition-delay: 0.1s; }
-[data-reveal="3"] { transition-delay: 0.2s; }
-[data-reveal="4"] { transition-delay: 0.3s; }
-[data-reveal="5"] { transition-delay: 0.4s; }
+  .paypol-project-banner {
+    text-align: center;
+    background: #f4f6f8;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .paypol-project-title { font-size: 1.1rem; font-weight: 700; color: #1c1c1c; }
+  .paypol-project-subtitle { font-size: 0.8rem; color: #6c7378; margin-top: 3px; }
 
-[data-reveal].revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
+  .paypol-input-group { margin-bottom: 20px; }
+  .paypol-label { display: block; font-size: 0.75rem; font-weight: 700; color: #3b3d40; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .paypol-amount-box { position: relative; }
+  .paypol-amount-box span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-weight: 700; font-size: 1.2rem; color: #1c1c1c; }
+  .paypol-input {
+    width: 100%; padding: 14px; border: 2px solid #eef0f2; background: #f9fafb; border-radius: 8px; font-size: 1.1rem; color: #000; transition: 0.2s; font-weight: 600;
+  }
+  .paypol-input:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
 
-/* ── HERO ── */
-.hero { margin-bottom: 50px; }
-.hero h1 { font-size: 2.8rem; color: #fff; margin: 0; letter-spacing: -1px; line-height: 1.2; }
-.hero h1 span { color: var(--primary); }
-.hero-sub { font-size: 1.1rem; color: var(--muted); margin-top: 12px; max-width: 600px; }
+  /* Code-Eingabe-Bereich (wird erst nach Schritt 1 eingeblendet) */
+  .paypol-code-area {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #eef0f2;
+    display: none;
+  }
 
-/* ── CLEAN GLASS PANEL ── */
-.mc-panel {
-  background: var(--panel);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  padding: 35px;
-  margin-bottom: 24px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, border-color 0.3s ease;
-}
-.mc-panel:hover { 
-  border-color: rgba(99, 102, 241, 0.3); 
-  transform: translateY(-2px); 
-}
+  .paypol-btn {
+    display: block; width: 100%; background: linear-gradient(90deg, var(--paypol-blue), var(--paypol-cyan)); color: #fff; border: none; padding: 15px; border-radius: 25px; font-size: 1rem; font-weight: 700; cursor: pointer; text-align: center; transition: 0.2s; box-shadow: 0 4px 12px rgba(0, 121, 193, 0.2);
+  }
+  .paypol-btn:hover { filter: brightness(1.1); }
+  .paypol-btn-unlocked { background: var(--trust-green) !important; box-shadow: none; }
 
-.mc-panel-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.2rem;
-  color: var(--primary);
-  margin-bottom: 20px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+  .paypol-error-msg { color: #ca1a1a; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
 
-.panel-body .line {
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  align-items: center;
-}
-.panel-body .line:last-child { border-bottom: none; }
-.panel-body .line span { color: var(--muted); margin-right: 15px; font-weight: 500; min-width: 120px; }
-
-/* ── PINNWAND STYLES ── */
-.shoutbox-list {
-  max-height: 250px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-  padding-right: 10px;
-}
-.shoutbox-list::-webkit-scrollbar { width: 6px; }
-.shoutbox-list::-webkit-scrollbar-track { background: transparent; }
-.shoutbox-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-
-.shoutbox-msg {
-  padding: 14px 18px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255,255,255,0.03);
-  border-radius: 12px;
-  margin-bottom: 10px;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-.shoutbox-msg:hover { background: rgba(15, 23, 42, 0.9); }
-.shoutbox-msg .msg-user {
-  color: var(--primary);
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-right: 10px;
-}
-.shoutbox-form {
-  display: flex;
-  gap: 12px;
-}
-.shoutbox-form .mc-input {
-  margin-bottom: 0;
-  flex: 1;
-}
-
-/* ── AUDIO VISUALIZER ── */
-.visualizer { display: flex; gap: 4px; height: 35px; align-items: center; margin: 20px 0; }
-.vis-bar { width: 4px; height: 10px; background: var(--border); border-radius: 4px; }
-.playing .vis-bar { animation: modernVis 0.5s ease-in-out infinite alternate; background: var(--primary); }
-.playing .vis-bar:nth-child(2n) { animation-duration: 0.7s; background: var(--diamond); }
-.playing .vis-bar:nth-child(3n) { animation-duration: 0.4s; }
-@keyframes modernVis { from { height: 10px; } to { height: 35px; } }
-
-/* ── MODERN ACTION BUTTON ── */
-.mc-action {
-  display: inline-block;
-  background: var(--primary);
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 14px 28px;
-  border-radius: 12px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  border: none;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
-}
-.mc-action:hover { 
-  background: #4f46e5; 
-  transform: translateY(-2px); 
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); 
-}
-.mc-action:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-.mc-action.full { width: 100%; display: block; }
-
-/* ── VIDEO EMBED ── */
-.clip-frame {
-  position: relative;
-  aspect-ratio: 16/9;
-  background: #000;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.05);
-  margin-bottom: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-.clip-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-.op-tag { color: var(--diamond); font-size: 0.9rem; margin-right: 15px; font-weight: 500; }
-
-/* ── CLEAN FORM ── */
-.mc-input {
-  display: block;
-  width: 100%;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid var(--border);
-  padding: 16px 20px;
-  border-radius: 12px;
-  color: #fff;
-  margin-bottom: 16px;
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-.mc-input:focus { 
-  border-color: var(--primary); 
-  outline: none; 
-  background: rgba(15, 23, 42, 0.9); 
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-}
-.mc-input[readonly] { opacity: 0.6; cursor: not-allowed; }
-
-.mc-label {
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--muted);
-  margin-bottom: 8px;
-  display: block;
-}
-
-.mc-success {
-  display: none;
-  border: 1px solid #10b981;
-  background: rgba(16, 185, 129, 0.1);
-  padding: 16px;
-  margin-top: 16px;
-  border-radius: 12px;
-  color: #10b981;
-  font-weight: 500;
-}
-
-/* ── DOWNLOAD GRIDS ── */
-.download-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
-}
-.download-card {
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.3s ease;
-}
-.download-card:hover {
-  background: rgba(30, 41, 59, 0.8);
-  border-color: var(--primary);
-  transform: translateY(-4px);
-}
-.download-card-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.3rem;
-  color: #fff;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-/* ── MODERN TOAST NOTIFICATION (Ehemals Cookie Banner) ── */
-.mc-cookie-banner {
-  position: fixed;
-  bottom: 24px;
-  right: -450px;
-  width: 400px;
-  background: rgba(30, 41, 59, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 20px;
-  z-index: 1000;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-  transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.mc-cookie-banner.show { right: 24px; }
-.mc-advancement-header { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
-.mc-advancement-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--primary); display: flex; align-items: center; justify-content: center; }
-.mc-advancement-text { display: flex; flex-direction: column; }
-.mc-advancement-title { font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-.mc-advancement-name { font-family: 'Poppins', sans-serif; font-size: 1.2rem; color: #ffffff; font-weight: 600; }
-.mc-cookie-desc { color: var(--muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5; }
-.mc-cookie-buttons { display: flex; gap: 12px; }
-.mc-cookie-btn {
-  flex: 1; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem; padding: 12px; border-radius: 10px; text-align: center; cursor: pointer; border: none; transition: 0.2s;
-}
-.mc-cookie-btn.decline { background: rgba(255, 255, 255, 0.05); color: #fff; }
-.mc-cookie-btn.decline:hover { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-.mc-cookie-btn.accept { background: var(--primary); color: #fff; }
-.mc-cookie-btn.accept:hover { background: #4f46e5; }
-
-/* ── FILE UPLOAD WRAPPER ── */
-.file-upload-wrapper {
-  position: relative;
-  margin-bottom: 16px;
-}
-.file-upload-label {
-  display: block;
-  text-align: center;
-  background: rgba(15, 23, 42, 0.4);
-  border: 2px dashed var(--border);
-  padding: 24px;
-  border-radius: 12px;
-  cursor: pointer;
-  color: var(--muted);
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
-.file-upload-label:hover {
-  border-color: var(--primary);
-  color: #fff;
-  background: rgba(99, 102, 241, 0.05);
-}
-.file-upload-input {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  opacity: 0;
-  cursor: pointer;
-}
-.file-name-preview {
-  margin-top: -8px;
-  margin-bottom: 16px;
-  font-size: 0.9rem;
-  color: var(--primary);
-  display: none;
-  font-weight: 500;
-}
-
-/* ── 🌟 FAKE PAYPOL & TRASTPILOD GATEWAY MODAL 🌟 ── */
-.paypol-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  z-index: 2000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  font-family: 'Inter', sans-serif;
-}
-.paypol-modal-overlay.show { display: flex; }
-
-.paypol-box {
-  background: #ffffff;
-  color: #1c1c1c;
-  width: 100%;
-  max-width: 480px;
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-  overflow: hidden;
-  animation: paypolPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes paypolPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-.paypol-header {
-  background: #fcfcfd;
-  padding: 20px 24px;
-  border-bottom: 1px solid #eef0f2;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.paypol-logo-area {
-  display: flex;
-  align-items: center;
-  font-style: italic;
-  font-weight: 800;
-  font-size: 1.6rem;
-  letter-spacing: -1px;
-}
-.paypol-logo-p1 { color: var(--paypol-blue); }
-.paypol-logo-p2 { color: var(--paypol-cyan); }
-
-.paypol-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #9aa1a7; }
-
-.paypol-body { padding: 24px; }
-
-.paypol-project-banner {
-  text-align: center;
-  background: #f4f6f8;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-.paypol-project-title { font-size: 1.1rem; font-weight: 700; color: #1c1c1c; }
-.paypol-project-subtitle { font-size: 0.8rem; color: #6c7378; margin-top: 3px; }
-
-.paypol-input-group { margin-bottom: 20px; }
-.paypol-label { display: block; font-size: 0.75rem; font-weight: 700; color: #3b3d40; margin-bottom: 6px; letter-spacing: 0.5px; }
-.paypol-amount-box { position: relative; }
-.paypol-amount-box span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-weight: 700; font-size: 1.2rem; color: #1c1c1c; }
-.paypol-input {
-  width: 100%; padding: 14px; border: 2px solid #eef0f2; background: #f9fafb; border-radius: 8px; font-size: 1.1rem; color: #000; transition: 0.2s; font-weight: 600;
-}
-.paypol-input:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
-
-/* Code-Eingabe-Bereich (wird erst nach Schritt 1 eingeblendet) */
-.paypol-code-area {
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px dashed #eef0f2;
-  display: none;
-}
-
-.paypol-btn {
-  display: block; width: 100%; background: linear-gradient(90deg, var(--paypol-blue), var(--paypol-cyan)); color: #fff; border: none; padding: 15px; border-radius: 25px; font-size: 1rem; font-weight: 700; cursor: pointer; text-align: center; transition: 0.2s; box-shadow: 0 4px 12px rgba(0, 121, 193, 0.2);
-}
-.paypol-btn:hover { filter: brightness(1.1); }
-.paypol-btn-unlocked { background: var(--trust-green) !important; box-shadow: none; }
-
-.paypol-error-msg { color: #ca1a1a; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
-
-/* ── INTEGRATED TRASTPILOD BAR (AM BODEN DES MODALS) ── */
-.paypol-trust-footer-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #1c1c1c;
-  color: #ffffff;
-  padding: 14px 24px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-}
-.trast-logo { display: flex; align-items: center; gap: 4px; }
-.trast-star-icon { background: var(--trust-green); color: #fff; padding: 1px 5px; font-weight: bold; font-size: 0.8rem; border-radius: 2px; }
-.trast-text { font-weight: 800; font-size: 1rem; letter-spacing: -0.5px; }
-.trast-stars { color: #ffb600; font-weight: bold; }
-.trast-badge { background: var(--trust-green); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 20px; text-transform: uppercase; }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-  .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
-  .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; gap: 10px; justify-content: center; }
-  .mc-btn { width: auto; margin: 0; }
-  .logout-btn { margin-bottom: 0; }
-  .sidebar-profile { justify-content: center; }
-  main { margin-left: 0; padding: 30px 20px; }
-}
+  /* ── INTEGRATED TRASTPILOD BAR (AM BODEN DES MODALS) ── */
+  .paypol-trust-footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1c1c1c;
+    color: #ffffff;
+    padding: 14px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+  }
+  .trast-logo { display: flex; align-items: center; gap: 4px; }
+  .trast-star-icon { background: var(--trust-green); color: #fff; padding: 1px 5px; font-weight: bold; font-size: 0.8rem; border-radius: 2px; }
+  .trast-text { font-weight: 800; font-size: 1rem; letter-spacing: -0.5px; }
+  .trast-stars { color: #ffb600; font-weight: bold; }
+  .trast-badge { background: var(--trust-green); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 20px; text-transform: uppercase; }
   </style>
 </head>
 <body>
