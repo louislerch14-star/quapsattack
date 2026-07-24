@@ -4,35 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quaps Attack - Offizielles Modpack</title>
-    <!-- Google Fonts für den echten Minecraft Retro-Style -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Minecraft Retro meets Modern Clean -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #a8ff78; /* Frisches XP-Grün */
             --diamond: #44d4d4;
             --gold:    #f5c518;
-            --bg:      #0a0a0a;
-            --panel:   #1a1a1a;
-            --panel2:  #222222;
-            --border:  #333333;
+            --bg:      #080c14;
+            --panel:   rgba(22, 27, 34, 0.75);
+            --panel2:  #0d1117;
+            --border:  rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(168, 255, 120, 0.3);
             --text:    #f0f0f0;
-            --muted:   #aaaaaa;
+            --muted:   #94a3b8;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'VT323', monospace;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg);
             color: var(--text);
             overflow-x: hidden;
             min-height: 100vh;
-            font-size: 1.2rem;
+            font-size: 1rem;
             line-height: 1.6;
         }
 
-        h1, h2, h3, .mc-font, .mc-btn, .mc-action {
+        /* Hintergrund Glow Effekte für den modernen Look */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(168, 255, 120, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(68, 212, 212, 0.05) 0%, transparent 40%);
+        }
+
+        h1, h2, h3, .mc-font {
             font-family: 'Press Start 2P', monospace;
             text-transform: uppercase;
         }
@@ -41,32 +53,32 @@
         .sidebar {
             position: fixed;
             top: 0; left: 0;
-            width: 240px;
+            width: 260px;
             height: 100vh;
             background: var(--panel2);
-            border-right: 2px solid var(--border);
+            border-right: 1px solid var(--border);
             z-index: 100;
             display: flex;
             flex-direction: column;
-            padding: 0;
+            backdrop-filter: blur(12px);
         }
 
         .sidebar-logo {
             padding: 30px 20px;
-            border-bottom: 2px solid var(--border);
-            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            background: rgba(0,0,0,0.2);
             text-align: center;
         }
         .sidebar-logo .logo-text {
             font-family: 'Press Start 2P', monospace;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: var(--primary);
             display: block;
-            line-height: 1.4;
+            line-height: 1.5;
+            text-shadow: 0 0 15px rgba(168,255,120,0.4);
         }
         .sidebar-logo .logo-sub {
-            font-family: 'VT323', monospace;
-            font-size: 1rem;
+            font-size: 0.85rem;
             color: var(--muted);
             margin-top: 8px;
             display: block;
@@ -78,50 +90,54 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .mc-btn {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             width: 100%;
             background: transparent;
             color: var(--muted);
-            font-size: 0.5rem;
-            letter-spacing: 0.5px;
-            padding: 16px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 14px 24px;
             border: none;
             cursor: pointer;
             text-align: left;
-            transition: 0.2s;
+            transition: all 0.25s ease;
             border-left: 3px solid transparent;
             text-decoration: none;
         }
         .mc-btn:hover {
-            background: rgba(168, 255, 120, 0.05);
+            background: rgba(168, 255, 120, 0.04);
             color: #fff;
             border-left-color: var(--primary);
+            padding-left: 28px;
         }
 
         .logout-btn {
             margin-top: auto;
-            margin-bottom: 10px;
-            color: #ff5555 !important;
+            margin-bottom: 15px;
+            color: #ff6b6b !important;
         }
-        .logout-btn:hover { background: rgba(255, 85, 85, 0.08); border-left-color: #ff5555; }
+        .logout-btn:hover { background: rgba(255, 107, 107, 0.05); border-left-color: #ff6b6b; }
 
         /* ── MAIN CONTENT ── */
         main {
-            margin-left: 240px;
-            padding: 60px 50px 80px;
+            margin-left: 260px;
+            padding: 50px 60px;
             position: relative;
             z-index: 1;
+            max-width: 1300px;
         }
 
         /* ── SCROLL REVEAL ANIMATION ── */
         [data-reveal] {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: translateY(25px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
         [data-reveal].revealed {
             opacity: 1;
@@ -129,49 +145,100 @@
         }
 
         /* ── HERO ── */
-        .hero { margin-bottom: 50px; }
-        .hero h1 { font-size: 2rem; color: #fff; margin: 0; letter-spacing: -1px; line-height: 1.4; }
-        .hero h1 span { color: var(--gold); }
-        .hero-sub { font-size: 1.3rem; color: var(--muted); margin-top: 15px; }
+        .hero {
+            margin-bottom: 50px;
+            padding: 40px 0;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(168, 255, 120, 0.1);
+            color: var(--primary);
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.45rem;
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(168, 255, 120, 0.2);
+            margin-bottom: 20px;
+        }
+        .hero h1 { 
+            font-size: 2.8rem; 
+            color: #fff; 
+            margin: 0; 
+            letter-spacing: -1px; 
+            line-height: 1.2; 
+        }
+        .hero h1 span { 
+            background: linear-gradient(135deg, var(--gold), #ff9900);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-sub { 
+            font-size: 1.2rem; 
+            color: var(--muted); 
+            margin-top: 15px; 
+            max-width: 650px;
+        }
 
-        /* ── MC PANELS ── */
+        /* ── GLASS PANELS ── */
         .mc-panel {
             background: var(--panel);
+            backdrop-filter: blur(16px);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            transition: 0.3s;
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
         }
-        .mc-panel:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+        .mc-panel:hover { 
+            border-color: var(--border-hover); 
+            transform: translateY(-3px); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
 
         .mc-panel-title {
+            font-family: 'Press Start 2P', monospace;
             font-size: 0.65rem;
             color: var(--gold);
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         /* ── ACTION BUTTONS ── */
         .mc-action {
             display: inline-block;
-            background: var(--panel2);
+            background: linear-gradient(135deg, #1f2937, #111827);
             color: var(--primary);
             font-family: 'Press Start 2P', monospace;
             font-size: 0.55rem;
-            padding: 14px 28px;
-            border-radius: 10px;
+            padding: 16px 30px;
+            border-radius: 12px;
             cursor: pointer;
             text-decoration: none;
-            transition: 0.2s;
+            transition: all 0.25s ease;
             border: 1px solid var(--border);
             text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .mc-action:hover:not(:disabled) { background: #fff; color: #000; border-color: #fff; transform: translateY(-1px); }
-        .mc-action:disabled { opacity: 0.4; cursor: not-allowed; border-color: #222; color: #666; }
+        .mc-action:hover:not(:disabled) { 
+            background: var(--primary); 
+            color: #000; 
+            border-color: var(--primary); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168,255,120,0.3);
+        }
+        .mc-action:disabled { 
+            opacity: 0.4; 
+            cursor: not-allowed; 
+            border-color: rgba(255,255,255,0.05); 
+            color: var(--muted);
+            background: rgba(255,255,255,0.02);
+        }
         .mc-action.full { width: 100%; text-align: center; display: block; }
 
-        /* ── GRID LAYOUTS ── */
+        /* ── FEATURES GRID ── */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -179,25 +246,42 @@
             margin-top: 20px;
         }
         .feature-card {
-            background: rgba(20, 20, 20, 0.8);
+            background: rgba(0, 0, 0, 0.25);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 25px;
+            transition: 0.3s;
         }
-        .feature-card h3 { font-size: 0.6rem; color: var(--diamond); margin-bottom: 12px; }
+        .feature-card:hover {
+            border-color: rgba(68, 212, 212, 0.3);
+            background: rgba(0, 0, 0, 0.4);
+        }
+        .feature-card h3 { 
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.55rem; 
+            color: var(--diamond); 
+            margin-bottom: 12px; 
+        }
+        .feature-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
 
         /* ── RESPONSIVE ── */
-        @media (max-width: 800px) {
-            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid var(--border); }
-            .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; }
-            .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; }
-            .mc-btn:hover { border-left-color: transparent; border-bottom-color: var(--primary); }
+        @media (max-width: 900px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
+            .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; justify-content: center; }
+            .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; padding: 10px 15px; font-size: 0.8rem; }
+            .mc-btn:hover { border-left-color: transparent; border-bottom-color: var(--primary); padding-left: 15px; }
             .logout-btn { margin-top: 0; margin-bottom: 0; }
             main { margin-left: 0; padding: 30px 20px; }
+            .hero h1 { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
+
+    <div class="bg-glow"></div>
 
     <!-- SIDEBAR NAVIGATION -->
     <aside class="sidebar">
@@ -218,24 +302,25 @@
     <main>
         <!-- HERO SECTION -->
         <section id="home" class="hero" data-reveal>
+            <div class="hero-badge">🚀 Bald am Start</div>
             <h1>Willkommen bei <br><span>Quaps Attack</span>!</h1>
-            <p class="hero-sub">Das offizielle Modpack für deinen ultimativen Minecraft-Server. Schnapp dir Quapsi und bau deine Base! 💀✨</p>
+            <p class="hero-sub">Das offizielle Modpack für deinen ultimativen Minecraft-Server. Schnapp dir Quapsi, bau deine Base und dominiere das Land! 💀✨</p>
         </section>
 
         <!-- ABOUT SECTION -->
         <section id="about" class="mc-panel" data-reveal>
-            <h2 class="mc-panel-title">Über das Modpack</h2>
-            <p style="margin-bottom: 15px;">
-                Quaps Attack ist nicht einfach nur ein Modpack – es ist ein reines Meisterwerk. Benannt nach unserem legendären Maskottchen Quapsi (mit der Krone und den abgeknickten Beinen 😉), bringt es den perfekten Vibe auf deinen Server.
+            <h2 class="mc-panel-title"><span>📖</span> Über das Modpack</h2>
+            <p style="margin-bottom: 15px; color: #cbd5e1;">
+                Quaps Attack ist nicht einfach nur ein Modpack – es ist ein absolutes Brett. Benannt nach unserem legendären Maskottchen Quapsi (mit der Krone und den abgeknickten Beinen 😉), bringt es den perfekten Multiplayer-Vibe auf deinen Server.
             </p>
-            <p>
-                Egal ob technischer Fortschritt, fetter Build oder gemütliches Zusammenzocken: Hier läuft alles flüssig und ohne Laggs!
+            <p style="color: #cbd5e1;">
+                Egal ob technischer Fortschritt, riesige Bauten oder entspanntes Zocken mit der Crew: Hier läuft alles butterweich und ohne Laggs!
             </p>
         </section>
 
         <!-- FEATURES SECTION -->
         <section id="features" class="mc-panel" data-reveal>
-            <h2 class="mc-panel-title">Was dich erwartet</h2>
+            <h2 class="mc-panel-title"><span>⚡</span> Was dich erwartet</h2>
             <div class="features-grid">
                 <div class="feature-card">
                     <h3>👑 Quapsi Style</h3>
@@ -254,8 +339,8 @@
 
         <!-- DOWNLOAD SECTION (BUTTON DEAKTIVIERT) -->
         <section id="download" class="mc-panel" data-reveal>
-            <h2 class="mc-panel-title">CurseForge Release</h2>
-            <p style="margin-bottom: 20px;">
+            <h2 class="mc-panel-title"><span>🔗</span> CurseForge Release</h2>
+            <p style="margin-bottom: 20px; color: #cbd5e1;">
                 Das Modpack ist aktuell noch nicht öffentlich auf CurseForge verfügbar. Der Download wird freigeschaltet, sobald alles ready ist! 🚀
             </p>
             <!-- Button ist disabled, weil es noch nicht runterladbar ist -->
