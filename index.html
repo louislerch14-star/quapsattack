@@ -129,6 +129,24 @@
             padding-left: 24px;
         }
 
+        /* Lang Switcher Button Design */
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 0 15px 10px 15px;
+            width: calc(100% - 30px);
+            justify-content: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.5rem;
+            color: var(--primary);
+        }
+        .lang-btn:hover {
+            background: rgba(168, 255, 120, 0.1);
+            border-color: var(--primary);
+            padding-left: 20px;
+        }
+
         .logout-btn {
             margin-top: auto;
             margin-bottom: 15px;
@@ -160,17 +178,6 @@
         .hero {
             margin-bottom: 50px;
             padding: 40px 0;
-        }
-        .hero-badge {
-            display: inline-block;
-            background: rgba(168, 255, 120, 0.1);
-            color: var(--primary);
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.45rem;
-            padding: 8px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(168, 255, 120, 0.2);
-            margin-bottom: 20px;
         }
         .hero h1 { 
             font-size: 2.8rem; 
@@ -315,6 +322,7 @@
             .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; justify-content: center; overflow-y: visible; }
             .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; padding: 10px 15px; font-size: 0.8rem; }
             .mc-btn:hover { border-left-color: transparent; border-bottom-color: var(--primary); padding-left: 15px; }
+            .lang-btn { width: auto; margin: 5px; }
             .logout-btn { margin-top: 0; margin-bottom: 0; }
             main { margin-left: 0; padding: 30px 20px; }
             .hero h1 { font-size: 2rem; }
@@ -335,12 +343,16 @@
             </div>
         </div>
         <div class="sidebar-section">
-            <a href="#home" class="mc-btn">🏠 Home</a>
-            <a href="#about" class="mc-btn">📖 Über das Pack</a>
-            <a href="#features" class="mc-btn">⚡ Features</a>
-            <a href="#mods" class="mc-btn">🧩 Mod Highlights</a>
-            <a href="#download" class="mc-btn">🔗 CurseForge</a>
-            <a href="login.html" class="mc-btn logout-btn">🔑 Login</a>
+            <a href="#home" class="mc-btn" data-i18n="nav-home">🏠 Home</a>
+            <a href="#about" class="mc-btn" data-i18n="nav-about">📖 Über das Pack</a>
+            <a href="#features" class="mc-btn" data-i18n="nav-features">⚡ Features</a>
+            <a href="#mods" class="mc-btn" data-i18n="nav-mods">🧩 Mod Highlights</a>
+            <a href="#download" class="mc-btn" data-i18n="nav-download">🔗 CurseForge</a>
+            
+            <!-- Manueller Sprach-Switch Button -->
+            <button class="mc-btn lang-btn" id="langToggle">🌐 EN / DE</button>
+            
+            <a href="login.html" class="mc-btn logout-btn" data-i18n="nav-login">🔑 Login</a>
         </div>
     </aside>
 
@@ -348,50 +360,49 @@
     <main>
         <!-- HERO SECTION -->
         <section id="home" class="hero" data-reveal>
-           
-            <h1>Willkommen bei <br><span>Quaps Attack</span>!</h1>
-            <p class="hero-sub">Das ultimative Modpack für dein Spielerlebnis! Zocke auf absolut jedem Vanilla Server mit maximaler Performance, ohne dass der Server auch nur eine einzige Mod braucht.</p>
+            <h1 data-i18n="hero-title">Willkommen bei <br><span>Quaps Attack</span>!</h1>
+            <p class="hero-sub" data-i18n="hero-sub">Das ultimative Modpack für dein Spielerlebnis! Zocke auf absolut jedem Vanilla Server mit maximaler Performance, ohne dass der Server auch nur eine einzige Mod braucht.</p>
         </section>
 
         <!-- ABOUT SECTION -->
         <section id="about" class="mc-panel" data-reveal>
-            <h2 class="mc-panel-title"><span>📖</span> Was ist Quaps Attack?</h2>
-            <p style="margin-bottom: 15px; color: #cbd5e1;">
+            <h2 class="mc-panel-title"><span>📖</span> <span data-i18n="about-title">Was ist Quaps Attack?</span></h2>
+            <p style="margin-bottom: 15px; color: #cbd5e1;" data-i18n="about-text1">
                 Quaps Attack ist das perfekt optimierte Client Modpack für alle, die das Beste aus Minecraft rausholen wollen. Da es sich rein auf Client Seite abspielt, kannst du es auf jedem beliebigen Vanilla- oder Multiplayer Server nutzen, ohne Kompatibilitätsprobleme oder Server Mods.
             </p>
-            <p style="color: #cbd5e1;">
+            <p style="color: #cbd5e1;" data-i18n="about-text2">
                 Egal ob krasse FPS-Boosts, QoL Features oder geile Optik, du installierst das Pack einfach über CurseForge und bist direkt bereit für den nächsten Server Grind! 
             </p>
         </section>
 
         <!-- FEATURES SECTION -->
         <section id="features" class="mc-panel" data-reveal>
-            <h2 class="mc-panel-title"><span>⚡</span> Deine Vorteile</h2>
+            <h2 class="mc-panel-title"><span>⚡</span> <span data-i18n="features-title">Deine Vorteile</span></h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <h3>🚀 Volle Performance</h3>
-                    <p>Holen das Maximum an FPS aus deinem PC raus, damit absolut nichts mehr laggt.</p>
+                    <h3 data-i18n="feat1-title">🚀 Volle Performance</h3>
+                    <p data-i18n="feat1-desc">Holen das Maximum an FPS aus deinem PC raus, damit absolut nichts mehr laggt.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>🌐 Überall nutzbar</h3>
-                    <p>Da keine Server Mods nötig sind, spielst du problemlos auf jedem beliebigen Vanilla Server.</p>
+                    <h3 data-i18n="feat2-title">🌐 Überall nutzbar</h3>
+                    <p data-i18n="feat2-desc">Da keine Server Mods nötig sind, spielst du problemlos auf jedem beliebigen Vanilla Server.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>🛠️ Quality of Life</h3>
-                    <p>Clevere Client Features, die dir das Überleben, Bauen und Erkunden extrem erleichtern.</p>
+                    <h3 data-i18n="feat3-title">🛠️ Quality of Life</h3>
+                    <p data-i18n="feat3-desc">Clevere Client Features, die dir das Überleben, Bauen und Erkunden extrem erleichtern.</p>
                 </div>
             </div>
         </section>
 
         <!-- MODS HIGHLIGHT SECTION -->
         <section id="mods" class="mc-panel" data-reveal>
-            <h2 class="mc-panel-title"><span>🧩</span> Verbaute Mods & Highlights</h2>
-            <p style="margin-bottom: 25px; color: #cbd5e1;">
+            <h2 class="mc-panel-title"><span>🧩</span> <span data-i18n="mods-title">Verbaute Mods & Highlights</span></h2>
+            <p style="margin-bottom: 25px; color: #cbd5e1;" data-i18n="mods-desc">
                 Hier ist ein Auszug aus den mächtigen Performance-, Grafik- und QoL Mods, die in Quaps Attack stecken:
             </p>
 
             <div class="mods-category">
-                <h3>🚀 Performance & Core</h3>
+                <h3 data-i18n="mods-cat1">🚀 Performance & Core</h3>
                 <div class="mod-tags">
                     <span class="mod-tag">Sodium</span>
                     <span class="mod-tag">Dynamic FPS</span>
@@ -407,7 +418,7 @@
             </div>
 
             <div class="mods-category">
-                <h3>✨ Optik, Shader & Animationen</h3>
+                <h3 data-i18n="mods-cat2">✨ Optik, Shader & Animationen</h3>
                 <div class="mod-tags">
                     <span class="mod-tag">Iris Shaders</span>
                     <span class="mod-tag">Complementary (Unbound & Reimagined)</span>
@@ -430,7 +441,7 @@
             </div>
 
             <div class="mods-category">
-                <h3>🔊 Sound & Audio</h3>
+                <h3 data-i18n="mods-cat3">🔊 Sound & Audio</h3>
                 <div class="mod-tags">
                     <span class="mod-tag">Sound Physics Remastered</span>
                     <span class="mod-tag">AmbientSounds 6</span>
@@ -440,9 +451,9 @@
             </div>
 
             <div class="mods-category">
-                <h3>🛠️ Quality of Life & Tooling</h3>
+                <h3 data-i18n="mods-cat4">🛠️ Quality of Life & Tooling</h3>
                 <div class="mod-tags">
-                    <span class="mod-tag">Jade </span>
+                    <span class="mod-tag">Jade</span>
                     <span class="mod-tag">Roughly Enough Items (REI)</span>
                     <span class="mod-tag">AppleSkin</span>
                     <span class="mod-tag">Just Zoom</span>
@@ -450,7 +461,7 @@
                     <span class="mod-tag">Litematica + MaLiLib</span>
                     <span class="mod-tag">Accurate Block Placement Reborn</span>
                     <span class="mod-tag">Mandala's GUI - Dark mode</span>
-                    <span class="mod-tag">Colorful Ping Indicator </span>
+                    <span class="mod-tag">Colorful Ping Indicator</span>
                     <span class="mod-tag">Fresh Food</span>
                     <span class="mod-tag">Fancy Door Animations</span>
                     <span class="mod-tag">Entity Player Compat</span>
@@ -460,22 +471,120 @@
             </div>
         </section>
 
-        <!-- DOWNLOAD SECTION (BUTTON DEAKTIVIERT) -->
+        <!-- DOWNLOAD SECTION -->
         <section id="download" class="mc-panel" data-reveal>
             <h2 class="mc-panel-title"><span>🔗</span> CurseForge Release</h2>
-            <p style="margin-bottom: 20px; color: #cbd5e1;">
+            <p style="margin-bottom: 20px; color: #cbd5e1;" data-i18n="download-desc">
                 Das Modpack wird gerade vorbereitet und ist in Kürze auf CurseForge zum Download verfügbar. Bald geht's los! 
             </p>
-            <!-- Button ist disabled, weil es noch nicht auf CurseForge hochgeladen ist -->
-            <button class="mc-action full" disabled>
+            <button class="mc-action full" disabled data-i18n="download-btn">
                 Noch nicht auf CurseForge verfügbar 🔒
             </button>
         </section>
     </main>
 
-    <!-- SCROLL REVEAL SCRIPT -->
+    <!-- SCRIPT FÜR AUTOMATISCHE SPRACHERKENNUNG, SWITCH & SCROLL REVEAL -->
     <script>
+        const translations = {
+            de: {
+                "nav-home": "🏠 Home",
+                "nav-about": "📖 Über das Pack",
+                "nav-features": "⚡ Features",
+                "nav-mods": "🧩 Mod Highlights",
+                "nav-download": "🔗 CurseForge",
+                "nav-login": "🔑 Login",
+                "hero-title": "Willkommen bei <br><span>Quaps Attack</span>!",
+                "hero-sub": "Das ultimative Modpack für dein Spielerlebnis! Zocke auf absolut jedem Vanilla Server mit maximaler Performance, ohne dass der Server auch nur eine einzige Mod braucht.",
+                "about-title": "Was ist Quaps Attack?",
+                "about-text1": "Quaps Attack ist das perfekt optimierte Client Modpack für alle, die das Beste aus Minecraft rausholen wollen. Da es sich rein auf Client Seite abspielt, kannst du es auf jedem beliebigen Vanilla- oder Multiplayer Server nutzen, ohne Kompatibilitätsprobleme oder Server Mods.",
+                "about-text2": "Egal ob krasse FPS-Boosts, QoL Features oder geile Optik, du installierst das Pack einfach über CurseForge und bist direkt bereit für den nächsten Server Grind!",
+                "features-title": "Deine Vorteile",
+                "feat1-title": "🚀 Volle Performance",
+                "feat1-desc": "Holen das Maximum an FPS aus deinem PC raus, damit absolut nichts mehr laggt.",
+                "feat2-title": "🌐 Überall nutzbar",
+                "feat2-desc": "Da keine Server Mods nötig sind, spielst du problemlos auf jedem beliebigen Vanilla Server.",
+                "feat3-title": "🛠️ Quality of Life",
+                "feat3-desc": "Clevere Client Features, die dir das Überleben, Bauen und Erkunden extrem erleichtern.",
+                "mods-title": "Verbaute Mods & Highlights",
+                "mods-desc": "Hier ist ein Auszug aus den mächtigen Performance-, Grafik- und QoL Mods, die in Quaps Attack stecken:",
+                "mods-cat1": "🚀 Performance & Core",
+                "mods-cat2": "✨ Optik, Shader & Animationen",
+                "mods-cat3": "🔊 Sound & Audio",
+                "mods-cat4": "🛠️ Quality of Life & Tooling",
+                "download-desc": "Das Modpack wird gerade vorbereitet und ist in Kürze auf CurseForge zum Download verfügbar. Bald geht's los!",
+                "download-btn": "Noch nicht auf CurseForge verfügbar 🔒"
+            },
+            en: {
+                "nav-home": "🏠 Home",
+                "nav-about": "📖 About the Pack",
+                "nav-features": "⚡ Features",
+                "nav-mods": "🧩 Mod Highlights",
+                "nav-download": "🔗 CurseForge",
+                "nav-login": "🔑 Login",
+                "hero-title": "Welcome to <br><span>Quaps Attack</span>!",
+                "hero-sub": "The ultimate modpack for your gaming experience! Play on absolutely any vanilla server with maximum performance, without the server needing a single mod.",
+                "about-title": "What is Quaps Attack?",
+                "about-text1": "Quaps Attack is the perfectly optimized client modpack for anyone looking to get the absolute best out of Minecraft. Since it runs entirely on the client side, you can use it on any vanilla or multiplayer server without compatibility issues or server-side mods.",
+                "about-text2": "Whether it's massive FPS boosts, QoL features, or gorgeous visuals, you simply install the pack via CurseForge and you're ready for the next server grind!",
+                "features-title": "Your Benefits",
+                "feat1-title": "🚀 Full Performance",
+                "feat1-desc": "Get the maximum FPS out of your PC so that absolutely nothing lags anymore.",
+                "feat2-title": "🌐 Use Anywhere",
+                "feat2-desc": "Since no server mods are required, you can play seamlessly on any vanilla server.",
+                "feat3-title": "🛠️ Quality of Life",
+                "feat3-desc": "Clever client features that make surviving, building, and exploring much easier.",
+                "mods-title": "Included Mods & Highlights",
+                "mods-desc": "Here is an excerpt of the powerful performance, graphics, and QoL mods packed into Quaps Attack:",
+                "mods-cat1": "🚀 Performance & Core",
+                "mods-cat2": "✨ Visuals, Shaders & Animations",
+                "mods-cat3": "🔊 Sound & Audio",
+                "mods-cat4": "🛠️ Quality of Life & Tooling",
+                "download-desc": "The modpack is currently being prepared and will be available for download on CurseForge shortly. Stay tuned!",
+                "download-btn": "Not available on CurseForge yet 🔒"
+            }
+        };
+
+        // Automatische Erkennung beim Start (Auto-Detection)
+        function getInitialLang() {
+            // Check ob schon mal manuell umgestellt wurde (LocalStorage)
+            const savedLang = localStorage.getItem('quaps_lang');
+            if (savedLang) return savedLang;
+
+            // Ansonsten Browsersprache prüfen (schaut ob 'de' am Anfang steht)
+            const browserLang = navigator.language || navigator.userLanguage;
+            return browserLang.startsWith('de') ? 'de' : 'en';
+        }
+
+        let currentLang = getInitialLang();
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('quaps_lang', lang);
+
+            // Alle Elemente mit data-i18n Attribut aktualisieren
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+
+            // Button Text aktualisieren
+            document.getElementById("langToggle").innerText = lang === 'de' ? "🌐 DE ➔ EN" : "🌐 EN ➔ DE";
+            document.documentElement.setAttribute("lang", lang);
+        }
+
+        // Event Listener für den manuellen Button-Switch
+        document.getElementById("langToggle").addEventListener("click", () => {
+            const newLang = currentLang === 'de' ? 'en' : 'de';
+            setLanguage(newLang);
+        });
+
+        // Init beim Laden ausführen
         document.addEventListener("DOMContentLoaded", function() {
+            setLanguage(currentLang);
+
+            // Scroll Reveal Logik
             const reveals = document.querySelectorAll("[data-reveal]");
 
             function checkReveal() {
@@ -489,7 +598,7 @@
             }
 
             window.addEventListener("scroll", checkReveal);
-            checkReveal(); // Initial check
+            checkReveal();
         });
     </script>
 </body>
