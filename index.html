@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+    <link rel="icon" type="image/png" href="unnamed.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quaps Attack - Das universelle Client-Modpack</title>
+    <title>Quaps Attack</title>
     <!-- Google Fonts: Minecraft Retro meets Modern Clean -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -63,33 +64,45 @@
         }
 
         .sidebar-logo {
-            padding: 30px 20px;
+            padding: 25px 20px;
             border-bottom: 1px solid var(--border);
             background: rgba(0,0,0,0.2);
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar-logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(168,255,120,0.3);
+            border: 1px solid var(--border-hover);
         }
         .sidebar-logo .logo-text {
             font-family: 'Press Start 2P', monospace;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             color: var(--primary);
             display: block;
             line-height: 1.5;
             text-shadow: 0 0 15px rgba(168,255,120,0.4);
         }
         .sidebar-logo .logo-sub {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--muted);
-            margin-top: 8px;
             display: block;
             letter-spacing: 1px;
         }
 
         .sidebar-section {
-            padding: 20px 0;
+            padding: 15px 0;
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
+            overflow-y: auto;
         }
 
         .mc-btn {
@@ -99,9 +112,9 @@
             width: 100%;
             background: transparent;
             color: var(--muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            padding: 14px 24px;
+            padding: 12px 20px;
             border: none;
             cursor: pointer;
             text-align: left;
@@ -113,7 +126,7 @@
             background: rgba(168, 255, 120, 0.04);
             color: #fff;
             border-left-color: var(--primary);
-            padding-left: 28px;
+            padding-left: 24px;
         }
 
         .logout-btn {
@@ -266,14 +279,43 @@
             font-size: 0.95rem;
         }
 
+        /* ── MOD LIST BADGES ── */
+        .mods-category {
+            margin-bottom: 25px;
+        }
+        .mods-category h3 {
+            font-size: 0.55rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-family: 'Press Start 2P', monospace;
+        }
+        .mod-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .mod-tag {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            transition: 0.2s;
+        }
+        .mod-tag:hover {
+            border-color: var(--primary);
+            color: #fff;
+            background: rgba(168, 255, 120, 0.05);
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
             .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
-            .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; justify-content: center; }
+            .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; justify-content: center; overflow-y: visible; }
             .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; padding: 10px 15px; font-size: 0.8rem; }
             .mc-btn:hover { border-left-color: transparent; border-bottom-color: var(--primary); padding-left: 15px; }
             .logout-btn { margin-top: 0; margin-bottom: 0; }
-            main { margin-left: 0; padding: 30px 20px; }
             main { margin-left: 0; padding: 30px 20px; }
             .hero h1 { font-size: 2rem; }
         }
@@ -286,13 +328,17 @@
     <!-- SIDEBAR NAVIGATION -->
     <aside class="sidebar">
         <div class="sidebar-logo">
-            <span class="logo-text">Quaps Attack</span>
-            <span class="logo-sub">Client Modpack</span>
+            <img src="unnamed.png" alt="Quaps Attack Logo">
+            <div>
+                <span class="logo-text">Quaps Attack</span>
+                <span class="logo-sub">Client Modpack</span>
+            </div>
         </div>
         <div class="sidebar-section">
             <a href="#home" class="mc-btn">🏠 Home</a>
             <a href="#about" class="mc-btn">📖 Über das Pack</a>
             <a href="#features" class="mc-btn">⚡ Features</a>
+            <a href="#mods" class="mc-btn">🧩 Mod-Highlights</a>
             <a href="#download" class="mc-btn">🔗 CurseForge</a>
             <a href="login.html" class="mc-btn logout-btn">🔑 Login</a>
         </div>
@@ -304,17 +350,17 @@
         <section id="home" class="hero" data-reveal>
             <div class="hero-badge">⚡ 100% Server-Kompatibel</div>
             <h1>Willkommen bei <br><span>Quaps Attack</span>!</h1>
-            <p class="hero-sub">Das ultimative Client-Modpack für dein Spielerlebnis! Zocke auf absolut jedem Vanilla-Server mit maximaler Performance, ohne dass der Server auch nur eine einzige Mod braucht. 💀✨</p>
+            <p class="hero-sub">Das ultimative Modpack für dein Spielerlebnis! Zocke auf absolut jedem Vanilla Server mit maximaler Performance, ohne dass der Server auch nur eine einzige Mod braucht.</p>
         </section>
 
         <!-- ABOUT SECTION -->
         <section id="about" class="mc-panel" data-reveal>
             <h2 class="mc-panel-title"><span>📖</span> Was ist Quaps Attack?</h2>
             <p style="margin-bottom: 15px; color: #cbd5e1;">
-                Quaps Attack ist das perfekt optimierte Client-Modpack für alle, die das Beste aus Minecraft rausholen wollen. Da es sich rein auf Client-Seite abspielt, kannst du es auf jedem beliebigen Vanilla- oder Multiplayer-Server nutzen, ohne Kompatibilitätsprobleme oder Server-Mods.
+                Quaps Attack ist das perfekt optimierte Client Modpack für alle, die das Beste aus Minecraft rausholen wollen. Da es sich rein auf Client Seite abspielt, kannst du es auf jedem beliebigen Vanilla- oder Multiplayer Server nutzen, ohne Kompatibilitätsprobleme oder Server Mods.
             </p>
             <p style="color: #cbd5e1;">
-                Egal ob krasse FPS-Boosts, QoL-Features oder geile Optik – du installierst das Pack einfach über CurseForge und bist direkt bereit für den nächsten Server-Grind! 😉
+                Egal ob krasse FPS-Boosts, QoL Features oder geile Optik, du installierst das Pack einfach über CurseForge und bist direkt bereit für den nächsten Server Grind! 
             </p>
         </section>
 
@@ -328,11 +374,88 @@
                 </div>
                 <div class="feature-card">
                     <h3>🌐 Überall nutzbar</h3>
-                    <p>Da keine Server-Mods nötig sind, spielst du problemlos auf jedem beliebigen Vanilla-Server.</p>
+                    <p>Da keine Server Mods nötig sind, spielst du problemlos auf jedem beliebigen Vanilla Server.</p>
                 </div>
                 <div class="feature-card">
                     <h3>🛠️ Quality of Life</h3>
-                    <p>Clevere Client-Features, die dir das Überleben, Bauen und Erkunden extrem erleichtern.</p>
+                    <p>Clevere Client Features, die dir das Überleben, Bauen und Erkunden extrem erleichtern.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODS HIGHLIGHT SECTION -->
+        <section id="mods" class="mc-panel" data-reveal>
+            <h2 class="mc-panel-title"><span>🧩</span> Verbaute Mods & Highlights</h2>
+            <p style="margin-bottom: 25px; color: #cbd5e1;">
+                Hier ist ein Auszug aus den mächtigen Performance-, Grafik- und QoL-Mods, die in Quaps Attack stecken:
+            </p>
+
+            <div class="mods-category">
+                <h3>🚀 Performance & Core</h3>
+                <div class="mod-tags">
+                    <span class="mod-tag">Sodium</span>
+                    <span class="mod-tag">Dynamic FPS</span>
+                    <span class="mod-tag">Entity Culling</span>
+                    <span class="mod-tag">Bobby</span>
+                    <span class="mod-tag">Clumps</span>
+                    <span class="mod-tag">Fabric API</span>
+                    <span class="mod-tag">Architectury API</span>
+                    <span class="mod-tag">Cloth Config API</span>
+                    <span class="mod-tag">YetAnotherConfigLib</span>
+                    <span class="mod-tag">Konkrete</span>
+                </div>
+            </div>
+
+            <div class="mods-category">
+                <h3>✨ Optik, Shader & Animationen</h3>
+                <div class="mod-tags">
+                    <span class="mod-tag">Iris Shaders</span>
+                    <span class="mod-tag">Complementary (Unbound & Reimagined)</span>
+                    <span class="mod-tag">BSL Shaders</span>
+                    <span class="mod-tag">Solas Shader</span>
+                    <span class="mod-tag">Iteration T & Euphoria Patches</span>
+                    <span class="mod-tag">Distant Horizons (LOD)</span>
+                    <span class="mod-tag">Fresh Animations + Extensions</span>
+                    <span class="mod-tag">ETF & EMF (Entity Textures/Models)</span>
+                    <span class="mod-tag">Punchy! First Person Animations</span>
+                    <span class="mod-tag">Skin Layers 3D</span>
+                    <span class="mod-tag">Motschen's Better Leaves</span>
+                    <span class="mod-tag">Glowing Emissive Ores</span>
+                    <span class="mod-tag">Crops 3D Reforged</span>
+                    <span class="mod-tag">Continuity & Fusion Connected Glass</span>
+                    <span class="mod-tag">Fast Better Grass</span>
+                    <span class="mod-tag">Low On Fire</span>
+                    <span class="mod-tag">Full Brightness Toggle</span>
+                </div>
+            </div>
+
+            <div class="mods-category">
+                <h3>🔊 Sound & Audio</h3>
+                <div class="mod-tags">
+                    <span class="mod-tag">Sound Physics Remastered</span>
+                    <span class="mod-tag">AmbientSounds 6</span>
+                    <span class="mod-tag">Simple Voice Chat</span>
+                    <span class="mod-tag">Sound​s & M.R.U</span>
+                </div>
+            </div>
+
+            <div class="mods-category">
+                <h3>🛠️ Quality of Life & Tooling</h3>
+                <div class="mod-tags">
+                    <span class="mod-tag">Jade 🔍</span>
+                    <span class="mod-tag">Roughly Enough Items (REI)</span>
+                    <span class="mod-tag">AppleSkin</span>
+                    <span class="mod-tag">Just Zoom</span>
+                    <span class="mod-tag">Mouse Tweaks</span>
+                    <span class="mod-tag">Litematica + MaLiLib</span>
+                    <span class="mod-tag">Accurate Block Placement Reborn</span>
+                    <span class="mod-tag">Mandala's GUI - Dark mode</span>
+                    <span class="mod-tag">Colorful Ping Indicator 🌈</span>
+                    <span class="mod-tag">Fresh Food</span>
+                    <span class="mod-tag">Fancy Door Animations</span>
+                    <span class="mod-tag">Entity Player Compat</span>
+                    <span class="mod-tag">CreativeCore</span>
+                    <span class="mod-tag">Collective</span>
                 </div>
             </div>
         </section>
@@ -341,7 +464,7 @@
         <section id="download" class="mc-panel" data-reveal>
             <h2 class="mc-panel-title"><span>🔗</span> CurseForge Release</h2>
             <p style="margin-bottom: 20px; color: #cbd5e1;">
-                Das Modpack wird gerade vorbereitet und ist in Kürze auf CurseForge zum Download verfügbar. Bald geht's los! 🚀
+                Das Modpack wird gerade vorbereitet und ist in Kürze auf CurseForge zum Download verfügbar. Bald geht's los! 
             </p>
             <!-- Button ist disabled, weil es noch nicht auf CurseForge hochgeladen ist -->
             <button class="mc-action full" disabled>
