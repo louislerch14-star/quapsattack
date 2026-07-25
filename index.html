@@ -12,6 +12,7 @@
             --primary: #a8ff78; /* Frisches XP-Grün */
             --diamond: #44d4d4;
             --gold:    #f5c518;
+            --curseforge: #f16436; /* CurseForge Orange */
             --bg:      #080c14;
             --panel:   rgba(22, 27, 34, 0.75);
             --panel2:  #0d1117;
@@ -248,14 +249,20 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(168,255,120,0.3);
         }
-        .mc-action:disabled { 
-            opacity: 0.4; 
-            cursor: not-allowed; 
-            border-color: rgba(255,255,255,0.05); 
-            color: var(--muted);
-            background: rgba(255,255,255,0.02);
-        }
         .mc-action.full { width: 100%; text-align: center; display: block; }
+
+        /* CurseForge Button Style */
+        .mc-action.curseforge {
+            background: linear-gradient(135deg, #20130d, #110906);
+            color: var(--curseforge);
+            border-color: rgba(241, 100, 54, 0.3);
+        }
+        .mc-action.curseforge:hover {
+            background: var(--curseforge);
+            color: #fff;
+            border-color: var(--curseforge);
+            box-shadow: 0 6px 20px rgba(241, 100, 54, 0.4);
+        }
 
         /* ── FEATURES GRID ── */
         .features-grid {
@@ -475,11 +482,11 @@
         <section id="download" class="mc-panel" data-reveal>
             <h2 class="mc-panel-title"><span>🔗</span> CurseForge Release</h2>
             <p style="margin-bottom: 20px; color: #cbd5e1;" data-i18n="download-desc">
-                Das Modpack wird gerade vorbereitet und ist in Kürze auf CurseForge zum Download verfügbar. Bald geht's los! 
+                Das Modpack ist jetzt live und auf CurseForge zum Download verfügbar! 
             </p>
-            <button class="mc-action full" disabled data-i18n="download-btn">
-                Noch nicht auf CurseForge verfügbar 🔒
-            </button>
+            <a href="https://www.curseforge.com/minecraft/modpacks/quaps-attack" target="_blank" class="mc-action full curseforge" data-i18n="download-btn">
+                Jetzt auf CurseForge herunterladen 🚀
+            </a>
         </section>
     </main>
 
@@ -511,8 +518,8 @@
                 "mods-cat2": "✨ Optik, Shader & Animationen",
                 "mods-cat3": "🔊 Sound & Audio",
                 "mods-cat4": "🛠️ Quality of Life & Tooling",
-                "download-desc": "Das Modpack wird gerade vorbereitet und ist in Kürze auf CurseForge zum Download verfügbar. Bald geht's los!",
-                "download-btn": "Noch nicht auf CurseForge verfügbar 🔒"
+                "download-desc": "Das Modpack ist jetzt live und auf CurseForge zum Download verfügbar!",
+                "download-btn": "Jetzt auf CurseForge herunterladen 🚀"
             },
             en: {
                 "nav-home": "🏠 Home",
@@ -539,18 +546,16 @@
                 "mods-cat2": "✨ Visuals, Shaders & Animations",
                 "mods-cat3": "🔊 Sound & Audio",
                 "mods-cat4": "🛠️ Quality of Life & Tooling",
-                "download-desc": "The modpack is currently being prepared and will be available for download on CurseForge shortly. Stay tuned!",
-                "download-btn": "Not available on CurseForge yet 🔒"
+                "download-desc": "The modpack is now live and available for download on CurseForge!",
+                "download-btn": "Download on CurseForge now 🚀"
             }
         };
 
         // Automatische Erkennung beim Start (Auto-Detection)
         function getInitialLang() {
-            // Check ob schon mal manuell umgestellt wurde (LocalStorage)
             const savedLang = localStorage.getItem('quaps_lang');
             if (savedLang) return savedLang;
 
-            // Ansonsten Browsersprache prüfen (schaut ob 'de' am Anfang steht)
             const browserLang = navigator.language || navigator.userLanguage;
             return browserLang.startsWith('de') ? 'de' : 'en';
         }
@@ -561,7 +566,6 @@
             currentLang = lang;
             localStorage.setItem('quaps_lang', lang);
 
-            // Alle Elemente mit data-i18n Attribut aktualisieren
             document.querySelectorAll("[data-i18n]").forEach(el => {
                 const key = el.getAttribute("data-i18n");
                 if (translations[lang][key]) {
@@ -569,22 +573,18 @@
                 }
             });
 
-            // Button Text aktualisieren
             document.getElementById("langToggle").innerText = lang === 'de' ? "🌐 DE ➔ EN" : "🌐 EN ➔ DE";
             document.documentElement.setAttribute("lang", lang);
         }
 
-        // Event Listener für den manuellen Button-Switch
         document.getElementById("langToggle").addEventListener("click", () => {
             const newLang = currentLang === 'de' ? 'en' : 'de';
             setLanguage(newLang);
         });
 
-        // Init beim Laden ausführen
         document.addEventListener("DOMContentLoaded", function() {
             setLanguage(currentLang);
 
-            // Scroll Reveal Logik
             const reveals = document.querySelectorAll("[data-reveal]");
 
             function checkReveal() {
