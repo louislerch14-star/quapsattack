@@ -551,6 +551,41 @@
     .sidebar-profile { border-top: none; border-left: 2px solid var(--border); padding: 10px; }
     main { margin-left: 0; padding: 30px 20px; }
   }
+  @keyframes redPulse {
+    0% {
+        border-color: rgba(255, 75, 75, 0.8);
+        box-shadow: 0 0 5px rgba(255, 75, 75, 0.4), inset 0 0 5px rgba(255, 75, 75, 0.2);
+    }
+    50% {
+        border-color: rgba(255, 0, 0, 1);
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), inset 0 0 10px rgba(255, 0, 0, 0.4);
+    }
+    100% {
+        border-color: rgba(255, 75, 75, 0.8);
+        box-shadow: 0 0 5px rgba(255, 75, 75, 0.4), inset 0 0 5px rgba(255, 75, 75, 0.2);
+    }
+}
+
+.mc-btn.btn-download-app {
+    color: #ff4b4b !important;
+    border: 2px solid #ff4b4b !important;
+    border-radius: 8px;
+    margin: 5px 15px 10px 15px;
+    width: calc(100% - 30px);
+    justify-content: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    background: rgba(255, 0, 0, 0.08);
+    animation: redPulse 2s infinite ease-in-out;
+    text-align: center;
+}
+
+.mc-btn.btn-download-app:hover {
+    background: rgba(255, 0, 0, 0.2) !important;
+    color: #fff !important;
+    border-left-color: #ff4b4b !important;
+    padding-left: 20px;
+}
   </style>
 </head>
 <body>
@@ -575,9 +610,7 @@
   <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
   <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">&nbsp; 📋 BEWERBUNGEN</button>
     <br>
-    <br>
-    <br>
-<button class="mc-btn" onclick="window.open('https://drive.google.com/file/d/1YKXFwB2QAsTXSQ-z3qqfOmzIiuYUedst/view?usp=sharing', '_blank')" id="btn-beta">&nbsp; DOWNLOAD APP</button>
+<button class="mc-btn btn-download-app" onclick="window.open('https://drive.google.com/file/d/1YKXFwB2QAsTXSQ-z3qqfOmzIiuYUedst/view?usp=sharing', '_blank')" id="btn-beta">&nbsp; DOWNLOAD APP</button>
   <button class="mc-btn logout-btn" onclick="logout()">&nbsp; EXIT / LOGOUT</button>
 </div>
 
