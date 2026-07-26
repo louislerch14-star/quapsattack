@@ -13,6 +13,7 @@
             --diamond: #44d4d4;
             --gold:    #f5c518;
             --curseforge: #f16436; /* CurseForge Orange */
+            --modrinth: #1bd96a; /* Modrinth Grün */
             --bg:      #080c14;
             --panel:   rgba(22, 27, 34, 0.75);
             --panel2:  #0d1117;
@@ -128,6 +129,19 @@
             color: #fff;
             border-left-color: var(--primary);
             padding-left: 24px;
+        }
+
+        /* Sidebar Download Buttons Styling */
+        .mc-btn.sidebar-cf:hover {
+            background: rgba(241, 100, 54, 0.08);
+            color: var(--curseforge);
+            border-left-color: var(--curseforge);
+        }
+
+        .mc-btn.sidebar-mr:hover {
+            background: rgba(27, 217, 106, 0.08);
+            color: var(--modrinth);
+            border-left-color: var(--modrinth);
         }
 
         /* Lang Switcher Button Design */
@@ -249,7 +263,7 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(168,255,120,0.3);
         }
-        .mc-action.full { width: 100%; text-align: center; display: block; }
+        .mc-action.full { width: 100%; text-align: center; display: block; margin-bottom: 15px; }
 
         /* CurseForge Button Style */
         .mc-action.curseforge {
@@ -262,6 +276,19 @@
             color: #fff;
             border-color: var(--curseforge);
             box-shadow: 0 6px 20px rgba(241, 100, 54, 0.4);
+        }
+
+        /* Modrinth Button Style */
+        .mc-action.modrinth {
+            background: linear-gradient(135deg, #0d2015, #061109);
+            color: var(--modrinth);
+            border-color: rgba(27, 217, 106, 0.3);
+        }
+        .mc-action.modrinth:hover {
+            background: var(--modrinth);
+            color: #000;
+            border-color: var(--modrinth);
+            box-shadow: 0 6px 20px rgba(27, 217, 106, 0.4);
         }
 
         /* ── FEATURES GRID ── */
@@ -354,7 +381,11 @@
             <a href="#about" class="mc-btn" data-i18n="nav-about">📖 Über das Pack</a>
             <a href="#features" class="mc-btn" data-i18n="nav-features">⚡ Features</a>
             <a href="#mods" class="mc-btn" data-i18n="nav-mods">🧩 Mod Highlights</a>
-            <a href="#download" class="mc-btn" data-i18n="nav-download">🔗 CurseForge</a>
+            <a href="#download" class="mc-btn" data-i18n="nav-download">🔗 Downloads</a>
+            
+            <!-- Direkte Download-Links in der Sidebar -->
+            <a href="https://www.curseforge.com/minecraft/modpacks/quaps-attack" target="_blank" class="mc-btn sidebar-cf" data-i18n="nav-cf">🔥 CurseForge</a>
+            <a href="https://modrinth.com/project/W4urffZz" target="_blank" class="mc-btn sidebar-mr" data-i18n="nav-mr">🟢 Modrinth</a>
             
             <!-- Manueller Sprach-Switch Button -->
             <button class="mc-btn lang-btn" id="langToggle">🌐 EN / DE</button>
@@ -378,7 +409,7 @@
                 Quaps Attack ist das perfekt optimierte Client Modpack für alle, die das Beste aus Minecraft rausholen wollen. Da es sich rein auf Client Seite abspielt, kannst du es auf jedem beliebigen Vanilla- oder Multiplayer Server nutzen, ohne Kompatibilitätsprobleme oder Server Mods.
             </p>
             <p style="color: #cbd5e1;" data-i18n="about-text2">
-                Egal ob krasse FPS-Boosts, QoL Features oder geile Optik, du installierst das Pack einfach über CurseForge und bist direkt bereit für den nächsten Server Grind! 
+                Egal ob krasse FPS-Boosts, QoL Features oder geile Optik, du installierst das Pack einfach über CurseForge oder Modrinth und bist direkt bereit für den nächsten Server Grind! 
             </p>
         </section>
 
@@ -480,12 +511,15 @@
 
         <!-- DOWNLOAD SECTION -->
         <section id="download" class="mc-panel" data-reveal>
-            <h2 class="mc-panel-title"><span>🔗</span> CurseForge Release</h2>
+            <h2 class="mc-panel-title"><span>🔗</span> <span data-i18n="download-section-title">Modpack herunterladen</span></h2>
             <p style="margin-bottom: 20px; color: #cbd5e1;" data-i18n="download-desc">
-                Das Modpack ist jetzt live und auf CurseForge zum Download verfügbar! 
+                Das Modpack ist jetzt live und sowohl auf CurseForge als auch auf Modrinth zum Download verfügbar! 
             </p>
-            <a href="https://www.curseforge.com/minecraft/modpacks/quaps-attack" target="_blank" class="mc-action full curseforge" data-i18n="download-btn">
+            <a href="https://www.curseforge.com/minecraft/modpacks/quaps-attack" target="_blank" class="mc-action full curseforge" data-i18n="download-btn-cf">
                 Jetzt auf CurseForge herunterladen 🚀
+            </a>
+            <a href="https://modrinth.com/project/W4urffZz" target="_blank" class="mc-action full modrinth" data-i18n="download-btn-mr">
+                Jetzt auf Modrinth herunterladen 🧩
             </a>
         </section>
     </main>
@@ -498,13 +532,15 @@
                 "nav-about": "📖 Über das Pack",
                 "nav-features": "⚡ Features",
                 "nav-mods": "🧩 Mod Highlights",
-                "nav-download": "🔗 CurseForge",
+                "nav-download": "🔗 Downloads",
+                "nav-cf": "🔥 CurseForge",
+                "nav-mr": "🟢 Modrinth",
                 "nav-login": "🔑 Login",
                 "hero-title": "Willkommen bei <br><span>Quaps Attack</span>!",
                 "hero-sub": "Das ultimative Modpack für dein Spielerlebnis! Zocke auf absolut jedem Vanilla Server mit maximaler Performance, ohne dass der Server auch nur eine einzige Mod braucht.",
                 "about-title": "Was ist Quaps Attack?",
-                "about-text1": "Quaps Attack ist das perfekt optimierte Client Modpack für alle, die das Beste aus Minecraft rausholen wollen. Da es sich rein auf Client Seite abspielt, kannst du es auf jedem beliebigen Vanilla- oder Multiplayer Server nutzen, ohne Kompatibilitätsprobleme oder Server Mods.",
-                "about-text2": "Egal ob krasse FPS-Boosts, QoL Features oder geile Optik, du installierst das Pack einfach über CurseForge und bist direkt bereit für den nächsten Server Grind!",
+                "about-text1": "Quaps Attack ist das perfekt optimierte Client Modpack für alle, die das Beste aus Minecraft rausholen wollen. Da es sich rein auf Client Seite abspielt, kannst du ist auf jedem beliebigen Vanilla- oder Multiplayer Server nutzen, ohne Kompatibilitätsprobleme oder Server Mods.",
+                "about-text2": "Egal ob krasse FPS-Boosts, QoL Features oder geile Optik, du installierst das Pack einfach über CurseForge oder Modrinth und bist direkt bereit für den nächsten Server Grind!",
                 "features-title": "Deine Vorteile",
                 "feat1-title": "🚀 Volle Performance",
                 "feat1-desc": "Holen das Maximum an FPS aus deinem PC raus, damit absolut nichts mehr laggt.",
@@ -518,21 +554,25 @@
                 "mods-cat2": "✨ Optik, Shader & Animationen",
                 "mods-cat3": "🔊 Sound & Audio",
                 "mods-cat4": "🛠️ Quality of Life & Tooling",
-                "download-desc": "Das Modpack ist jetzt live und auf CurseForge zum Download verfügbar!",
-                "download-btn": "Jetzt auf CurseForge herunterladen 🚀"
+                "download-section-title": "Modpack herunterladen",
+                "download-desc": "Das Modpack ist jetzt live und sowohl auf CurseForge als auch auf Modrinth zum Download verfügbar!",
+                "download-btn-cf": "Jetzt auf CurseForge herunterladen 🚀",
+                "download-btn-mr": "Jetzt auf Modrinth herunterladen 🧩"
             },
             en: {
                 "nav-home": "🏠 Home",
                 "nav-about": "📖 About the Pack",
                 "nav-features": "⚡ Features",
                 "nav-mods": "🧩 Mod Highlights",
-                "nav-download": "🔗 CurseForge",
+                "nav-download": "🔗 Downloads",
+                "nav-cf": "🔥 CurseForge",
+                "nav-mr": "🟢 Modrinth",
                 "nav-login": "🔑 Login",
                 "hero-title": "Welcome to <br><span>Quaps Attack</span>!",
                 "hero-sub": "The ultimate modpack for your gaming experience! Play on absolutely any vanilla server with maximum performance, without the server needing a single mod.",
                 "about-title": "What is Quaps Attack?",
                 "about-text1": "Quaps Attack is the perfectly optimized client modpack for anyone looking to get the absolute best out of Minecraft. Since it runs entirely on the client side, you can use it on any vanilla or multiplayer server without compatibility issues or server-side mods.",
-                "about-text2": "Whether it's massive FPS boosts, QoL features, or gorgeous visuals, you simply install the pack via CurseForge and you're ready for the next server grind!",
+                "about-text2": "Whether it's massive FPS boosts, QoL features, or gorgeous visuals, you simply install the pack via CurseForge or Modrinth and you're ready for the next server grind!",
                 "features-title": "Your Benefits",
                 "feat1-title": "🚀 Full Performance",
                 "feat1-desc": "Get the maximum FPS out of your PC so that absolutely nothing lags anymore.",
@@ -546,8 +586,10 @@
                 "mods-cat2": "✨ Visuals, Shaders & Animations",
                 "mods-cat3": "🔊 Sound & Audio",
                 "mods-cat4": "🛠️ Quality of Life & Tooling",
-                "download-desc": "The modpack is now live and available for download on CurseForge!",
-                "download-btn": "Download on CurseForge now 🚀"
+                "download-section-title": "Download Modpack",
+                "download-desc": "The modpack is now live and available for download on CurseForge and Modrinth!",
+                "download-btn-cf": "Download on CurseForge now 🚀",
+                "download-btn-mr": "Download on Modrinth now 🧩"
             }
         };
 
