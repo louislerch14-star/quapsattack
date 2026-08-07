@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NILS IS 15 - THE LEGEND UNLEASHED</title>
+    <title>NILS IS 15 - SYSTEM LOCK</title>
     <style>
-        /* Basis Styles */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -13,19 +12,19 @@
         }
 
         body {
-            background-color: #050505; /* Tieferes Schwarz */
-            color: #eee;
-            font-family: 'Orbitron', sans-serif; /* Cooler Tech-Font */
+            background-color: #030712;
+            color: #f3f4f6;
+            font-family: 'Courier New', Courier, monospace;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            perspective: 1000px; /* Für den 3D-Effekt */
+            overflow-x: hidden;
+            padding: 15px;
         }
 
-        /* Animierter Matrix-Code Hintergrund */
+        /* Matrix Hintergrund fürs Handy optimiert */
         #matrix-bg {
             position: fixed;
             top: 0;
@@ -34,230 +33,226 @@
             height: 100vh;
             z-index: -1;
             pointer-events: none;
-            opacity: 0.1; /* Sehr subtil, aber da */
-            overflow: hidden;
-            background: linear-gradient(to bottom, #050505 0%, #000319 100%);
+            opacity: 0.15;
         }
-        
+
         canvas {
             display: block;
         }
 
-        /* Haupt-Container */
-        .main-container {
-            max-width: 800px;
-            width: 90%;
-            padding: 50px;
-            background: rgba(15, 15, 30, 0.85);
-            border: 1px solid #141428;
-            border-radius: 25px;
-            box-shadow: 0 15px 50px rgba(0, 229, 255, 0.2), 0 5px 15px rgba(0,0,0,0.5);
-            backdrop-filter: blur(20px);
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(17, 24, 39, 0.9);
+            border: 2px solid #38bdf8;
+            border-radius: 20px;
+            padding: 25px;
             text-align: center;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+            backdrop-filter: blur(10px);
             position: relative;
             z-index: 10;
-            transition: transform 0.3s ease-out;
-            transform-style: preserve-3d;
-        }
-        
-        .main-container:hover {
-            transform: rotateX(2deg) rotateY(-2deg);
-            box-shadow: 0 20px 70px rgba(0, 229, 255, 0.3), 0 8px 25px rgba(0,0,0,0.6);
         }
 
-        /* Neon-Überschrift mit 3D-Tilt */
         h1 {
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: #00e5ff; /* Neon Cyan */
-            text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff, 0 0 30px #00e5ff, 0 0 40px #003399;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 1.8rem;
+            color: #38bdf8;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            transform: translateZ(30px);
-        }
-
-        h1:hover {
-            color: #ff00e6; /* Neon Pink beim Hover */
-            text-shadow: 0 0 10px #ff00e6, 0 0 20px #ff00e6, 0 0 30px #ff00e6, 0 0 40px #990055;
-            transform: translateZ(50px);
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
         }
 
         .subtitle {
-            font-size: 1.5rem;
-            color: #888;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transform: translateZ(15px);
+            font-size: 0.9rem;
+            color: #9ca3af;
+            margin-bottom: 25px;
         }
 
-        /* Das Bild-Grid */
+        /* Interaktives Minispiel-Fenster */
+        #minigame-box {
+            background: #1f2937;
+            border: 1px dashed #ef4444;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        #minigame-box p {
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            color: #fca5a5;
+        }
+
+        .hack-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: inherit;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+            transition: all 0.2s;
+        }
+
+        .hack-btn:active {
+            transform: scale(0.95);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #374151;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #34d399;
+            transition: width 0.3s ease;
+        }
+
+        /* Der geheime Content (wird freigeschaltet) */
+        #secret-content {
+            display: none;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .gallery {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 40px;
-            transform: translateZ(20px);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
         }
 
         .img-container {
-            position: relative;
-            border-radius: 15px;
+            width: 100%;
+            aspect-ratio: 4/3;
+            border-radius: 12px;
             overflow: hidden;
-            aspect-ratio: 1/1;
+            border: 2px solid #38bdf8;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            border: 2px solid #141428;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .img-container:hover {
-            transform: scale(1.05) rotateZ(1deg);
-            box-shadow: 0 10px 25px rgba(0, 229, 255, 0.4);
-            border-color: #00e5ff;
+            position: relative;
         }
 
         .img-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
         }
-        
-        .img-container:hover img {
-            transform: scale(1.1);
-        }
-        
-        .img-overlay {
+
+        .img-label {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            padding: 15px;
-            color: #00e5ff;
+            background: rgba(0,0,0,0.7);
+            color: #38bdf8;
+            padding: 8px;
+            font-size: 0.85rem;
             font-weight: bold;
-            font-size: 1.1rem;
         }
 
-        /* Cyber-Button */
-        .cyber-btn {
-            background-color: #050505;
-            color: #00e5ff;
-            border: 2px solid #00e5ff;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-            transform: translateZ(25px);
-            z-index: 2;
-        }
-        
-        .cyber-btn::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            width: calc(100% + 10px);
-            height: calc(100% + 10px);
-            background: linear-gradient(45deg, #00e5ff, #ff00e6);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .cyber-btn:hover {
-            color: #fff;
-            border-color: transparent;
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.7);
-        }
-        
-        .cyber-btn:hover::before {
-            opacity: 1;
-        }
-
-        /* Easter Egg Console Log & Alert */
-        #console-msg {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            color: #0f0;
-            border: 1px solid #0f0;
+        .birthday-text {
+            background: #1f2937;
             padding: 15px;
-            font-family: 'Courier New', Courier, monospace;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-            z-index: 100;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #d1d5db;
+            border-left: 4px solid #34d399;
+            text-align: left;
+            margin-bottom: 20px;
         }
 
+        footer {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Background Canvas -->
+    <!-- Matrix Hintergrund -->
     <div id="matrix-bg">
         <canvas id="q"></canvas>
     </div>
 
-    <div class="main-container">
-        <h1 onclick="triggerAlert()">NILS IS 15! 🚀</h1>
-        <div class="subtitle">LEVEL 15 UNLOCKED. READY PLAYER ONE?</div>
+    <div class="container">
+        <h1>🔒 SYSTEM LOCKED</h1>
+        <div class="subtitle">Nils-OS v15.0 - Zugriff gesperrt</div>
 
-        <div class="gallery">
-            <div class="img-container">
-                <!-- FÜG DEIN BILD HIER EIN: nils1.jpg -->
-                <img src="nils1.jpg" alt="Nils #1">
-                <div class="img-overlay">DER BOSS</div>
-            </div>
-            <div class="img-container">
-                <!-- FÜG DEIN BILD HIER EIN: nils2.jpg -->
-                <img src="nils2.jpg" alt="Nils #2">
-                <div class="img-overlay">LEGEND MODE</div>
+        <!-- Interaktives Element: Hack-Minispiel -->
+        <div id="minigame-box">
+            <p>💀 Yo Nils! Um das System zu knacken und deine Birthday-Files zu öffnen, musst du das System 15 Mal hacken!</p>
+            <button class="hack-btn" onclick="hackSystem()">SYSTEM HACKEN (<span id="clicksLeft">15</span>)</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
 
-        <button class="cyber-btn" onclick="activateHack()">EPIC GREETING SENDEN</button>
+        <!-- Geheimer Content nach erfolgreichem Hack -->
+        <div id="secret-content">
+            <h1 style="color: #34d399; margin-bottom: 15px;">🎉 HAPPY 15, NILS! 🎉</h1>
+            
+            <div class="birthday-text">
+                <b>Status-Meldung:</b> Du hast es geschafft, Digga! Willkommen im Club der 15-Jährigen. Ab jetzt wird absolut eskaliert, egal ob beim Zocken oder sonst wo. Lass dich feiern, Bruder! 🚀😉
+            </div>
+
+            <div class="gallery">
+                <div class="img-container">
+                    <!-- Bild 1 -->
+                    <img src="nils1.jpg" alt="Nils 1">
+                    <div class="img-label">DER BOSS // LEVEL 15</div>
+                </div>
+                <div class="img-container">
+                    <!-- Bild 2 -->
+                    <img src="nils2.jpg" alt="Nils 2">
+                    <div class="img-label">LEGENDARY MODE ON</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Gecoded mit absolutem Ehren-Bruder-Vibe 🦾
+        </footer>
     </div>
 
-    <div id="console-msg">
-        &gt; SYSTEM//GREETING_SENT_TO_NILS...<br>
-        &gt; STATUS: EPICNESS_CONFIRMED.
-    </div>
-
-    <!-- Matrix Background Script -->
     <script>
+        // Matrix Code Animation
         var c = document.getElementById("q");
         var ctx = c.getContext("2d");
 
         c.height = window.innerHeight;
         c.width = window.innerWidth;
 
-        var matrix = "15NILSGANGLEGENDARYGAMINGCODEBIRTHDAYDARKNEONCYBERHACKER";
+        var matrix = "15NILSGANGGAMINGHACKER";
         matrix = matrix.split("");
 
-        var font_size = 14;
+        var font_size = 12;
         var columns = c.width / font_size;
         var drops = [];
 
-        for(var x = 0; x < columns; x++)
-            drops[x] = 1; 
+        for(var x = 0; x < columns; x++) drops[x] = 1;
 
         function draw() {
-            ctx.fillStyle = "rgba(5, 5, 5, 0.05)";
+            ctx.fillStyle = "rgba(3, 7, 18, 0.05)";
             ctx.fillRect(0, 0, c.width, c.height);
 
-            ctx.fillStyle = "#00e5ff"; // Neon Cyan für Matrix
-            ctx.font = font_size + "px arial";
+            ctx.fillStyle = "#38bdf8";
+            ctx.font = font_size + "px monospace";
 
             for(var i = 0; i < drops.length; i++) {
                 var text = matrix[Math.floor(Math.random()*matrix.length)];
@@ -269,33 +264,33 @@
                 drops[i]++;
             }
         }
-
         setInterval(draw, 35);
 
-        window.addEventListener('resize', resizeCanvas, false);
-        function resizeCanvas() {
+        window.addEventListener('resize', () => {
             c.height = window.innerHeight;
             c.width = window.innerWidth;
-            columns = c.width / font_size;
-            drops = [];
-            for(var x = 0; x < columns; x++) drops[x] = 1;
-        }
+        });
 
-        // Easter Egg 1: Titel klicken
-        function triggerAlert() {
-            alert("🚨 SYSTEM_ALERT: Nils hat den ultimativen Button gefunden! Respekt, Digga! 🚨");
-        }
+        // Interaktives Minispiel Logik
+        let hacksDone = 0;
+        const totalHacks = 15;
 
-        // Easter Egg 2: Button klicken
-        function activateHack() {
-            const msg = document.getElementById('console-msg');
-            msg.style.display = 'block';
-            setTimeout(() => {
-                msg.style.display = 'none';
-            }, 4000);
-            console.log("Yo Nils, wenn du das liest, bist du ne Legende! Alles Gute zum 15.! 🎂");
+        function hackSystem() {
+            hacksDone++;
+            let remaining = totalHacks - hacksDone;
+            
+            if(remaining >= 0) {
+                document.getElementById('clicksLeft').innerText = remaining;
+                let percentage = (hacksDone / totalHacks) * 100;
+                document.getElementById('progressFill').style.width = percentage + '%';
+            }
+
+            if(hacksDone === totalHacks) {
+                // Minispiel verstecken, Bilder & Text freischalten
+                document.getElementById('minigame-box').style.display = 'none';
+                document.getElementById('secret-content').style.display = 'block';
+            }
         }
     </script>
-
 </body>
 </html>
