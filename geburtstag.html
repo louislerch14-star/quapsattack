@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content5="width=device-width, initial-scale=1.0">
+    <title>Alles Gute zum 15. Geburtstag, Nils! 🎉</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: rgba(17, 24, 39, 0.8);
+            border: 2px solid #1f2937;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: #38bdf8;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        h1:hover {
+            transform: scale(1.05);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #9ca3af;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #1f2937;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #38bdf8;
+            text-align: left;
+        }
+
+        .card h3 {
+            color: #f9fafb;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            color: #d1d5db;
+            line-height: 1.5;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #0ea5e9, #2563eb);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
+            background: linear-gradient(135deg, #38bdf8, #1d4ed8);
+        }
+
+        .counter-display {
+            font-size: 1.5rem;
+            color: #34d399;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        /* Easter Egg Geheim-Box */
+        #secret-box {
+            display: none;
+            background: #7f1d1d;
+            border: 2px dashed #f87171;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: #fee2e2;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        footer {
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        /* Konfetti Styling */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            top: -10px;
+            z-index: 1;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(105vh) rotate(720deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Easter Egg 1: Titel anklicken -->
+        <h1 onclick="triggerEasterEgg()">Alles Gute zum 15., Nils! 🥳</h1>
+        <div class="subtitle">Willkommen im Club der offiziellen Halbstarken! 💀</div>
+
+        <div class="card">
+            <h3>status_update.exe</h3>
+            <p>Yo Nils! Heute knackst du die 15 Jahre. Ab jetzt heißt es: Offiziell älter, weiser (hoffentlich) und bereit, komplett zu asozialen Zeiten zu zocken oder andere Dinger zu reißen. Lass krachen, Bruder! 😉</p>
+        </div>
+
+        <div class="card">
+            <h3>🎁 Das Nils-Erfolgs-Level</h3>
+            <p>Klick auf den Button, um den ultimativen Glücks-Pegel für heute zu maximieren:</p>
+            <div class="counter-display" id="clickCounter">Level: 0 EP</div>
+            <button class="btn" onclick="increaseCounter()">EP sammeln! 🚀</button>
+        </div>
+
+        <!-- Geheim-Easter-Egg Box -->
+        <div id="secret-box">
+            🔥 GEHEIMER CHEATCODE AKTIVIERT! 🔥<br>
+            Du hast das Easter-Egg gefunden, Digga! 500+ Social Credit für dich. Schreib den Jungs: "Nils ist der Boss", um deinen Preis abzuholen! 🤫
+        </div>
+
+        <footer>
+            Erstellt mit purem Schweiß und absolutem Ehren-Bruder-Code für Nils. 🦾
+        </footer>
+    </div>
+
+    <script>
+        // Konfetti-Regen beim Laden
+        window.onload = function() {
+            for(let i = 0; i < 50; i++) {
+                createConfetti();
+            }
+            console.log("🎮 Hey Nils, falls du das hier in der Browser-Konsole liest: Du bist ein absoluter Legenden-Bro! Alles Gute zum 15.! 🎂");
+        };
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            confetti.style.backgroundColor = getRandomColor();
+            confetti.style.opacity = Math.random();
+            confetti.style.width = (Math.random() * 8 + 5) + 'px';
+            confetti.style.height = confetti.style.width;
+            document.body.appendChild(confetti);
+
+            setTimeout(() => {
+                confetti.remove();
+            }, 5000);
+        }
+
+        function getRandomColor() {
+            const colors = ['#38bdf8', '#34d399', '#f43f5e', '#fbbf24', '#a855f7'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Klick-Counter Logik mit Easter-Egg Trigger bei 15 Klicks
+        let clicks = 0;
+        function increaseCounter() {
+            clicks++;
+            document.getElementById('clickCounter').innerText = "Level: " + (clicks * 15) + " EP";
+            
+            // Konfetti-Explosion bei jedem Klick
+            for(let i = 0; i < 5; i++) {
+                createConfetti();
+            }
+
+            // Easter Egg bei exakt 15 Klicks freischalten
+            if(clicks === 15) {
+                document.getElementById('secret-box').style.display = 'block';
+            }
+        }
+
+        // Easter Egg: Doppelklick oder 3x klicken auf die Überschrift
+        let titleClicks = 0;
+        function triggerEasterEgg() {
+            titleClicks++;
+            if(titleClicks === 3) {
+                alert("🚨 MEGA-EASTER-EGG: Nils hat den ultimativen Button gefunden! 💀 Respekt!");
+                titleClicks = 0;
+            }
+        }
+    </script>
+</body>
+</html>
