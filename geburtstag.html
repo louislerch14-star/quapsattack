@@ -64,7 +64,13 @@
             transition: transform 0.1s;
         }
 
-        button:active {
+        button:disabled {
+            background: #333;
+            color: #777;
+            cursor: not-allowed;
+        }
+
+        button:active:not(:disabled) {
             transform: scale(0.97);
         }
 
@@ -106,27 +112,6 @@
             object-fit: cover;
             cursor: pointer;
         }
-
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%;
-            height: 0;
-            background: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid #ff0000;
-            margin-bottom: 15px;
-        }
-
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
     </style>
 </head>
 <body>
@@ -149,14 +134,23 @@
         <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">(Klick auf das Bild zum Bestätigen)</p>
     </div>
 
-    <!-- Schritt 3: Rickroll -->
+    <!-- Schritt 3: Rickroll mit lokalem MP3 & Tenor GIF -->
     <div id="step3" class="box hidden" style="border-color: #ff0000; box-shadow: 0 0 20px rgba(255,0,0,0.2);">
-        <h1 style="color: #ff0000;">STREAM LÄDT... ⚠️</h1>
-        <div id="videoArea">
-            <p>Sicherheits-Protokoll erfordert manuelle Freigabe auf diesem Gerät:</p>
-            <button onclick="startRickroll()" style="background: #ff0000; color: #fff;">▶ STREAM ABSPIELEN</button>
+        <h1 style="color: #ff0000;">SYSTEM-ALARM! ⚠️</h1>
+        <p>Unerwarteter Vibe-Check erkannt. Genieße das Konzert, Bro! 😎</p>
+        
+        <!-- Tenor GIF Embed -->
+        <div class="img-container" style="border-color: #ff0000; margin-bottom: 15px;">
+            <div class="tenor-gif-embed" data-postid="2314683734397195818" data-share-method="host" data-aspect-ratio="0.845381" data-width="100%">
+                <a href="https://tenor.com/view/dance-vibing-grooving-microphone-music-gif-2314683734397195818">Dance Vibing GIF</a>
+            </div>
         </div>
-        <button onclick="showFinal()" style="background: #333; color: #fff; margin-top: 15px;">WEITER ZUM FELD ➡️</button>
+
+        <!-- Lokaler Audio Player (versteckt, wird per JS getriggert) -->
+        <audio id="rickAudio" src="rickroll.mp3" loop></audio>
+
+        <!-- Weiter-Button mit Anti-Skip-Sperre (wird erst nach 8 Sekunden frei) -->
+        <button id="finalBtn" disabled style="background: #ff0000; color: #fff;" onclick="showFinal()">WEITER GESPERRT (8s) ⏳</button>
     </div>
 
     <!-- Finale -->
@@ -167,6 +161,9 @@
             <img src="nils1.heic" alt="Nils Finale" style="cursor: default;">
         </div>
     </div>
+
+    <!-- Tenor Script -->
+    <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 
     <script>
         function checkAge() {
@@ -182,18 +179,35 @@
         function successCaptcha() {
             document.getElementById('step2').classList.add('hidden');
             document.getElementById('step3').classList.remove('hidden');
-        }
 
-        function startRickroll() {
-            // Injiziert das Video erst beim Klick, wodurch Safari und Co. den Ton sofort freigeben
-            document.getElementById('videoArea').innerHTML = `
-                <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/xvFZjo5PgG0?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                </div>
-            `;
+            // Audio direkt beim Captcha-Klick starten (Android erlaubt das nach User-Interaktion sofort)
+            const audio = document.getElementById('rickAudio');
+            audio.play().catch(e => console.log("Audio play blocked:", e));
+
+            // Anti-Skip Countdown starten (8 Sekunden Zwangspause)
+            let timeLeft = 8;
+            const btn = document.getElementById('finalBtn');
+            
+            let timer = setInterval(() => {
+                timeLeft--;
+                if(timeLeft > 0) {
+                    btn.innerText = `WEITER GESPERRT (${timeLeft}s) ⏳`;
+                } else {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    btn.style.background = "#00ff00";
+                    btn.style.color = "#000";
+                    btn.innerText = "WEITER ZUM FELD ➡️";
+                }
+            }, 1000);
         }
 
         function showFinal() {
+            // Musik stoppen
+            const audio = document.getElementById('rickAudio');
+            audio.pause();
+            audio.currentTime = 0;
+
             document.getElementById('step3').classList.add('hidden');
             document.getElementById('step4').classList.remove('hidden');
         }
