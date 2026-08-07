@@ -2,57 +2,180 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NILS SYSTEM ACCESS</title>
     <style>
-        body { background: #050505; color: #00ff00; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; margin: 0; }
-        .box { background: #111; border: 2px solid #333; padding: 20px; border-radius: 10px; text-align: center; width: 90%; max-width: 400px; }
-        button { background: #00ff00; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; margin-top: 10px; font-family: inherit; width: 100%; }
-        input { padding: 10px; width: 80%; background: #000; border: 1px solid #333; color: #fff; text-align: center; font-family: inherit; }
-        .hidden { display: none; }
-        img { width: 100%; border: 2px solid #00ff00; margin-top: 10px; cursor: pointer; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #050505;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .box {
+            background: #111;
+            border: 2px solid #00ff00;
+            padding: 25px 20px;
+            border-radius: 15px;
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #00ff00;
+            text-transform: uppercase;
+        }
+
+        p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 14px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: inherit;
+            font-size: 1rem;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #000;
+            border: 2px solid #333;
+            color: #00ff00;
+            text-align: center;
+            font-family: inherit;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #00ff00;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .img-container {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #00ff00;
+            margin-top: 15px;
+            background: #000;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #ff0000;
+            margin-bottom: 15px;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
 
     <!-- Schritt 1: Rätsel -->
     <div id="step1" class="box">
-        <p>SYSTEM-CHECK: Wie alt wird der Legende Nils heute?</p>
-        <input type="text" id="ageInput" placeholder="Zahl eingeben...">
-        <br><button onclick="checkAge()">WEITER 🔒</button>
+        <h1>SYSTEM-CHECK 🔒</h1>
+        <p>Wie alt wird der Legende Nils heute?</p>
+        <input type="text" id="ageInput" placeholder="Zahl eingeben..." inputmode="numeric">
+        <button onclick="checkAge()">WEITER 🚀</button>
     </div>
 
     <!-- Schritt 2: Captcha Fake -->
     <div id="step2" class="box hidden">
-        <p>HUMAN VERIFICATION:</p>
+        <h1>HUMAN VERIFICATION 🤖</h1>
         <p>Wähle das Bild aus, auf dem der BOSS zu sehen ist:</p>
-        <img src="nils2.jpg" alt="Captcha" onclick="successCaptcha()">
-        <p><small>(Klick auf das Bild um dich als Mensch zu verifizieren)</small></p>
+        <div class="img-container">
+            <img src="nils2.jpg" alt="Captcha" onclick="successCaptcha()">
+        </div>
+        <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">(Klick auf das Bild zum Bestätigen)</p>
     </div>
 
     <!-- Schritt 3: Rickroll -->
-    <div id="step3" class="box hidden">
-        <p>STREAM WIRD GELADEN...</p>
-        <div id="videoContainer">
-            <button onclick="startRickroll()" style="background: #ff0000; color: #fff; margin-bottom: 10px;">▶ STREAM STARTEN (SICHERHEITSHINWEIS)</button>
+    <div id="step3" class="box hidden" style="border-color: #ff0000; box-shadow: 0 0 20px rgba(255,0,0,0.2);">
+        <h1 style="color: #ff0000;">STREAM LÄDT... ⚠️</h1>
+        <div id="videoArea">
+            <p>Sicherheits-Protokoll erfordert manuelle Freigabe auf diesem Gerät:</p>
+            <button onclick="startRickroll()" style="background: #ff0000; color: #fff;">▶ STREAM ABSPIELEN</button>
         </div>
-        <br><button onclick="showFinal()">WEITER ➡️</button>
+        <button onclick="showFinal()" style="background: #333; color: #fff; margin-top: 15px;">WEITER ZUM FELD ➡️</button>
     </div>
 
     <!-- Finale -->
     <div id="step4" class="box hidden">
         <h1>HERZLICHEN GLÜCKWUNSCH! 🎉</h1>
-        <p>Du bist offiziell 15, Bro! Lass krachen!</p>
-        <img src="nils1.heic" alt="Nils Foto" style="cursor: default;">
+        <p>Du bist offiziell 15, Bro! Lass absolut krachen! 💀</p>
+        <div class="img-container">
+            <img src="nils1.heic" alt="Nils Finale" style="cursor: default;">
+        </div>
     </div>
 
     <script>
         function checkAge() {
-            if(document.getElementById('ageInput').value.trim() === "15") {
+            const val = document.getElementById('ageInput').value.trim();
+            if(val === "15") {
                 document.getElementById('step1').classList.add('hidden');
                 document.getElementById('step2').classList.remove('hidden');
             } else {
-                alert("Falsch, Digga! 💀 Denk nochmal nach!");
+                alert("Falsch, Digga! 💀 Denk an dein Alter!");
             }
         }
 
@@ -62,13 +185,15 @@
         }
 
         function startRickroll() {
-            // Ersetzt den Button durch das Video, das jetzt garantiert mit Ton startet (auch in Safari)
-            document.getElementById('videoContainer').innerHTML = '<iframe id="rickVideo" width="100%" height="200" src="https://www.youtube.com/embed/xvFZjo5PgG0?autoplay=1" allow="autoplay; encrypted-media" style="border:none;"></iframe>';
+            // Injiziert das Video erst beim Klick, wodurch Safari und Co. den Ton sofort freigeben
+            document.getElementById('videoArea').innerHTML = `
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/xvFZjo5PgG0?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                </div>
+            `;
         }
 
         function showFinal() {
-            let video = document.getElementById('rickVideo');
-            if(video) video.src = ""; // Video stoppen
             document.getElementById('step3').classList.add('hidden');
             document.getElementById('step4').classList.remove('hidden');
         }
