@@ -3,307 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NILS-OS // SECURITY CHECK</title>
+    <title>NILS SYSTEM ACCESS</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: #030712;
-            color: #f3f4f6;
-            font-family: 'Courier New', Courier, monospace;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
-            padding: 15px;
-        }
-
-        #matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0.15;
-        }
-
-        canvas {
-            display: block;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: rgba(17, 24, 39, 0.95);
-            border: 2px solid #ef4444;
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 10;
-        }
-
-        h1 {
-            font-size: 1.6rem;
-            color: #ef4444;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
-        }
-
-        .subtitle {
-            font-size: 0.85rem;
-            color: #9ca3af;
-            margin-bottom: 20px;
-        }
-
-        /* Rätsel Box */
-        #puzzle-box {
-            background: #1f2937;
-            border: 1px dashed #38bdf8;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        #puzzle-box p {
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            color: #d1d5db;
-            line-height: 1.4;
-        }
-
-        .puzzle-input {
-            width: 100%;
-            background: #111827;
-            border: 2px solid #4b5563;
-            color: #fff;
-            padding: 12px;
-            font-size: 1rem;
-            font-family: inherit;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-align: center;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .puzzle-input:focus {
-            border-color: #38bdf8;
-        }
-
-        .submit-btn {
-            background: #38bdf8;
-            color: #030712;
-            border: none;
-            padding: 12px 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            font-family: inherit;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
-            transition: all 0.2s;
-        }
-
-        .submit-btn:active {
-            transform: scale(0.95);
-        }
-
-        #error-msg {
-            color: #f87171;
-            font-size: 0.8rem;
-            margin-top: 10px;
-            display: none;
-            text-align: center;
-        }
-
-        /* Rickroll Container (Versteckt bis gelöst) */
-        #rickroll-container {
-            display: none;
-            width: 100%;
-        }
-
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 15px;
-            border: 2px solid #22c55e;
-        }
-
-        .video-wrapper iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .real-content {
-            display: none;
-            margin-top: 20px;
-            animation: fadeIn 0.8s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .img-container {
-            width: 100%;
-            max-height: 300px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid #38bdf8;
-            margin-top: 15px;
-        }
-
-        .img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .birthday-text {
-            background: #1f2937;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            color: #d1d5db;
-            border-left: 4px solid #22c55e;
-            text-align: left;
-            margin-top: 15px;
-        }
-
-        footer {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-top: 15px;
-        }
+        body { background: #050505; color: #00ff00; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
+        .box { background: #111; border: 2px solid #333; padding: 20px; border-radius: 10px; text-align: center; width: 90%; max-width: 400px; }
+        button { background: #00ff00; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        input { padding: 10px; width: 80%; background: #000; border: 1px solid #333; color: #fff; text-align: center; }
+        .hidden { display: none; }
+        img { width: 100%; border: 2px solid #00ff00; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="matrix-bg">
-        <canvas id="q"></canvas>
+    <!-- Schritt 1: Rätsel -->
+    <div id="step1" class="box">
+        <p>SYSTEM-CHECK: Wie alt wird der Legenden-Nils heute?</p>
+        <input type="text" id="ageInput" placeholder="Zahl eingeben...">
+        <br><button onclick="checkAge()">WEITER 🔒</button>
     </div>
 
-    <div class="container" id="mainContainer">
-        <h1>⚠️ ACCESS RESTRICTED</h1>
-        <div class="subtitle">Zarbex-Security-Protocol v1.5</div>
+    <!-- Schritt 2: Captcha Fake -->
+    <div id="step2" class="box hidden">
+        <p>HUMAN VERIFICATION:</p>
+        <p>Wähle das Bild aus, auf dem der BOSS zu sehen ist:</p>
+        <img src="nils2.heic" alt="Captcha" onclick="successCaptcha()">
+        <p><small>(Klick auf das Bild um dich als Mensch zu verifizieren)</small></p>
+    </div>
 
-        <!-- Zarbex-Style Rätsel -->
-        <div id="puzzle-box">
-            <p><b>Sicherheitsfrage für Nils:</b><br>Welche magische Zahl knackt heute das System, weil genau ab diesem Alter offiziell die absolute Eskalation startet?</p>
-            <input type="text" id="puzzleInput" class="puzzle-input" placeholder="Antwort eingeben...">
-            <button class="submit-btn" onclick="checkPuzzle()">SYSTEM KNACKEN 🔓</button>
-            <div id="error-msg">❌ Falsch, Digga! Versuch's nochmal (Denk an dein Alter!).</div>
-        </div>
+    <!-- Schritt 3: Rickroll -->
+    <div id="step3" class="box hidden">
+        <p>VERBINDUNG WIRD GEÖFFNET...</p>
+        <iframe id="rickVideo" width="100%" height="200" src="https://www.youtube.com/embed/xvFZjo5PgG0?autoplay=1" allow="autoplay"></iframe>
+        <br><button onclick="showFinal()">WEITER ➡️</button>
+    </div>
 
-        <!-- Rickroll & echter Inhalt (wird nach Lösen getoggelt) -->
-        <div id="rickroll-container">
-            <h1 style="color: #22c55e; margin-bottom: 10px;">💀 GET RICKROLLED, BRO! 💀</h1>
-            <p style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 15px;">Du hast das Rätsel gelöst, aber der Preis ist pure Zerstörung...</p>
-            
-            <div class="video-wrapper">
-                <!-- Autoplay Rickroll direkt ins Gesicht -->
-                <iframe src="https://www.youtube-sin-embed.com/embed/dQw4w9WgXcQ?autoplay=1&enablejsapi=1" allow="autoplay" title="Rickroll"></iframe>
-            </div>
-
-            <button class="submit-btn" style="background: #22c55e; color: #fff;" onclick="showRealBirthday()">Okay, genug Schmerz – Zeig den echten Gruß! 😉</button>
-
-            <div class="real-content" id="realContent">
-                <div class="birthday-text">
-                    <b>Alles Gute zum 15., Nils!</b> Du hast den Test bestanden und den ultimativen Rickroll überlebt. Jetzt wird gefeiert, lass krachen Bruder! 🚀🎉
-                </div>
-                <div class="img-container">
-                    <img src="nils1.heic" alt="Nils Legend">
-                </div>
-            </div>
-        </div>
-
-        <footer>
-            Erstellt mit absolutem Zarbex-Ehren-Vibe 🦾
-        </footer>
+    <!-- Finale -->
+    <div id="step4" class="box hidden">
+        <h1>HERZLICHEN GLÜCKWUNSCH! 🎉</h1>
+        <p>Du bist offiziell 15, Bro! Lass krachen!</p>
+        <img src="nils1.heic">
     </div>
 
     <script>
-        // Matrix Code Animation
-        var c = document.getElementById("q");
-        var ctx = c.getContext("2d");
-
-        c.height = window.innerHeight;
-        c.width = window.innerWidth;
-
-        var matrix = "15NILSZARBEXRICKROLLGAMING";
-        matrix = matrix.split("");
-
-        var font_size = 12;
-        var columns = c.width / font_size;
-        var drops = [];
-
-        for(var x = 0; x < columns; x++) drops[x] = 1;
-
-        function draw() {
-            ctx.fillStyle = "rgba(3, 7, 18, 0.05)";
-            ctx.fillRect(0, 0, c.width, c.height);
-
-            ctx.fillStyle = "#ef4444";
-            ctx.font = font_size + "px monospace";
-
-            for(var i = 0; i < drops.length; i++) {
-                var text = matrix[Math.floor(Math.random()*matrix.length)];
-                ctx.fillText(text, i * font_size, drops[i] * font_size);
-
-                if(drops[i] * font_size > c.height && Math.random() > 0.975)
-                    drops[i] = 0;
-
-                drops[i]++;
-            }
-        }
-        setInterval(draw, 35);
-
-        window.addEventListener('resize', () => {
-            c.height = window.innerHeight;
-            c.width = window.innerWidth;
-        });
-
-        // Rätsel Logik (Antwort ist 15)
-        function checkPuzzle() {
-            const input = document.getElementById('puzzleInput').value.trim();
-            const errorMsg = document.getElementById('error-msg');
-
-            if(input === "15") {
-                // Rätsel Box verstecken, Rickroll feuern
-                document.getElementById('puzzle-box').style.display = 'none';
-                document.getElementById('rickroll-container').style.display = 'block';
+        function checkAge() {
+            if(document.getElementById('ageInput').value === "15") {
+                document.getElementById('step1').classList.add('hidden');
+                document.getElementById('step2').classList.remove('hidden');
             } else {
-                errorMsg.style.display = 'block';
-                setTimeout(() => {
-                    errorMsg.style.display = 'none';
-                }, 3000);
+                alert("Falsch, Digga! 💀");
             }
         }
-
-        // Echten Geburtstag nach dem Rickroll freischalten
-        function showRealBirthday() {
-            document.getElementById('realContent').style.display = 'block';
+        function successCaptcha() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+        }
+        function showFinal() {
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.remove('hidden');
         }
     </script>
 </body>
