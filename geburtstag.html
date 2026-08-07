@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NILS IS 15 - SYSTEM LOCK</title>
+    <title>NILS-OS // SECURITY CHECK</title>
     <style>
         * {
             box-sizing: border-box;
@@ -24,7 +24,6 @@
             padding: 15px;
         }
 
-        /* Matrix Hintergrund fürs Handy optimiert */
         #matrix-bg {
             position: fixed;
             top: 0;
@@ -43,49 +42,70 @@
         .container {
             width: 100%;
             max-width: 500px;
-            background: rgba(17, 24, 39, 0.9);
-            border: 2px solid #38bdf8;
+            background: rgba(17, 24, 39, 0.95);
+            border: 2px solid #ef4444;
             border-radius: 20px;
             padding: 25px;
             text-align: center;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
             backdrop-filter: blur(10px);
             position: relative;
             z-index: 10;
         }
 
         h1 {
-            font-size: 1.8rem;
-            color: #38bdf8;
+            font-size: 1.6rem;
+            color: #ef4444;
             text-transform: uppercase;
             margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
         }
 
         .subtitle {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #9ca3af;
-            margin-bottom: 25px;
-        }
-
-        /* Interaktives Minispiel-Fenster */
-        #minigame-box {
-            background: #1f2937;
-            border: 1px dashed #ef4444;
-            padding: 20px;
-            border-radius: 12px;
             margin-bottom: 20px;
         }
 
-        #minigame-box p {
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-            color: #fca5a5;
+        /* Rätsel Box */
+        #puzzle-box {
+            background: #1f2937;
+            border: 1px dashed #38bdf8;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: left;
         }
 
-        .hack-btn {
-            background: #ef4444;
-            color: white;
+        #puzzle-box p {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            color: #d1d5db;
+            line-height: 1.4;
+        }
+
+        .puzzle-input {
+            width: 100%;
+            background: #111827;
+            border: 2px solid #4b5563;
+            color: #fff;
+            padding: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .puzzle-input:focus {
+            border-color: #38bdf8;
+        }
+
+        .submit-btn {
+            background: #38bdf8;
+            color: #030712;
             border: none;
             padding: 12px 20px;
             font-size: 1rem;
@@ -94,33 +114,48 @@
             border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
             transition: all 0.2s;
         }
 
-        .hack-btn:active {
+        .submit-btn:active {
             transform: scale(0.95);
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: #374151;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-top: 15px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: #34d399;
-            transition: width 0.3s ease;
-        }
-
-        /* Der geheime Content (wird freigeschaltet) */
-        #secret-content {
+        #error-msg {
+            color: #f87171;
+            font-size: 0.8rem;
+            margin-top: 10px;
             display: none;
+            text-align: center;
+        }
+
+        /* Rickroll Container (Versteckt bis gelöst) */
+        #rickroll-container {
+            display: none;
+            width: 100%;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 2px solid #22c55e;
+        }
+
+        .video-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .real-content {
+            display: none;
+            margin-top: 20px;
             animation: fadeIn 0.8s ease forwards;
         }
 
@@ -129,39 +164,19 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .gallery {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
         .img-container {
             width: 100%;
-            aspect-ratio: 4/3;
+            max-height: 300px;
             border-radius: 12px;
             overflow: hidden;
             border: 2px solid #38bdf8;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            position: relative;
+            margin-top: 15px;
         }
 
         .img-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        .img-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.7);
-            color: #38bdf8;
-            padding: 8px;
-            font-size: 0.85rem;
-            font-weight: bold;
         }
 
         .birthday-text {
@@ -171,9 +186,9 @@
             font-size: 0.9rem;
             line-height: 1.5;
             color: #d1d5db;
-            border-left: 4px solid #34d399;
+            border-left: 4px solid #22c55e;
             text-align: left;
-            margin-bottom: 20px;
+            margin-top: 15px;
         }
 
         footer {
@@ -185,48 +200,46 @@
 </head>
 <body>
 
-    <!-- Matrix Hintergrund -->
     <div id="matrix-bg">
         <canvas id="q"></canvas>
     </div>
 
-    <div class="container">
-        <h1>🔒 SYSTEM LOCKED</h1>
-        <div class="subtitle">Nils-OS v15.0 - Zugriff gesperrt</div>
+    <div class="container" id="mainContainer">
+        <h1>⚠️ ACCESS RESTRICTED</h1>
+        <div class="subtitle">Zarbex-Security-Protocol v1.5</div>
 
-        <!-- Interaktives Element: Hack-Minispiel -->
-        <div id="minigame-box">
-            <p>💀 Yo Nils! Um das System zu knacken und deine Birthday-Files zu öffnen, musst du das System 15 Mal hacken!</p>
-            <button class="hack-btn" onclick="hackSystem()">SYSTEM HACKEN (<span id="clicksLeft">15</span>)</button>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
+        <!-- Zarbex-Style Rätsel -->
+        <div id="puzzle-box">
+            <p><b>Sicherheitsfrage für Nils:</b><br>Welche magische Zahl knackt heute das System, weil genau ab diesem Alter offiziell die absolute Eskalation startet?</p>
+            <input type="text" id="puzzleInput" class="puzzle-input" placeholder="Antwort eingeben...">
+            <button class="submit-btn" onclick="checkPuzzle()">SYSTEM KNACKEN 🔓</button>
+            <div id="error-msg">❌ Falsch, Digga! Versuch's nochmal (Denk an dein Alter!).</div>
         </div>
 
-        <!-- Geheimer Content nach erfolgreichem Hack -->
-        <div id="secret-content">
-            <h1 style="color: #34d399; margin-bottom: 15px;">🎉 HAPPY 15, NILS! 🎉</h1>
+        <!-- Rickroll & echter Inhalt (wird nach Lösen getoggelt) -->
+        <div id="rickroll-container">
+            <h1 style="color: #22c55e; margin-bottom: 10px;">💀 GET RICKROLLED, BRO! 💀</h1>
+            <p style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 15px;">Du hast das Rätsel gelöst, aber der Preis ist pure Zerstörung...</p>
             
-            <div class="birthday-text">
-                <b>Status-Meldung:</b> Du hast es geschafft, Digga! Willkommen im Club der 15-Jährigen. Ab jetzt wird absolut eskaliert, egal ob beim Zocken oder sonst wo. Lass dich feiern, Bruder! 🚀😉
+            <div class="video-wrapper">
+                <!-- Autoplay Rickroll direkt ins Gesicht -->
+                <iframe src="https://www.youtube-sin-embed.com/embed/dQw4w9WgXcQ?autoplay=1&enablejsapi=1" allow="autoplay" title="Rickroll"></iframe>
             </div>
 
-            <div class="gallery">
-                <div class="img-container">
-                    <!-- Bild 1 -->
-                    <img src="nils1.jpg" alt="Nils 1">
-                    <div class="img-label">DER BOSS // LEVEL 15</div>
+            <button class="submit-btn" style="background: #22c55e; color: #fff;" onclick="showRealBirthday()">Okay, genug Schmerz – Zeig den echten Gruß! 😉</button>
+
+            <div class="real-content" id="realContent">
+                <div class="birthday-text">
+                    <b>Alles Gute zum 15., Nils!</b> Du hast den Test bestanden und den ultimativen Rickroll überlebt. Jetzt wird gefeiert, lass krachen Bruder! 🚀🎉
                 </div>
                 <div class="img-container">
-                    <!-- Bild 2 -->
-                    <img src="nils2.jpg" alt="Nils 2">
-                    <div class="img-label">LEGENDARY MODE ON</div>
+                    <img src="nils1.heic" alt="Nils Legend">
                 </div>
             </div>
         </div>
 
         <footer>
-            Gecoded mit absolutem Ehren-Bruder-Vibe 🦾
+            Erstellt mit absolutem Zarbex-Ehren-Vibe 🦾
         </footer>
     </div>
 
@@ -238,7 +251,7 @@
         c.height = window.innerHeight;
         c.width = window.innerWidth;
 
-        var matrix = "15NILSGANGGAMINGHACKER";
+        var matrix = "15NILSZARBEXRICKROLLGAMING";
         matrix = matrix.split("");
 
         var font_size = 12;
@@ -251,7 +264,7 @@
             ctx.fillStyle = "rgba(3, 7, 18, 0.05)";
             ctx.fillRect(0, 0, c.width, c.height);
 
-            ctx.fillStyle = "#38bdf8";
+            ctx.fillStyle = "#ef4444";
             ctx.font = font_size + "px monospace";
 
             for(var i = 0; i < drops.length; i++) {
@@ -271,25 +284,26 @@
             c.width = window.innerWidth;
         });
 
-        // Interaktives Minispiel Logik
-        let hacksDone = 0;
-        const totalHacks = 15;
+        // Rätsel Logik (Antwort ist 15)
+        function checkPuzzle() {
+            const input = document.getElementById('puzzleInput').value.trim();
+            const errorMsg = document.getElementById('error-msg');
 
-        function hackSystem() {
-            hacksDone++;
-            let remaining = totalHacks - hacksDone;
-            
-            if(remaining >= 0) {
-                document.getElementById('clicksLeft').innerText = remaining;
-                let percentage = (hacksDone / totalHacks) * 100;
-                document.getElementById('progressFill').style.width = percentage + '%';
+            if(input === "15") {
+                // Rätsel Box verstecken, Rickroll feuern
+                document.getElementById('puzzle-box').style.display = 'none';
+                document.getElementById('rickroll-container').style.display = 'block';
+            } else {
+                errorMsg.style.display = 'block';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 3000);
             }
+        }
 
-            if(hacksDone === totalHacks) {
-                // Minispiel verstecken, Bilder & Text freischalten
-                document.getElementById('minigame-box').style.display = 'none';
-                document.getElementById('secret-content').style.display = 'block';
-            }
+        // Echten Geburtstag nach dem Rickroll freischalten
+        function showRealBirthday() {
+            document.getElementById('realContent').style.display = 'block';
         }
     </script>
 </body>
