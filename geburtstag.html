@@ -7,7 +7,7 @@
     <style>
         body { background: #050505; color: #00ff00; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; margin: 0; }
         .box { background: #111; border: 2px solid #333; padding: 20px; border-radius: 10px; text-align: center; width: 90%; max-width: 400px; }
-        button { background: #00ff00; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; margin-top: 10px; font-family: inherit; }
+        button { background: #00ff00; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; margin-top: 10px; font-family: inherit; width: 100%; }
         input { padding: 10px; width: 80%; background: #000; border: 1px solid #333; color: #fff; text-align: center; font-family: inherit; }
         .hidden { display: none; }
         img { width: 100%; border: 2px solid #00ff00; margin-top: 10px; cursor: pointer; }
@@ -32,9 +32,10 @@
 
     <!-- Schritt 3: Rickroll -->
     <div id="step3" class="box hidden">
-        <p>VERBINDUNG WIRD GEÖFFNET...</p>
-        <!-- Iframe mit Autoplay-Parameter und JS-API für besseren Support -->
-        <iframe id="rickVideo" width="100%" height="200" src="https://www.youtube.com/embed/xvFZjo5PgG0?autoplay=1" allow="autoplay; encrypted-media"></iframe>
+        <p>STREAM WIRD GELADEN...</p>
+        <div id="videoContainer">
+            <button onclick="startRickroll()" style="background: #ff0000; color: #fff; margin-bottom: 10px;">▶ STREAM STARTEN (SICHERHEITSHINWEIS)</button>
+        </div>
         <br><button onclick="showFinal()">WEITER ➡️</button>
     </div>
 
@@ -58,15 +59,16 @@
         function successCaptcha() {
             document.getElementById('step2').classList.add('hidden');
             document.getElementById('step3').classList.remove('hidden');
-            
-            // Erzwinge Reload vom Iframe, damit Autoplay bei Klick startet
-            let iframe = document.getElementById('rickVideo');
-            iframe.src = iframe.src;
+        }
+
+        function startRickroll() {
+            // Ersetzt den Button durch das Video, das jetzt garantiert mit Ton startet (auch in Safari)
+            document.getElementById('videoContainer').innerHTML = '<iframe id="rickVideo" width="100%" height="200" src="https://www.youtube.com/embed/xvFZjo5PgG0?autoplay=1" allow="autoplay; encrypted-media" style="border:none;"></iframe>';
         }
 
         function showFinal() {
-            // Rickroll stoppen beim Weiterklicken
-            document.getElementById('rickVideo').src = "";
+            let video = document.getElementById('rickVideo');
+            if(video) video.src = ""; // Video stoppen
             document.getElementById('step3').classList.add('hidden');
             document.getElementById('step4').classList.remove('hidden');
         }
