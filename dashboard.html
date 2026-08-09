@@ -473,7 +473,6 @@
   }
   .paypol-input:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
 
-  /* Code-Eingabe-Bereich (wird erst nach Schritt 1 eingeblendet) */
   .paypol-code-area {
     margin-top: 15px;
     padding-top: 15px;
@@ -489,7 +488,6 @@
 
   .paypol-error-msg { color: #ca1a1a; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
 
-  /* ── INTEGRATED TRASTPILOD BAR (AM BODEN DES MODALS) ── */
   .paypol-trust-footer-bar {
     display: flex;
     align-items: center;
@@ -601,18 +599,16 @@
   </div>
 
   <div class="sidebar-section">
-  <button class="mc-btn active" onclick="showPage('home')" id="btn-home">&nbsp; HOME</button> 
+    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">&nbsp; HOME</button> 
     <button class="mc-btn" onclick="window.location.href='beta/index.html'" id="btn-beta" style="color: var(--gold); border: 1px solid var(--gold);">&nbsp; 🧪 BETA</button>
-    <!-- <button class="mc-btn" onclick="window.location.href='chillcraft-index.html'" id="btn-langeweile">&nbsp; Chillcraft</button> -->
-  <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">&nbsp; CLIP-ARCHIV</button>
-  <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">&nbsp; CLIP UPLOAD</button>
- <!-- <button class="mc-btn" onclick="showPage('image-upload')" id="btn-image-upload" style="color: var(--diamond); font-weight: bold;">&nbsp; 🖼 BILDER UP-LOAD</button> -->
-  <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
-  <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">&nbsp; 📋 BEWERBUNGEN</button>
+    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">&nbsp; CLIP-ARCHIV</button>
+    <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">&nbsp; CLIP UPLOAD</button>
+    <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
+    <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">&nbsp; 📋 BEWERBUNGEN</button>
     <br>
-<button class="mc-btn btn-download-app" onclick="window.open('https://drive.google.com/file/d/1YKXFwB2QAsTXSQ-z3qqfOmzIiuYUedst/view?usp=sharing', '_blank')" id="btn-beta">&nbsp; DOWNLOAD APP</button>
-  <button class="mc-btn logout-btn" onclick="logout()">&nbsp; EXIT / LOGOUT</button>
-</div>
+    <button class="mc-btn btn-download-app" onclick="window.open('https://drive.google.com/file/d/1YKXFwB2QAsTXSQ-z3qqfOmzIiuYUedst/view?usp=sharing', '_blank')" id="btn-beta">&nbsp; DOWNLOAD APP</button>
+    <button class="mc-btn logout-btn" onclick="logout()">&nbsp; EXIT / LOGOUT</button>
+  </div>
 
   <div class="sidebar-profile">
     <img src="unnamed.jpg" id="user-avatar" class="profile-avatar" alt="M" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
@@ -672,6 +668,19 @@
         <source src="quaps-hymne.mp3" type="audio/mpeg">
       </audio>
       <button onclick="togglePlay()" id="playBtn" class="mc-action">▶ SONG ABSPIELEN</button>
+    </div>
+
+    <!-- NEUER MEDIA PLAYER FÜR QA12REM.MP3[span_0](start_span)[span_0](end_span) -->
+    <div class="glass-card mc-panel" data-reveal="4" style="border-color: var(--diamond); background: rgba(68, 212, 212, 0.02);">
+      <div class="mc-panel-title" style="color: var(--diamond);">🎧 MEDIA PLAYER // QA12REM[span_1](start_span)[span_1](end_span)</div>
+      <div class="visualizer" id="visualizer-qa12">
+        <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+        <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+      </div>
+      <audio id="qa12Song">
+        <source src="Qa12rem.mp3" type="audio/mpeg">[span_2](start_span)[span_2](end_span)
+      </audio>
+      <button onclick="toggleQa12Play()" id="playQa12Btn" class="mc-action" style="color: var(--diamond); border-color: var(--diamond);">▶ QA12REM ABSPIELEN</button>[span_3](start_span)[span_3](end_span)
     </div>
   </div>
 
@@ -887,27 +896,22 @@ const PROJECT_DOWNLOADS = [
 let currentGlobalUser = "SPIELER";
 let selectedProjectId = null;
 let cinematicTimeout = null;
-let isGuestMode = false; // Variable, um den Gast-Status global zu speichern
+let isGuestMode = false;
 
 window.addEventListener('DOMContentLoaded', async () => {
-  // Überprüfen, ob ?guest=true in der URL steht
   const urlParams = new URLSearchParams(window.location.search);
   isGuestMode = urlParams.get('guest') === 'true';
 
   if (isGuestMode) {
-    // Gast-Modus Einstellungen
     currentGlobalUser = "GAST";
     
-    // UI für Gäste anpassen
     document.getElementById('user-name-display').textContent = currentGlobalUser;
     document.getElementById('uploaderName').value = currentGlobalUser;
     document.getElementById('imageUploaderName').value = currentGlobalUser;
     document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
 
-    // Features sperren (Buttons deaktivieren und beschriften)
     disableGuestFeatures();
   } else {
-    // Normaler Login-Schutz über Supabase
     const { data: { session }, error } = await supabaseClient.auth.getSession();
 
     if (error || !session) {
@@ -924,7 +928,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
   }
 
-  // Diese Funktionen werden für beide geladen (Gäste können die Pinnwand/Bewerbungen lesen)
   loadPinnwand();
   loadBewerbungen();
   renderDownloadList();
@@ -933,9 +936,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   setTimeout(initReveal, 100);
 });
 
-// Hilfsfunktion, um die Buttons für Gäste zu sperren
 function disableGuestFeatures() {
-  // Pinnwand Button sperren
   const pinnwandBtn = document.getElementById('pinnwand-btn');
   if (pinnwandBtn) {
     pinnwandBtn.disabled = true;
@@ -944,7 +945,6 @@ function disableGuestFeatures() {
     pinnwandBtn.style.cursor = "not-allowed";
   }
   
-  // Clip Upload Button sperren
   const clipBtn = document.getElementById('submitBtn');
   if (clipBtn) {
     clipBtn.disabled = true;
@@ -953,7 +953,6 @@ function disableGuestFeatures() {
     clipBtn.style.cursor = "not-allowed";
   }
 
-  // Bilder Upload Button sperren
   const imgBtn = document.getElementById('imgSubmitBtn');
   if (imgBtn) {
     imgBtn.disabled = true;
@@ -966,7 +965,6 @@ function disableGuestFeatures() {
 function renderDownloadList() {
   const container = document.getElementById('download-list-container');
   container.innerHTML = PROJECT_DOWNLOADS.map(proj => {
-    // Wenn Gast-Modus aktiv ist, wird der Button direkt blockiert ausgegeben
     const buttonHtml = isGuestMode 
       ? `<button class="mc-action" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>▶ NUR ALS MITGLIED</button>`
       : `<button onclick="openPaypolGateway('${proj.id}')" class="mc-action" style="width: 100%;">▶ DOWNLOAD ANFORDERN</button>`;
@@ -987,7 +985,7 @@ function renderDownloadList() {
 }
 
 function openPaypolGateway(id) {
-  if (isGuestMode) return; // Sicherheits-Check
+  if (isGuestMode) return;
 
   const project = PROJECT_DOWNLOADS.find(p => p.id === id);
   if (!project) return;
@@ -1146,7 +1144,7 @@ async function loadBewerbungen() {
 }
 
 async function postToPinnwand() {
-  if (isGuestMode) return; // Sicherheits-Check für Gäste
+  if (isGuestMode) return;
 
   const input = document.getElementById('pinnwand-input');
   const btn = document.getElementById('pinnwand-btn');
@@ -1191,9 +1189,8 @@ function showPage(id) {
   window.scrollTo(0, 0);
   setTimeout(initReveal, 50);
 
-  /* ⌨ DYNAMISCHE DISCORD RICH PRESENCE ERWEITERUNG */
   if (window.electronAPI) {
-    let rpcText = "Im Hauptmenü 📋"; // Standard-Text
+    let rpcText = "Im Hauptmenü 📋";
 
     if (id === 'home') {
       rpcText = "Chillt in der Base 🏡";
@@ -1231,9 +1228,24 @@ function togglePlay() {
   else { audio.pause(); btn.textContent = '▶ SONG ABSPIELEN'; vis.classList.remove('playing'); }
 }
 
-/* ── FUNKTIONEN FÜR KLASSISCHEN CLIP UPLOAD ── */
+/* ── STEUERUNG FÜR QA12REM[span_4](start_span)[span_4](end_span) ── */
+function toggleQa12Play() {
+  const audio = document.getElementById('qa12Song');
+  const btn   = document.getElementById('playQa12Btn');
+  const vis   = document.getElementById('visualizer-qa12');
+  if (audio.paused) { 
+    audio.play(); 
+    btn.textContent = '⏸ QA12REM PAUSIEREN';[span_5](start_span)[span_5](end_span)
+    vis.classList.add('playing'); 
+  } else { 
+    audio.pause(); 
+    btn.textContent = '▶ QA12REM ABSPIELEN';[span_6](start_span)[span_6](end_span)
+    vis.classList.remove('playing'); 
+  }
+}
+
 async function sendToDiscord() {
-  if (isGuestMode) return; // Sicherheits-Check
+  if (isGuestMode) return;
 
   const name = document.getElementById('uploaderName').value;
   const title = document.getElementById('clipTitle').value;
@@ -1280,7 +1292,6 @@ async function sendToDiscord() {
   }
 }
 
-/* ── FUNKTIONEN FÜR SEPARATEN BILDER UPLOAD (NEW DISCORD WEBHOOK) ── */
 function previewImageFileName() {
   const fileInput = document.getElementById('baseImageFile');
   const display = document.getElementById('imgFileNameDisplay');
@@ -1299,7 +1310,7 @@ function previewImageFileName() {
 }
 
 async function sendImageToDiscord() {
-  if (isGuestMode) return; // Sicherheits-Check
+  if (isGuestMode) return;
 
   const name = document.getElementById('imageUploaderName').value;
   const description = document.getElementById('imageDescription').value;
