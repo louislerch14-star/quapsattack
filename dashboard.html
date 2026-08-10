@@ -658,30 +658,39 @@
       </div>
     </div>
 
-    <!-- ERWEITERTER JUKEBOX & HYMNEN PLAYER (ALT, NEU & QA12REM) -->
+    <!-- MODERNER MEDIA PLAYER MIT PLAY/PAUSE, SPULEN & LAUTSTÄRKE -->
     <div class="glass-card mc-panel" data-reveal="4">
-      <div class="mc-panel-title">🎵 JUKEBOX // HYMNEN & MEDIA PLAYER</div>
+      <div class="mc-panel-title">🎵 JUKEBOX // MEDIA PLAYER</div>
       <div class="visualizer" id="visualizer">
         <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
         <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
       </div>
       
-      <!-- Audio Elemente -->
-      <audio id="communitySong">
-        <source src="quaps-hymne.mp3" type="audio/mpeg">
-      </audio>
-      <audio id="communitySongNew">
-        <source src="qa12_new.mp3" type="audio/mpeg">
-      </audio>
-      <audio id="qa12Song">
-        <source src="Qa12rem.mp3" type="audio/mpeg">
-      </audio>
+      <!-- Track Auswahl Buttons -->
+      <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+        <button onclick="switchTrack('quaps-hymne.mp3', 'Alte Hymne')" id="trackBtn1" class="mc-action" style="flex: 1; font-size: 0.45rem;">Alte Hymne</button>
+        <button onclick="switchTrack('qa12_new.mp3', 'Neue Hymne')" id="trackBtn2" class="mc-action" style="flex: 1; font-size: 0.45rem; color: var(--gold); border-color: var(--gold);">Neue Hymne</button>
+        <button onclick="switchTrack('Qa12rem.mp3', 'QA12Rem')" id="trackBtn3" class="mc-action" style="flex: 1; font-size: 0.45rem; color: var(--diamond); border-color: var(--diamond);">QA12Rem</button>
+      </div>
 
-      <!-- Steuerung Buttons -->
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-        <button onclick="playTrack('old')" id="playOldBtn" class="mc-action full">▶ ALTE HYMNE (QUAPS-HYMNE)</button>
-        <button onclick="playTrack('new')" id="playNewBtn" class="mc-action full" style="color: var(--gold); border-color: var(--gold);">▶ NEUE HYMNE (QA12_NEW)</button>
-        <button onclick="playTrack('qa12')" id="playQa12Btn" class="mc-action full" style="color: var(--diamond); border-color: var(--diamond);">▶ MEDIA PLAYER (QA12REM)</button>
+      <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; text-align: center;" id="currentTrackLabel">Aktuell: Alte Hymne</div>
+
+      <!-- Fortschrittsbalken / Spulen -->
+      <div style="margin-bottom: 15px;">
+        <input type="range" id="progressBar" value="0" max="100" step="0.1" style="width: 100%; accent-color: var(--primary); cursor: pointer;" oninput="seekAudio(this.value)">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-top: 4px;">
+          <span id="currentTimeDisplay">0:00</span>
+          <span id="durationDisplay">0:00</span>
+        </div>
+      </div>
+
+      <!-- Play/Pause und Lautstärke -->
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <button onclick="togglePlayPause()" id="playPauseBtn" class="mc-action" style="flex: 1; min-width: 140px;">▶ PLAY</button>
+        <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 160px; background: rgba(0,0,0,0.3); padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);">
+          <span style="font-size: 0.9rem; color: var(--muted);">🔊</span>
+          <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.4" style="width: 100%; accent-color: var(--primary); cursor: pointer;" oninput="changeVolume(this.value)">
+        </div>
       </div>
     </div>
 
@@ -900,6 +909,68 @@ let currentGlobalUser = "SPIELER";
 let selectedProjectId = null;
 let cinematicTimeout = null;
 let isGuestMode = false;
+
+/* 🎧 AUDIO PLAYER LOGIK */
+const audioElement = new Audio('quaps-hymne.mp3');
+audioElement.volume = 0.4;
+
+audioElement.addEventListener('timeupdate', () => {
+  if (isNaN(audioElement.duration)) return;
+  const progress = (audioElement.currentTime / audioElement.duration) * 100;
+  document.getElementById('progressBar').value = progress;
+  document.getElementById('currentTimeDisplay').textContent = formatTime(audioElement.currentTime);
+  document.getElementById('durationDisplay').textContent = formatTime(audioElement.duration);
+});
+
+audioElement.addEventListener('ended', () => {
+  document.getElementById('playPauseBtn').textContent = '▶ PLAY';
+  document.getElementById('visualizer').classList.remove('playing');
+});
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function switchTrack(file, name) {
+  const wasPlaying = !audioElement.paused;
+  audioElement.src = file;
+  audioElement.currentTime = 0;
+  document.getElementById('currentTrackLabel').textContent = 'Aktuell: ' + name;
+  if (wasPlaying) {
+    audioElement.play();
+    document.getElementById('playPauseBtn').textContent = '⏸ PAUSE';
+    document.getElementById('visualizer').classList.add('playing');
+  } else {
+    document.getElementById('playPauseBtn').textContent = '▶ PLAY';
+    document.getElementById('visualizer').classList.remove('playing');
+  }
+}
+
+function togglePlayPause() {
+  const btn = document.getElementById('playPauseBtn');
+  const vis = document.getElementById('visualizer');
+  if (audioElement.paused) {
+    audioElement.play();
+    btn.textContent = '⏸ PAUSE';
+    vis.classList.add('playing');
+  } else {
+    audioElement.pause();
+    btn.textContent = '▶ PLAY';
+    vis.classList.remove('playing');
+  }
+}
+
+function seekAudio(value) {
+  if (isNaN(audioElement.duration)) return;
+  const time = (value / 100) * audioElement.duration;
+  audioElement.currentTime = time;
+}
+
+function changeVolume(val) {
+  audioElement.volume = parseFloat(val);
+}
 
 window.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -1221,58 +1292,6 @@ function initReveal() {
   const els = document.querySelectorAll('.page.active [data-reveal]');
   const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); }); }, { threshold: 0.1 });
   els.forEach(el => { el.classList.remove('revealed'); obs.observe(el); });
-}
-
-/* ── ZENTRALER PLAYER FÜR HYMNEN & QA12REM ── */
-function playTrack(type) {
-  const audioOld = document.getElementById('communitySong');
-  const audioNew = document.getElementById('communitySongNew');
-  const audioQa12 = document.getElementById('qa12Song');
-
-  const btnOld = document.getElementById('playOldBtn');
-  const btnNew = document.getElementById('playNewBtn');
-  const btnQa12 = document.getElementById('playQa12Btn');
-  const vis = document.getElementById('visualizer');
-
-  // Alle anderen Tracks anhalten und Buttons zurücksetzen
-  audioOld.pause(); audioOld.currentTime = 0;
-  audioNew.pause(); audioNew.currentTime = 0;
-  audioQa12.pause(); audioQa12.currentTime = 0;
-
-  btnOld.textContent = '▶ ALTE HYMNE (QUAPS-HYMNE)';
-  btnNew.textContent = '▶ NEUE HYMNE (QA12_NEW)';
-  btnQa12.textContent = '▶ MEDIA PLAYER (QA12REM)';
-
-  if (type === 'old') {
-    if (audioOld.paused) {
-      audioOld.play();
-      btnOld.textContent = '⏸ ALTE HYMNE PAUSIEREN';
-      vis.classList.add('playing');
-    } else {
-      vis.classList.remove('playing');
-    }
-  } else if (type === 'new') {
-    if (audioNew.paused) {
-      audioNew.play();
-      btnNew.textContent = '⏸ NEUE HYMNE PAUSIEREN';
-      vis.classList.add('playing');
-    } else {
-      vis.classList.remove('playing');
-    }
-  } else if (type === 'qa12') {
-    if (audioQa12.paused) {
-      audioQa12.play();
-      btnQa12.textContent = '⏸ QA12REM PAUSIEREN';
-      vis.classList.add('playing');
-    } else {
-      vis.classList.remove('playing');
-    }
-  }
-
-  // Wenn alle pausiert sind, Visualizer stoppen
-  if (audioOld.paused && audioNew.paused && audioQa12.paused) {
-    vis.classList.remove('playing');
-  }
 }
 
 async function sendToDiscord() {
