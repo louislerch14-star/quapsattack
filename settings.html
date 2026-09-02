@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anmeldung & Registrierung</title>
+  <title>Konto-Einstellungen</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
@@ -31,6 +31,15 @@
       margin-top: 0;
       text-align: center;
       color: #3b82f6;
+    }
+    .user-info {
+      background: #2a2a2a;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #aaa;
+      text-align: center;
     }
     .input-group {
       margin-bottom: 15px;
@@ -65,21 +74,17 @@
       cursor: pointer;
       font-size: 16px;
       transition: background 0.2s;
+      margin-top: 10px;
     }
     button:hover {
       background: #2563eb;
     }
     .btn-secondary {
-      background: transparent;
-      border: 1px solid #333;
-      color: #aaa;
+      background: #333;
       margin-top: 10px;
-      font-size: 14px;
-      padding: 8px;
     }
     .btn-secondary:hover {
-      background: #2a2a2a;
-      color: #fff;
+      background: #444;
     }
     .strength-meter {
       height: 6px;
@@ -125,49 +130,37 @@
       color: #22c55e;
       display: block;
     }
-    .hidden {
-      display: none;
-    }
   </style>
 </head>
 <body>
 
 <div class="card">
-  <!-- PHASE 1: E-Mail eingeben für Bestätigung oder Reset -->
-  <div id="phase-email">
-    <h2>Registrieren / Login</h2>
-    <p style="font-size: 13px; color: #aaa; text-align: center;">Gib deine E-Mail ein, um dich anzumelden oder dein Passwort zurückzusetzen.</p>
-    <div class="input-group">
-      <label for="email">E-Mail Adresse</label>
-      <input type="email" id="email" placeholder="deine@email.de" required>
-    </div>
-    <button id="btn-send-email">Bestätigungs-E-Mail senden</button>
-    <button id="btn-reset-password" class="btn-secondary">Passwort vergessen?</button>
+  <h2>Einstellungen ⚙️</h2>
+  
+  <div class="user-info">
+    Eingeloggt als: <br><strong id="user-email" style="color: #fff;">Lade...</strong>
   </div>
 
-  <!-- PHASE 2: Passwort festlegen (wird sichtbar nach Klick in der E-Mail) -->
-  <div id="phase-password" class="hidden">
-    <h2>Passwort festlegen</h2>
-    <p style="font-size: 13px; color: #aaa; text-align: center;">E-Mail erfolgreich verifiziert! Wähle jetzt dein neues Passwort.</p>
-    <div class="input-group">
-      <label for="password">Neues Passwort</label>
-      <input type="password" id="password" placeholder="••••••••" required>
-      
-      <!-- Stärke-Balken -->
-      <div class="strength-meter">
-        <div id="strength-bar" class="strength-bar"></div>
-      </div>
-
-      <!-- Kriterien-Liste -->
-      <ul class="requirements">
-        <li id="req-length">Mindestens 8 Zeichen</li>
-        <li id="req-upper">Ein Großbuchstabe</li>
-        <li id="req-number">Eine Zahl</li>
-        <li id="req-special">Ein Sonderzeichen (!@#$%^&*)</li>
-      </ul>
+  <div class="input-group">
+    <label for="new-password">Neues Passwort</label>
+    <input type="password" id="new-password" placeholder="••••••••" required>
+    
+    <!-- Stärke-Balken -->
+    <div class="strength-meter">
+      <div id="strength-bar" class="strength-bar"></div>
     </div>
-    <button id="btn-set-password">Passwort speichern & Einloggen</button>
+
+    <!-- Kriterien-Liste -->
+    <ul class="requirements">
+      <li id="req-length">Mindestens 8 Zeichen</li>
+      <li id="req-upper">Ein Großbuchstabe</li>
+      <li id="req-number">Eine Zahl</li>
+      <li id="req-special">Ein Sonderzeichen (!@#$%^&*)</li>
+    </ul>
   </div>
+
+  <button id="btn-update-password">Passwort aktualisieren</button>
+  <button id="btn-back" class="btn-secondary">Zurück zum Dashboard</button>
 
   <div id="status-msg" class="message"></div>
 </div>
@@ -179,13 +172,10 @@
   
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const phaseEmail = document.getElementById('phase-email');
-  const phasePassword = document.getElementById('phase-password');
-  const emailInput = document.getElementById('email');
-  const passwordInput = document.getElementById('password');
-  const btnSendEmail = document.getElementById('btn-send-email');
-  const btnResetPassword = document.getElementById('btn-reset-password');
-  const btnSetPassword = document.getElementById('btn-set-password');
+  const userEmail = document.getElementById('user-email');
+  const passwordInput = document.getElementById('new-password');
+  const btnUpdatePassword = document.getElementById('btn-update-password');
+  const btnBack = document.getElementById('btn-back');
   const statusMsg = document.getElementById('status-msg');
 
   const strengthBar = document.getElementById('strength-bar');
@@ -194,71 +184,20 @@
   const reqNumber = document.getElementById('req-number');
   const reqSpecial = document.getElementById('req-special');
 
-  // 1. Prüfen, ob der User über einen E-Mail-Link (Registrierung oder Reset) kommt
+  // Session-Prüfung beim Laden der Seite
   window.addEventListener('DOMContentLoaded', async () => {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    
-    // Wenn eine Session existiert, schalten wir direkt auf Phase 2 (Passwort festlegen)
-    if (session) {
-      phaseEmail.classList.add('hidden');
-      phasePassword.classList.remove('hidden');
-    }
-  });
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
 
-  // 2. Bestätigungs-E-Mail anfordern (Registrierung / Magic Link)
-  btnSendEmail.addEventListener('click', async () => {
-    const email = emailInput.value.trim();
-    if (!email) {
-      showStatus('Bitte gib eine gültige E-Mail ein.', 'error');
+    if (error || !session) {
+      // Nicht eingeloggt -> Zurück zum Login
+      window.location.href = 'login-.html';
       return;
     }
 
-    btnSendEmail.disabled = true;
-    btnSendEmail.innerText = 'Sende E-Mail...';
-
-    const { error } = await supabaseClient.auth.signInWithOtp({
-      email: email,
-      options: {
-        emailRedirectTo: window.location.href
-      }
-    });
-
-    if (error) {
-      showStatus('Fehler: ' + error.message, 'error');
-      btnSendEmail.disabled = false;
-      btnSendEmail.innerText = 'Bestätigungs-E-Mail senden';
-    } else {
-      showStatus('Bestätigungs-E-Mail gesendet! Prüfe dein Postfach.', 'success');
-      btnSendEmail.innerText = 'E-Mail gesendet ✓';
-    }
+    userEmail.innerText = session.user.email;
   });
 
-  // 3. Passwort vergessen? (Reset-E-Mail senden)
-  btnResetPassword.addEventListener('click', async () => {
-    const email = emailInput.value.trim();
-    if (!email) {
-      showStatus('Bitte gib deine E-Mail ein, um das Passwort zurückzusetzen.', 'error');
-      return;
-    }
-
-    btnResetPassword.disabled = true;
-    btnResetPassword.innerText = 'Sende Reset-Link...';
-
-    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.href
-    });
-
-    if (error) {
-      showStatus('Fehler: ' + error.message, 'error');
-      btnResetPassword.disabled = false;
-      btnResetPassword.innerText = 'Passwort vergessen?';
-    } else {
-      showStatus('Passwort-Reset-Link wurde gesendet! Prüfe dein Postfach.', 'success');
-      btnResetPassword.innerText = 'Reset-Link gesendet ✓';
-    }
-  });
-
-  // 4. Live Passwort-Stärke-Prüfung
+  // Live Passwort-Stärke-Prüfung
   passwordInput.addEventListener('input', () => {
     const val = passwordInput.value;
     let score = 0;
@@ -302,32 +241,38 @@
     }
   });
 
-  // 5. Passwort nach E-Mail-Bestätigung / Reset speichern
-  btnSetPassword.addEventListener('click', async () => {
-    const password = passwordInput.value;
+  // Passwort aktualisieren
+  btnUpdatePassword.addEventListener('click', async () => {
+    const newPassword = passwordInput.value;
 
-    if (password.length < 8) {
+    if (newPassword.length < 8) {
       showStatus('Das Passwort muss mindestens 8 Zeichen lang sein.', 'error');
       return;
     }
 
-    btnSetPassword.disabled = true;
-    btnSetPassword.innerText = 'Speichere Passwort...';
+    btnUpdatePassword.disabled = true;
+    btnUpdatePassword.innerText = 'Aktualisiere...';
 
     const { error } = await supabaseClient.auth.updateUser({
-      password: password
+      password: newPassword
     });
 
     if (error) {
       showStatus('Fehler: ' + error.message, 'error');
-      btnSetPassword.disabled = false;
-      btnSetPassword.innerText = 'Passwort speichern & Einloggen';
+      btnUpdatePassword.disabled = false;
+      btnUpdatePassword.innerText = 'Passwort aktualisieren';
     } else {
-      showStatus('Erfolgreich! Du wirst weitergeleitet...', 'success');
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 1500);
+      showStatus('Passwort erfolgreich geändert! 🎉', 'success');
+      passwordInput.value = '';
+      strengthBar.style.width = '0%';
+      btnUpdatePassword.disabled = false;
+      btnUpdatePassword.innerText = 'Passwort aktualisieren';
     }
+  });
+
+  // Zurück-Button Event
+  btnBack.addEventListener('click', () => {
+    window.location.href = 'dashboard.html';
   });
 
   function showStatus(text, type) {
