@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuapsHub</title>
+  
+  <link rel="icon" type="image/jpeg" href="unnamed.jpg">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+  :root {
+    --primary: #a8ff78; /* Frisches XP-Grün */
+    --diamond: #44d4d4;
+    --gold:    #f5c518;
+    --bg:      #0a0a0a;
+    --panel:   #1a1a1a;
+    --panel2:  #222222;
+    --border:  #333333;
+    --text:    #f0f0f0;
+    --muted:   #aaaaaa;
+    --trust-green: #00b67a;
+    --paypol-blue: #003087;
+    --paypol-cyan: #0079c1;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'VT323', monospace;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+    font-size: 1.2rem;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, .mc-font, .mc-btn, .mc-action {
+    font-family: 'Press Start 2P', monospace;
+    text-transform: uppercase;
+  }
+
+  /* ── VIDEO BACKGROUND ── */
+  .video-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: #0d1117;
+  }
+  .video-bg iframe {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100vw; height: 56.25vw;
+    min-height: 100vh; min-width: 177.77vh;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    filter: brightness(0.12) saturate(0.3);
+  }
+  .video-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,0.9) 100%);
+  }
+
+  /* ── SIDEBAR NAVBAR ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--panel2);
+    border-right: 2px solid var(--border);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  } 
+
+  .sidebar-logo {
+    padding: 30px 20px;
+    border-bottom: 2px solid var(--border);
+    background: var(--panel);
+    text-align: center;
+  }
+  .sidebar-logo .logo-text {
+    font-size: 1rem;
+    color: var(--primary);
+    display: block;
+  }
+  .sidebar-logo .logo-sub {
+    font-family: 'VT323', monospace;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-top: 8px;
+    display: block;
+    letter-spacing: 1px;
+  }
+
+  .sidebar-section {
+    padding: 20px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mc-btn {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.6rem;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.2s;
+    border-left: 3px solid transparent;
+  }
+  .mc-btn:hover {
+    background: rgba(168, 255, 120, 0.05);
+    color: #fff;
+    border-left-color: var(--primary);
+  }
+  .mc-btn.active {
+    background: rgba(168, 255, 120, 0.08);
+    color: #fff;
+    border-left-color: var(--primary);
+  }
+
+  .logout-btn {
+    margin-top: auto;
+    margin-bottom: 10px;
+    color: #ff5555 !important;
+  }
+  .logout-btn:hover { background: rgba(255, 85, 85, 0.08); border-left-color: #ff5555; }
+
+  /* ── PROFILE AREA IN SIDEBAR ── */
+  .sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    border-top: 2px solid var(--border);
+    background: #151515;
+  }
+  .profile-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+    background: var(--panel2);
+  }
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .profile-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45rem;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .profile-status-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--primary);
+  }
+  .status-text {
+    font-size: 0.8rem;
+    color: var(--primary);
+    font-weight: bold;
+  }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    margin-left: 240px;
+    padding: 60px 50px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── MODERN SCROLL REVEAL ── */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  [data-reveal="2"] { transition-delay: 0.1s; }
+  [data-reveal="3"] { transition-delay: 0.2s; }
+  [data-reveal="4"] { transition-delay: 0.3s; }
+  [data-reveal="5"] { transition-delay: 0.4s; }
+
+  [data-reveal].revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── HERO ── */
+  .hero { margin-bottom: 50px; }
+  .hero h1 { font-size: 2.2rem; color: #fff; margin: 0; letter-spacing: -1px; }
+  .hero h1 span { color: var(--gold); }
+  .hero-sub { font-size: 1.1rem; color: var(--muted); margin-top: 10px; }
+
+  /* ── CLEAN GLASS PANEL ── */
+  .mc-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    transition: 0.3s;
+  }
+  .mc-panel:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+  .mc-panel-title {
+    font-size: 0.65rem;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .panel-body .line {
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .panel-body .line:last-child { border-bottom: none; }
+  .panel-body .line span { color: var(--primary); margin-right: 10px; }
+
+  /* ── PINNWAND STYLES ── */
+  .shoutbox-list {
+    max-height: 220px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 5px;
+  }
+  .shoutbox-msg {
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+  }
+  .shoutbox-msg .msg-user {
+    color: var(--gold);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    margin-right: 8px;
+  }
+  .shoutbox-form {
+    display: flex;
+    gap: 10px;
+  }
+  .shoutbox-form .mc-input {
+    margin-bottom: 0;
+    flex: 1;
+  }
+
+  /* ── AUDIO VISUALIZER ── */
+  .visualizer { display: flex; gap: 4px; height: 35px; align-items: center; margin: 20px 0; }
+  .vis-bar { width: 5px; height: 10px; background: #333; border-radius: 2px; }
+  .playing .vis-bar { animation: modernVis 0.6s infinite alternate; background: var(--primary); }
+  .playing .vis-bar:nth-child(2n) { animation-duration: 0.4s; background: var(--diamond); }
+  @keyframes modernVis { from { height: 10px; } to { height: 35px; } }
+
+  /* ── MODERN ACTION BUTTON ── */
+  .mc-action {
+    display: inline-block;
+    background: var(--panel2);
+    color: var(--primary);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+    padding: 14px 28px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .mc-action:hover { background: #fff; color: #000; border-color: #fff; transform: translateY(-1px); }
+  .mc-action:disabled { opacity: 0.5; cursor: not-allowed; }
+  .mc-action.full { width: 100%; text-align: center; display: block; }
+
+  /* ── VIDEO EMBED ── */
+  .clip-frame {
+    position: relative;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .clip-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+  .op-tag { color: var(--diamond); font-size: 0.9rem; margin-right: 15px; }
+
+  /* ── CLEAN FORM ── */
+  .mc-input {
+    display: block;
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: 12px;
+    color: #fff;
+    margin-bottom: 15px;
+    font-family: inherit;
+    font-size: 1rem;
+  }
+  .mc-input:focus { border-color: var(--primary); outline: none; background: rgba(0,0,0,0.7); }
+  .mc-input[readonly] { opacity: 0.5; cursor: not-allowed; }
+
+  .mc-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .mc-success {
+    display: none;
+    border: 2px solid var(--primary);
+    background: rgba(168,255,120,0.05);
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 12px;
+    color: var(--primary);
+  }
+
+  /* ── DOWNLOAD GRIDS ── */
+  .download-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .download-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .download-card-title {
+    font-size: 1.4rem;
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  /* ── MINECRAFT COOKIE BANNER STYLE ── */
+  .mc-cookie-banner {
+    position: fixed;
+    bottom: 20px;
+    right: -420px;
+    width: 380px;
+    background: #212121;
+    border: 4px solid #000000;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 10px 0 rgba(0,0,0,0.5);
+    font-family: 'VT323', monospace;
+    font-size: 1.3rem;
+    transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .mc-cookie-banner.show { right: 20px; }
+  .mc-advancement-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .mc-advancement-icon { width: 32px; height: 32px; image-rendering: pixelated; }
+  .mc-advancement-text { display: flex; flex-direction: column; }
+  .mc-advancement-title { font-family: 'Press Start 2P', monospace; font-size: 0.5rem; color: #cc55ff; text-transform: uppercase; }
+  .mc-advancement-name { font-size: 1.5rem; color: #ffffff; font-weight: bold; }
+  .mc-cookie-desc { color: #aaaaaa; font-size: 1.1rem; margin-bottom: 15px; line-height: 1.3; }
+  .mc-cookie-buttons { display: flex; gap: 10px; }
+  .mc-cookie-btn {
+    flex: 1; font-family: 'Press Start 2P', monospace; font-size: 0.5rem; padding: 10px; text-align: center; cursor: pointer; border: 2px solid #555; background: #555555; color: #fff; box-shadow: inset -2px -2px 0 #222, inset 2px 2px 0 #aaa;
+  }
+  .mc-cookie-btn:hover { background: #777777; border-color: #777; }
+  .mc-cookie-btn.accept { color: var(--primary); }
+  .mc-cookie-btn.decline { color: #ff5555; }
+
+
+  /* ── 🌟 FAKE PAYPOL & TRASTPILOD GATEWAY MODAL 🌟 ── */
+  .paypol-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Inter', sans-serif;
+  }
+  .paypol-modal-overlay.show { display: flex; }
+
+  .paypol-box {
+    background: #ffffff;
+    color: #1c1c1c;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    overflow: hidden;
+    animation: paypolPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes paypolPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .paypol-header {
+    background: #fcfcfd;
+    padding: 20px 24px;
+    border-bottom: 1px solid #eef0f2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .paypol-logo-area {
+    display: flex;
+    align-items: center;
+    font-style: italic;
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: -1px;
+  }
+  .paypol-logo-p1 { color: var(--paypol-blue); }
+  .paypol-logo-p2 { color: var(--paypol-cyan); }
+
+  .paypol-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #9aa1a7; }
+
+  .paypol-body { padding: 24px; }
+
+  .paypol-project-banner {
+    text-align: center;
+    background: #f4f6f8;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .paypol-project-title { font-size: 1.1rem; font-weight: 700; color: #1c1c1c; }
+  .paypol-project-subtitle { font-size: 0.8rem; color: #6c7378; margin-top: 3px; }
+
+  .paypol-input-group { margin-bottom: 20px; }
+  .paypol-label { display: block; font-size: 0.75rem; font-weight: 700; color: #3b3d40; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .paypol-amount-box { position: relative; }
+  .paypol-amount-box span { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-weight: 700; font-size: 1.2rem; color: #1c1c1c; }
+  .paypol-input {
+    width: 100%; padding: 14px; border: 2px solid #eef0f2; background: #f9fafb; border-radius: 8px; font-size: 1.1rem; color: #000; transition: 0.2s; font-weight: 600;
+  }
+  .paypol-input:focus { border-color: var(--paypol-cyan); outline: none; background: #fff; }
+
+  .paypol-code-area {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #eef0f2;
+    display: none;
+  }
+
+  .paypol-btn {
+    display: block; width: 100%; background: linear-gradient(90deg, var(--paypol-blue), var(--paypol-cyan)); color: #fff; border: none; padding: 15px; border-radius: 25px; font-size: 1rem; font-weight: 700; cursor: pointer; text-align: center; transition: 0.2s; box-shadow: 0 4px 12px rgba(0, 121, 193, 0.2);
+  }
+  .paypol-btn:hover { filter: brightness(1.1); }
+  .paypol-btn-unlocked { background: var(--trust-green) !important; box-shadow: none; }
+
+  .paypol-error-msg { color: #ca1a1a; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 500; }
+
+  .paypol-trust-footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1c1c1c;
+    color: #ffffff;
+    padding: 14px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+  }
+  .trast-logo { display: flex; align-items: center; gap: 4px; }
+  .trast-star-icon { background: var(--trust-green); color: #fff; padding: 1px 5px; font-weight: bold; font-size: 0.8rem; border-radius: 2px; }
+  .trast-text { font-weight: 800; font-size: 1rem; letter-spacing: -0.5px; }
+  .trast-stars { color: #ffb600; font-weight: bold; }
+  .trast-badge { background: var(--trust-green); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 20px; text-transform: uppercase; }
+
+  /* ── FILE UPLOAD WRAPPER ── */
+  .file-upload-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+  }
+  .file-upload-label {
+    display: block;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px dashed var(--border);
+    padding: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: 0.2s;
+  }
+  .file-upload-label:hover {
+    border-color: var(--primary);
+    color: #fff;
+    background: rgba(168, 255, 120, 0.02);
+  }
+  .file-upload-input {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .file-name-preview {
+    margin-top: -5px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: var(--primary);
+    display: none;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 800px) {
+    .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 2px solid var(--border); }
+    .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; }
+    .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; }
+    .mc-btn:hover, .mc-btn.active { border-left-color: transparent; border-bottom-color: var(--primary); }
+    .logout-btn { margin-top: 0; margin-bottom: 0; }
+    .sidebar-profile { border-top: none; border-left: 2px solid var(--border); padding: 10px; }
+    main { margin-left: 0; padding: 30px 20px; }
+  }
+  @keyframes redPulse {
+    0% {
+        border-color: rgba(255, 75, 75, 0.8);
+        box-shadow: 0 0 5px rgba(255, 75, 75, 0.4), inset 0 0 5px rgba(255, 75, 75, 0.2);
+    }
+    50% {
+        border-color: rgba(255, 0, 0, 1);
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), inset 0 0 10px rgba(255, 0, 0, 0.4);
+    }
+    100% {
+        border-color: rgba(255, 75, 75, 0.8);
+        box-shadow: 0 0 5px rgba(255, 75, 75, 0.4), inset 0 0 5px rgba(255, 75, 75, 0.2);
+    }
+}
+
+.mc-btn.btn-download-app {
+    color: #ff4b4b !important;
+    border: 2px solid #ff4b4b !important;
+    border-radius: 8px;
+    margin: 5px 15px 10px 15px;
+    width: calc(100% - 30px);
+    justify-content: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    background: rgba(255, 0, 0, 0.08);
+    animation: redPulse 2s infinite ease-in-out;
+    text-align: center;
+}
+
+.mc-btn.btn-download-app:hover {
+    background: rgba(255, 0, 0, 0.2) !important;
+    color: #fff !important;
+    border-left-color: #ff4b4b !important;
+    padding-left: 20px;
+}
+  </style>
+</head>
+<body>
+
+<div class="video-bg">
+  <iframe src="https://www.youtube.com/embed/44MX1avl9JI?autoplay=1&mute=1&loop=1&playlist=44MX1avl9JI&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay"></iframe>
+</div>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-text">QUAPS<br>HUB</span>
+    <span class="logo-sub">ATTACK EDITION // v2.7</span>
+  </div>
+
+  <div class="sidebar-section">
+    <button class="mc-btn active" onclick="showPage('home')" id="btn-home">&nbsp; HOME</button> 
+    <button class="mc-btn" onclick="window.location.href='beta/index.html'" id="btn-beta" style="color: var(--gold); border: 1px solid var(--gold);">&nbsp; 🧪 BETA</button>
+    <button class="mc-btn" onclick="showPage('clips')" id="btn-clips">&nbsp; CLIP-ARCHIV</button>
+    <button class="mc-btn" onclick="showPage('upload')" id="btn-upload">&nbsp; CLIP UPLOAD</button>
+    <button class="mc-btn" onclick="showPage('downloads')" id="btn-downloads">&nbsp; WELTEN-DOWNLOADS</button>
+    <button class="mc-btn" onclick="showPage('admin-apply')" id="btn-admin-apply">&nbsp; 📋 BEWERBUNGEN</button>
+    <br>
+    <button class="mc-btn btn-download-app" onclick="window.open('https://drive.google.com/file/d/1YKXFwB2QAsTXSQ-z3qqfOmzIiuYUedst/view?usp=sharing', '_blank')" id="btn-beta">&nbsp; DOWNLOAD APP</button>
+    <button class="mc-btn logout-btn" onclick="logout()">&nbsp; EXIT / LOGOUT</button>
+  </div>
+
+  <div class="sidebar-profile">
+    <img src="unnamed.jpg" id="user-avatar" class="profile-avatar" alt="M" onerror="this.src='https://minecraft.wiki/images/Steves_Head_JE2_BE2.png'">
+    <div class="profile-info">
+      <span class="profile-name" id="sidebar-user-name">SPIELER</span>
+      <div class="profile-status-wrapper">
+        <span class="status-dot"></span>
+        <span class="status-text">ONLINE</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <div id="home" class="page active">
+    <div class="hero" data-reveal="1">
+      <h1>Moin, <br><span id="user-name-display">Spieler</span>.</h1>
+      <p class="hero-sub">Willkommen im Quaps Attack Dashboard.</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2">
+      <div class="mc-panel-title">📜 REGELN</div>
+      <div class="panel-body">
+        <div class="line"><span>▶</span> Das Griefen des Spawns ist strengstens untersagt.</div>
+        <div class="line"><span>▶</span> Hacks, X-Ray oder unfaire Client Modifikationen führen zum sofortigen Bann.</div>
+        <div class="line"><span>▶</span> Schicke ein Bild von deiner Base und sie steht unter Grieferschutz.(QA11)</div>
+      </div>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2" style="border-color: var(--diamond); background: rgba(68, 212, 212, 0.03);">
+      <div class="mc-panel-title" style="color: var(--diamond);">🛡 BASE-SCHUTZ AKTIVIEREN</div>
+      <div class="panel-body" style="margin-bottom: 15px;">
+        <p style="font-size: 1.1rem; color: #ccc;">Sichere dein Eigentum! Lade hier direkt ein Bild deiner Base hoch, um den offiziellen Grieferschutz laut Regel 3 zu beantragen.</p>
+      </div>
+      <button onclick="showPage('image-upload')" class="mc-action" style="color: var(--diamond); border-color: var(--diamond);">▶ JETZT BILD HOCHLADEN</button>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="3">
+      <div class="mc-panel-title">💬 QUAPS PINNWAND</div>
+      <div class="shoutbox-list" id="pinnwand-box">
+        <div style="color: var(--muted); font-size: 1rem;">Lade Nachrichten...</div>
+      </div>
+      <div class="shoutbox-form">
+        <input type="text" id="pinnwand-input" class="mc-input" placeholder="Schreib was auf die Wand..." maxlength="120" onkeydown="if(event.key === 'Enter') postToPinnwand()">
+        <button onclick="postToPinnwand()" id="pinnwand-btn" class="mc-action">SENDEN</button>
+      </div>
+    </div>
+
+    <!-- MODERNER MEDIA PLAYER MIT PLAY/PAUSE, SPULEN & LAUTSTÄRKE -->
+    <div class="glass-card mc-panel" data-reveal="4">
+      <div class="mc-panel-title">🎵 JUKEBOX // MEDIA PLAYER</div>
+      <div class="visualizer" id="visualizer">
+        <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+        <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+      </div>
+      
+      <!-- Track Auswahl Buttons -->
+      <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+        <button onclick="switchTrack('quaps-hymne.mp3', 'Alte Hymne')" id="trackBtn1" class="mc-action" style="flex: 1; font-size: 0.45rem;">Alte Hymne</button>
+        <button onclick="switchTrack('qa12_new.mp3', 'Neue Hymne')" id="trackBtn2" class="mc-action" style="flex: 1; font-size: 0.45rem; color: var(--gold); border-color: var(--gold);">Neue Hymne</button>
+        <button onclick="switchTrack('Qa12rem.mp3', 'QA12Rem')" id="trackBtn3" class="mc-action" style="flex: 1; font-size: 0.45rem; color: var(--diamond); border-color: var(--diamond);">QA12Rem</button>
+      </div>
+
+      <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; text-align: center;" id="currentTrackLabel">Aktuell: Alte Hymne</div>
+
+      <!-- Fortschrittsbalken / Spulen -->
+      <div style="margin-bottom: 15px;">
+        <input type="range" id="progressBar" value="0" max="100" step="0.1" style="width: 100%; accent-color: var(--primary); cursor: pointer;" oninput="seekAudio(this.value)">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-top: 4px;">
+          <span id="currentTimeDisplay">0:00</span>
+          <span id="durationDisplay">0:00</span>
+        </div>
+      </div>
+
+      <!-- Play/Pause und Lautstärke -->
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <button onclick="togglePlayPause()" id="playPauseBtn" class="mc-action" style="flex: 1; min-width: 140px;">▶ PLAY</button>
+        <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 160px; background: rgba(0,0,0,0.3); padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);">
+          <span style="font-size: 0.9rem; color: var(--muted);">🔊</span>
+          <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.4" style="width: 100%; accent-color: var(--primary); cursor: pointer;" oninput="changeVolume(this.value)">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="clips" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Clip <span>Archiv</span></h1>
+      <p class="hero-sub">Die besten Szenen und Fail-Clips aus der Community.</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2">
+      <div class="mc-panel-title">Mace Hit Showcase</div>
+      <div class="clip-frame">
+        <iframe src="https://medal.tv/clip/m245phyP0YReNUdb0?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div>Eingesendet von: <span class="op-tag">LOUIS</span></div>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="3">
+      <div class="mc-panel-title">Uganana</div>
+      <div class="clip-frame">
+        <iframe src="https://medal.tv/clip/mG1pg5SzLr51mGslD?autoplay=0" frameborder="0" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div>Eingesendet von: <span class="op-tag">NILS</span><span class="op-tag">GIORGIO</span></div>
+    </div>
+  </div>
+
+  <div id="upload" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Clip <span>einsenden</span></h1>
+      <p class="hero-sub">Teile deine Highlights oder Fail-Momente mit der gesamten Truppe.</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2" style="max-width: 600px; margin: 0 auto;">
+      <div class="mc-panel-title">Clip-Formular</div>
+      
+      <label class="mc-label">DEIN NAME</label>
+      <input class="mc-input" id="uploaderName" type="text" readonly>
+
+      <label class="mc-label">TITEL ODER BESCHREIBUNG</label>
+      <input class="mc-input" id="clipTitle" type="text" placeholder="z.B. Epic PvP Clutch">
+
+      <label class="mc-label">LINK (MEDAL ODER YOUTUBE)</label>
+      <textarea class="mc-input" id="clipLink" rows="2" placeholder="https://..."></textarea>
+      
+      <button onclick="sendToDiscord()" id="submitBtn" class="mc-action full">▶ AN DISCORD SENDEN</button>
+      <div class="mc-success" id="statusMsg">Erfolgreich an Discord übertragen!</div>
+    </div>
+  </div>
+
+  <div id="image-upload" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Bilder <span>Upload (Grieferschutz)</span></h1>
+      <p class="hero-sub">Lade hier Base-Bilder hoch, um Grieferschutz gemäß Regelwerk zu erhalten.</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2" style="max-width: 600px; margin: 0 auto; border-color: var(--diamond);">
+      <div class="mc-panel-title" style="color: var(--diamond);">Base / Image Formular</div>
+      
+      <label class="mc-label">DEIN NAME</label>
+      <input class="mc-input" id="imageUploaderName" type="text" readonly>
+
+      <label class="mc-label">BESCHREIBUNG / BASE-KOORDINATEN</label>
+      <input class="mc-input" id="imageDescription" type="text" placeholder="z.B. Meine Hauptbase bei X: 200 Z: -1500">
+
+      <label class="mc-label">BILD PER DATEIUPLOAD HINZUFÜGEN</label>
+      <div class="file-upload-wrapper">
+        <label class="file-upload-label" id="imgUploadLabel">📁 Bild auswählen oder hierher ziehen</label>
+        <input type="file" id="baseImageFile" class="file-upload-input" accept="image/*" onchange="previewImageFileName()">
+      </div>
+      <div class="file-name-preview" id="imgFileNameDisplay"></div>
+      
+      <button onclick="sendImageToDiscord()" id="imgSubmitBtn" class="mc-action full" style="color: var(--diamond); border-color: var(--diamond);">▶ BILD AN DISCORD SENDEN</button>
+      <div class="mc-success" id="imgStatusMsg" style="border-color: var(--diamond); color: var(--diamond); background: rgba(68,212,212,0.05);">Bild erfolgreich an Discord gesendet!</div>
+    </div>
+  </div>
+
+  <div id="downloads" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Welten <span>Downloads</span></h1>
+      <p class="hero-sub">Lade dir hier die offiziellen Server-Maps und Quaps-Welten herunter.</p>
+    </div>
+
+    <div class="mc-panel" data-reveal="2">
+      <div class="mc-panel-title">🌍 VERFÜGBARE WORLD-SAVES & PROJEKTE</div>
+      <div class="download-grid" id="download-list-container"></div>
+    </div>
+  </div>
+
+  <div id="admin-apply" class="page">
+    <div class="hero" data-reveal="1">
+      <h1>Eingegangene <span>Bewerbungen</span></h1>
+      <p class="hero-sub">Hier sind alle Spieler, die auf den Server wollen.</p>
+    </div>
+
+    <div class="glass-card mc-panel" data-reveal="2">
+      <div class="mc-panel-title">👥 OFFENE ANFRAGEN</div>
+      <div id="bewerbungen-liste-box" style="display: flex; flex-direction: column; gap: 15px;">
+        <div style="color: var(--muted); font-size: 1rem;">Lade Bewerbungen...</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="mc-cookie-banner" id="cookie-banner">
+  <div class="mc-advancement-header">
+    <img src="https://minecraft.wiki/images/Cookie_JE1_BE1.png" class="mc-advancement-icon" alt="Cookie" onerror="this.src='unnamed.jpg'">
+    <div class="mc-advancement-text">
+      <span class="mc-advancement-title">Challenge Complete!</span>
+      <span class="mc-advancement-name">Kekse gefressen?</span>
+    </div>
+  </div>
+  <div class="mc-cookie-desc">Diese Website nutzt Kekse, um dein Erlebnis fetter zu machen. Akzeptierst du die Bedingungen oder bist du ein Noob?</div>
+  <div class="mc-cookie-buttons">
+    <div class="mc-cookie-btn accept" onclick="handleCookie(true)">AKZEPTIEREN</div>
+    <div class="mc-cookie-btn decline" onclick="handleCookie(false)">ABLEHNEN</div>
+  </div>
+</div>
+
+
+<div class="paypol-modal-overlay" id="paypolModal">
+  <div class="paypol-box" id="paypolMainBox">
+    
+    <div id="cinematic-intro-screen" style="position: absolute; top:0; left:0; width:100%; height:100%; background: #050505; z-index: 100; display: none; flex-direction: column; justify-content: space-between; padding: 25px; box-sizing: border-box; overflow: hidden; border-radius: 6px;">
+      <div style="position: relative; width: 100%; height: 75%; overflow: hidden; mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);">
+        <div id="cinematic-text-scroll" style="position: absolute; width: 100%; text-align: center; font-family: 'Courier New', Courier, monospace; color: #ffaa00; font-size: 1.2rem; font-weight: bold; line-height: 1.8; text-shadow: 2px 2px #221100; transform: translateY(100%);"></div>
+      </div>
+      <div style="text-align: center; margin-bottom: 10px;">
+        <button onclick="skipCinematicIntro()" class="mc-action" style="padding: 8px 25px; font-size: 0.9rem; background: #222; border: 2px solid #555; color: #aaa; cursor: pointer; border-radius: 4px;">⏩ INTRO ÜBERSPRINGEN</button>
+      </div>
+    </div>
+
+    <div class="paypol-header">
+      <div class="paypol-logo-area">
+        <span class="paypol-logo-p1">Pay</span><span class="paypol-logo-p2">Pol</span>
+      </div>
+      <button class="paypol-close" onclick="closePaypolGateway()">&times;</button>
+    </div>
+    
+    <div class="paypol-body">
+      <div class="paypol-project-banner">
+        <div class="paypol-project-title" id="paypolItemName">Projektname</div>
+        <div class="paypol-project-subtitle">Sicherer Download-Schutz & Verifizierung</div>
+      </div>
+
+      <div id="paypol-step-1">
+        <div class="paypol-input-group">
+          <label class="paypol-label">PROJEKT SUPPORT SPENDE (Emeralds)</label>
+          <div class="paypol-amount-box">
+            <input type="number" id="paypolAmount" class="paypol-input" value="5" min="0">
+            <span>EMERALDS</span>
+          </div>
+        </div>
+        <button onclick="advanceToCodeStep()" class="paypol-btn">Weiter zur Verifizierung</button>
+      </div>
+
+      <div id="paypol-step-2" class="paypol-code-area">
+        <div class="paypol-input-group">
+          <label class="paypol-label" style="color: var(--trust-green); font-weight: 800;">🔒 TRASTPILOD FREISCHALTCODE ERFORDERLICH</label>
+          <input type="text" id="paypolCode" class="paypol-input" placeholder="Code eingeben..." autocomplete="off" style="text-align: center; letter-spacing: 1px;">
+          <div class="paypol-error-msg" id="paypolError">Ungültiger Freischaltcode für diese Welt!</div>
+        </div>
+        <button onclick="verifyPaypolCode()" id="paypolBtn" class="paypol-btn">Code prüfen & Download starten</button>
+      </div>
+
+      <a id="hiddenDownloadTrigger" href="#" target="_blank" style="display: none;"></a>
+    </div>
+    
+    <div class="paypol-trust-footer-bar">
+      <div class="trast-logo">
+        <span class="trast-star-icon">★</span>
+        <span class="trast-text">Trastpilod</span>
+      </div>
+      <span class="trast-stars">★★★★★ <span style="font-size: 0.75rem; color: #fff;">4.9 / 5</span></span>
+      <span class="trast-badge">Verifiziert</span>
+    </div>
+
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://sdwelvinfbqxivvxnjkh.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd2VsdmluZmJxeGl2dnhuamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDAxNjMsImV4cCI6MjA5NTQ3NjE2M30.aRc-rwNoZwx2vHS3tvvDkQr7t6el6ankRsgkldgHCBE";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1502355086519697419/ktl5zmzp74R19ENAwzCQt0zdKLSLZ2jCkJprgESEnVhVs1ttsUE_PM7g68xQbhnw1HHe";
+const NEW_DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1509916610008322128/3UyMxJGsobkWgUWaVh_fAa-K36T9Uax_LGBjbNrjliz37rp7JB-qYp7A39e8IfvCa2Dy";
+
+/* 🔑 TRASTPILOD CODES */
+const VALID_DOWNLOAD_CODES = [
+  "QA10",
+  "GeheimKey123",
+  "QuapsMod2026",
+  "LouisBeta26",
+  "ServerPass2026"
+];
+
+/* 📂 PROJEKTE & DATEIEN */
+const PROJECT_DOWNLOADS = [
+  {
+    id: "season10",
+    title: "Quaps Attack Hauptwelt (Season 10)",
+    version: "1.21+",
+    size: "ca. 5.0 GB",
+    file: "https://drive.google.com/uc?export=download&id=18DLzMxDv_NbOSHvoSwV66zVyC049QcFl",
+    introText: " QUAPS ATTACK 10 <br><br>Du stehst kurz vor dem Download einer Legende.<br>Monate voller Schweiß, Blut und unendlicher Arbeit stecken in diesen Blöcken.<br><br>Erlebe das gewaltige Nevada, erbaut von Lois_7 und Milka_600.<br><br>Lois_7 bereut es immer noch nicht Joschi all sein Redstone geklaut zu haben!<br><br>🔒 SICHERER GOOGLE DRIVE DOWNLOAD BREITGESTELLT."
+  },
+];
+
+let currentGlobalUser = "SPIELER";
+let selectedProjectId = null;
+let cinematicTimeout = null;
+let isGuestMode = false;
+
+/* 🎧 AUDIO PLAYER LOGIK */
+const audioElement = new Audio('quaps-hymne.mp3');
+audioElement.volume = 0.4;
+
+audioElement.addEventListener('timeupdate', () => {
+  if (isNaN(audioElement.duration)) return;
+  const progress = (audioElement.currentTime / audioElement.duration) * 100;
+  document.getElementById('progressBar').value = progress;
+  document.getElementById('currentTimeDisplay').textContent = formatTime(audioElement.currentTime);
+  document.getElementById('durationDisplay').textContent = formatTime(audioElement.duration);
+});
+
+audioElement.addEventListener('ended', () => {
+  document.getElementById('playPauseBtn').textContent = '▶ PLAY';
+  document.getElementById('visualizer').classList.remove('playing');
+});
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function switchTrack(file, name) {
+  const wasPlaying = !audioElement.paused;
+  audioElement.src = file;
+  audioElement.currentTime = 0;
+  document.getElementById('currentTrackLabel').textContent = 'Aktuell: ' + name;
+  if (wasPlaying) {
+    audioElement.play();
+    document.getElementById('playPauseBtn').textContent = '⏸ PAUSE';
+    document.getElementById('visualizer').classList.add('playing');
+  } else {
+    document.getElementById('playPauseBtn').textContent = '▶ PLAY';
+    document.getElementById('visualizer').classList.remove('playing');
+  }
+}
+
+function togglePlayPause() {
+  const btn = document.getElementById('playPauseBtn');
+  const vis = document.getElementById('visualizer');
+  if (audioElement.paused) {
+    audioElement.play();
+    btn.textContent = '⏸ PAUSE';
+    vis.classList.add('playing');
+  } else {
+    audioElement.pause();
+    btn.textContent = '▶ PLAY';
+    vis.classList.remove('playing');
+  }
+}
+
+function seekAudio(value) {
+  if (isNaN(audioElement.duration)) return;
+  const time = (value / 100) * audioElement.duration;
+  audioElement.currentTime = time;
+}
+
+function changeVolume(val) {
+  audioElement.volume = parseFloat(val);
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  isGuestMode = urlParams.get('guest') === 'true';
+
+  if (isGuestMode) {
+    currentGlobalUser = "GAST";
+    
+    document.getElementById('user-name-display').textContent = currentGlobalUser;
+    document.getElementById('uploaderName').value = currentGlobalUser;
+    document.getElementById('imageUploaderName').value = currentGlobalUser;
+    document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
+
+    disableGuestFeatures();
+  } else {
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+    if (error || !session) {
+      window.location.href = 'index.html';
+      return;
+    }
+
+    const user = session.user;
+    currentGlobalUser = user.user_metadata.full_name || user.email.split('@')[0].toUpperCase();
+    
+    document.getElementById('user-name-display').textContent = currentGlobalUser;
+    document.getElementById('uploaderName').value = currentGlobalUser;
+    document.getElementById('imageUploaderName').value = currentGlobalUser;
+    document.getElementById('sidebar-user-name').textContent = currentGlobalUser;
+  }
+
+  loadPinnwand();
+  loadBewerbungen();
+  renderDownloadList();
+
+  setTimeout(triggerCookieBanner, 2000);
+  setTimeout(initReveal, 100);
+});
+
+function disableGuestFeatures() {
+  const pinnwandBtn = document.getElementById('pinnwand-btn');
+  if (pinnwandBtn) {
+    pinnwandBtn.disabled = true;
+    pinnwandBtn.textContent = "NUR ALS MITGLIED";
+    pinnwandBtn.style.opacity = "0.5";
+    pinnwandBtn.style.cursor = "not-allowed";
+  }
+  
+  const clipBtn = document.getElementById('submitBtn');
+  if (clipBtn) {
+    clipBtn.disabled = true;
+    clipBtn.textContent = "NUR ALS MITGLIED";
+    clipBtn.style.opacity = "0.5";
+    clipBtn.style.cursor = "not-allowed";
+  }
+
+  const imgBtn = document.getElementById('imgSubmitBtn');
+  if (imgBtn) {
+    imgBtn.disabled = true;
+    imgBtn.textContent = "NUR ALS MITGLIED";
+    imgBtn.style.opacity = "0.5";
+    imgBtn.style.cursor = "not-allowed";
+  }
+}
+
+function renderDownloadList() {
+  const container = document.getElementById('download-list-container');
+  container.innerHTML = PROJECT_DOWNLOADS.map(proj => {
+    const buttonHtml = isGuestMode 
+      ? `<button class="mc-action" style="width: 100%; opacity: 0.5; cursor: not-allowed;" disabled>▶ NUR ALS MITGLIED</button>`
+      : `<button onclick="openPaypolGateway('${proj.id}')" class="mc-action" style="width: 100%;">▶ DOWNLOAD ANFORDERN</button>`;
+
+    return `
+      <div class="download-card">
+        <div>
+          <div class="download-card-title">${proj.title}</div>
+          <div style="color: var(--muted); font-size: 1.1rem; margin-bottom: 15px;">
+            Version: ${proj.version}<br>
+            Größe: ${proj.size}
+          </div>
+        </div>
+        ${buttonHtml}
+      </div>
+    `;
+  }).join('');
+}
+
+function openPaypolGateway(id) {
+  if (isGuestMode) return;
+
+  const project = PROJECT_DOWNLOADS.find(p => p.id === id);
+  if (!project) return;
+
+  selectedProjectId = id;
+  document.getElementById('paypolItemName').textContent = project.title;
+  document.getElementById('paypolAmount').value = "5";
+  document.getElementById('paypolCode').value = "";
+  document.getElementById('paypolError').style.display = "none";
+  
+  document.getElementById('paypol-step-2').style.display = "none";
+  const btn = document.getElementById('paypolBtn');
+  btn.textContent = "Code prüfen & Download starten";
+  btn.classList.remove('paypol-btn-unlocked');
+
+  document.getElementById('paypolModal').classList.add('show');
+
+  const introScreen = document.getElementById('cinematic-intro-screen');
+  const scrollText = document.getElementById('cinematic-text-scroll');
+  
+  if (project.introText) {
+    introScreen.style.display = "flex";
+    scrollText.innerHTML = project.introText;
+    scrollText.style.animation = "cinematicScrollUp 18s linear forwards";
+    playSound("achievement.mp3");
+
+    cinematicTimeout = setTimeout(() => {
+      skipCinematicIntro();
+    }, 18000);
+  } else {
+    introScreen.style.display = "none";
+  }
+}
+
+function skipCinematicIntro() {
+  if (cinematicTimeout) clearTimeout(cinematicTimeout);
+  document.getElementById('cinematic-intro-screen').style.display = "none";
+  playSound("xp.mp3");
+}
+
+function closePaypolGateway() {
+  if (cinematicTimeout) clearTimeout(cinematicTimeout);
+  document.getElementById('paypolModal').classList.remove('show');
+  document.getElementById('cinematic-intro-screen').style.display = "none";
+}
+
+function advanceToCodeStep() {
+  document.getElementById('paypol-step-2').style.display = "block";
+  playSound("xp.mp3");
+}
+
+function verifyPaypolCode() {
+  if (isGuestMode) return;
+
+  const project = PROJECT_DOWNLOADS.find(p => p.id === selectedProjectId);
+  if (!project) return;
+
+  const inputCode = document.getElementById('paypolCode').value.trim();
+  const errorBox = document.getElementById('paypolError');
+  const btn = document.getElementById('paypolBtn');
+
+  if (VALID_DOWNLOAD_CODES.includes(inputCode)) {
+    errorBox.style.display = "none";
+    btn.textContent = "✔ VERIFIZIERT - DATEI WIRD GELADEN";
+    btn.classList.add('paypol-btn-unlocked');
+    playSound("xp.mp3");
+    
+    setTimeout(() => {
+      const trigger = document.getElementById('hiddenDownloadTrigger');
+      trigger.href = project.file;
+      trigger.click();
+      closePaypolGateway();
+    }, 1500);
+  } else {
+    errorBox.style.display = "block";
+    playSound("creeper.mp3");
+  }
+}
+
+function triggerCookieBanner() {
+  if (!localStorage.getItem('mc_cookie_choice')) {
+    document.getElementById('cookie-banner').classList.add('show');
+    playSound("achievement.mp3");
+  }
+}
+
+function handleCookie(accepted) {
+  document.getElementById('cookie-banner').classList.remove('show');
+  localStorage.setItem('mc_cookie_choice', accepted ? 'accepted' : 'declined');
+  playSound(accepted ? "xp.mp3" : "creeper.mp3");
+}
+
+function playSound(file) {
+  try {
+    const audio = new Audio(file);
+    audio.volume = 0.4;
+    audio.play();
+  } catch (e) {}
+}
+
+async function loadPinnwand() {
+  const { data, error } = await supabaseClient
+    .from('pinnwand')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(30);
+
+  if (error) {
+    document.getElementById('pinnwand-box').innerHTML = `<div style="color: #ff5555;">Fehler beim Laden!</div>`;
+    return;
+  }
+
+  const box = document.getElementById('pinnwand-box');
+  if (data.length === 0) {
+    box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Noch keine Einträge.</div>`;
+    return;
+  }
+
+  box.innerHTML = data.reverse().map(msg => `
+    <div class="shoutbox-msg">
+      <span class="msg-user">${escapeHtml(msg.name)}:</span>
+      <span>${escapeHtml(msg.nachricht)}</span>
+    </div>
+  `).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function loadBewerbungen() {
+  const { data, error } = await supabaseClient
+    .from('bewerbungen')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  const box = document.getElementById('bewerbungen-liste-box');
+
+  if (error) {
+    box.innerHTML = `<div style="color: #ff5555;">Fehler beim Laden der Bewerbungen!</div>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    box.innerHTML = `<div style="color: var(--muted); font-size: 1rem;">Aktuell keine Bewerbungen vorhanden.</div>`;
+    return;
+  }
+
+  box.innerHTML = data.map(apply => `
+    <div style="padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px;">
+      <div style="font-family: 'Press Start 2P', monospace; font-size: 0.6rem; color: var(--gold); margin-bottom: 8px;">
+        Spieler: ${escapeHtml(apply.username || 'Unbekannt')}
+      </div>
+      <div style="font-size: 1.1rem; color: #fff; white-space: pre-wrap;">
+        ${escapeHtml(apply.begruendung || 'Keine Begründung angegeben.')}
+      </div>
+    </div>
+  `).join('');
+}
+
+async function postToPinnwand() {
+  if (isGuestMode) return;
+
+  const input = document.getElementById('pinnwand-input');
+  const btn = document.getElementById('pinnwand-btn');
+  const text = input.value.trim();
+  if (!text) return;
+
+  btn.disabled = true; input.disabled = true;
+
+  const { error } = await supabaseClient
+    .from('pinnwand')
+    .insert([{ name: currentGlobalUser, nachricht: text }]);
+
+  if (error) { alert('Fehler beim Speichern.'); btn.disabled = false; input.disabled = false; return; }
+
+  const payload = {
+    username: 'QuapsHub Pinnwand',
+    avatar_url: 'https://quapsattack.airbusfan.de/unnamed.jpg',
+    content: '📢 **Neue Nachricht an der Wand!**',
+    embeds: [{
+      title: '💬 Quaps Attack Pinnwand',
+      description: `>>> ${text}`,
+      color: 0xa8ff78,
+      fields: [{ name: '👤 Absender', value: `\`{currentGlobalUser}\``, inline: true }]
+    }]
+  };
+
+  try { await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch (e) {}
+
+  input.value = ''; btn.disabled = false; input.disabled = false;
+  loadPinnwand();
+}
+
+function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+
+async function logout() { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; }
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('btn-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+  setTimeout(initReveal, 50);
+
+  if (window.electronAPI) {
+    let rpcText = "Im Hauptmenü 📋";
+
+    if (id === 'home') {
+      rpcText = "Chillt in der Base 🏡";
+    } else if (id === 'pinnwand') {
+      rpcText = "Liest die Pinnwand 💬";
+    } else if (id === 'bewerbungen' || id === 'bewerbung') {
+      rpcText = "Schaut sich Bewerbungen an 📝";
+    } else if (id === 'downloads') {
+      rpcText = "Schaut sich Downloads an 📂";
+    } else if (id === 'clips' || id === 'clip') {
+      rpcText = "Reicht Videos ein 📹";
+    } else if (id === 'bilder' || id === 'bild') {
+      rpcText = "Beantragt Grieferschutz 🖼";
+    } else if (id === 'projekte') {
+      rpcText = "Plant Riesen-Projekte 🏗";
+    } else {
+      rpcText = "Erkundet Bereich: " + id.toUpperCase();
+    }
+
+    window.electronAPI.updateStatus(rpcText);
+  }
+}
+
+function initReveal() {
+  const els = document.querySelectorAll('.page.active [data-reveal]');
+  const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); }); }, { threshold: 0.1 });
+  els.forEach(el => { el.classList.remove('revealed'); obs.observe(el); });
+}
+
+async function sendToDiscord() {
+  if (isGuestMode) return;
+
+  const name = document.getElementById('uploaderName').value;
+  const title = document.getElementById('clipTitle').value;
+  const link = document.getElementById('clipLink').value;
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('statusMsg');
+
+  if (!title || !link) { alert('Bitte fülle alle Felder aus!'); return; }
+  btn.textContent = '... ÜBERTRAGE DATEN'; btn.disabled = true;
+
+  const payload = {
+    username: 'QuapsHub Monitor',
+    embeds: [{
+      title: '📹 Neuer Clip eingereicht',
+      color: 0xa8ff78,
+      fields: [
+        { name: 'Spieler', value: name, inline: true },
+        { name: 'Titel', value: title, inline: true },
+        { name: 'Link', value: link }
+      ]
+    }]
+  };
+
+  try {
+    await fetch(DISCORD_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    
+    msg.style.display = 'block';
+    setTimeout(() => {
+      msg.style.display = 'none'; 
+      btn.textContent = '▶ AN DISCORD SENDEN'; 
+      btn.disabled = false;
+      document.getElementById('clipTitle').value = ''; 
+      document.getElementById('clipLink').value = '';
+      showPage('home');
+    }, 3000);
+  } catch { 
+    alert('Übertragung fehlgeschlagen.'); 
+    btn.textContent = '▶ AN DISCORD SENDEN'; 
+    btn.disabled = false; 
+  }
+}
+
+function previewImageFileName() {
+  const fileInput = document.getElementById('baseImageFile');
+  const display = document.getElementById('imgFileNameDisplay');
+  const label = document.getElementById('imgUploadLabel');
+  
+  if (fileInput.files.length > 0) {
+    display.textContent = "Ausgewählt: " + fileInput.files[0].name;
+    display.style.display = "block";
+    label.textContent = "✔ Bild geladen";
+    label.style.borderColor = "var(--diamond)";
+  } else {
+    display.style.display = "none";
+    label.textContent = "📁 Bild auswählen oder hierher ziehen";
+    label.style.borderColor = "var(--border)";
+  }
+}
+
+async function sendImageToDiscord() {
+  if (isGuestMode) return;
+
+  const name = document.getElementById('imageUploaderName').value;
+  const description = document.getElementById('imageDescription').value;
+  const fileInput = document.getElementById('baseImageFile');
+  const btn = document.getElementById('imgSubmitBtn');
+  const msg = document.getElementById('imgStatusMsg');
+
+  if (fileInput.files.length === 0) { alert('Bitte wähle ein Bild zum Hochladen aus!'); return; }
+  btn.textContent = '... ÜBERTRAGE DATEN'; btn.disabled = true;
+
+  const formData = new FormData();
+  const file = fileInput.files[0];
+  
+  const extension = file.name.split('.').pop();
+  const safeFileName = `base_upload.${extension}`;
+
+  formData.append('files[0]', file, safeFileName);
+
+  const embed = {
+    title: '🖼 Neues Base-Bild (Grieferschutz-Antrag)',
+    color: 0x44d4d4,
+    fields: [
+      { name: 'Spieler', value: name, inline: true },
+      { name: 'Info / Koordinaten', value: description || 'Keine Beschreibung angegeben.', inline: true }
+    ],
+    image: { 
+      url: `attachment://${safeFileName}` 
+    }
+  };
+
+  const payload = {
+    username: 'QuapsHub Base-Schutz',
+    embeds: [embed]
+  };
+
+  formData.append('payload_json', JSON.stringify(payload));
+
+  try {
+    await fetch(NEW_DISCORD_WEBHOOK, {
+      method: 'POST',
+      body: formData
+    });
+    
+    msg.style.display = 'block';
+    setTimeout(() => {
+      msg.style.display = 'none'; 
+      btn.textContent = '▶ BILD AN DISCORD SENDEN'; 
+      btn.disabled = false;
+      document.getElementById('imageDescription').value = ''; 
+      document.getElementById('baseImageFile').value = '';
+      document.getElementById('imgFileNameDisplay').style.display = 'none';
+      document.getElementById('imgUploadLabel').textContent = '📁 Bild auswählen oder hierher ziehen';
+      document.getElementById('imgUploadLabel').style.borderColor = 'var(--border)';
+      showPage('home');
+    }, 3000);
+  } catch { 
+    alert('Bilder-Übertragung fehlgeschlagen.'); 
+    btn.textContent = '▶ BILD AN DISCORD SENDEN'; 
+    btn.disabled = false; 
+  }
+}
+</script>
+</body>
+</html> 
