@@ -160,10 +160,12 @@
 </div>
 
 <script>
-  // Supabase Initialisierung mit deinen Daten
+  // Supabase Initialisierung mit geändertem Variablennamen
   const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  
+  // Hier supabaseClient statt supabase
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const phaseEmail = document.getElementById('phase-email');
   const phasePassword = document.getElementById('phase-password');
@@ -181,7 +183,7 @@
 
   // 1. Prüfen, ob der User über den Bestätigungs-Link in der E-Mail auf die Seite kam
   window.addEventListener('DOMContentLoaded', async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
     
     // Wenn eine Session existiert (durch Klick auf den E-Mail Link), schalten wir auf Passwort-Eingabe um
     if (session) {
@@ -201,7 +203,7 @@
     btnSendEmail.disabled = true;
     btnSendEmail.innerText = 'Sende E-Mail...';
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabaseClient.auth.signInWithOtp({
       email: email,
       options: {
         emailRedirectTo: window.location.href // Leitet nach Klick in der Mail zurück auf diese Seite
@@ -276,7 +278,7 @@
     btnSetPassword.disabled = true;
     btnSetPassword.innerText = 'Speichere Passwort...';
 
-    const { error } = await supabase.auth.updateUser({
+    const { error } = await supabaseClient.auth.updateUser({
       password: password
     });
 
