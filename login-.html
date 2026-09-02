@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Community Hub — Anmelden</title>
-  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
@@ -179,12 +178,8 @@
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
 
-    let supabase;
-    try {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } catch (err) {
-      console.error("Supabase Init Error:", err);
-    }
+    // Supabase-Client EINMALIG erstellen
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let isSignUp = false;
 
@@ -225,9 +220,8 @@
 
     // Prüfen, ob bereits eingeloggt
     window.addEventListener('DOMContentLoaded', async () => {
-      if (!supabase) return;
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session } } = await supabaseClient.auth.getSession();
         if (session) {
           window.location.href = 'dashboard.html';
         }
@@ -239,11 +233,6 @@
     async function handleSubmit() {
       hideMessage();
       
-      if (!supabase) {
-        showMessage("Supabase konnte nicht geladen werden. Bitte Seite neu laden!", true);
-        return;
-      }
-
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
 
@@ -258,7 +247,7 @@
       try {
         if (isSignUp) {
           // Registrierung
-          const { data, error } = await supabase.auth.signUp({
+          const { data, error } = await supabaseClient.auth.signUp({
             email: email,
             password: password,
           });
@@ -270,7 +259,7 @@
           }
         } else {
           // Login
-          const { data, error } = await supabase.auth.signInWithPassword({
+          const { data, error } = await supabaseClient.auth.signInWithPassword({
             email: email,
             password: password,
           });
