@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Community Hub — Anmelden</title>
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
@@ -113,14 +114,13 @@
       color: #9ca3af;
     }
 
-    .toggle-text a {
+    .toggle-text span {
       color: #3b82f6;
-      text-decoration: none;
       font-weight: 600;
       cursor: pointer;
     }
 
-    .toggle-text a:hover {
+    .toggle-text span:hover {
       text-decoration: underline;
     }
 
@@ -154,20 +154,22 @@
     <h2 id="form-title">Willkommen zurück</h2>
     <p class="subtitle" id="form-subtitle">Melde dich mit deinen Zugangsdaten an</p>
     
-    <div class="form-group">
-      <label for="email">E-Mail Adresse</label>
-      <input type="email" id="email" placeholder="deine@email.de" required>
-    </div>
+    <form id="auth-form" onsubmit="event.preventDefault(); handleSubmit();">
+      <div class="form-group">
+        <label for="email">E-Mail Adresse</label>
+        <input type="email" id="email" placeholder="deine@email.de" required>
+      </div>
 
-    <div class="form-group">
-      <label for="password">Passwort</label>
-      <input type="password" id="password" placeholder="••••••••" required>
-    </div>
+      <div class="form-group">
+        <label for="password">Passwort</label>
+        <input type="password" id="password" placeholder="••••••••" required>
+      </div>
 
-    <button class="btn-submit" id="submit-btn" onclick="handleSubmit()">Einloggen</button>
+      <button type="submit" class="btn-submit" id="submit-btn">Einloggen</button>
+    </form>
 
     <div class="toggle-text" id="toggle-container">
-      Noch keinen Account? <a onclick="toggleMode('signup')">Jetzt registrieren</a>
+      Noch keinen Account? <span onclick="toggleMode('signup')">Jetzt registrieren</span>
     </div>
 
     <div id="message"></div>
@@ -177,7 +179,12 @@
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let supabase;
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (err) {
+      console.error("Supabase Init Error:", err);
+    }
 
     let isSignUp = false;
 
@@ -206,26 +213,37 @@
         formTitle.textContent = "Account erstellen";
         formSubtitle.textContent = "Erstelle ein neues Konto für die Community";
         submitBtn.textContent = "Registrieren";
-        toggleContainer.innerHTML = 'Bereits registriert? <a onclick="toggleMode(\'login\')">Hier anmelden</a>';
+        toggleContainer.innerHTML = 'Bereits registriert? <span onclick="toggleMode(\'login\')">Hier anmelden</span>';
       } else {
         isSignUp = false;
         formTitle.textContent = "Willkommen zurück";
         formSubtitle.textContent = "Melde dich mit deinen Zugangsdaten an";
         submitBtn.textContent = "Einloggen";
-        toggleContainer.innerHTML = 'Noch keinen Account? <a onclick="toggleMode(\'signup\')">Jetzt registrieren</a>';
+        toggleContainer.innerHTML = 'Noch keinen Account? <span onclick="toggleMode(\'signup\')">Jetzt registrieren</span>';
       }
     }
 
-    // Prüfen, ob bereits eine Session existiert
+    // Prüfen, ob bereits eingeloggt
     window.addEventListener('DOMContentLoaded', async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        window.location.href = 'dashboard.html';
+      if (!supabase) return;
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          window.location.href = 'dashboard.html';
+        }
+      } catch (err) {
+        console.error("Session Check Error:", err);
       }
     });
 
     async function handleSubmit() {
       hideMessage();
+      
+      if (!supabase) {
+        showMessage("Supabase konnte nicht geladen werden. Bitte Seite neu laden!", true);
+        return;
+      }
+
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
 
@@ -234,33 +252,43 @@
         return;
       }
 
-      if (isSignUp) {
-        // Registrierung
-        const { data, error } = await supabase.auth.signUp({
-          email: email,
-          password: password,
-        });
+      submitBtn.disabled = true;
+      submitBtn.textContent = isSignUp ? "Registriere..." : "Logge ein...";
 
-        if (error) {
-          showMessage("Fehler bei der Registrierung: " + error.message, true);
-        } else {
-          showMessage("Registrierung erfolgreich! Bitte überprüfe deine E-Mails zur Bestätigung.");
-        }
-      } else {
-        // Login
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email,
-          password: password,
-        });
+      try {
+        if (isSignUp) {
+          // Registrierung
+          const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+          });
 
-        if (error) {
-          showMessage("Login fehlgeschlagen: " + error.message, true);
+          if (error) {
+            showMessage("Fehler bei der Registrierung: " + error.message, true);
+          } else {
+            showMessage("Registrierung erfolgreich! Bitte überprüfe deine E-Mails zur Bestätigung.");
+          }
         } else {
-          showMessage("Login erfolgreich! Du wirst weitergeleitet...");
-          setTimeout(() => {
-            window.location.href = 'dashboard.html';
-          }, 800);
+          // Login
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+          });
+
+          if (error) {
+            showMessage("Login fehlgeschlagen: " + error.message, true);
+          } else {
+            showMessage("Login erfolgreich! Du wirst weitergeleitet...");
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 800);
+          }
         }
+      } catch (err) {
+        showMessage("Unerwarteter Fehler: " + err.message, true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = isSignUp ? "Registrieren" : "Einloggen";
       }
     }
   </script>
