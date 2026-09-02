@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Hub & Media Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent-green: #2ea043;
+            --accent-blue: #58a6ff;
+            --accent-purple: #8a2be2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Auth Screen */
+        #auth-section {
+            max-width: 400px;
+            margin: 60px auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Main App Grid */
+        #app-section {
+            display: none;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            background: #010409;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        button {
+            width: 100%;
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        .btn-secondary {
+            background: #21262d;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            margin-top: 5px;
+        }
+
+        /* Audio Player Styling */
+        .player-item {
+            background: #010409;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 8px;
+            height: 36px;
+        }
+
+        /* Notes & Items */
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .note-item {
+            background: #010409;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- LOGIN / REGISTER SECTION -->
+        <div id="auth-section">
+            <h2 style="color: #fff; margin-bottom: 15px; text-align: center;">Community Hub Login</h2>
+            <input type="email" id="auth-email" placeholder="E-Mail Adresse">
+            <input type="password" id="auth-password" placeholder="Passwort">
+            <button onclick="login()">Anmelden</button>
+            <button class="btn-secondary" onclick="register()">Registrieren</button>
+            <p id="auth-msg" style="margin-top: 10px; font-size: 0.85rem; text-align: center; color: var(--accent-blue);"></p>
+        </div>
+
+        <!-- MAIN APP SECTION -->
+        <div id="app-section">
+            <header>
+                <div>
+                    <h1 style="font-size: 1.3rem; color: #fff;">Community Hub & AI Player</h1>
+                    <span id="user-display" style="font-size: 0.85rem; color: var(--text-muted);">Eingeloggt als: -</span>
+                </div>
+                <button onclick="logout()" class="btn-secondary" style="width: auto; padding: 6px 16px;">Abmelden</button>
+            </header>
+
+            <div class="grid">
+                
+                <!-- 🎵 AI MEDIA PLAYER -->
+                <div class="card">
+                    <div class="card-title">🎵 AI Music Player</div>
+                    <div class="item-list" id="songs-container">
+                        <p style="color: var(--text-muted);">Lade Songs...</p>
+                    </div>
+
+                    <hr style="border-color: var(--border-color); margin: 15px 0;">
+                    
+                    <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: #fff;">Neuen Song hinzufügen</h4>
+                    <input type="text" id="song-title" placeholder="Song Titel">
+                    <input type="text" id="song-url" placeholder="Audio URL (z.B. https://.../song.mp3)">
+                    <button onclick="addSong()">Song Hochladen / Speichern</button>
+                </div>
+
+                <!-- 📝 GROUP & PUBLIC NOTES -->
+                <div class="card">
+                    <div class="card-title">📝 Notizen & Gruppen-Posts</div>
+                    
+                    <select id="note-group-select">
+                        <option value="">🌐 Öffentlicher Bereich (Für alle)</option>
+                    </select>
+
+                    <input type="text" id="note-title" placeholder="Titel der Notiz">
+                    <textarea id="note-content" rows="3" placeholder="Inhalt..."></textarea>
+                    <button onclick="addNote()">Notiz erstellen</button>
+
+                    <div class="item-list" id="notes-container" style="margin-top: 15px;">
+                        <p style="color: var(--text-muted);">Lade Notizen...</p>
+                    </div>
+                </div>
+
+                <!-- 👥 GROUPS MANAGEMENT -->
+                <div class="card">
+                    <div class="card-title">👥 Gruppen Management</div>
+                    
+                    <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: #fff;">Gruppe erstellen</h4>
+                    <input type="text" id="group-name" placeholder="Gruppen Name">
+                    <input type="text" id="group-desc" placeholder="Beschreibung">
+                    <button onclick="createGroup()">Gruppe gründen</button>
+
+                    <div class="item-list" id="groups-container" style="margin-top: 15px;">
+                        <p style="color: var(--text-muted);">Lade Gruppen...</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Supabase Konfiguration
+        const SUPABASE_URL = "DEINE_SUPABASE_URL_HIER";
+        const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY_HIER";
+        
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let currentUser = null;
+
+        // Init Check
+        document.addEventListener("DOMContentLoaded", async () => {
+            const { data: { session } } = await db.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                showApp();
+            }
+        });
+
+        // --- AUTH FUNCTIONS ---
+        async function register() {
+            const email = document.getElementById("auth-email").value.trim();
+            const password = document.getElementById("auth-password").value.trim();
+            const msg = document.getElementById("auth-msg");
+
+            if (!email || !password) return alert("Bitte E-Mail und Passwort eingeben!");
+
+            const { data, error } = await db.auth.signUp({ email, password });
+            if (error) {
+                msg.style.color = "red";
+                msg.textContent = error.message;
+            } else {
+                msg.style.color = "#56d364";
+                msg.textContent = "Registrierung erfolgreich! Überprüfe deine E-Mails.";
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById("auth-email").value.trim();
+            const password = document.getElementById("auth-password").value.trim();
+            const msg = document.getElementById("auth-msg");
+
+            const { data, error } = await db.auth.signInWithPassword({ email, password });
+            if (error) {
+                msg.style.color = "red";
+                msg.textContent = error.message;
+            } else {
+                currentUser = data.user;
+                showApp();
+            }
+        }
+
+        async function logout() {
+            await db.auth.signOut();
+            window.location.reload();
+        }
+
+        function showApp() {
+            document.getElementById("auth-section").style.display = "none";
+            document.getElementById("app-section").style.display = "block";
+            document.getElementById("user-display").textContent = "Eingeloggt als: " + currentUser.email;
+
+            loadSongs();
+            loadGroups();
+            loadNotes();
+        }
+
+        // --- AI MUSIC PLAYER ---
+        async function loadSongs() {
+            const { data, error } = await db.from('ai_songs').select('*').order('created_at', { ascending: false });
+            const container = document.getElementById("songs-container");
+
+            if (error || !data) return container.innerHTML = "<p>Fehler beim Laden.</p>";
+            container.innerHTML = "";
+
+            data.forEach(song => {
+                const div = document.createElement("div");
+                div.className = "player-item";
+                div.innerHTML = `
+                    <div style="font-weight: 600; color: #fff;">${escapeHtml(song.title)}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(song.artist)}</div>
+                    <audio controls src="${escapeHtml(song.audio_url)}"></audio>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function addSong() {
+            const title = document.getElementById("song-title").value.trim();
+            const url = document.getElementById("song-url").value.trim();
+
+            if (!title || !url) return alert("Titel und URL ausfüllen!");
+
+            await db.from('ai_songs').insert([{ title, audio_url: url }]);
+            document.getElementById("song-title").value = "";
+            document.getElementById("song-url").value = "";
+            loadSongs();
+        }
+
+        // --- GROUPS & NOTES ---
+        async function loadGroups() {
+            const { data, error } = await db.from('groups').select('*');
+            const container = document.getElementById("groups-container");
+            const select = document.getElementById("note-group-select");
+
+            if (error || !data) return;
+            container.innerHTML = "";
+
+            data.forEach(group => {
+                // List in Groups Card
+                const div = document.createElement("div");
+                div.className = "note-item";
+                div.innerHTML = `
+                    <strong style="color: var(--accent-blue);">${escapeHtml(group.name)}</strong>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">${escapeHtml(group.description || '')}</p>
+                `;
+                container.appendChild(div);
+
+                // Add to Select Dropdown
+                const opt = document.createElement("option");
+                opt.value = group.id;
+                opt.textContent = "👥 " + group.name;
+                select.appendChild(opt);
+            });
+        }
+
+        async function createGroup() {
+            const name = document.getElementById("group-name").value.trim();
+            const desc = document.getElementById("group-desc").value.trim();
+
+            if (!name) return alert("Gruppenname erforderlich!");
+
+            const { data, error } = await db.from('groups').insert([{ name, description: desc, created_by: currentUser.id }]).select();
+            if (data && data[0]) {
+                await db.from('group_members').insert([{ group_id: data[0].id, user_id: currentUser.id, role: 'owner' }]);
+            }
+
+            document.getElementById("group-name").value = "";
+            document.getElementById("group-desc").value = "";
+            loadGroups();
+        }
+
+        async function loadNotes() {
+            const { data, error } = await db.from('group_notes').select('*').order('created_at', { ascending: false });
+            const container = document.getElementById("notes-container");
+
+            if (error || !data) return;
+            container.innerHTML = "";
+
+            data.forEach(note => {
+                const div = document.createElement("div");
+                div.className = "note-item";
+                div.innerHTML = `
+                    <div style="font-weight: 600; color: var(--accent-green);">${escapeHtml(note.title)}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-main); margin: 4px 0;">${escapeHtml(note.content)}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Von: ${escapeHtml(note.author_email)}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function addNote() {
+            const title = document.getElementById("note-title").value.trim();
+            const content = document.getElementById("note-content").value.trim();
+            const groupId = document.getElementById("note-group-select").value || null;
+
+            if (!title || !content) return alert("Titel und Inhalt eingeben!");
+
+            await db.from('group_notes').insert([{ 
+                title, 
+                content, 
+                group_id: groupId, 
+                author_email: currentUser.email 
+            }]);
+
+            document.getElementById("note-title").value = "";
+            document.getElementById("note-content").value = "";
+            loadNotes();
+        }
+
+        function escapeHtml(text) {
+            return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : '';
+        }
+    </script>
+</body>
+</html>
