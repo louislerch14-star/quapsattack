@@ -603,38 +603,42 @@
 
     <script>
         // --- 1. SUPABASE INITIALISIERUNG ---
-        // ERSETZE DIESE ZWEI WERTE MIT DEINEN SUPABASE PROJEKT-DATEN:
-        const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
+        const SUPABASE_URL = 'DEINE_SUPABASE_URL';
+        const SUPABASE_KEY = 'DEIN_SUPABASE_ANON_KEY';
         
-        let supabase = null;
-        if (SUPABASE_URL !== 'DEINE_SUPABASE_URL') {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabaseClient = null;
+        if (SUPABASE_URL !== 'DEINE_SUPABASE_URL' && window.supabase) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
         let currentUser = null;
 
-        // --- 2. TAB SWITCHING ---
-        function switchTab(pageId, navElement) {
+        // --- 2. TAB SWITCHING (Global definiert) ---
+        window.switchTab = function(pageId, navElement) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 
-            document.getElementById(pageId).classList.add('active');
-            if(navElement) navElement.classList.add('active');
-        }
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+            if (navElement) {
+                navElement.classList.add('active');
+            }
+        };
 
         // --- 3. SUPABASE AUTH LOGIK ---
-        async function handleSignUp() {
+        window.handleSignUp = async function() {
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
             const username = document.getElementById('authUsername').value;
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 alert("Bitte füge zuerst deine SUPABASE_URL & SUPABASE_KEY im JS-Code ein!");
                 return;
             }
 
-            const { data, error } = await supabase.auth.signUp({
+            const { data, error } = await supabaseClient.auth.signUp({
                 email: email,
                 password: password,
                 options: {
@@ -647,18 +651,18 @@
             } else {
                 alert("Registrierung erfolgreich! Wir haben dir eine Bestätigungs-E-Mail gesendet.");
             }
-        }
+        };
 
-        async function handleSignIn() {
+        window.handleSignIn = async function() {
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 alert("Bitte füge zuerst deine SUPABASE_URL & SUPABASE_KEY im JS-Code ein!");
                 return;
             }
 
-            const { data, error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password
             });
@@ -669,13 +673,13 @@
                 updateUserSession(data.user);
                 alert("Erfolgreich eingeloggt!");
             }
-        }
+        };
 
-        async function handleSignOut() {
-            if (supabase) await supabase.auth.signOut();
+        window.handleSignOut = async function() {
+            if (supabaseClient) await supabaseClient.auth.signOut();
             updateUserSession(null);
             alert("Ausgeloggt.");
-        }
+        };
 
         function updateUserSession(user) {
             currentUser = user;
@@ -708,7 +712,7 @@
         }
 
         // --- 4. GRUPPEN & NOTIZEN LOGIK ---
-        function createGroup() {
+        window.createGroup = function() {
             const name = document.getElementById('newGroupName').value;
             if(!name) return alert("Gib einen Gruppennamen ein.");
 
@@ -727,16 +731,16 @@
             `;
             alert(`Gruppe "${name}" erstellt!`);
             document.getElementById('newGroupName').value = '';
-        }
+        };
 
-        function inviteUser() {
+        window.inviteUser = function() {
             const email = document.getElementById('inviteEmail').value;
             if(!email) return alert("Gib eine E-Mail-Adresse ein.");
             alert(`Einladungs-E-Mail wurde an ${email} verschickt!`);
             document.getElementById('inviteEmail').value = '';
-        }
+        };
 
-        function sendGroupNote() {
+        window.sendGroupNote = function() {
             const group = document.getElementById('groupSelect').value;
             const note = document.getElementById('groupNoteText').value;
 
@@ -752,7 +756,7 @@
 
             alert("Notiz wurde gesendet und alle Gruppenmitglieder wurden benachrichtigt!");
             document.getElementById('groupNoteText').value = '';
-        }
+        };
 
         // --- 5. MEDIA PLAYER LOGIK ---
         const audio = document.getElementById('audioPlayer');
@@ -764,26 +768,32 @@
         const trackStatus = document.getElementById('trackStatus');
         const currentTimeEl = document.getElementById('currentTime');
         const durationTimeEl = document.getElementById('durationTime');
+        const prevBtn = document.getElementById('btnPrev');
+        const nextBtn = document.getElementById('btnNext');
 
-        playBtn.addEventListener('click', () => {
-            if (audio.paused) {
+        if (playBtn) {
+            playBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play();
+                    playBtn.textContent = '⏸';
+                    trackStatus.textContent = 'Wird abgespielt...';
+                } else {
+                    audio.pause();
+                    playBtn.textContent = '▶';
+                    trackStatus.textContent = 'Pausiert';
+                }
+            });
+        }
+
+        if (trackSelect) {
+            trackSelect.addEventListener('change', (e) => {
+                audio.src = e.target.value;
+                trackTitle.textContent = e.target.options[e.target.selectedIndex].text;
                 audio.play();
                 playBtn.textContent = '⏸';
                 trackStatus.textContent = 'Wird abgespielt...';
-            } else {
-                audio.pause();
-                playBtn.textContent = '▶';
-                trackStatus.textContent = 'Pausiert';
-            }
-        });
-
-        trackSelect.addEventListener('change', (e) => {
-            audio.src = e.target.value;
-            trackTitle.textContent = e.target.options[e.target.selectedIndex].text;
-            audio.play();
-            playBtn.textContent = '⏸';
-            trackStatus.textContent = 'Wird abgespielt...';
-        });
+            });
+        }
 
         function formatTime(seconds) {
             if (isNaN(seconds)) return '0:00';
@@ -792,23 +802,49 @@
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        audio.addEventListener('loadedmetadata', () => {
-            seekSlider.max = Math.floor(audio.duration);
-            durationTimeEl.textContent = formatTime(audio.duration);
-        });
+        if (audio) {
+            audio.addEventListener('loadedmetadata', () => {
+                seekSlider.max = Math.floor(audio.duration);
+                durationTimeEl.textContent = formatTime(audio.duration);
+            });
 
-        audio.addEventListener('timeupdate', () => {
-            seekSlider.value = Math.floor(audio.currentTime);
-            currentTimeEl.textContent = formatTime(audio.currentTime);
-        });
+            audio.addEventListener('timeupdate', () => {
+                seekSlider.value = Math.floor(audio.currentTime);
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+            });
+        }
 
-        seekSlider.addEventListener('input', () => {
-            audio.currentTime = seekSlider.value;
-        });
+        if (seekSlider) {
+            seekSlider.addEventListener('input', () => {
+                audio.currentTime = seekSlider.value;
+            });
+        }
 
-        volumeSlider.addEventListener('input', () => {
-            audio.volume = volumeSlider.value / 100;
-        });
+        if (volumeSlider) {
+            volumeSlider.addEventListener('input', () => {
+                audio.volume = volumeSlider.value / 100;
+            });
+        }
+
+        if (prevBtn && trackSelect) {
+            prevBtn.addEventListener('click', () => {
+                let currentIndex = trackSelect.selectedIndex;
+                if (currentIndex > 0) {
+                    trackSelect.selectedIndex = currentIndex - 1;
+                    trackSelect.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+
+        if (nextBtn && trackSelect) {
+            nextBtn.addEventListener('click', () => {
+                let currentIndex = trackSelect.selectedIndex;
+                if (currentIndex < trackSelect.options.length - 1) {
+                    trackSelect.selectedIndex = currentIndex + 1;
+                    trackSelect.dispatchEvent(new Event('change'));
+                }
+            });
+        }
     </script>
 </body>
 </html>
