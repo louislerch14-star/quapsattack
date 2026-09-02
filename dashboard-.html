@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Dashboard & Media Hub</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
@@ -45,23 +45,28 @@
       flex-direction: column;
       gap: 8px;
     }
-    .nav-item a {
+    .nav-item button {
+      width: 100%;
+      text-align: left;
       display: flex;
       align-items: center;
       gap: 12px;
       padding: 12px 16px;
+      background: none;
+      border: none;
       color: #aaa;
-      text-decoration: none;
       border-radius: 8px;
       font-weight: 500;
+      cursor: pointer;
+      font-size: 15px;
       transition: all 0.2s;
     }
-    .nav-item a:hover, .nav-item a.active {
+    .nav-item button:hover, .nav-item button.active {
       background: #2563eb;
       color: #fff;
     }
 
-    /* User Profile Footer in Sidebar */
+    /* User Profile Footer */
     .user-profile {
       background: #222;
       padding: 12px;
@@ -93,7 +98,6 @@
       font-size: 18px;
       padding: 5px;
       border-radius: 6px;
-      transition: background 0.2s;
     }
     .btn-logout:hover {
       background: rgba(239, 68, 68, 0.1);
@@ -102,27 +106,23 @@
     /* Main Content Area */
     .main-content {
       flex: 1;
-      padding: 40px;
+      padding: 30px;
       background: #121212;
       overflow-y: auto;
     }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
+    .view-section {
+      display: none;
     }
-    .header h1 {
-      margin: 0;
-      font-size: 28px;
+    .view-section.active {
+      display: block;
     }
 
-    /* Stats Cards Grid */
-    .stats-grid {
+    /* Cards & Grids */
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 20px;
-      margin-bottom: 30px;
+      margin-top: 20px;
     }
     .card {
       background: #1e1e1e;
@@ -131,47 +131,107 @@
       border: 1px solid #282828;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    .card-title {
-      font-size: 14px;
-      color: #aaa;
-      margin-bottom: 8px;
+    .card h3 {
+      margin-top: 0;
+      color: #3b82f6;
     }
-    .card-value {
-      font-size: 28px;
+
+    /* Input & Button Styling */
+    .input-group {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 13px;
+      color: #aaa;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: #2a2a2a;
+      color: #fff;
+      font-size: 14px;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+    .btn-primary {
+      padding: 10px 16px;
+      background: #3b82f6;
+      border: none;
+      border-radius: 6px;
+      color: white;
       font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    .btn-danger {
+      padding: 8px 12px;
+      background: #ef4444;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Medienplayer Styles */
+    .player-card {
+      background: #181818;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #282828;
+      text-align: center;
+    }
+    .player-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .control-btn {
+      background: #2a2a2a;
+      border: none;
+      color: #fff;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .control-btn:hover {
+      background: #3b82f6;
+    }
+
+    /* Gruppen Liste */
+    .group-item {
+      background: #282828;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #3b82f6;
       color: #fff;
     }
 
-    /* Welcome Section */
-    .welcome-card {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      padding: 30px;
-      border-radius: 12px;
-      color: white;
-      margin-bottom: 30px;
-    }
-    .welcome-card h2 {
-      margin-top: 0;
-      font-size: 24px;
-    }
-    .welcome-card p {
-      margin-bottom: 0;
-      opacity: 0.9;
-    }
-
-    /* Responsive Design */
     @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
-      .sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #282828;
-      }
-      .main-content {
-        padding: 20px;
-      }
+      body { flex-direction: column; }
+      .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #282828; }
     }
   </style>
 </head>
@@ -180,22 +240,19 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <div>
-      <div class="brand">
-        ⚡ Dashboard
-      </div>
+      <div class="brand">⚡ LouMi Hub</div>
       <ul class="nav-menu">
-        <li class="nav-item"><a href="#" class="active">📊 Übersicht</a></li>
-        <li class="nav-item"><a href="#">📁 Meine Daten</a></li>
-        <li class="nav-item"><a href="#">📈 Analysen</a></li>
-        <li class="nav-item"><a href="settings.html">⚙️ Einstellungen</a></li>
+        <li class="nav-item"><button class="active" onclick="switchTab('overview', this)">📊 Übersicht</button></li>
+        <li class="nav-item"><button onclick="switchTab('player', this)">🎵 Medienplayer</button></li>
+        <li class="nav-item"><button onclick="switchTab('groups', this)">👥 Gruppen</button></li>
+        <li class="nav-item"><button onclick="window.location.href='settings.html'">⚙️ Einstellungen</button></li>
       </ul>
     </div>
 
-    <!-- User Profile Footer -->
     <div class="user-profile">
       <div class="user-info">
         <div id="user-email-display" class="user-email">Lade...</div>
-        <div class="user-status">● Eingeloggt</div>
+        <div class="user-status">● Online</div>
       </div>
       <button id="btn-logout" class="btn-logout" title="Abmelden">🚪</button>
     </div>
@@ -203,31 +260,107 @@
 
   <!-- Main Content -->
   <main class="main-content">
-    <div class="header">
+
+    <!-- 1. ÜBERSICHT -->
+    <div id="view-overview" class="view-section active">
       <h1>Willkommen zurück! 👋</h1>
+      <div class="grid">
+        <div class="card">
+          <h3>Aktive Gruppen</h3>
+          <p id="stat-group-count" style="font-size: 32px; font-weight: bold; margin: 0;">1</p>
+        </div>
+        <div class="card">
+          <h3>Medien-Status</h3>
+          <p style="font-size: 18px; color: #22c55e; margin: 10px 0 0 0;">● Player Bereit</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Welcome Card -->
-    <div class="welcome-card">
-      <h2 id="welcome-heading">Hey bro! 🚀</h2>
-      <p>Deine Authentifizierung steht felsenfest. Du hast vollen Zugriff auf alle Funktionen deines Dashboards.</p>
+    <!-- 2. MEDIENPLAYER -->
+    <div id="view-player" class="view-section">
+      <h1>🎵 Medienplayer</h1>
+      <div class="grid">
+        <div class="player-card">
+          <h2 id="media-title">Kein Track ausgewählt</h2>
+          <p id="media-artist" style="color: #aaa;">Wähle eine Audio- oder Videodatei</p>
+          
+          <audio id="audio-element" style="width: 100%; margin: 15px 0;"></audio>
+
+          <div class="input-group" style="text-align: left;">
+            <label>Medien-URL laden (MP3/Stream)</label>
+            <input type="text" id="media-url-input" placeholder="https://beispiel.de/musik.mp3">
+          </div>
+          <button class="btn-primary" onclick="loadCustomMedia()" style="width: 100%;">Song / Stream Laden</button>
+        </div>
+
+        <div class="card">
+          <h3>Playlist / Zuletzt Gehört</h3>
+          <ul id="playlist" style="list-style: none; padding: 0;">
+            <li class="group-item" onclick="playPreset('Lofi Beats', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">
+              <span>🎧 Demo Track 1</span>
+              <button class="btn-primary" style="padding: 4px 8px; font-size: 12px;">Play</button>
+            </li>
+            <li class="group-item" onclick="playPreset('Synthwave Vibe', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3')">
+              <span>🎹 Demo Track 2</span>
+              <button class="btn-primary" style="padding: 4px 8px; font-size: 12px;">Play</button>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div class="card">
-        <div class="card-title">Status</div>
-        <div class="card-value" style="color: #22c55e;">Aktiv</div>
+    <!-- 3. GRUPPEN MANAGEMENT -->
+    <div id="view-groups" class="view-section">
+      <h1>👥 Gruppenverwaltung</h1>
+      <div class="grid">
+        
+        <!-- Gruppe erstellen -->
+        <div class="card">
+          <h3>Neue Gruppe erstellen</h3>
+          <div class="input-group">
+            <label for="group-name">Gruppenname</label>
+            <input type="text" id="group-name" placeholder="z.B. Creator Team, Gaming Hub">
+          </div>
+          <div class="input-group">
+            <label for="group-desc">Beschreibung</label>
+            <input type="text" id="group-desc" placeholder="Worum geht es in der Gruppe?">
+          </div>
+          <button class="btn-primary" onclick="createGroup()" style="width: 100%;">Gruppe erstellen</button>
+        </div>
+
+        <!-- Mitglieder einladen -->
+        <div class="card">
+          <h3>Mitglied einladen</h3>
+          <div class="input-group">
+            <label for="invite-group-select">Gruppe wählen</label>
+            <select id="invite-group-select">
+              <option value="1">Meine erste Gruppe</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="invite-email">E-Mail des Users</label>
+            <input type="email" id="invite-email" placeholder="kollege@mail.de">
+          </div>
+          <button class="btn-primary" onclick="sendInvite()" style="width: 100%;">Einladung senden</button>
+        </div>
+
       </div>
-      <div class="card">
-        <div class="card-title">Sicherheit</div>
-        <div class="card-value">Verifiziert</div>
-      </div>
-      <div class="card">
-        <div class="card-title">Session-Typ</div>
-        <div class="card-value" style="font-size: 20px;">Supabase Auth</div>
+
+      <h2 style="margin-top: 30px;">Deine Gruppen</h2>
+      <div id="groups-list">
+        <div class="group-item">
+          <div>
+            <strong>Meine erste Gruppe</strong> <span class="badge">Admin</span>
+            <div style="font-size: 12px; color: #aaa; margin-top: 4px;">Standard-Gruppe für dein Dashboard.</div>
+          </div>
+          <div>
+            <button class="btn-primary" style="padding: 6px 10px; font-size: 12px;" onclick="editGroup('Meine erste Gruppe')">Bearbeiten</button>
+            <button class="btn-danger" style="padding: 6px 10px; font-size: 12px;" onclick="deleteGroup(this)">Löschen</button>
+          </div>
+        </div>
       </div>
     </div>
+
   </main>
 
   <script>
@@ -237,33 +370,105 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const userEmailDisplay = document.getElementById('user-email-display');
-    const welcomeHeading = document.getElementById('welcome-heading');
     const btnLogout = document.getElementById('btn-logout');
 
-    // Auth-Check beim Seitenstart
+    // Auth-Check beim Laden
     window.addEventListener('DOMContentLoaded', async () => {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
 
       if (error || !session) {
-        // Nicht eingeloggt? Kicken zur Login-Seite!
         window.location.href = 'login-.html';
         return;
       }
 
-      // Email anzeigen
-      const email = session.user.email;
-      userEmailDisplay.innerText = email;
-      welcomeHeading.innerText = `Hey ${email.split('@')[0]}! 🚀`;
+      userEmailDisplay.innerText = session.user.email;
     });
 
-    // Logout Event
-    btnLogout.addEventListener('click', async () => {
-      const { error } = await supabaseClient.auth.signOut();
-      if (!error) {
-        window.location.href = 'login-.html';
-      } else {
-        alert('Fehler beim Abmelden: ' + error.message);
+    // Tab-Umschaltung
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item button').forEach(el => el.classList.remove('active'));
+
+      document.getElementById('view-' + tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // Medienplayer Logik
+    const audioElement = document.getElementById('audio-element');
+    const mediaTitle = document.getElementById('media-title');
+
+    function playPreset(title, url) {
+      mediaTitle.innerText = title;
+      audioElement.src = url;
+      audioElement.play();
+    }
+
+    function loadCustomMedia() {
+      const url = document.getElementById('media-url-input').value.trim();
+      if (!url) return alert('Bitte eine URL eingeben!');
+      mediaTitle.innerText = 'Benutzerdefinierter Stream';
+      audioElement.src = url;
+      audioElement.play();
+    }
+
+    // Gruppen Logik
+    function createGroup() {
+      const name = document.getElementById('group-name').value.trim();
+      const desc = document.getElementById('group-desc').value.trim();
+
+      if (!name) return alert('Bitte einen Gruppennamen eingeben!');
+
+      const groupsList = document.getElementById('groups-list');
+      const newGroup = document.createElement('div');
+      newGroup.className = 'group-item';
+      newGroup.innerHTML = `
+        <div>
+          <strong>${name}</strong> <span class="badge">Admin</span>
+          <div style="font-size: 12px; color: #aaa; margin-top: 4px;">${desc || 'Keine Beschreibung'}</div>
+        </div>
+        <div>
+          <button class="btn-primary" style="padding: 6px 10px; font-size: 12px;" onclick="editGroup('${name}')">Bearbeiten</button>
+          <button class="btn-danger" style="padding: 6px 10px; font-size: 12px;" onclick="deleteGroup(this)">Löschen</button>
+        </div>
+      `;
+      groupsList.appendChild(newGroup);
+
+      // Select Option ergänzen
+      const select = document.getElementById('invite-group-select');
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.innerText = name;
+      select.appendChild(opt);
+
+      document.getElementById('group-name').value = '';
+      document.getElementById('group-desc').value = '';
+      alert('Gruppe "' + name + '" erfolgreich erstellt!');
+    }
+
+    function sendInvite() {
+      const email = document.getElementById('invite-email').value.trim();
+      if (!email) return alert('Bitte eine E-Mail-Adresse eingeben!');
+      alert(`Einladung an ${email} wurde gesendet! 😉`);
+      document.getElementById('invite-email').value = '';
+    }
+
+    function editGroup(name) {
+      const newName = prompt('Neuer Name für die Gruppe:', name);
+      if (newName) {
+        alert('Gruppe umbenannt in: ' + newName);
       }
+    }
+
+    function deleteGroup(btn) {
+      if (confirm('Möchtest du diese Gruppe wirklich löschen?')) {
+        btn.closest('.group-item').remove();
+      }
+    }
+
+    // Logout
+    btnLogout.addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'login-.html';
     });
   </script>
 </body>
