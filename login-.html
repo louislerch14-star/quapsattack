@@ -183,7 +183,7 @@
   window.addEventListener('DOMContentLoaded', async () => {
     const { data: { session } } = await supabase.auth.getSession();
     
-    // Wenn eine Session existiert (durch Klick auf den E-Mail Link), schalten wir auf Passwort-Eingabe
+    // Wenn eine Session existiert (durch Klick auf den E-Mail Link), schalten wir auf Passwort-Eingabe um
     if (session) {
       phaseEmail.classList.add('hidden');
       phasePassword.classList.remove('hidden');
