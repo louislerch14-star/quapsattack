@@ -1,413 +1,445 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quapsattack Umfrage 💀</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --bg-dark: #0a0e17;
-            --panel-bg: rgba(22, 28, 45, 0.75);
-            --panel-border: rgba(255, 255, 255, 0.08);
-            --accent: #6366f1;
-            --accent-hover: #4f46e5;
-            --accent-glow: rgba(99, 102, 241, 0.35);
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-            --danger: #ef4444;
-            --success: #10b981;
-            --radius-lg: 16px;
-            --radius-md: 10px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quapsattack - Offizielle Umfrage</title>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        body {
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+  <style>
+    :root {
+      --bg-color: #0a0e17;
+      --card-bg: #161c2d;
+      --accent-color: #6366f1;
+      --accent-hover: #4f46e5;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --success-color: #10b981;
+      --error-color: #ef4444;
+    }
 
-        /* --- NAVBAR --- */
-        .navbar {
-            background: rgba(10, 14, 23, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--panel-border);
-            padding: 0 24px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 700;
-            font-size: 1.25rem;
-        }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      padding: 40px 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
 
-        .brand-logo {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 1px solid var(--panel-border);
-            box-shadow: 0 0 12px var(--accent-glow);
-            background: linear-gradient(135deg, var(--accent), #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
 
-        /* --- CONTAINER & CARDS --- */
-        .container {
-            max-width: 900px;
-            width: 100%;
-            margin: 30px auto;
-            padding: 0 20px;
-            flex: 1;
-        }
+    /* Header & Logo */
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-        .page-header {
-            margin-bottom: 28px;
-            text-align: center;
-        }
+    .logo {
+      max-width: 120px;
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+    }
 
-        .page-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #fff, var(--text-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
 
-        .page-subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.5;
-        }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
 
-        .card {
-            background: var(--panel-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--panel-border);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: border-color 0.2s ease;
-        }
+    /* Intro / Anonymitäts-Banner mit Glow Animation */
+    .privacy-notice {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 35px;
+      position: relative;
+      overflow: hidden;
+      animation: pulseGlow 4s infinite alternate;
+    }
 
-        .card:hover {
-            border-color: rgba(99, 102, 241, 0.3);
-        }
+    @keyframes pulseGlow {
+      0% {
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.1);
+        border-color: rgba(99, 102, 241, 0.2);
+      }
+      100% {
+        box-shadow: 0 0 25px rgba(99, 102, 241, 0.35);
+        border-color: rgba(99, 102, 241, 0.6);
+      }
+    }
 
-        .question-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .privacy-notice h2 {
+      font-size: 1.15rem;
+      color: #ffffff;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-        .question-number {
-            background: rgba(99, 102, 241, 0.2);
-            color: var(--accent);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            border: 1px solid var(--panel-border);
-        }
+    .privacy-notice p {
+      color: #d1d5db;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
 
-        /* --- RATING OPTIONS --- */
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 10px;
-            margin-bottom: 16px;
-        }
+    .privacy-notice p:last-child {
+      margin-bottom: 0;
+    }
 
-        .option-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--panel-border);
-            border-radius: var(--radius-md);
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            user-select: none;
-        }
+    .highlight-text {
+      color: #a5b4fc;
+      font-weight: 600;
+    }
 
-        .option-btn input[type="radio"] {
-            display: none;
-        }
+    /* Formular Styles */
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      color: #ffffff;
+    }
 
-        .option-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-        }
+    .item-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: border-color 0.2s ease;
+    }
 
-        .option-btn.selected {
-            background: rgba(99, 102, 241, 0.2);
-            border-color: var(--accent);
-            color: #fff;
-            box-shadow: 0 0 12px var(--accent-glow);
-        }
+    .item-card:focus-within {
+      border-color: var(--accent-color);
+    }
 
-        /* --- TEXTAREA FOR BEGRÜNDUNG --- */
-        .reason-box {
-            display: none;
-            margin-top: 14px;
-            animation: fadeIn 0.3s ease;
-        }
+    .item-card h3 {
+      font-size: 1.1rem;
+      color: #ffffff;
+      margin-bottom: 15px;
+    }
 
-        .reason-box.active {
-            display: block;
-        }
+    .rating-options {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
 
-        .form-input {
-            width: 100%;
-            padding: 12px 14px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--panel-border);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
-            outline: none;
-            font-size: 0.9rem;
-            resize: vertical;
-            min-height: 70px;
-        }
+    .rating-label {
+      flex: 1;
+      min-width: 100px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
 
-        .form-input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
+    .rating-label:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-        /* --- EMAIL SECTION & BUTTONS --- */
-        .email-card {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(22, 28, 45, 0.9));
-            border: 1px solid rgba(99, 102, 241, 0.3);
-        }
+    .rating-options input[type="radio"] {
+      display: none;
+    }
 
-        .btn {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 14px 28px;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0 0 15px var(--accent-glow);
-            transition: all 0.2s ease;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+    .rating-options input[type="radio"]:checked + .rating-label {
+      background: var(--accent-color);
+      border-color: var(--accent-color);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
 
-        .btn:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-        }
+    textarea, input[type="email"] {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    textarea:focus, input[type="email"]:focus {
+      border-color: var(--accent-color);
+    }
 
-        .success-message {
-            display: none;
-            text-align: center;
-            padding: 40px 20px;
-        }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
 
-        .success-message.active {
-            display: block;
-        }
-    </style>
+    .email-section {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+
+    .email-section label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #ffffff;
+      font-size: 0.95rem;
+    }
+
+    .email-hint {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--accent-color);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.99);
+    }
+
+    .submit-btn:disabled {
+      background: #4b5563;
+      cursor: not-allowed;
+    }
+
+    #statusMessage {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+
+    #statusMessage.success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--success-color);
+      color: #6ee7b7;
+      display: block;
+    }
+
+    #statusMessage.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--error-color);
+      color: #fca5a5;
+      display: block;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      .rating-options {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="nav-brand">
-            <div class="brand-logo">⚔️</div>
-            <span>Quapsattack Survey</span>
-        </div>
-        <div class="nav-links">
-            <span class="nav-item active">Umfrage</span>
-        </div>
-    </nav>
-
-    <!-- MAIN CONTAINER -->
-    <div class="container">
-        
-        <div id="survey-content">
-            <div class="page-header">
-                <h1 class="page-title">Wie steht's um Quapsattack? 💀</h1>
-                <p class="page-subtitle">Ich habe gefühlt das Gefühl, Quapsattack stirbt langsam aus... Ich brauche euer ehrliches Feedback, Bro! Sag mir wie du die Lage siehst.</p>
-            </div>
-
-            <form id="survey-form">
-                <!-- 10 Frage-Punkte (Platzhalter) -->
-                <div id="questions-wrapper"></div>
-
-                <!-- EMAIL & SUBMIT CARD -->
-                <div class="card email-card">
-                    <h3 style="margin-bottom: 10px;">Abschließen & Bestätigung ✉️</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 16px;">
-                        Deine Stimme wird <strong>anonym</strong> in der Datenbank gespeichert! Gib deine E-Mail an, um eine Kopie deiner Antworten inkl. einer kleinen Nachricht zu erhalten.
-                    </p>
-                    <div style="margin-bottom: 16px;">
-                        <input type="email" id="user-email" class="form-input" placeholder="deine-email@beispiel.de" required />
-                    </div>
-                    <button type="submit" class="btn" id="submit-btn">
-                        <span>Abschicken & E-Mail erhalten</span> 🚀
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- SUCCESS MESSAGE -->
-        <div id="success-box" class="card success-message">
-            <h2 style="color: var(--success); margin-bottom: 10px;">Danke dir, Bro! 🔥</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px;">
-                Deine Bewertung wurde anonym gespeichert! Eine E-Mail mit deinen Antworten ist auf dem Weg zu dir.
-            </p>
-            <button class="btn" onclick="location.reload()" style="max-width: 200px; margin: 0 auto;">Nochmal ausfüllen</button>
-        </div>
-
+  <div class="container">
+    <div class="header">
+      <img src="unnamed.jpg" alt="Quapsattack Logo" class="logo">
+      <h1>Quapsattack Zukunftsabstimmung</h1>
+      <p class="subtitle">Wir gestalten die Zukunft gemeinsam.</p>
     </div>
 
-    <script>
-        // --- 1. SUPABASE CONFIGURATION ---
-        // Ersetze diese beiden Werte mit deinen eigenen Supabase-Daten!
-        const SUPABASE_URL = "DEINE_SUPABASE_URL";
-        const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY";
-        
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <!-- Anonymitäts- & Wichtigkeits-Notice -->
+    <div class="privacy-notice">
+      <h2>Wichtiger Hinweis zur Anonymität</h2>
+      <p>
+        Wir haben uns das Feedback zu Herzen genommen: <span class="highlight-text">Diese Umfrage ist zu 100 % anonym.</span> Es werden keinerlei personenbezogene Daten, IP-Adressen oder Identifikatoren mit euren Stimmabgaben verknüpft oder gespeichert. Niemand wird jemals erfahren, wer für welche Punkte gestimmt hat.
+      </p>
+      <p>
+        Bitte nehmt euch kurz Zeit und füllt diese Umfrage ernsthaft aus. Eure Rückmeldungen werden maßgeblich darüber entscheiden, wie sich die Zukunft von Quapsattack gestalten wird.
+      </p>
+    </div>
 
-        // --- 2. GENERATE 10 QUESTION BLOCKS ---
-        const questionsWrapper = document.getElementById('questions-wrapper');
-        const ratingOptions = ['Sehr Gut', 'Gut', 'Mittel', 'Schlecht'];
+    <form id="surveyForm">
+      <div class="section-title">Bewertung der Punkte</div>
 
-        for (let i = 1; i <= 10; i++) {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <div class="question-title">
-                    <span class="question-number">Punkt ${i}</span>
-                    <span>Platzhalter Punkt ${i} (z. B. Spielspaß / Community Activity)</span>
-                </div>
-                <div class="options-grid">
-                    ${ratingOptions.map(opt => `
-                        <label class="option-btn" onclick="selectOption(this, ${i})">
-                            <input type="radio" name="q${i}" value="${opt}" required>
-                            <span>${opt}</span>
-                        </label>
-                    `).join('')}
-                </div>
-                <div class="reason-box" id="reason-box-${i}">
-                    <textarea class="form-input" id="reason-${i}" placeholder="Erhöhe die Aussagekraft: Warum hast du so gestimmt? (Optional)"></textarea>
-                </div>
-            `;
-            questionsWrapper.appendChild(card);
+      <!-- Punkt 1 -->
+      <div class="item-card">
+        <h3>1. Feature / Projekt A</h3>
+        <div class="rating-options">
+          <input type="radio" id="p1_gut" name="p1" value="Gut" required>
+          <label for="p1_gut" class="rating-label">Gut</label>
+
+          <input type="radio" id="p1_neutral" name="p1" value="Neutral">
+          <label for="p1_neutral" class="rating-label">Neutral</label>
+
+          <input type="radio" id="p1_schlecht" name="p1" value="Schlecht">
+          <label for="p1_schlecht" class="rating-label">Schlecht</label>
+        </div>
+        <textarea name="p1_reason" placeholder="Begründung oder Anmerkung (optional)..."></textarea>
+      </div>
+
+      <!-- Punkt 2 -->
+      <div class="item-card">
+        <h3>2. Feature / Projekt B</h3>
+        <div class="rating-options">
+          <input type="radio" id="p2_gut" name="p2" value="Gut" required>
+          <label for="p2_gut" class="rating-label">Gut</label>
+
+          <input type="radio" id="p2_neutral" name="p2" value="Neutral">
+          <label for="p2_neutral" class="rating-label">Neutral</label>
+
+          <input type="radio" id="p2_schlecht" name="p2" value="Schlecht">
+          <label for="p2_schlecht" class="rating-label">Schlecht</label>
+        </div>
+        <textarea name="p2_reason" placeholder="Begründung oder Anmerkung (optional)..."></textarea>
+      </div>
+
+      <!-- E-Mail Bestätigung für den User (Optional & Anonym) -->
+      <div class="email-section">
+        <label for="userEmail">Kopie der Abstimmung per E-Mail erhalten (optional)</label>
+        <p class="email-hint">
+          Falls eine Bestätigung gewünscht ist, kann hier eine E-Mail-Adresse eingegeben werden. Die Adresse dient ausschließlich dem einmaligen Versand der Kopie und wird zu keinem Zeitpunkt mit den Ergebnissen in unserer Datenbank gespeichert.
+        </p>
+        <input type="email" id="userEmail" placeholder="deine-email@beispiel.de">
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Abstimmung absenden</button>
+    </form>
+
+    <div id="statusMessage"></div>
+  </div>
+
+  <script>
+    // Supabase Konfiguration
+    const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById("surveyForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const statusMessage = document.getElementById("statusMessage");
+
+    // Nachricht an den User in der automatischen Bestätigungs-E-Mail
+    const CUSTOM_EMAIL_TEXT = "Vielen Dank für die Teilnahme an der Abstimmung. Diese Bestätigung dient als Nachweis der abgegebenen Antworten. Sämtliche Eingaben wurden vollständig anonym in der Datenbank erfasst.";
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Wird gesendet...";
+      statusMessage.className = "";
+      statusMessage.style.display = "none";
+
+      const formData = new FormData(form);
+      const userEmail = document.getElementById("userEmail").value.trim();
+
+      // Strukturierte Aufbereitung der Umfragedaten
+      const surveyData = [
+        {
+          item: "Feature / Projekt A",
+          rating: formData.get("p1"),
+          reason: formData.get("p1_reason") || null
+        },
+        {
+          item: "Feature / Projekt B",
+          rating: formData.get("p2"),
+          reason: formData.get("p2_reason") || null
         }
+      ];
 
-        // --- 3. HANDLE OPTION SELECTION ---
-        function selectOption(element, qIndex) {
-            // Unselect sibling options in the same card
-            const parent = element.parentElement;
-            parent.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
-            
-            // Highlight selected option
-            element.classList.add('selected');
+      try {
+        // 1. Anonyme Speicherung in der Supabase-Datenbank
+        const { error: dbError } = await supabase
+          .from("survey_responses")
+          .insert([{ answers: surveyData }]);
 
-            // Show reason textarea
-            const reasonBox = document.getElementById(`reason-box-${qIndex}`);
-            reasonBox.classList.add('active');
-        }
+        if (dbError) throw dbError;
 
-        // --- 4. FORM SUBMISSION ---
-        document.getElementById('survey-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Wird gespeichert... ⏳';
-
-            const email = document.getElementById('user-email').value;
-            const answers = [];
-
-            for (let i = 1; i <= 10; i++) {
-                const selectedRadio = document.querySelector(`input[name="q${i}"]:checked`);
-                const reasonInput = document.getElementById(`reason-${i}`).value;
-
-                answers.push({
-                    item: `Punkt ${i}`,
-                    rating: selectedRadio ? selectedRadio.value : null,
-                    reason: reasonInput || null
-                });
-            }
-
-            try {
-                // A) ANONYM IN SUPABASE SPEICHERN
-                // Speichert KEINE E-Mail in der DB-Zeile für komplette Anonymität!
-                const { data, error } = await supabase
-                    .from('quapsattack_survey')
-                    .insert([{ responses: answers }]);
-
-                if (error) throw error;
-
-                // B) E-MAIL VERSAND VIA SUPABASE EDGE FUNCTION / EMAIL SERVICE
-                // (Ruft deine Supabase Function oder Webhook auf, die 2 Mails verschickt)
-                await supabase.functions.invoke('send-survey-email', {
-                    body: { 
-                        user_email: email, 
-                        survey_data: answers,
-                        custom_text: "Danke für dein Feedback zu Quapsattack! Ich passe das Spiel/die Community mit deinen Infos weiter an. Stay tuned! ⚔️"
-                    }
-                });
-
-                // UI UPDATE
-                document.getElementById('survey-content').style.display = 'none';
-                document.getElementById('success-box').classList.add('active');
-
-            } catch (err) {
-                console.error("Fehler:", err);
-                alert("Fehler beim Speichern! Check mal die Console Digger 😢");
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'Abschicken & E-Mail erhalten 🚀';
-            }
+        // 2. Aufruf der Supabase Edge Function zum E-Mail-Versand
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/send-survey-email`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({
+            user_email: userEmail || null,
+            survey_data: surveyData,
+            custom_text: CUSTOM_EMAIL_TEXT
+          })
         });
-    </script>
+
+        if (!response.ok) {
+          console.warn("E-Mail konnte nicht gesendet werden, aber Datenbank-Eintrag war erfolgreich.");
+        }
+
+        // Erfolgsmeldung anzeigen
+        statusMessage.textContent = "Vielen Dank! Die Abstimmung wurde erfolgreich und anonym übermittelt.";
+        statusMessage.className = "success";
+        form.reset();
+
+      } catch (err) {
+        console.error("Fehler beim Absenden:", err);
+        statusMessage.textContent = "Fehler beim Übermitteln der Daten. Bitte versuche es später erneut.";
+        statusMessage.className = "error";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Abstimmung absenden";
+      }
+    });
+  </script>
 </body>
 </html>
