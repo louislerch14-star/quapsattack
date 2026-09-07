@@ -160,14 +160,14 @@
 
     .rating-label {
       flex: 1;
-      min-width: 100px;
+      min-width: 90px;
       text-align: center;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 10px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 500;
       transition: all 0.2s ease;
     }
@@ -315,37 +315,8 @@
     <form id="surveyForm">
       <div class="section-title">Bewertung der Punkte</div>
 
-      <!-- Punkt 1 -->
-      <div class="item-card">
-        <h3>1. Feature / Projekt A</h3>
-        <div class="rating-options">
-          <input type="radio" id="p1_gut" name="p1" value="Gut" required>
-          <label for="p1_gut" class="rating-label">Gut</label>
-
-          <input type="radio" id="p1_neutral" name="p1" value="Neutral">
-          <label for="p1_neutral" class="rating-label">Neutral</label>
-
-          <input type="radio" id="p1_schlecht" name="p1" value="Schlecht">
-          <label for="p1_schlecht" class="rating-label">Schlecht</label>
-        </div>
-        <textarea name="p1_reason" placeholder="Begründung oder Anmerkung (optional)..."></textarea>
-      </div>
-
-      <!-- Punkt 2 -->
-      <div class="item-card">
-        <h3>2. Feature / Projekt B</h3>
-        <div class="rating-options">
-          <input type="radio" id="p2_gut" name="p2" value="Gut" required>
-          <label for="p2_gut" class="rating-label">Gut</label>
-
-          <input type="radio" id="p2_neutral" name="p2" value="Neutral">
-          <label for="p2_neutral" class="rating-label">Neutral</label>
-
-          <input type="radio" id="p2_schlecht" name="p2" value="Schlecht">
-          <label for="p2_schlecht" class="rating-label">Schlecht</label>
-        </div>
-        <textarea name="p2_reason" placeholder="Begründung oder Anmerkung (optional)..."></textarea>
-      </div>
+      <!-- 10 Punkte als Cards mit 'Sehr gut', 'Gut', 'Mittel', 'Schlecht' -->
+      <div id="surveyQuestions"></div>
 
       <!-- E-Mail Bestätigung für den User (Optional & Anonym) -->
       <div class="email-section">
@@ -362,19 +333,37 @@
     <div id="statusMessage"></div>
   </div>
 
- <script>
+  <script>
     // Supabase Konfiguration
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
 
-    // WICHTIG: Hier 'supabaseClient' anstatt 'supabase' nutzen!
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Dynamisches Erstellen der 10 Fragestellungen
+    const questionsContainer = document.getElementById("surveyQuestions");
+    const ratings = ["Sehr gut", "Gut", "Mittel", "Schlecht"];
+
+    for (let i = 1; i <= 10; i++) {
+      const card = document.createElement("div");
+      card.className = "item-card";
+      card.innerHTML = `
+        <h3>${i}. Punkt ${i}</h3>
+        <div class="rating-options">
+          ${ratings.map(r => `
+            <input type="radio" id="p${i}_${r}" name="p${i}" value="${r}" required>
+            <label for="p${i}_${r}" class="rating-label">${r}</label>
+          `).join('')}
+        </div>
+        <textarea name="p${i}_reason" placeholder="Begründung oder Anmerkung (optional)..."></textarea>
+      `;
+      questionsContainer.appendChild(card);
+    }
 
     const form = document.getElementById("surveyForm");
     const submitBtn = document.getElementById("submitBtn");
     const statusMessage = document.getElementById("statusMessage");
 
-    // Nachricht an den User in der automatischen Bestätigungs-E-Mail
     const CUSTOM_EMAIL_TEXT = "Vielen Dank für die Teilnahme an der Abstimmung. Diese Bestätigung dient als Nachweis der abgegebenen Antworten. Sämtliche Eingaben wurden vollständig anonym in der Datenbank erfasst.";
 
     form.addEventListener("submit", async (e) => {
@@ -387,44 +376,35 @@
       const formData = new FormData(form);
       const userEmail = document.getElementById("userEmail").value.trim();
 
-      // Strukturierte Aufbereitung der Umfragedaten
-      const surveyData = [
-        {
-          item: "Feature / Projekt A",
-          rating: formData.get("p1"),
-          reason: formData.get("p1_reason") || null
-        },
-        {
-          item: "Feature / Projekt B",
-          rating: formData.get("p2"),
-          reason: formData.get("p2_reason") || null
-        }
-      ];
+      // Strukturierte Daten der 10 Punkte sammeln
+      const surveyData = [];
+      for (let i = 1; i <= 10; i++) {
+        surveyData.push({
+          item: `Punkt ${i}`,
+          rating: formData.get(`p${i}`),
+          reason: formData.get(`p${i}_reason`) || null
+        });
+      }
 
       try {
-        // 1. Anonyme Speicherung in der Supabase-Datenbank
+        // 1. Speicherung in der Tabelle 'quapsattack_survey' und Spalte 'responses'
         const { error: dbError } = await supabaseClient
-          .from("survey_responses")
-          .insert([{ answers: surveyData }]);
+          .from("quapsattack_survey")
+          .insert([{ responses: surveyData }]);
 
         if (dbError) throw dbError;
 
-        // 2. Aufruf der Supabase Edge Function zum E-Mail-Versand
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/send-survey-email`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-          },
-          body: JSON.stringify({
-            user_email: userEmail || null,
-            survey_data: surveyData,
-            custom_text: CUSTOM_EMAIL_TEXT
-          })
-        });
-
-        if (!response.ok) {
-          console.warn("E-Mail konnte nicht gesendet werden, aber Datenbank-Eintrag war erfolgreich.");
+        // 2. E-Mail Versand per Supabase Edge Function
+        try {
+          await supabaseClient.functions.invoke("send-survey-email", {
+            body: {
+              user_email: userEmail || null,
+              survey_data: surveyData,
+              custom_text: CUSTOM_EMAIL_TEXT
+            }
+          });
+        } catch (emailErr) {
+          console.warn("E-Mail-Versand fehlgeschlagen oder nicht eingerichtet, Eintrag in DB war aber erfolgreich:", emailErr);
         }
 
         // Erfolgsmeldung anzeigen
@@ -434,7 +414,7 @@
 
       } catch (err) {
         console.error("Fehler beim Absenden:", err);
-        statusMessage.textContent = "Fehler beim Übermitteln der Daten. Bitte versuche es später erneut.";
+        statusMessage.textContent = "Fehler beim Übermitteln der Daten. Prüfe bitte, ob das SQL-Skript in Supabase ausgeführt wurde.";
         statusMessage.className = "error";
       } finally {
         submitBtn.disabled = false;
