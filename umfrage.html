@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+    <link rel="icon" type="image/jpeg" href="unnamed.jpg">
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quapsattack - Offizielle Umfrage</title>
@@ -191,7 +193,14 @@
     .item-card h3 {
       font-size: 1.2rem;
       color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .item-description {
+      color: var(--text-muted);
+      font-size: 0.95rem;
       margin-bottom: 18px;
+      line-height: 1.5;
     }
 
     .rating-options {
@@ -413,7 +422,7 @@
     <div class="header">
       <img src="unnamed.jpg" alt="Quapsattack Logo" class="logo">
       <div class="header-text">
-        <h1>Quapsattack Zukunftsabstimmung</h1>
+        <h1>Quapsattack abstimmung</h1>
         <p class="subtitle">Wir gestalten die Zukunft gemeinsam.</p>
       </div>
     </div>
@@ -423,7 +432,7 @@
       <div class="privacy-notice">
         <h2>Wichtiger Hinweis zur Anonymität</h2>
         <p>
-          Wir haben uns das Feedback zu Herzen genommen: <span class="highlight-bold-underline">Diese Umfrage ist zu 100 % anonym.</span> Es werden keinerlei personenbezogene Daten, IP-Adressen oder Identifikatoren mit euren Stimmabgaben verknüpft oder gespeichert. Niemand wird jemals erfahren, wer für welche Punkte gestimmt hat.
+          Wir werden das Feedback zu Herzen nehmen: <span class="highlight-bold-underline">Diese Umfrage ist zu 100 % anonym.</span> Es werden keinerlei personenbezogene Daten, mit euren Stimmabgaben verknüpft oder gespeichert. Niemand wird jemals erfahren, wer für welche Punkte gestimmt hat.
         </p>
         <p>
           Bitte nehmt euch kurz Zeit und füllt diese Umfrage ernsthaft aus. <span class="highlight-bold-underline">Eure Stimme entscheidet direkt über die Zukunft von Quapsattack!</span>
@@ -446,7 +455,7 @@
       <!-- STEP 11: Abschluss & E-Mail Option -->
       <div id="step-11" class="step">
         <div class="email-section">
-          <label for="userEmail">Kopie der Abstimmung per E-Mail erhalten (optional)</label>
+          <label for="userEmail">Kopie der Abstimmung per E-Mail erhalten (Pflichtfeld)</label>
           <p class="email-hint">
             Falls eine Bestätigung gewünscht ist, kann hier eine E-Mail-Adresse eingegeben werden. Die Adresse dient ausschließlich dem einmaligen Versand der Kopie und wird <span class="highlight-bold-underline">zu keinem Zeitpunkt in unserer Datenbank gespeichert</span>.
           </p>
@@ -473,8 +482,54 @@
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // =========================================================================
+    // HIER KANNST DU DIE FRAGEN, ÜBERSCHRIFTEN UND BESCHREIBUNGEN BEARBEITEN
+    // =========================================================================
+    const questionsConfig = [
+      {
+        title: "Punkt 1: Spielspaß & Spieldrang",
+        description: "Wie sehr gefällt es dir auf dem Server zu spielen und hast du den drang immer weiter zu spielen?"
+      },
+      {
+        title: "Punkt 2: Freundlichkeit & Vertrauen",
+        description: "Kannst du anderen Spielern vertrauen und sind immer alle freundlich?"
+      },
+      {
+        title: "Punkt 3: Eigene Meinung",
+        description: "Kannst du deine eigene Meinung unterbringen und wird sie berücksichtigt?"
+      },
+      {
+        title: "Punkt 4: Planung & Zukunft",
+        description: "Findest du das wenn ein Quapsattack zu ende geht und ein neues gestartet wird das es kreativer oder eher langweiliger wird?"
+      },
+      {
+        title: "Punkt 5: Add'ons & Mods",
+        description: "Wie gefallen dir die Projekte mit jeglicher Art von Add'ons und Mods?"
+      },
+      {
+        title: "Punkt 6: Event Organisation",
+        description: "Wie zufrieden bist du mit der Ankündigung und Durchführung von Events?"
+      },
+      {
+        title: "Punkt 7: Support & Hilfe",
+        description: "Wie gut fühlst du dich bei Fragen oder Problemen unterstützt?"
+      },
+      {
+        title: "Punkt 8: Regelmäßige Updates",
+        description: "Wie bewertest du die Häufigkeit und Qualität neuer Versionen?"
+      },
+      {
+        title: "Punkt 9: Performance & Server",
+        description: "Wie findest du die Performance und Leistung unser bisher genutzten Server?"
+      },
+      {
+        title: "Punkt 10: Gesamteindruck & Zukunft",
+        description: "Wie siehst du das Projekt Quapsattack insgesamt für die Zukunft aufgestellt?(Gerne Ideen und Vorschläge dazu schreiben :))"
+      }
+    ];
+
     let currentStep = 0;
-    const totalQuestions = 10;
+    const totalQuestions = questionsConfig.length;
     const ratings = ["Sehr gut", "Gut", "Mittel", "Schlecht"];
     const CUSTOM_EMAIL_TEXT = "Vielen Dank für die Teilnahme an der Abstimmung. Diese Bestätigung dient als Nachweis der abgegebenen Antworten. Sämtliche Eingaben wurden vollständig anonym in der Datenbank erfasst.";
 
@@ -498,14 +553,16 @@
     });
 
     // Dynamic Creation of Question Cards (Steps 1 to 10)
-    for (let i = 1; i <= totalQuestions; i++) {
+    questionsConfig.forEach((q, index) => {
+      const i = index + 1;
       const stepDiv = document.createElement("div");
       stepDiv.id = `step-${i}`;
       stepDiv.className = "step";
 
       stepDiv.innerHTML = `
         <div class="item-card">
-          <h3>Frage ${i} von ${totalQuestions}: Punkt ${i}</h3>
+          <h3>Frage ${i} von ${totalQuestions}: ${q.title}</h3>
+          <p class="item-description">${q.description}</p>
           
           <div class="rating-options">
             ${ratings.map(r => `
@@ -526,7 +583,7 @@
       `;
 
       questionsContainer.appendChild(stepDiv);
-    }
+    });
 
     // Build Pagination Bar (1-10)
     for (let i = 1; i <= totalQuestions; i++) {
@@ -638,7 +695,7 @@
       const surveyData = [];
       for (let i = 1; i <= totalQuestions; i++) {
         surveyData.push({
-          item: `Punkt ${i}`,
+          item: questionsConfig[i - 1].title,
           rating: formData.get(`p${i}`),
           reason: formData.get(`p${i}_reason`)
         });
