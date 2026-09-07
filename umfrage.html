@@ -49,18 +49,40 @@
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     }
 
-    /* Header & Logo */
+    /* Animierter Header & Logo */
     .header {
       text-align: center;
       margin-bottom: 30px;
     }
 
     .logo {
-      max-width: 120px;
+      max-width: 130px;
       height: auto;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+      border-radius: 16px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 25px rgba(99, 102, 241, 0.4);
+      opacity: 0;
+      transform: scale(0.6);
+      animation: logoFadeIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes logoFadeIn {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .header-text {
+      opacity: 0;
+      animation: textFadeIn 0.8s ease forwards;
+      animation-delay: 0.8s;
+    }
+
+    @keyframes textFadeIn {
+      to {
+        opacity: 1;
+      }
     }
 
     h1 {
@@ -76,15 +98,14 @@
       font-size: 1rem;
     }
 
-    /* Intro / Anonymitäts-Banner mit Glow Animation */
+    /* Intro-Box mit Hervorhebungen */
     .privacy-notice {
       background: rgba(99, 102, 241, 0.08);
       border: 1px solid rgba(99, 102, 241, 0.3);
       border-radius: 12px;
       padding: 24px;
-      margin-bottom: 35px;
+      margin-bottom: 25px;
       position: relative;
-      overflow: hidden;
       animation: pulseGlow 4s infinite alternate;
     }
 
@@ -102,7 +123,7 @@
     .privacy-notice h2 {
       font-size: 1.15rem;
       color: #ffffff;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -110,64 +131,86 @@
     .privacy-notice p {
       color: #d1d5db;
       font-size: 0.95rem;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     .privacy-notice p:last-child {
       margin-bottom: 0;
     }
 
-    .highlight-text {
-      color: #a5b4fc;
-      font-weight: 600;
-    }
-
-    /* Formular Styles */
-    .section-title {
-      font-size: 1.25rem;
+    .highlight-bold-underline {
       font-weight: 700;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-color);
-      color: #ffffff;
+      text-decoration: underline;
+      color: #a5b4fc;
     }
 
+    /* Checkbox Styles */
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent-color);
+      cursor: pointer;
+    }
+
+    .checkbox-container span {
+      font-size: 0.92rem;
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    /* Multi-Step Visibility Control */
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    /* Item Card & Fragestellungen */
     .item-card {
       background: rgba(0, 0, 0, 0.2);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      transition: border-color 0.2s ease;
-    }
-
-    .item-card:focus-within {
-      border-color: var(--accent-color);
+      padding: 24px;
+      margin-bottom: 25px;
     }
 
     .item-card h3 {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       color: #ffffff;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     .rating-options {
       display: flex;
       gap: 12px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
     }
 
     .rating-label {
       flex: 1;
-      min-width: 90px;
+      min-width: 100px;
       text-align: center;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 10px;
+      padding: 12px;
       cursor: pointer;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       font-weight: 500;
       transition: all 0.2s ease;
     }
@@ -184,7 +227,7 @@
       background: var(--accent-color);
       border-color: var(--accent-color);
       color: #ffffff;
-      font-weight: 600;
+      font-weight: 700;
       box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
     }
 
@@ -193,10 +236,10 @@
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 12px;
+      padding: 14px;
       color: var(--text-main);
       font-family: inherit;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       outline: none;
       transition: border-color 0.2s ease;
     }
@@ -207,16 +250,107 @@
 
     textarea {
       resize: vertical;
-      min-height: 70px;
+      min-height: 90px;
     }
 
+    /* Buttons & Navigationsleiste */
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      flex: 1;
+      background: var(--accent-color);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn:active {
+      transform: scale(0.99);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn:disabled {
+      background: #374151;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    /* Pagination / Fragenleiste 1-10 */
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .page-num {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .page-num:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+
+    .page-num.active {
+      background: var(--accent-color);
+      color: #ffffff;
+      border-color: var(--accent-color);
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+    }
+
+    .page-num.completed {
+      border-color: var(--success-color);
+      color: var(--success-color);
+    }
+
+    .page-num.completed.active {
+      background: var(--accent-color);
+      color: #ffffff;
+    }
+
+    /* E-Mail Section */
     .email-section {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 20px;
-      margin-top: 30px;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
 
     .email-section label {
@@ -231,32 +365,6 @@
       font-size: 0.85rem;
       color: var(--text-muted);
       margin-bottom: 12px;
-    }
-
-    .submit-btn {
-      width: 100%;
-      background: var(--accent-color);
-      color: #ffffff;
-      border: none;
-      border-radius: 10px;
-      padding: 16px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background-color 0.2s ease, transform 0.1s ease;
-    }
-
-    .submit-btn:hover {
-      background: var(--accent-hover);
-    }
-
-    .submit-btn:active {
-      transform: scale(0.99);
-    }
-
-    .submit-btn:disabled {
-      background: #4b5563;
-      cursor: not-allowed;
     }
 
     #statusMessage {
@@ -289,105 +397,255 @@
       .rating-options {
         flex-direction: column;
       }
+      .pagination-bar {
+        flex-wrap: wrap;
+      }
+      .page-num {
+        min-width: 35px;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
+    <!-- Header & Logo mit Animation -->
     <div class="header">
       <img src="unnamed.jpg" alt="Quapsattack Logo" class="logo">
-      <h1>Quapsattack Zukunftsabstimmung</h1>
-      <p class="subtitle">Wir gestalten die Zukunft gemeinsam.</p>
+      <div class="header-text">
+        <h1>Quapsattack Zukunftsabstimmung</h1>
+        <p class="subtitle">Wir gestalten die Zukunft gemeinsam.</p>
+      </div>
     </div>
 
-    <!-- Anonymitäts- & Wichtigkeits-Notice -->
-    <div class="privacy-notice">
-      <h2>Wichtiger Hinweis zur Anonymität</h2>
-      <p>
-        Wir haben uns das Feedback zu Herzen genommen: <span class="highlight-text">Diese Umfrage ist zu 100 % anonym.</span> Es werden keinerlei personenbezogene Daten, IP-Adressen oder Identifikatoren mit euren Stimmabgaben verknüpft oder gespeichert. Niemand wird jemals erfahren, wer für welche Punkte gestimmt hat.
-      </p>
-      <p>
-        Bitte nehmt euch kurz Zeit und füllt diese Umfrage ernsthaft aus. Eure Rückmeldungen werden maßgeblich darüber entscheiden, wie sich die Zukunft von Quapsattack gestalten wird.
-      </p>
-    </div>
-
-    <form id="surveyForm">
-      <div class="section-title">Bewertung der Punkte</div>
-
-      <!-- 10 Punkte als Cards mit 'Sehr gut', 'Gut', 'Mittel', 'Schlecht' -->
-      <div id="surveyQuestions"></div>
-
-      <!-- E-Mail Bestätigung für den User (Optional & Anonym) -->
-      <div class="email-section">
-        <label for="userEmail">Kopie der Abstimmung per E-Mail erhalten (optional)</label>
-        <p class="email-hint">
-          Falls eine Bestätigung gewünscht ist, kann hier eine E-Mail-Adresse eingegeben werden. Die Adresse dient ausschließlich dem einmaligen Versand der Kopie und wird zu keinem Zeitpunkt mit den Ergebnissen in unserer Datenbank gespeichert.
+    <!-- STEP 0: Intro & Anonymitätshinweis -->
+    <div id="step-0" class="step active">
+      <div class="privacy-notice">
+        <h2>Wichtiger Hinweis zur Anonymität</h2>
+        <p>
+          Wir haben uns das Feedback zu Herzen genommen: <span class="highlight-bold-underline">Diese Umfrage ist zu 100 % anonym.</span> Es werden keinerlei personenbezogene Daten, IP-Adressen oder Identifikatoren mit euren Stimmabgaben verknüpft oder gespeichert. Niemand wird jemals erfahren, wer für welche Punkte gestimmt hat.
         </p>
-        <input type="email" id="userEmail" placeholder="deine-email@beispiel.de">
+        <p>
+          Bitte nehmt euch kurz Zeit und füllt diese Umfrage ernsthaft aus. <span class="highlight-bold-underline">Eure Stimme entscheidet direkt über die Zukunft von Quapsattack!</span>
+        </p>
+
+        <label class="checkbox-container">
+          <input type="checkbox" id="acceptNotice">
+          <span>Ich habe mir dieses zu Herzen genommen und bin bereit für die Abstimmung.</span>
+        </label>
       </div>
 
-      <button type="submit" class="submit-btn" id="submitBtn">Abstimmung absenden</button>
+      <button type="button" class="btn" id="startSurveyBtn" disabled>Umfrage starten</button>
+    </div>
+
+    <!-- FORMULAR / SCHRITTE 1-10 + ABSCHLUSS -->
+    <form id="surveyForm">
+      <!-- Dynamisch erstellte Fragen 1 bis 10 -->
+      <div id="questionsContainer"></div>
+
+      <!-- STEP 11: Abschluss & E-Mail Option -->
+      <div id="step-11" class="step">
+        <div class="email-section">
+          <label for="userEmail">Kopie der Abstimmung per E-Mail erhalten (optional)</label>
+          <p class="email-hint">
+            Falls eine Bestätigung gewünscht ist, kann hier eine E-Mail-Adresse eingegeben werden. Die Adresse dient ausschließlich dem einmaligen Versand der Kopie und wird <span class="highlight-bold-underline">zu keinem Zeitpunkt in unserer Datenbank gespeichert</span>.
+          </p>
+          <input type="email" id="userEmail" placeholder="deine-email@beispiel.de">
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="goToStep(10)">Zurück zu Frage 10</button>
+          <button type="submit" class="btn" id="submitBtn">Abstimmung absenden</button>
+        </div>
+      </div>
+
+      <!-- Pagination / Zahlenleiste (1-10) -->
+      <div class="pagination-bar" id="paginationBar" style="display: none;"></div>
     </form>
 
     <div id="statusMessage"></div>
   </div>
 
- <script>
+  <script>
     // Supabase Konfiguration
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Dynamisches Erstellen der 10 Fragestellungen
-    const questionsContainer = document.getElementById("surveyQuestions");
+    let currentStep = 0;
+    const totalQuestions = 10;
     const ratings = ["Sehr gut", "Gut", "Mittel", "Schlecht"];
-
-    for (let i = 1; i <= 10; i++) {
-      const card = document.createElement("div");
-      card.className = "item-card";
-      card.innerHTML = `
-        <h3>${i}. Punkt ${i}</h3>
-        <div class="rating-options">
-          ${ratings.map(r => `
-            <input type="radio" id="p${i}_${r}" name="p${i}" value="${r}" required>
-            <label for="p${i}_${r}" class="rating-label">${r}</label>
-          `).join('')}
-        </div>
-        <textarea name="p${i}_reason" placeholder="Begründung oder Anmerkung (optional)..."></textarea>
-      `;
-      questionsContainer.appendChild(card);
-    }
-
-    const form = document.getElementById("surveyForm");
-    const submitBtn = document.getElementById("submitBtn");
-    const statusMessage = document.getElementById("statusMessage");
-
     const CUSTOM_EMAIL_TEXT = "Vielen Dank für die Teilnahme an der Abstimmung. Diese Bestätigung dient als Nachweis der abgegebenen Antworten. Sämtliche Eingaben wurden vollständig anonym in der Datenbank erfasst.";
 
+    // DOM Elemente
+    const acceptCheckbox = document.getElementById("acceptNotice");
+    const startSurveyBtn = document.getElementById("startSurveyBtn");
+    const questionsContainer = document.getElementById("questionsContainer");
+    const paginationBar = document.getElementById("paginationBar");
+    const statusMessage = document.getElementById("statusMessage");
+    const form = document.getElementById("surveyForm");
+    const submitBtn = document.getElementById("submitBtn");
+
+    // Enable / Disable Start-Button basierend auf Checkbox
+    acceptCheckbox.addEventListener("change", () => {
+      startSurveyBtn.disabled = !acceptCheckbox.checked;
+    });
+
+    startSurveyBtn.addEventListener("click", () => {
+      paginationBar.style.display = "flex";
+      goToStep(1);
+    });
+
+    // Dynamic Creation of Question Cards (Steps 1 to 10)
+    for (let i = 1; i <= totalQuestions; i++) {
+      const stepDiv = document.createElement("div");
+      stepDiv.id = `step-${i}`;
+      stepDiv.className = "step";
+
+      stepDiv.innerHTML = `
+        <div class="item-card">
+          <h3>Frage ${i} von ${totalQuestions}: Punkt ${i}</h3>
+          
+          <div class="rating-options">
+            ${ratings.map(r => `
+              <input type="radio" id="p${i}_${r}" name="p${i}" value="${r}" onchange="updatePaginationStatus(${i})">
+              <label for="p${i}_${r}" class="rating-label">${r}</label>
+            `).join('')}
+          </div>
+
+          <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Begründung / Anmerkung (Pflichtfeld):</label>
+          <textarea id="p${i}_reason" name="p${i}_reason" placeholder="Deine Begründung zu deiner Bewertung..." oninput="updatePaginationStatus(${i})"></textarea>
+        </div>
+
+        <div class="button-group">
+          ${i > 1 ? `<button type="button" class="btn btn-secondary" onclick="goToStep(${i - 1})">Zurück</button>` : `<button type="button" class="btn btn-secondary" onclick="goToStep(0)">Startseite</button>`}
+          <button type="button" class="btn btn-secondary" onclick="skipQuestion(${i})">Skip</button>
+          <button type="button" class="btn" onclick="nextQuestion(${i})">${i === totalQuestions ? 'Weiter zur Übersicht' : 'Nächste Frage'}</button>
+        </div>
+      `;
+
+      questionsContainer.appendChild(stepDiv);
+    }
+
+    // Build Pagination Bar (1-10)
+    for (let i = 1; i <= totalQuestions; i++) {
+      const pageBtn = document.createElement("div");
+      pageBtn.className = "page-num";
+      pageBtn.id = `pageNum-${i}`;
+      pageBtn.textContent = i;
+      pageBtn.addEventListener("click", () => {
+        if (currentStep > 0) goToStep(i);
+      });
+      paginationBar.appendChild(pageBtn);
+    }
+
+    // Switch between Steps
+    function goToStep(stepNumber) {
+      statusMessage.style.display = "none";
+      document.querySelectorAll(".step").forEach(el => el.classList.remove("active"));
+      
+      currentStep = stepNumber;
+      const targetStep = document.getElementById(`step-${stepNumber}`);
+      if (targetStep) targetStep.classList.add("active");
+
+      // Update Pagination Bar
+      for (let i = 1; i <= totalQuestions; i++) {
+        const btn = document.getElementById(`pageNum-${i}`);
+        if (i === stepNumber) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Check if Question i is filled completely
+    function isQuestionFilled(i) {
+      const ratingSelected = document.querySelector(`input[name="p${i}"]:checked`);
+      const reasonFilled = document.getElementById(`p${i}_reason`).value.trim();
+      return ratingSelected && reasonFilled !== "";
+    }
+
+    // Update Pagination Visual Status
+    function updatePaginationStatus(i) {
+      const pageBtn = document.getElementById(`pageNum-${i}`);
+      if (isQuestionFilled(i)) {
+        pageBtn.classList.add("completed");
+      } else {
+        pageBtn.classList.remove("completed");
+      }
+    }
+
+    // Next Question Action
+    function nextQuestion(i) {
+      if (!isQuestionFilled(i)) {
+        statusMessage.textContent = `Bitte wähle eine Bewertung aus und gib eine Begründung für Frage ${i} ein!`;
+        statusMessage.className = "error";
+        return;
+      }
+      statusMessage.style.display = "none";
+
+      if (i < totalQuestions) {
+        goToStep(i + 1);
+      } else {
+        goToStep(11); // Step 11: Finish / Email Option
+      }
+    }
+
+    // Skip Action
+    function skipQuestion(i) {
+      statusMessage.style.display = "none";
+      if (i < totalQuestions) {
+        goToStep(i + 1);
+      } else {
+        goToStep(11);
+      }
+    }
+
+    // Submit Handling
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      statusMessage.style.display = "none";
+
+      // 1. Prüfen, ob alle Fragen (1 bis 10) ausgefüllt wurden
+      const missingQuestions = [];
+      for (let i = 1; i <= totalQuestions; i++) {
+        if (!isQuestionFilled(i)) {
+          missingQuestions.push(i);
+        }
+      }
+
+      if (missingQuestions.length > 0) {
+        const missingText = missingQuestions.map(num => `Frage ${num}`).join(", ");
+        statusMessage.textContent = `Achtung! Folgende Fragen wurden noch nicht vollständig ausgefüllt (Bewertung + Begründung fehlen): ${missingText}. Bitte fülle diese aus!`;
+        statusMessage.className = "error";
+        
+        // Springe zur ersten unvollständigen Frage
+        goToStep(missingQuestions[0]);
+        return;
+      }
+
       submitBtn.disabled = true;
       submitBtn.textContent = "Wird gesendet...";
-      statusMessage.className = "";
-      statusMessage.style.display = "none";
 
       const formData = new FormData(form);
       const userEmail = document.getElementById("userEmail").value.trim();
 
       // Strukturierte Daten der 10 Punkte sammeln
       const surveyData = [];
-      for (let i = 1; i <= 10; i++) {
+      for (let i = 1; i <= totalQuestions; i++) {
         surveyData.push({
           item: `Punkt ${i}`,
           rating: formData.get(`p${i}`),
-          reason: formData.get(`p${i}_reason`) || null
+          reason: formData.get(`p${i}_reason`)
         });
       }
 
       try {
-        // 1. Speicherung in der Tabelle 'quapsattack_survey' und Spalte 'responses'
+        // 1. Anonyme Speicherung in Supabase
         const { error: dbError } = await supabaseClient
           .from("quapsattack_survey")
           .insert([{ responses: surveyData }]);
@@ -396,7 +654,7 @@
 
         // 2. E-Mail Versand per Supabase Edge Function 'resend-email'
         try {
-          const { data, error: functionError } = await supabaseClient.functions.invoke("resend-email", {
+          await supabaseClient.functions.invoke("resend-email", {
             headers: {
               "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
               "apikey": SUPABASE_ANON_KEY
@@ -407,22 +665,20 @@
               custom_text: CUSTOM_EMAIL_TEXT
             }
           });
-
-          if (functionError) {
-            console.error("Fehler von der Edge Function:", functionError);
-          }
         } catch (emailErr) {
           console.warn("E-Mail-Versand fehlgeschlagen oder nicht eingerichtet, Eintrag in DB war aber erfolgreich:", emailErr);
         }
 
         // Erfolgsmeldung anzeigen
-        statusMessage.textContent = "Vielen Dank! Die Abstimmung wurde erfolgreich und anonym übermittelt.";
+        statusMessage.textContent = "Vielen Dank! Deine Abstimmung wurde erfolgreich und vollständig anonym übermittelt.";
         statusMessage.className = "success";
         form.reset();
+        paginationBar.style.display = "none";
+        goToStep(0); // Zurück zur Startseite
 
       } catch (err) {
         console.error("Fehler beim Absenden:", err);
-        statusMessage.textContent = "Fehler beim Übermitteln der Daten. Prüfe bitte, ob das SQL-Skript in Supabase ausgeführt wurde.";
+        statusMessage.textContent = "Fehler beim Übermitteln der Daten. Bitte versuche es erneut.";
         statusMessage.className = "error";
       } finally {
         submitBtn.disabled = false;
