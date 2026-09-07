@@ -333,7 +333,7 @@
     <div id="statusMessage"></div>
   </div>
 
-  <script>
+ <script>
     // Supabase Konfiguration
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
@@ -394,15 +394,23 @@
 
         if (dbError) throw dbError;
 
-        // 2. E-Mail Versand per Supabase Edge Function
+        // 2. E-Mail Versand per Supabase Edge Function 'resend-email'
         try {
-          await supabaseClient.functions.invoke("send-survey-email", {
+          const { data, error: functionError } = await supabaseClient.functions.invoke("resend-email", {
+            headers: {
+              "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+              "apikey": SUPABASE_ANON_KEY
+            },
             body: {
               user_email: userEmail || null,
               survey_data: surveyData,
               custom_text: CUSTOM_EMAIL_TEXT
             }
           });
+
+          if (functionError) {
+            console.error("Fehler von der Edge Function:", functionError);
+          }
         } catch (emailErr) {
           console.warn("E-Mail-Versand fehlgeschlagen oder nicht eingerichtet, Eintrag in DB war aber erfolgreich:", emailErr);
         }
