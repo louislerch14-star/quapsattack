@@ -362,12 +362,13 @@
     <div id="statusMessage"></div>
   </div>
 
-  <script>
+ <script>
     // Supabase Konfiguration
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // WICHTIG: Hier 'supabaseClient' anstatt 'supabase' nutzen!
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const form = document.getElementById("surveyForm");
     const submitBtn = document.getElementById("submitBtn");
@@ -402,7 +403,7 @@
 
       try {
         // 1. Anonyme Speicherung in der Supabase-Datenbank
-        const { error: dbError } = await supabase
+        const { error: dbError } = await supabaseClient
           .from("survey_responses")
           .insert([{ answers: surveyData }]);
 
