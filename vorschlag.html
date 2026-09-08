@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quapsattack - Modpack Vorschläge</title>
+
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg-color: #0a0e17;
+      --card-bg: #161c2d;
+      --accent-color: #6366f1;
+      --accent-hover: #4f46e5;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --success-color: #10b981;
+      --error-color: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      padding: 40px 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #ffffff;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"], input[type="url"] {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    input[type="text"]:focus, input[type="url"]:focus {
+      border-color: var(--accent-color);
+    }
+
+    .btn {
+      width: 100%;
+      background: var(--accent-color);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn:active {
+      transform: scale(0.99);
+    }
+
+    .btn:disabled {
+      background: #374151;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    #statusMessage {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+
+    #statusMessage.success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--success-color);
+      color: #6ee7b7;
+      display: block;
+    }
+
+    #statusMessage.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--error-color);
+      color: #fca5a5;
+      display: block;
+    }
+
+    /* Liste der eingereichten Mods */
+    .mod-list-section {
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .mod-list-section h2 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      color: #ffffff;
+    }
+
+    .mod-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mod-card-info h3 {
+      font-size: 1.05rem;
+      color: #ffffff;
+    }
+
+    .mod-card-info a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-size: 0.85rem;
+      word-break: break-all;
+    }
+
+    .mod-card-info a:hover {
+      text-decoration: underline;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Minecraft Modpack Vorschläge</h1>
+      <p class="subtitle">Reiche deine Lieblings-Mods von CurseForge oder Modrinth ein!</p>
+    </div>
+
+    <!-- EINGABEFORMULAR -->
+    <form id="modForm">
+      <div class="form-group">
+        <label for="modName">Mod Name (Pflichtfeld)</label>
+        <input type="text" id="modName" placeholder="z. B. Create, Mekanism, JEI" required>
+      </div>
+
+      <div class="form-group">
+        <label for="modUrl">CurseForge oder Modrinth Link (Pflichtfeld)</label>
+        <input type="url" id="modUrl" placeholder="https://www.curseforge.com/minecraft/mc-mods/..." required>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">Mod einreichen 🚀</button>
+    </form>
+
+    <div id="statusMessage"></div>
+
+    <!-- LISTE BEREITS EINGEREICHTER MODS -->
+    <div class="mod-list-section">
+      <h2>Eingereichte Mods</h2>
+      <div id="modList">Lädt Mods...</div>
+    </div>
+  </div>
+
+  <script>
+    // Supabase Konfiguration
+    const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById("modForm");
+    const modNameInput = document.getElementById("modName");
+    const modUrlInput = document.getElementById("modUrl");
+    const submitBtn = document.getElementById("submitBtn");
+    const statusMessage = document.getElementById("statusMessage");
+    const modList = document.getElementById("modList");
+
+    // Mods aus Supabase laden und anzeigen
+    async function fetchMods() {
+      try {
+        const { data, error } = await supabaseClient
+          .from("modpack_suggestions")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        if (data.length === 0) {
+          modList.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">Noch keine Mods eingereicht. Sei der Erste! 😎</p>`;
+          return;
+        }
+
+        modList.innerHTML = data.map(mod => {
+          let platform = "Link";
+          if (mod.mod_url.includes("curseforge.com")) platform = "CurseForge";
+          if (mod.mod_url.includes("modrinth.com")) platform = "Modrinth";
+
+          return `
+            <div class="mod-card">
+              <div class="mod-card-info">
+                <h3>${escapeHtml(mod.mod_name)}</h3>
+                <a href="${escapeHtml(mod.mod_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(mod.mod_url)}</a>
+              </div>
+              <span class="badge">${platform}</span>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error("Fehler beim Laden:", err);
+        modList.innerHTML = `<p style="color: var(--error-color);">Fehler beim Laden der Mods.</p>`;
+      }
+    }
+
+    // Formular Absenden
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusMessage.style.display = "none";
+
+      const modName = modNameInput.value.trim();
+      const modUrl = modUrlInput.value.trim();
+
+      if (!modName || !modUrl) {
+        statusMessage.textContent = "Bitte alle Felder ausfüllen!";
+        statusMessage.className = "error";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Wird gespeichert...";
+
+      try {
+        const { error } = await supabaseClient
+          .from("modpack_suggestions")
+          .insert([{ mod_name: modName, mod_url: modUrl }]);
+
+        if (error) throw error;
+
+        statusMessage.textContent = "Mod-Vorschlag erfolgreich eingereicht! 🔥";
+        statusMessage.className = "success";
+        form.reset();
+        
+        // Liste neu laden
+        fetchMods();
+
+      } catch (err) {
+        console.error("Fehler beim Speichern:", err);
+        statusMessage.textContent = "Fehler beim Einreichen. Bitte erneut versuchen!";
+        statusMessage.className = "error";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Mod einreichen 🚀";
+      }
+    });
+
+    // Hilfsfunktion gegen XSS
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+
+    // Beim Start Mods laden
+    fetchMods();
+  </script>
+</body>
+</html>
