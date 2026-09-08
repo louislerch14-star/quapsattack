@@ -167,6 +167,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
+    }
+
+    .mod-card-info {
+      flex: 1;
     }
 
     .mod-card-info h3 {
@@ -185,12 +190,40 @@
       text-decoration: underline;
     }
 
+    .mod-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .badge {
       font-size: 0.75rem;
       padding: 4px 8px;
       border-radius: 6px;
       background: rgba(255, 255, 255, 0.08);
       color: var(--text-muted);
+    }
+
+    /* Löschen X Button Styling */
+    .delete-btn {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: var(--error-color);
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .delete-btn:hover {
+      background: var(--error-color);
+      color: #ffffff;
     }
   </style>
 </head>
@@ -266,7 +299,10 @@
                 <h3>${escapeHtml(mod.mod_name)}</h3>
                 <a href="${escapeHtml(mod.mod_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(mod.mod_url)}</a>
               </div>
-              <span class="badge">${platform}</span>
+              <div class="mod-card-actions">
+                <span class="badge">${platform}</span>
+                <button class="delete-btn" onclick="deleteMod('${mod.id}')" title="Mod löschen">✕</button>
+              </div>
             </div>
           `;
         }).join('');
@@ -274,6 +310,29 @@
       } catch (err) {
         console.error("Fehler beim Laden:", err);
         modList.innerHTML = `<p style="color: var(--error-color);">Fehler beim Laden der Mods.</p>`;
+      }
+    }
+
+    // Mod aus Supabase löschen
+    async function deleteMod(id) {
+      if (!confirm("Möchtest du diese Mod wirklich aus der Liste entfernen? 💀")) {
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from("modpack_suggestions")
+          .delete()
+          .eq("id", id);
+
+        if (error) throw error;
+
+        // Liste nach dem Löschen direkt aktualisieren
+        fetchMods();
+
+      } catch (err) {
+        console.error("Fehler beim Löschen:", err);
+        alert("Fehler beim Löschen der Mod!");
       }
     }
 
