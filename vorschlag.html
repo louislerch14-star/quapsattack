@@ -19,6 +19,8 @@
       --border-color: rgba(255, 255, 255, 0.08);
       --success-color: #10b981;
       --error-color: #ef4444;
+      --pulse-speed: 2s;
+      --bar-color: #10b981;
     }
 
     * {
@@ -51,7 +53,7 @@
 
     .header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
 
     h1 {
@@ -64,6 +66,57 @@
     .subtitle {
       color: var(--text-muted);
       font-size: 1rem;
+    }
+
+    /* TIMER CONTAINER & ANIMATION */
+    .timer-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .timer-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .timer-display {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #ffffff;
+      font-variant-numeric: tabular-nums;
+      animation: pulse var(--pulse-speed) infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.04); opacity: 0.75; text-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 100%;
+      background-color: var(--bar-color);
+      border-radius: 6px;
+      transition: width 1s linear, background-color 1s ease;
     }
 
     .form-group {
@@ -268,6 +321,15 @@
       <p class="subtitle">Reiche deine Lieblings-Mods von CurseForge oder Modrinth ein!</p>
     </div>
 
+    <!-- LIVE COUNTDOWN TIMER -->
+    <div class="timer-card">
+      <div class="timer-title">Einsendeschluss: Morgen 15:00 Uhr</div>
+      <div class="timer-display" id="timerDisplay">00h 00m 00s</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+
     <!-- EINGABEFORMULAR -->
     <form id="modForm">
       <div class="form-group">
@@ -316,6 +378,94 @@
     const statusMessage = document.getElementById("statusMessage");
     const modList = document.getElementById("modList");
     const sortSelect = document.getElementById("sortSelect");
+
+    const timerDisplay = document.getElementById("timerDisplay");
+    const progressBar = document.getElementById("progressBar");
+
+    // --- COUNTDOWN LOGIK (Berlin Zeitzone, Ziel: Morgen 15:00 Uhr) ---
+    function getTargetDeadline() {
+      const now = new Date();
+      // Heutigen Tag um 15:00 Uhr Berliner Zeit berechnen
+      const berlinOffsetMinutes = -now.getTimezoneOffset(); // Berücksichtigt Sommer/Winterzeit des Browsers
+      
+      let deadline = new Date();
+      deadline.setDate(now.getDate() + 1); // Morgen
+      deadline.setHours(15, 0, 0, 0);      // 15:00 Uhr
+
+      return deadline;
+    }
+
+    const startTime = new Date().getTime();
+    const targetDeadline = getTargetDeadline().getTime();
+    const totalDuration = targetDeadline - startTime;
+
+    let isExpired = false;
+
+    function updateTimer() {
+      const now = new Date().getTime();
+      const distance = targetDeadline - now;
+
+      if (distance <= 0) {
+        isExpired = true;
+        timerDisplay.textContent = "ABGELAUFEN 💀";
+        document.documentElement.style.setProperty('--pulse-speed', '0s');
+        progressBar.style.width = "0%";
+        progressBar.style.backgroundColor = "#ef4444";
+
+        // Formular deaktivieren
+        modNameInput.disabled = true;
+        modUrlInput.disabled = true;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Einsendeschluss vorbei 🔒";
+
+        statusMessage.textContent = "Der Einsendeschluss ist erreicht. Es können keine neuen Mods mehr eingereicht werden!";
+        statusMessage.className = "error";
+        return;
+      }
+
+      // Zeit-Berechnungen
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      const formattedH = String(hours).padStart(2, '0');
+      const formattedM = String(minutes).padStart(2, '0');
+      const formattedS = String(seconds).padStart(2, '0');
+
+      timerDisplay.textContent = `${formattedH}h ${formattedM}m ${formattedS}s`;
+
+      // Dynamische Pulsations-Geschwindigkeit
+      if (distance < 60 * 1000) { // Unter 1 Min
+        document.documentElement.style.setProperty('--pulse-speed', '0.2s');
+      } else if (distance < 10 * 60 * 1000) { // Unter 10 Min
+        document.documentElement.style.setProperty('--pulse-speed', '0.5s');
+      } else if (distance < 60 * 60 * 1000) { // Unter 1 Std
+        document.documentElement.style.setProperty('--pulse-speed', '1s');
+      } else {
+        document.documentElement.style.setProperty('--pulse-speed', '2s');
+      }
+
+      // Fortschrittsbalken & Farbverlauf
+      const progressPercent = Math.max(0, Math.min(100, (distance / totalDuration) * 100));
+      progressBar.style.width = `${progressPercent}%`;
+
+      // Farbänderung des Balkens (Grün -> Hellgrün -> Gelb -> Orange -> Rot)
+      if (progressPercent > 75) {
+        progressBar.style.backgroundColor = "#10b981"; // Grün
+      } else if (progressPercent > 50) {
+        progressBar.style.backgroundColor = "#84cc16"; // Hellgrün
+      } else if (progressPercent > 25) {
+        progressBar.style.backgroundColor = "#eab308"; // Gelb
+      } else if (progressPercent > 10) {
+        progressBar.style.backgroundColor = "#f97316"; // Orange
+      } else {
+        progressBar.style.backgroundColor = "#ef4444"; // Rot
+      }
+    }
+
+    // Timer initialisieren und jede Sekunde updaten
+    updateTimer();
+    setInterval(updateTimer, 1000);
 
     // Mods aus Supabase laden und anzeigen
     async function fetchMods() {
@@ -379,7 +529,6 @@
 
         if (error) throw error;
 
-        // Liste nach dem Löschen direkt aktualisieren
         fetchMods();
 
       } catch (err) {
@@ -388,7 +537,7 @@
       }
     }
 
-    // Event Listener für die Sortierung
+    // Event Listener für Sortierung
     sortSelect.addEventListener("change", () => {
       fetchMods();
     });
@@ -396,6 +545,12 @@
     // Formular Absenden
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      
+      if (isExpired) {
+        alert("Die Frist ist leider abgelaufen! 💀");
+        return;
+      }
+
       statusMessage.style.display = "none";
 
       const modName = modNameInput.value.trim();
@@ -421,7 +576,6 @@
         statusMessage.className = "success";
         form.reset();
         
-        // Liste neu laden
         fetchMods();
 
       } catch (err) {
@@ -429,8 +583,10 @@
         statusMessage.textContent = "Fehler beim Einreichen. Bitte erneut versuchen!";
         statusMessage.className = "error";
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Mod einreichen 🚀";
+        if (!isExpired) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Mod einreichen 🚀";
+        }
       }
     });
 
