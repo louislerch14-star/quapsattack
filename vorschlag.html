@@ -78,7 +78,7 @@
       font-size: 0.95rem;
     }
 
-    input[type="text"], input[type="url"] {
+    input[type="text"], input[type="url"], select {
       width: 100%;
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid var(--border-color);
@@ -91,8 +91,13 @@
       transition: border-color 0.2s ease;
     }
 
-    input[type="text"]:focus, input[type="url"]:focus {
+    input[type="text"]:focus, input[type="url"]:focus, select:focus {
       border-color: var(--accent-color);
+    }
+
+    select option {
+      background-color: var(--card-bg);
+      color: var(--text-main);
     }
 
     .btn {
@@ -152,10 +157,38 @@
       border-top: 1px solid var(--border-color);
     }
 
+    .mod-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
     .mod-list-section h2 {
       font-size: 1.3rem;
-      margin-bottom: 15px;
       color: #ffffff;
+    }
+
+    .sort-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sort-container label {
+      margin-bottom: 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .sort-container select {
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      width: auto;
+      cursor: pointer;
     }
 
     .mod-card {
@@ -254,7 +287,17 @@
 
     <!-- LISTE BEREITS EINGEREICHTER MODS -->
     <div class="mod-list-section">
-      <h2>Eingereichte Mods</h2>
+      <div class="mod-list-header">
+        <h2>Eingereichte Mods</h2>
+        <div class="sort-container">
+          <label for="sortSelect">Sortieren:</label>
+          <select id="sortSelect">
+            <option value="newest">Neueste zuerst</option>
+            <option value="alpha-asc">Alphabetisch (A-Z)</option>
+            <option value="alpha-desc">Alphabetisch (Z-A)</option>
+          </select>
+        </div>
+      </div>
       <div id="modList">Lädt Mods...</div>
     </div>
   </div>
@@ -272,14 +315,23 @@
     const submitBtn = document.getElementById("submitBtn");
     const statusMessage = document.getElementById("statusMessage");
     const modList = document.getElementById("modList");
+    const sortSelect = document.getElementById("sortSelect");
 
     // Mods aus Supabase laden und anzeigen
     async function fetchMods() {
       try {
-        const { data, error } = await supabaseClient
-          .from("modpack_suggestions")
-          .select("*")
-          .order("created_at", { ascending: false });
+        let query = supabaseClient.from("modpack_suggestions").select("*");
+
+        const sortOption = sortSelect.value;
+        if (sortOption === "alpha-asc") {
+          query = query.order("mod_name", { ascending: true });
+        } else if (sortOption === "alpha-desc") {
+          query = query.order("mod_name", { ascending: false });
+        } else {
+          query = query.order("created_at", { ascending: false });
+        }
+
+        const { data, error } = await query;
 
         if (error) throw error;
 
@@ -335,6 +387,11 @@
         alert("Fehler beim Löschen der Mod!");
       }
     }
+
+    // Event Listener für die Sortierung
+    sortSelect.addEventListener("change", () => {
+      fetchMods();
+    });
 
     // Formular Absenden
     form.addEventListener("submit", async (e) => {
