@@ -19,8 +19,8 @@
       --border-color: rgba(255, 255, 255, 0.08);
       --success-color: #10b981;
       --error-color: #ef4444;
-      --pulse-speed: 2s;
-      --bar-color: #10b981;
+      --pulse-speed: 0s;
+      --bar-color: #ef4444;
       --curseforge-color: #f16436;
       --curseforge-hover: #e04e1b;
     }
@@ -111,7 +111,7 @@
       fill: currentColor;
     }
 
-    /* TIMER CONTAINER & ANIMATION */
+    /* TIMER CONTAINER */
     .timer-card {
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid var(--border-color);
@@ -125,7 +125,7 @@
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: var(--text-muted);
+      color: var(--error-color);
       margin-bottom: 6px;
       font-weight: 600;
     }
@@ -136,13 +136,6 @@
       letter-spacing: 2px;
       color: #ffffff;
       font-variant-numeric: tabular-nums;
-      animation: pulse var(--pulse-speed) infinite ease-in-out;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.04); opacity: 0.75; text-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
-      100% { transform: scale(1); opacity: 1; }
     }
 
     .progress-bar-container {
@@ -156,10 +149,9 @@
 
     .progress-bar {
       height: 100%;
-      width: 100%;
-      background-color: var(--bar-color);
+      width: 0%;
+      background-color: var(--error-color);
       border-radius: 6px;
-      transition: width 1s linear, background-color 1s ease;
     }
 
     .form-group {
@@ -180,46 +172,22 @@
       border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 14px;
-      color: var(--text-main);
+      color: var(--text-muted);
       font-family: inherit;
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s ease;
-    }
-
-    input[type="text"]:focus, input[type="url"]:focus, select:focus {
-      border-color: var(--accent-color);
-    }
-
-    select option {
-      background-color: var(--card-bg);
-      color: var(--text-main);
+      cursor: not-allowed;
     }
 
     .btn {
       width: 100%;
-      background: var(--accent-color);
-      color: #ffffff;
+      background: #374151;
+      color: #9ca3af;
       border: none;
       border-radius: 10px;
       padding: 14px;
       font-size: 1rem;
       font-weight: 700;
-      cursor: pointer;
-      transition: background-color 0.2s ease, transform 0.1s ease;
-    }
-
-    .btn:hover {
-      background: var(--accent-hover);
-    }
-
-    .btn:active {
-      transform: scale(0.99);
-    }
-
-    .btn:disabled {
-      background: #374151;
-      color: #9ca3af;
       cursor: not-allowed;
     }
 
@@ -229,21 +197,10 @@
       border-radius: 8px;
       text-align: center;
       font-weight: 600;
-      display: none;
-    }
-
-    #statusMessage.success {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid var(--success-color);
-      color: #6ee7b7;
       display: block;
-    }
-
-    #statusMessage.error {
       background: rgba(239, 68, 68, 0.15);
       border: 1px solid var(--error-color);
       color: #fca5a5;
-      display: block;
     }
 
     /* Liste der eingereichten Mods */
@@ -285,6 +242,7 @@
       font-size: 0.85rem;
       width: auto;
       cursor: pointer;
+      color: var(--text-main);
     }
 
     .mod-card {
@@ -361,7 +319,7 @@
   <div class="container">
     <div class="header">
       <h1>Minecraft Modpack Vorschläge</h1>
-      <p class="subtitle">Reiche deine Lieblings-Mods von CurseForge oder Modrinth ein!</p>
+      <p class="subtitle">Einsendungsphase ist beendet!</p>
       
       <!-- STYLISHER CURSEFORGE BUTTON -->
       <div class="curseforge-btn-container">
@@ -374,31 +332,31 @@
       </div>
     </div>
 
-    <!-- LIVE COUNTDOWN TIMER -->
+    <!-- TIMER CARD DEAKTIVIERT -->
     <div class="timer-card">
-      <div class="timer-title">Einsendeschluss: Morgen 15:00 Uhr</div>
-      <div class="timer-display" id="timerDisplay">00h 00m 00s</div>
+      <div class="timer-title">EINSENDESCHLUSS ERREICHT</div>
+      <div class="timer-display">ABGELAUFEN 🔒</div>
       <div class="progress-bar-container">
-        <div class="progress-bar" id="progressBar"></div>
+        <div class="progress-bar"></div>
       </div>
     </div>
 
-    <!-- EINGABEFORMULAR -->
+    <!-- EINGABEFORMULAR DEAKTIVIERT -->
     <form id="modForm">
       <div class="form-group">
-        <label for="modName">Mod Name (Pflichtfeld)</label>
-        <input type="text" id="modName" placeholder="z. B. Create, Mekanism, JEI" required>
+        <label for="modName">Mod Name</label>
+        <input type="text" id="modName" placeholder="Einsendeschluss vorbei..." disabled>
       </div>
 
       <div class="form-group">
-        <label for="modUrl">CurseForge oder Modrinth Link (Pflichtfeld)</label>
-        <input type="url" id="modUrl" placeholder="https://www.curseforge.com/minecraft/mc-mods/..." required>
+        <label for="modUrl">CurseForge oder Modrinth Link</label>
+        <input type="url" id="modUrl" placeholder="Einsendeschluss vorbei..." disabled>
       </div>
 
-      <button type="submit" class="btn" id="submitBtn">Mod einreichen 🚀</button>
+      <button type="submit" class="btn" id="submitBtn" disabled>Einsendeschluss vorbei 🔒</button>
     </form>
 
-    <div id="statusMessage"></div>
+    <div id="statusMessage">Der Einsendeschluss ist erreicht. Es können keine neuen Mods mehr eingereicht werden!</div>
 
     <!-- LISTE BEREITS EINGEREICHTER MODS -->
     <div class="mod-list-section">
@@ -424,101 +382,8 @@
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const form = document.getElementById("modForm");
-    const modNameInput = document.getElementById("modName");
-    const modUrlInput = document.getElementById("modUrl");
-    const submitBtn = document.getElementById("submitBtn");
-    const statusMessage = document.getElementById("statusMessage");
     const modList = document.getElementById("modList");
     const sortSelect = document.getElementById("sortSelect");
-
-    const timerDisplay = document.getElementById("timerDisplay");
-    const progressBar = document.getElementById("progressBar");
-
-    // --- COUNTDOWN LOGIK (Berlin Zeitzone, Ziel: Morgen 15:00 Uhr) ---
-    function getTargetDeadline() {
-      const now = new Date();
-      // Heutigen Tag um 15:00 Uhr Berliner Zeit berechnen
-      const berlinOffsetMinutes = -now.getTimezoneOffset(); // Berücksichtigt Sommer/Winterzeit des Browsers
-      
-      let deadline = new Date();
-      deadline.setDate(now.getDate() + 1); // Morgen
-      deadline.setHours(15, 0, 0, 0);      // 15:00 Uhr
-
-      return deadline;
-    }
-
-    const startTime = new Date().getTime();
-    const targetDeadline = getTargetDeadline().getTime();
-    const totalDuration = targetDeadline - startTime;
-
-    let isExpired = false;
-
-    function updateTimer() {
-      const now = new Date().getTime();
-      const distance = targetDeadline - now;
-
-      if (distance <= 0) {
-        isExpired = true;
-        timerDisplay.textContent = "ABGELAUFEN 💀";
-        document.documentElement.style.setProperty('--pulse-speed', '0s');
-        progressBar.style.width = "0%";
-        progressBar.style.backgroundColor = "#ef4444";
-
-        // Formular deaktivieren
-        modNameInput.disabled = true;
-        modUrlInput.disabled = true;
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Einsendeschluss vorbei 🔒";
-
-        statusMessage.textContent = "Der Einsendeschluss ist erreicht. Es können keine neuen Mods mehr eingereicht werden!";
-        statusMessage.className = "error";
-        return;
-      }
-
-      // Zeit-Berechnungen
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      const formattedH = String(hours).padStart(2, '0');
-      const formattedM = String(minutes).padStart(2, '0');
-      const formattedS = String(seconds).padStart(2, '0');
-
-      timerDisplay.textContent = `${formattedH}h ${formattedM}m ${formattedS}s`;
-
-      // Dynamische Pulsations-Geschwindigkeit
-      if (distance < 60 * 1000) { // Unter 1 Min
-        document.documentElement.style.setProperty('--pulse-speed', '0.2s');
-      } else if (distance < 10 * 60 * 1000) { // Unter 10 Min
-        document.documentElement.style.setProperty('--pulse-speed', '0.5s');
-      } else if (distance < 60 * 60 * 1000) { // Unter 1 Std
-        document.documentElement.style.setProperty('--pulse-speed', '1s');
-      } else {
-        document.documentElement.style.setProperty('--pulse-speed', '2s');
-      }
-
-      // Fortschrittsbalken & Farbverlauf
-      const progressPercent = Math.max(0, Math.min(100, (distance / totalDuration) * 100));
-      progressBar.style.width = `${progressPercent}%`;
-
-      // Farbänderung des Balkens (Grün -> Hellgrün -> Gelb -> Orange -> Rot)
-      if (progressPercent > 75) {
-        progressBar.style.backgroundColor = "#10b981"; // Grün
-      } else if (progressPercent > 50) {
-        progressBar.style.backgroundColor = "#84cc16"; // Hellgrün
-      } else if (progressPercent > 25) {
-        progressBar.style.backgroundColor = "#eab308"; // Gelb
-      } else if (progressPercent > 10) {
-        progressBar.style.backgroundColor = "#f97316"; // Orange
-      } else {
-        progressBar.style.backgroundColor = "#ef4444"; // Rot
-      }
-    }
-
-    // Timer initialisieren und jede Sekunde updaten
-    updateTimer();
-    setInterval(updateTimer, 1000);
 
     // Mods aus Supabase laden und anzeigen
     async function fetchMods() {
@@ -539,7 +404,7 @@
         if (error) throw error;
 
         if (data.length === 0) {
-          modList.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">Noch keine Mods eingereicht. Sei der Erste! 😎</p>`;
+          modList.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">Keine Mods eingereicht.</p>`;
           return;
         }
 
@@ -568,7 +433,7 @@
       }
     }
 
-    // Mod aus Supabase löschen
+    // Mod aus Supabase löschen (Bleibt für dich als Admin erhalten)
     async function deleteMod(id) {
       if (!confirm("Möchtest du diese Mod wirklich aus der Liste entfernen? 💀")) {
         return;
@@ -595,52 +460,10 @@
       fetchMods();
     });
 
-    // Formular Absenden
-    form.addEventListener("submit", async (e) => {
+    // Blockiere Absenden-Versuche komplett
+    document.getElementById("modForm").addEventListener("submit", (e) => {
       e.preventDefault();
-      
-      if (isExpired) {
-        alert("Die Frist ist leider abgelaufen! 💀");
-        return;
-      }
-
-      statusMessage.style.display = "none";
-
-      const modName = modNameInput.value.trim();
-      const modUrl = modUrlInput.value.trim();
-
-      if (!modName || !modUrl) {
-        statusMessage.textContent = "Bitte alle Felder ausfüllen!";
-        statusMessage.className = "error";
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Wird gespeichert...";
-
-      try {
-        const { error } = await supabaseClient
-          .from("modpack_suggestions")
-          .insert([{ mod_name: modName, mod_url: modUrl }]);
-
-        if (error) throw error;
-
-        statusMessage.textContent = "Mod-Vorschlag erfolgreich eingereicht! 🔥";
-        statusMessage.className = "success";
-        form.reset();
-        
-        fetchMods();
-
-      } catch (err) {
-        console.error("Fehler beim Speichern:", err);
-        statusMessage.textContent = "Fehler beim Einreichen. Bitte erneut versuchen!";
-        statusMessage.className = "error";
-      } finally {
-        if (!isExpired) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Mod einreichen 🚀";
-        }
-      }
+      alert("Die Einsendungsphase ist abgelaufen! 🔒");
     });
 
     // Hilfsfunktion gegen XSS
