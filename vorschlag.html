@@ -21,6 +21,8 @@
       --error-color: #ef4444;
       --pulse-speed: 2s;
       --bar-color: #10b981;
+      --curseforge-color: #f16436;
+      --curseforge-hover: #e04e1b;
     }
 
     * {
@@ -66,6 +68,47 @@
     .subtitle {
       color: var(--text-muted);
       font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    /* CURSEFORGE LINK BUTTON STYLES */
+    .curseforge-btn-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    .curseforge-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #f16436 0%, #e04e1b 100%);
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 12px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(241, 100, 54, 0.3);
+      transition: all 0.25s ease;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .curseforge-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(241, 100, 54, 0.5);
+      background: linear-gradient(135deg, #ff7344 0%, #f16436 100%);
+    }
+
+    .curseforge-btn:active {
+      transform: translateY(0);
+    }
+
+    .curseforge-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
     }
 
     /* TIMER CONTAINER & ANIMATION */
@@ -319,6 +362,16 @@
     <div class="header">
       <h1>Minecraft Modpack Vorschläge</h1>
       <p class="subtitle">Reiche deine Lieblings-Mods von CurseForge oder Modrinth ein!</p>
+      
+      <!-- STYLISHER CURSEFORGE BUTTON -->
+      <div class="curseforge-btn-container">
+        <a href="https://www.curseforge.com/minecraft/modpacks/chillcraft-only-relax" target="_blank" rel="noopener noreferrer" class="curseforge-btn">
+          <svg viewBox="0 0 24 24">
+            <path d="M18.812 10.125s1.438-1.782.938-4.125c-.438 1.563-1.813 2.125-1.813 2.125s-.375-2.875-2.875-3.813c.875 1.563.313 3.313.313 3.313s-1.813-1.063-3.688-.25c1.188.75 1.438 2.063 1.438 2.063s-1.875-.375-3.188.625c1.125.438 1.5 1.625 1.5 1.625s-2.938.125-3.625 2.125c-.25.75-.188 1.625 0 2.375-1.375-.625-1.938-2.063-1.938-2.063s-.688 1.813.5 3.563c1.188 1.75 3.313 2.125 3.313 2.125s-1.125 1.063-.5 2.125c.625 1.063 2.188.688 2.188.688s.063 1.188 1.125 1.5c1.063.313 2.063-.375 2.063-.375s.563.813 1.563.688c1-.125 1.313-1.125 1.313-1.125s1.25.125 1.75-.75c.5-.875-.125-1.75-.125-1.75s1.375-.5 1.375-1.875c0-1.375-1.25-1.875-1.25-1.875s1.438-.938 1.125-2.563c-.313-1.625-1.813-1.875-1.813-1.875z"/>
+          </svg>
+          <span>Chillcraft Modpack auf CurseForge</span>
+        </a>
+      </div>
     </div>
 
     <!-- LIVE COUNTDOWN TIMER -->
