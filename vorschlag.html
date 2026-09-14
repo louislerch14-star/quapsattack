@@ -419,9 +419,9 @@
     const modList = document.getElementById("modList");
     const sortSelect = document.getElementById("sortSelect");
 
-    // Timer Konfiguration (Passe das Enddatum hier an!)
-    const COUNTDOWN_TARGET = new Date("2026-10-01T23:59:59").getTime(); 
-    const COUNTDOWN_START = new Date("2026-09-01T00:00:00").getTime();
+    // Enddatum: 14. September 2026, 15:00:00 Uhr deutscher Zeit (MESZ / UTC+2)
+    const COUNTDOWN_TARGET = new Date("2026-09-14T15:00:00+02:00").getTime(); 
+    const COUNTDOWN_START = new Date("2026-09-14T00:00:00+02:00").getTime();
 
     function updateTimer() {
       const now = new Date().getTime();
