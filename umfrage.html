@@ -5,7 +5,7 @@
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quapsattack PC App - Umfrage und Redesign</title>
+  <title>Quapsattack App - Umfrage und Redesign</title>
 
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -219,15 +219,15 @@
       font-weight: 600;
     }
 
-    /* Modal Pop-up */
+    /* Großes Full-Page Modal Pop-up */
     .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
       display: none;
       justify-content: center;
       align-items: center;
@@ -241,10 +241,12 @@
 
     .modal-content {
       width: 100%;
-      max-width: 650px;
-      border-radius: 16px;
-      padding: 25px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+      max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.9);
       position: relative;
       animation: modalSlide 0.3s ease forwards;
     }
@@ -254,14 +256,14 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
-    /* Die 8 verschiedenen Style Previews im Popup */
+    /* Design Themes für die volle Vorschau-Seite */
     .preview-cyberpunk {
       background: #0d0221;
       border: 2px solid #ff007f;
       color: #00f6ff;
       font-family: 'Courier New', monospace;
-      box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
     }
+    .preview-cyberpunk .demo-box { background: rgba(255,0,127,0.1); border: 1px solid #ff007f; }
     .preview-cyberpunk .demo-btn { background: #ff007f; color: #fff; border: none; box-shadow: 0 0 10px #ff007f; }
 
     .preview-clean {
@@ -270,6 +272,7 @@
       color: #0f172a;
       font-family: sans-serif;
     }
+    .preview-clean .demo-box { background: #ffffff; border: 1px solid #e2e8f0; }
     .preview-clean .demo-btn { background: #2563eb; color: #fff; border: none; }
 
     .preview-retro {
@@ -278,14 +281,16 @@
       color: #55ff55;
       font-family: monospace;
     }
+    .preview-retro .demo-box { background: #1a120e; border: 2px solid #5c4033; }
     .preview-retro .demo-btn { background: #55ff55; color: #000; font-weight: bold; border: 2px solid #00aa00; }
 
     .preview-glass {
-      background: rgba(255, 255, 255, 0.07);
+      background: rgba(20, 20, 35, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(16px);
       color: #ffffff;
     }
+    .preview-glass .demo-box { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
     .preview-glass .demo-btn { background: rgba(255, 255, 255, 0.2); color: #fff; border: 1px solid rgba(255, 255, 255, 0.4); }
 
     .preview-matrix {
@@ -293,8 +298,8 @@
       border: 2px solid #00ff41;
       color: #00ff41;
       font-family: monospace;
-      box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
     }
+    .preview-matrix .demo-box { background: #051505; border: 1px solid #00ff41; }
     .preview-matrix .demo-btn { background: #003b00; color: #00ff41; border: 1px solid #00ff41; }
 
     .preview-synthwave {
@@ -303,6 +308,7 @@
       color: #ff007f;
       font-family: sans-serif;
     }
+    .preview-synthwave .demo-box { background: rgba(255,0,127,0.1); border: 1px solid #ff7700; }
     .preview-synthwave .demo-btn { background: linear-gradient(45deg, #ff007f, #ff7700); color: #fff; border: none; }
 
     .preview-minimal {
@@ -311,6 +317,7 @@
       color: #888888;
       font-family: sans-serif;
     }
+    .preview-minimal .demo-box { background: #111111; border: 1px solid #333333; }
     .preview-minimal .demo-btn { background: #ffffff; color: #000000; border: none; font-weight: 600; }
 
     .preview-anime {
@@ -318,23 +325,64 @@
       border: 3px solid #000000;
       color: #2d3748;
       font-family: sans-serif;
-      box-shadow: 5px 5px 0px #000000;
+      box-shadow: 6px 6px 0px #000000;
     }
+    .preview-anime .demo-box { background: #ffffff; border: 2px solid #000000; box-shadow: 3px 3px 0px #000; }
     .preview-anime .demo-btn { background: #ff4757; color: #ffffff; border: 2px solid #000000; box-shadow: 3px 3px 0px #000000; }
 
-    .demo-window {
-      border-radius: 10px;
+    /* Layout der vollen Vorschau Seite */
+    .full-app-preview {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .preview-sidebar {
       padding: 15px;
-      margin: 15px 0;
-      background: rgba(0,0,0,0.15);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preview-sidebar a {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      opacity: 0.8;
+      cursor: pointer;
+    }
+
+    .preview-sidebar a.active-tab {
+      opacity: 1;
+      background: rgba(99, 102, 241, 0.3);
+    }
+
+    .preview-main-area {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .demo-box {
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .demo-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
     .demo-btn {
-      padding: 10px 18px;
-      border-radius: 8px;
+      padding: 8px 14px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 0.9rem;
-      margin-top: 10px;
+      font-size: 0.85rem;
+      margin-top: 8px;
     }
 
     /* Checkbox Styles */
@@ -590,22 +638,13 @@
       display: block;
     }
 
-    @media (max-width: 600px) {
-      .container {
-        padding: 20px;
-      }
-      .rating-options {
-        flex-direction: column;
-      }
-      .styles-grid {
-        grid-template-columns: 1fr;
-      }
-      .pagination-bar {
-        flex-wrap: wrap;
-      }
-      .page-num {
-        min-width: 35px;
-      }
+    @media (max-width: 650px) {
+      .container { padding: 20px; }
+      .rating-options { flex-direction: column; }
+      .styles-grid { grid-template-columns: 1fr; }
+      .full-app-preview { grid-template-columns: 1fr; }
+      .pagination-bar { flex-wrap: wrap; }
+      .page-num { min-width: 35px; }
     }
   </style>
 </head>
@@ -616,17 +655,17 @@
     <div class="header">
       <img src="unnamed.jpg" alt="Quapsattack Logo" class="logo">
       <div class="header-text">
-        <h1>Quapsattack PC App</h1>
-        <p class="subtitle">Windows App Umfrage und neues Design</p>
+        <h1>Quapsattack Project App</h1>
+        <p class="subtitle">Windows App Umfrage und neues Redesign</p>
       </div>
     </div>
 
     <!-- STEP 0: Intro & 8 Style Karten -->
     <div id="step-0" class="step active">
       <div class="privacy-notice">
-        <h2>Umfrage zur neuen Windows App 🖥️</h2>
+        <h2>Umfrage zur neuen Quapsattack Projekt App 🖥️</h2>
         <p id="introText">
-          Hey leute ich baue gerade an einer eigenen <span class="highlight-bold-underline">Windows PC App für Quapsattack</span> und will dem ganzen gleichzeitig ein neues Design verpassen. Ich habe unten 8 verschiedene Styles gebaut die man sich im Popup angucken kann. Klickt einfach drauf sucht euch euer Lieblingsdesign aus und antwortet kurz auf die Fragen. Die Umfrage ist wie immer <span class="highlight-bold-underline">zu 100 prozent anonym</span> und hilft mir mega weiter! 🚀
+          Hey leute wir planen eine allgemeine <span class="highlight-bold-underline">Windows App über das gesamte Quapsattack Projekt</span> wo alles zusammenläuft. Keine Sorge das wird kein Launcher, sondern eine riesige Hub App für News, Community, Infos und alle zukünftigen Ideen! Unten sind 8 verschiedene Styles – klickt auf einen Style um eine <span class="highlight-bold-underline">volle App Vorschau Seite</span> zu öffnen. Die Umfrage ist <span class="highlight-bold-underline">zu 100 prozent anonym</span>! 🚀
         </p>
         
         <!-- Vorlesebutton -->
@@ -635,62 +674,62 @@
           <button type="button" class="btn-tts" id="stopAudioBtn" style="display: none;">⏹ Stoppen</button>
         </div>
 
-        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 12px; margin-top: 20px;">Wähle dein Lieblingsdesign (draufklicken für Vorschau Popup):</h3>
+        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 12px; margin-top: 20px;">Wähle dein Lieblingsdesign (Klick öffnet die große Vorschau):</h3>
         
         <div class="styles-grid">
           <div class="style-card-option" id="card-cyberpunk" onclick="openStylePreview('cyberpunk')">
             <div class="style-title">⚡ 1. Cyberpunk Gaming</div>
-            <div class="style-desc">Pinker Neon Glow dunkler Look und futuristischer Style</div>
-            <span class="badge-preview">👁️ Popup Vorschau</span>
+            <div class="style-desc">Neon Glow, dunkler Look und futuristischer Gamer Vibe</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
 
           <div class="style-card-option" id="card-clean" onclick="openStylePreview('clean')">
             <div class="style-title">💎 2. Clean Modern</div>
-            <div class="style-desc">Sehr helle und aufgeräumte Oberfläche ohne schnickschnack</div>
-            <span class="badge-preview">👁️ Popup Vorschau</span>
+            <div class="style-desc">Sehr helle und aufgeräumte Oberfläche mit klaren Kanten</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
 
           <div class="style-card-option" id="card-retro" onclick="openStylePreview('retro')">
-            <div class="style-title">🧱 3. Retro Pixel Minecraft</div>
-            <div class="style-desc">Klassische Minecraft Block Optik mit braunem Pixel Look</div>
-            <span class="badge-preview">👁️ Popup Vorschau</span>
+            <div class="style-title">🧱 3. Retro Pixel Sandbox</div>
+            <div class="style-desc">Nostalgischer Retro Look mit pixeligen Elementen</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
 
           <div class="style-card-option" id="card-glass" onclick="openStylePreview('glass')">
-            <div class="style-title">🔮 4. Dark Glassmorphic</div>
+            <div class="style-title">🔮 4. Dark Glassmorphism</div>
             <div class="style-desc">Transparenter Glas Look mit weichen Schatten im Darkmode</div>
-            <span class="badge-preview">👁️ Popup Vorschau</span>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
 
           <div class="style-card-option" id="card-matrix" onclick="openStylePreview('matrix')">
             <div class="style-title">📟 5. Matrix Terminal</div>
-            <div class="style-desc">Komplett schwarzer Hintergrund mit leuchtend grüner Schrift</div>
-            <span class="badge-preview">👁️ Popup Vorschau</span>
+            <div class="style-desc">Schwarzer Bildschirm mit leuchtend grüner Hacker Schrift</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
 
           <div class="style-card-option" id="card-synthwave" onclick="openStylePreview('synthwave')">
             <div class="style-title">🌅 6. Neon Synthwave</div>
-            <div class="style-desc">80s Vibe mit lila und orange Farbverläufen</div>
-            <span class="badge-preview">👁️ Popup Vorschau</span>
+            <div class="style-desc">80er Jahre Vibes mit lila und orangenen Farbverläufen</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
 
           <div class="style-card-option" id="card-minimal" onclick="openStylePreview('minimal')">
             <div class="style-title">🖤 7. Minimal Deep Dark</div>
             <div class="style-desc">Extrem schlichtes tiefschwarz mit weißem Kontrast</div>
-            <span class="badge-preview">👁️ Popup Vorschau</span>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
 
           <div class="style-card-option" id="card-anime" onclick="openStylePreview('anime')">
             <div class="style-title">🎨 8. Anime Comic Style</div>
-            <div class="style-desc">Helle Farben dicke schwarze Ränder und Pop art Style</div>
-            <span class="badge-preview">👁️ Popup Vorschau</span>
+            <div class="style-desc">Dicke schwarze Ränder, bunte Elemente und Pop Art Vibe</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
         </div>
 
         <input type="hidden" id="selectedStyleInput" name="preferredStyle" value="Noch kein Style gewählt">
 
         <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Warum gefällt dir genau dieser Style am besten?</label>
-        <textarea id="styleReason" placeholder="Schreib hier kurz rein warum der Style am besten zu Quapsattack passt..."></textarea>
+        <textarea id="styleReason" placeholder="Schreib hier kurz rein warum dieser Look perfekt zur Quapsattack App passt..."></textarea>
 
         <label class="checkbox-container" style="margin-top: 20px;">
           <input type="checkbox" id="acceptNotice">
@@ -728,20 +767,50 @@
     <div id="statusMessage"></div>
   </div>
 
-  <!-- Popup für Style Vorschau -->
+  <!-- Großes Full-Page Modal für die App-Vorschau -->
   <div class="modal-overlay" id="styleModal">
     <div class="modal-content" id="modalContainer">
-      <h2 id="modalTitle">Style Vorschau</h2>
-      <p id="modalDesc" style="margin-bottom: 10px; opacity: 0.8;">So könnte die Quapsattack PC App in diesem Design aussehen:</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2 id="modalTitle">Vorschau</h2>
+        <button type="button" onclick="closeStyleModal()" style="background:none; border:none; color:inherit; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+      <p id="modalDesc" style="margin-bottom: 15px; opacity: 0.8; font-size: 0.9rem;"></p>
 
-      <div class="demo-window">
-        <h3>Quapsattack Launcher (Preview)</h3>
-        <p>Server Status: <span style="font-weight: bold;">ONLINE</span> (24 Spieler gerade am am Start)</p>
-        <div style="margin-top: 10px; font-size: 0.85rem;">News: Neues Server Update steht bereit zum Download!</div>
-        <button type="button" class="demo-btn">🎮 Spiel Jetzt Starten</button>
+      <!-- Die volle App Vorschau Seite im Modal -->
+      <div class="full-app-preview">
+        <!-- Sidebar Navigation -->
+        <div class="preview-sidebar demo-box">
+          <div style="font-weight: bold; margin-bottom: 10px; font-size: 0.9rem;">Quapsattack Hub</div>
+          <a class="active-tab">🏠 Home & Übersicht</a>
+          <a>📰 News & Updates</a>
+          <a>💬 Community Feed</a>
+          <a>📊 Projekt Statistiken</a>
+          <a>⚙️ App Einstellungen</a>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="preview-main-area">
+          <div class="demo-box">
+            <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Willkommen zurück, Quaps!</h3>
+            <p style="font-size: 0.85rem; opacity: 0.8;">Hier siehst du alle wichtigen Infos rund um das gesamte Projekt auf einen Blick.</p>
+          </div>
+
+          <div class="demo-grid-2">
+            <div class="demo-box">
+              <h4 style="font-size: 0.95rem; margin-bottom: 5px;">🔥 Aktuelle Highlights</h4>
+              <p style="font-size: 0.8rem; opacity: 0.8;">Schau dir die neuesten Umfragen, Community Projekte und kommenden Aktionen an.</p>
+              <button type="button" class="demo-btn">Mehr erfahren</button>
+            </div>
+            <div class="demo-box">
+              <h4 style="font-size: 0.95rem; margin-bottom: 5px;">💡 Deine Ideen</h4>
+              <p style="font-size: 0.8rem; opacity: 0.8;">Reiche direkt über die App neue Vorschläge ein und stimme über Features ab.</p>
+              <button type="button" class="demo-btn">Vorschlag einreichen</button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="button-group" style="margin-top: 20px;">
+      <div class="button-group" style="margin-top: 25px;">
         <button type="button" class="btn btn-secondary" onclick="closeStyleModal()">Anderen Style ansehen</button>
         <button type="button" class="btn" onclick="confirmSelectStyle()">Diesen Style auswählen</button>
       </div>
@@ -757,50 +826,50 @@
     // 8 Style Previews Konfiguration
     const stylePreviews = {
       cyberpunk: {
-        title: "⚡ Cyberpunk Gaming",
-        desc: "Nachtschwarzer Hintergrund mit neongrünen und pinken Akzenten und Gamer Optik",
+        title: "⚡ Cyberpunk Gaming Design",
+        desc: "Volle Vorschau der App im Neon Cyberpunk Look mit dunklem Hintergrund und Leuchteffekten.",
         class: "preview-cyberpunk",
         name: "Cyberpunk Gaming"
       },
       clean: {
-        title: "💎 Clean Modern",
-        desc: "Sehr aufgeräumtes helles Design mit modernen Buttons und klaren Linien",
+        title: "💎 Clean Modern Design",
+        desc: "Volle Vorschau der App im hellen, ultra-sauberen und modernen Stil.",
         class: "preview-clean",
         name: "Clean Modern"
       },
       retro: {
-        title: "🧱 Retro Pixel Minecraft",
-        desc: "Minecraft Vibe mit Pixel Schriftarten braunen Tönen und grünem Gras Look",
+        title: "🧱 Retro Pixel Sandbox Design",
+        desc: "Volle Vorschau der App im klassischen Block und Pixel Vibe.",
         class: "preview-retro",
-        name: "Retro Pixel Minecraft"
+        name: "Retro Pixel Sandbox"
       },
       glass: {
-        title: "🔮 Dark Glassmorphism",
-        desc: "Leicht durchsichtige Fenster mit Milchglas Effekt auf dunklem Hintergrund",
+        title: "🔮 Dark Glassmorphism Design",
+        desc: "Volle Vorschau der App mit transparenten Milchglas Elementen im Darkmode.",
         class: "preview-glass",
         name: "Dark Glassmorphism"
       },
       matrix: {
-        title: "📟 Matrix Terminal",
-        desc: "Komplett schwarzer Bildschirm mit grüner Computerschrift wie bei Hackern",
+        title: "📟 Matrix Terminal Design",
+        desc: "Volle Vorschau der App im Hacker Stil mit komplett schwarzem Bildschirm und grüner Schrift.",
         class: "preview-matrix",
         name: "Matrix Terminal"
       },
       synthwave: {
-        title: "🌅 Neon Synthwave",
-        desc: "Lila und orangene Farbverläufe mit 80er Retro Style",
+        title: "🌅 Neon Synthwave Design",
+        desc: "Volle Vorschau der App im 80er Jahre Retro Wave Stil mit lila und orangen Tönen.",
         class: "preview-synthwave",
         name: "Neon Synthwave"
       },
       minimal: {
-        title: "🖤 Minimal Deep Dark",
-        desc: "Extrem edles tiefschwarz mit weißem Text ohne bunten Schnickschnack",
+        title: "🖤 Minimal Deep Dark Design",
+        desc: "Volle Vorschau der App im extrem schlichten und stylischen Tiefschwarz.",
         class: "preview-minimal",
         name: "Minimal Deep Dark"
       },
       anime: {
-        title: "🎨 Anime Comic Style",
-        desc: "Dicke schwarze Comic Ränder bunte Buttons und Pop art Design",
+        title: "🎨 Anime Comic Style Design",
+        desc: "Volle Vorschau der App im bunten Comic Look mit dicken schwarzen Umrandungen.",
         class: "preview-anime",
         name: "Anime Comic Style"
       }
@@ -836,54 +905,54 @@
       closeStyleModal();
     }
 
-    // Fragen für die PC App
+    // Fragen für die Allgemeine Projekt App
     const questionsConfig = [
       {
-        title: "Punkt 1: Autostart und Windows Tray",
-        description: "Wie findest du die Idee dass die App unten bei Windows in der Leiste minimiert mitläuft damit sie sofort da ist?"
+        title: "Punkt 1: App Navigation und Übersicht",
+        description: "Wie findest du die Aufteilung in verschiedene Bereiche wie News, Community und Statistiken in der App?"
       },
       {
-        title: "Punkt 2: Windows Benachrichtigungen",
-        description: "Soll die PC App dir direkt unten rechts in Windows Nachrichten anzeigen wenn Events starten oder News da sind?"
+        title: "Punkt 2: Projekt News und Updates",
+        description: "Soll die App dir immer direkt neue Infos und Ankündigungen zum Quapsattack Projekt anzeigen?"
       },
       {
-        title: "Punkt 3: Performance und Auslastung",
-        description: "Wie wichtig ist dir dass die App ganz wenig Arbeitsspeicher und CPU braucht während du zockst?"
+        title: "Punkt 3: Performance und Schnelligkeit",
+        description: "Wie wichtig ist dir, dass die App extrem flüssig läuft und sofort startet ohne Ladezeiten?"
       },
       {
-        title: "Punkt 4: Automatische Updates",
-        description: "Findest du es gut wenn sich die App von alleine im Hintergrund updatet ohne dass man manuell neu herunterladen muss?"
+        title: "Punkt 4: Push Benachrichtigungen",
+        description: "Soll die App dich informieren, wenn es wichtige Neuigkeiten oder neue Umfragen gibt?"
       },
       {
-        title: "Punkt 5: Shortcuts und Tastenkombinationen",
-        description: "Wären Hotkeys zum Beispiel Strg+Alt+Q praktisch um die App jederzeit mitten im Spiel zu öffnen?"
+        title: "Punkt 5: Community Feed und Austausch",
+        description: "Wäre ein direkter Community Bereich in der App cool, wo man sich über alles austauschen kann?"
       },
       {
-        title: "Punkt 6: Community Chat in der App",
-        description: "Soll es direkt in der PC App einen Bereich geben wo man mit den anderen Schreiben und Chatten kann?"
+        title: "Punkt 6: Design und Optik Anpassung",
+        description: "Findest du es wichtig, dass man das Design und den Look der App nach eigenen Wünschen ändern kann?"
       },
       {
-        title: "Punkt 7: Live Server Status",
-        description: "Wie wichtig ist dir eine Live Anzeige wo man direkt sieht wer gerade online ist und wie der Server läuft?"
+        title: "Punkt 7: Ideen und Vorschläge einreichen",
+        description: "Soll es einen extra Bereich in der App geben, wo jeder ganz easy neue Ideen für das Projekt vorschlagen kann?"
       },
       {
-        title: "Punkt 8: Eigene Widgets bauen",
-        description: "Wäre es cool wenn man sich die Startseite der App selber zusammenstellen kann mit verschiedenen Boxen?"
+        title: "Punkt 8: Widgets und Schnellzugriff",
+        description: "Wäre es praktisch, wenn man sich wichtige Infos direkt auf eine Startseite in der App legen kann?"
       },
       {
-        title: "Punkt 9: Windows Darkmode Anpassung",
-        description: "Soll sich das Design der App automatisch anpassen je nachdem ob du in Windows Hell oder Dunkel eingestellt hast?"
+        title: "Punkt 9: Windows Integration",
+        description: "Wie wichtig ist dir, dass sich die Windows App perfekt in dein Betriebssystem einfügt?"
       },
       {
-        title: "Punkt 10: Deine eigenen Ideen",
-        description: "Was muss deiner Meinung nach unbedingt noch in die Quapsattack PC App eingebaut werden? Schreib einfach alles rein!"
+        title: "Punkt 10: Deine ultimativen Projekt Wünsche",
+        description: "Was soll deiner Meinung nach in Zukunft unbedingt in dieser All-in-One App enthalten sein? Schreib alles rein!"
       }
     ];
 
     let currentStep = 0;
     const totalQuestions = questionsConfig.length;
     const ratings = ["Mega wichtig", "Ziemlich cool", "Eher egal", "Brauch ich nicht"];
-    const CUSTOM_EMAIL_TEXT = "Vielen Dank für deine Teilnahme an der Quapsattack PC App Umfrage. Deine Antworten wurden anonym gespeichert.";
+    const CUSTOM_EMAIL_TEXT = "Vielen Dank für deine Teilnahme an der Quapsattack App Umfrage. Deine Antworten wurden anonym gespeichert.";
 
     const acceptCheckbox = document.getElementById("acceptNotice");
     const startSurveyBtn = document.getElementById("startSurveyBtn");
