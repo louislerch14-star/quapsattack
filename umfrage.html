@@ -680,7 +680,7 @@
   </div>
 
 <script>
-    // Supabase Konfiguration (mit deinen fest integrierten Keys)
+    // Supabase Konfiguration
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -738,7 +738,7 @@
       { title: "Punkt 7: Ideen & Vorschläge einreichen", description: "Wie stellst du dir ein System vor, bei dem jeder eigene Projektideen einreichen und darüber abstimmen kann?" },
       { title: "Punkt 8: Performance & Technik", description: "Worauf sollten wir bei der Entwicklung der Windows App technisch besonders achten (z.B. Geschwindigkeit, Speicher)?" },
       { title: "Punkt 9: Design & visuelle Extras", description: "Welche visuellen Effekte oder Design-Besonderheiten würden die App für dich perfekt machen?" },
-      { title: "Punkt 10: Deine absolut wildesten Ideen", description: "Hau hier alles raus was dir einfällt! Was ist deine ultimative Vision für die Zukunft der Quapsattack App?" }
+      { title: "Punkt 10: Deine absolut wildesten Ideen", description: "Hau hier alles raus was dir einfällt! What's your ultimate vision?" }
     ];
 
     let currentStep = 0;
@@ -932,25 +932,27 @@
       };
 
       try {
-        // 1. In Supabase speichern
+        // 1. In Supabase Datenbank speichern
         const { error: dbError } = await supabaseClient
           .from("quapsattack_survey")
           .insert([finalPayload]);
 
         if (dbError) throw dbError;
 
-        // 2. E-Mail über die Resend Edge Function verschicken (OHNE verbotene Auth-Header!)
-        const { error: fnError } = await supabaseClient.functions.invoke("resend-email", {
+        // 2. E-Mail über die Resend Edge Function auslösen
+        const { data: fnData, error: fnError } = await supabaseClient.functions.invoke("resend-email", {
           body: {
-            user_email: userEmail || null,
+            user_email: userEmail || "keine-angabe@quapsattack.de",
             survey_data: finalPayload
           }
         });
 
         if (fnError) {
           console.error("Edge Function Fehler:", fnError);
-          throw new Error(JSON.stringify(fnError));
+          throw new Error(fnError.message || JSON.stringify(fnError));
         }
+
+        console.log("Erfolgreich gesendet:", fnData);
 
         statusMessage.textContent = "Mega! Deine Ideen und dein Style-Wunsch wurden erfolgreich abgeschickt!";
         statusMessage.className = "success";
