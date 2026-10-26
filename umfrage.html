@@ -5,7 +5,7 @@
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quapsattack Windows-App - Feature & Design Umfrage</title>
+  <title>Quapsattack Windows-App - Feature & Redesign Umfrage</title>
 
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -136,10 +136,6 @@
       margin-bottom: 12px;
     }
 
-    .privacy-notice p:last-of-type {
-      margin-bottom: 16px;
-    }
-
     .tts-container {
       display: flex;
       gap: 10px;
@@ -169,6 +165,162 @@
       font-weight: 700;
       text-decoration: underline;
       color: #a5b4fc;
+    }
+
+    /* Style Auswahl Grid */
+    .styles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .style-card-option {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .style-card-option:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent-color);
+    }
+
+    .style-card-option.selected {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--accent-color);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .style-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .style-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .badge-preview {
+      display: inline-block;
+      font-size: 0.75rem;
+      background: var(--accent-color);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* Modal / Pop-up Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 650px;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+      position: relative;
+      animation: modalSlide 0.3s ease forwards;
+    }
+
+    @keyframes modalSlide {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Themen-Previews für das Pop-up */
+    .preview-cyberpunk {
+      background: #0d0221;
+      border: 2px solid #ff007f;
+      color: #00f6ff;
+      font-family: 'Courier New', monospace;
+      box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
+    }
+    .preview-cyberpunk .demo-btn {
+      background: #ff007f;
+      color: #fff;
+      border: none;
+      box-shadow: 0 0 10px #ff007f;
+    }
+
+    .preview-clean {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      font-family: sans-serif;
+    }
+    .preview-clean .demo-btn {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+    }
+
+    .preview-retro {
+      background: #281d18;
+      border: 3px solid #5c4033;
+      color: #55ff55;
+      font-family: monospace;
+      image-rendering: pixelated;
+    }
+    .preview-retro .demo-btn {
+      background: #55ff55;
+      color: #000;
+      font-weight: bold;
+      border: 2px solid #00aa00;
+    }
+
+    .preview-glass {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(16px);
+      color: #ffffff;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    .preview-glass .demo-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .demo-window {
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+      background: rgba(0,0,0,0.15);
+    }
+
+    .demo-btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 10px;
     }
 
     /* Checkbox Styles */
@@ -204,56 +356,6 @@
 
     .step.active {
       display: block;
-    }
-
-    /* Style Auswahl Grid (4-5 Beispiele) */
-    .styles-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .style-card-option {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .style-card-option:hover {
-      background: rgba(255, 255, 255, 0.07);
-      border-color: var(--accent-color);
-    }
-
-    .style-card-option input[type="radio"] {
-      display: none;
-    }
-
-    .style-card-option input[type="radio"]:checked + .style-content {
-      border-color: var(--accent-color);
-    }
-
-    /* Wenn gewählt, die Karte hervorheben */
-    .style-option-wrapper input[type="radio"]:checked ~ .style-card-option,
-    .style-card-option.selected {
-      background: rgba(99, 102, 241, 0.15);
-      border-color: var(--accent-color);
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-    }
-
-    .style-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 6px;
-    }
-
-    .style-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
     }
 
     /* Item Card & Fragestellungen */
@@ -510,7 +612,7 @@
       <div class="privacy-notice">
         <h2>Willkommen zur PC-App & Redesign-Umfrage! 🖥️</h2>
         <p id="introText">
-          Digger, wir bauen eine dedizierte <span class="highlight-bold-underline">Windows-Desktop-App</span> für Quapsattack und verpassen der ganzen Plattform ein frisches Styling! Hier kannst du dir 4 verschiedene Design-Beispiele ansehen, deinen Favoriten wählen und abstimmen, was die PC-App alles können muss. Alles ist <span class="highlight-bold-underline">zu 100 % anonym</span>. Check den Infotext, wähle deinen Style und los geht's! 🚀
+          Digger, wir bauen eine eigene <span class="highlight-bold-underline">Windows-Desktop-App</span> für Quapsattack und verpassen allem ein frisches Design! Klicke unten auf ein Style-Beispiel, um eine <span class="highlight-bold-underline">visuelle Live-Vorschau (Pop-up)</span> zu öffnen. Wähle deinen Favoriten und sag uns deine Meinung! Alles zu <span class="highlight-bold-underline">100 % anonym</span>. 🚀
         </p>
         
         <!-- Wiedergabe-Button falls zu faul zum Lesen -->
@@ -519,40 +621,42 @@
           <button type="button" class="btn-tts" id="stopAudioBtn" style="display: none;">⏹ Stoppen</button>
         </div>
 
-        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 10px; margin-top: 20px;">Wähle dein bevorzugtes Design-Beispiel (New Styling):</h3>
+        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 12px; margin-top: 20px;">Wähle dein bevorzugtes Design (Klicken für Pop-up Vorschau):</h3>
         
         <div class="styles-grid">
-          <label class="style-card-option" onclick="selectStyleCard(this)">
-            <input type="radio" name="preferredStyle" value="Cyberpunk Gaming">
+          <div class="style-card-option" id="card-cyberpunk" onclick="openStylePreview('cyberpunk')">
             <div class="style-title">⚡ 1. Cyberpunk Gaming</div>
-            <div class="style-desc">Neon-Akzente, dunkler Gamer-Look, Shader-Glow & futuristische Elemente.</div>
-          </label>
+            <div class="style-desc">Neon-Glow, dunkler Gamer-Vibe & futuristische Sci-Fi UI.</div>
+            <span class="badge-preview">👁️ Live-Vorschau ansehen</span>
+          </div>
 
-          <label class="style-card-option" onclick="selectStyleCard(this)">
-            <input type="radio" name="preferredStyle" value="Clean & Modern">
+          <div class="style-card-option" id="card-clean" onclick="openStylePreview('clean')">
             <div class="style-title">💎 2. Clean & Modern</div>
-            <div class="style-desc">Minimalistisch, extrem aufgeräumt, flüssige Animationen & edles Blau/Weiß.</div>
-          </label>
+            <div class="style-desc">Minimalistisch, hell/aufgeräumt, flüssige Animationen & edle Kanten.</div>
+            <span class="badge-preview">👁️ Live-Vorschau ansehen</span>
+          </div>
 
-          <label class="style-card-option" onclick="selectStyleCard(this)">
-            <input type="radio" name="preferredStyle" value="Retro Pixel Minecraft">
+          <div class="style-card-option" id="card-retro" onclick="openStylePreview('retro')">
             <div class="style-title">🧱 3. Retro Pixel / Sandbox</div>
-            <div class="style-desc">Angelehnt an Block-Optik, pixelige UI-Elemente & nostalgischer Community-Vibe.</div>
-          </label>
+            <div class="style-desc">Minecraft-Block-Optik, pixelige Elemente & Nostalgie-Look.</div>
+            <span class="badge-preview">👁️ Live-Vorschau ansehen</span>
+          </div>
 
-          <label class="style-card-option" onclick="selectStyleCard(this)">
-            <input type="radio" name="preferredStyle" value="Dark Glassmorphism">
+          <div class="style-card-option" id="card-glass" onclick="openStylePreview('glass')">
             <div class="style-title">🔮 4. Dark Glassmorphism</div>
-            <div class="style-desc">Transparente Glas-Effekte, weiche Schatten, edler Dark-Mode Look.</div>
-          </label>
+            <div class="style-desc">Transparente Glas-Effekte, blurred Backgrounds & edler Dark-Mode.</div>
+            <span class="badge-preview">👁️ Live-Vorschau ansehen</span>
+          </div>
         </div>
 
-        <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Warum feierst du genau diesen Style? (Optional, aber nice zu wissen):</label>
-        <textarea id="styleReason" placeholder="Schreib kurz, warum dieser Look perfekt zur Windows-App passt..."></textarea>
+        <input type="hidden" id="selectedStyleInput" name="preferredStyle" value="Noch kein Style gewählt">
+
+        <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Warum feierst du genau diesen Style? (Begründung):</label>
+        <textarea id="styleReason" placeholder="Schreib kurz, warum dieser Look perfekt zur Quapsattack Windows-App passt..."></textarea>
 
         <label class="checkbox-container" style="margin-top: 20px;">
           <input type="checkbox" id="acceptNotice">
-          <span>Ich habe alles gecheckt und bin bereit für die Windows-App Abstimmung!</span>
+          <span>Ich habe meinen Lieblings-Style gecheckt und bin bereit für die Fragen!</span>
         </label>
       </div>
 
@@ -587,12 +691,93 @@
     <div id="statusMessage"></div>
   </div>
 
+  <!-- MODAL / POP-UP FÜR STYLE VORSCHAU -->
+  <div class="modal-overlay" id="styleModal">
+    <div class="modal-content" id="modalContainer">
+      <h2 id="modalTitle">Style Vorschau</h2>
+      <p id="modalDesc" style="margin-bottom: 10px; opacity: 0.8;">So könnte die Quapsattack Windows-App in diesem Styling aussehen:</p>
+
+      <!-- Beispiel-Oberfläche der App -->
+      <div class="demo-window">
+        <h3>Quapsattack Launcher v2.0 (Preview)</h3>
+        <p>Server Status: <span style="font-weight: bold;">ONLINE</span> (24 Spieler aktiv)</p>
+        <div style="margin-top: 10px; font-size: 0.85rem;">News: Neues Update für die Map ist jetzt verfgbar!</div>
+        <button type="button" class="demo-btn">🎮 Spiel Jetzt Starten</button>
+      </div>
+
+      <div class="button-group" style="margin-top: 20px;">
+        <button type="button" class="btn btn-secondary" onclick="closeStyleModal()">Anderen Style ansehen</button>
+        <button type="button" class="btn" onclick="confirmSelectStyle()">Diesen Style auswählen</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Supabase Konfiguration
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Style Previews Konfiguration
+    const stylePreviews = {
+      cyberpunk: {
+        title: "⚡ Cyberpunk Gaming Style",
+        desc: "Dunkler Cyber-Look mit neongrünen und pinken Akzenten, futuristischer Schrift und Shader-Effekten.",
+        class: "preview-cyberpunk",
+        name: "Cyberpunk Gaming"
+      },
+      clean: {
+        title: "💎 Clean & Modern Style",
+        desc: "Sehr aufgeräumt, helles/modernes Interface, minimalistische Buttons und ultra-flüssige UI.",
+        class: "preview-clean",
+        name: "Clean & Modern"
+      },
+      retro: {
+        title: "🧱 Retro Pixel / Sandbox Style",
+        desc: "Angelehnt an den klassischen Block- & Pixel-Look von Minecraft mit nostalgischer UI.",
+        class: "preview-retro",
+        name: "Retro Pixel"
+      },
+      glass: {
+        title: "🔮 Dark Glassmorphism Style",
+        desc: "Gefrostete Glaseffekte, edle Transparenzen und dunkler Hintergrund für einen High-End Look.",
+        class: "preview-glass",
+        name: "Dark Glassmorphism"
+      }
+    };
+
+    let activeStyleKey = "";
+
+    function openStylePreview(key) {
+      activeStyleKey = key;
+      const data = stylePreviews[key];
+      const modal = document.getElementById("styleModal");
+      const container = document.getElementById("modalContainer");
+
+      document.getElementById("modalTitle").innerText = data.title;
+      document.getElementById("modalDesc").innerText = data.desc;
+
+      // Klassen zurücksetzen & neue Vorschau-Klasse setzen
+      container.className = "modal-content " + data.class;
+      modal.classList.add("active");
+    }
+
+    function closeStyleModal() {
+      document.getElementById("styleModal").classList.remove("active");
+    }
+
+    function confirmSelectStyle() {
+      const data = stylePreviews[activeStyleKey];
+      document.getElementById("selectedStyleInput").value = data.name;
+
+      // Karten visuell aktualisieren
+      document.querySelectorAll('.style-card-option').forEach(c => c.classList.remove('selected'));
+      const activeCard = document.getElementById(`card-${activeStyleKey}`);
+      if (activeCard) activeCard.classList.add('selected');
+
+      closeStyleModal();
+    }
 
     // =========================================================================
     // FRAGEN FÜR DIE WINDOWS-APP 🖥️
@@ -653,14 +838,6 @@
     const statusMessage = document.getElementById("statusMessage");
     const form = document.getElementById("surveyForm");
     const submitBtn = document.getElementById("submitBtn");
-
-    // Style Auswahl Klick-Effekt
-    function selectStyleCard(cardElement) {
-      document.querySelectorAll('.style-card-option').forEach(c => c.classList.remove('selected'));
-      cardElement.classList.add('selected');
-      const radio = cardElement.querySelector('input[type="radio"]');
-      if (radio) radio.checked = true;
-    }
 
     // Text-to-Speech (Wiedergabe für Faule)
     const playAudioBtn = document.getElementById("playAudioBtn");
@@ -843,7 +1020,7 @@
 
       const formData = new FormData(form);
       const userEmail = document.getElementById("userEmail").value.trim();
-      const preferredStyle = formData.get("preferredStyle") || "Nicht angegeben";
+      const preferredStyle = document.getElementById("selectedStyleInput").value;
       const styleReason = document.getElementById("styleReason").value.trim();
 
       const surveyData = [];
