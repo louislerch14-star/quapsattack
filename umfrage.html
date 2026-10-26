@@ -931,28 +931,39 @@
         responses: surveyData
       };
 
-      try {
+    try {
         // 1. In Supabase Datenbank speichern
         const { error: dbError } = await supabaseClient
           .from("quapsattack_survey")
           .insert([finalPayload]);
 
         if (dbError) throw dbError;
+        alert("Datenbank-Speicherung erfolgreich!");
 
-        // 2. E-Mail über die Resend Edge Function auslösen
-        const { data: fnData, error: fnError } = await supabaseClient.functions.invoke("resend-email", {
-          body: {
+        // 2. E-Mail über direktes fetch an die Supabase Edge Function URL (umgeht Client-Wrapper-Probleme)
+        const functionUrl = `${SUPABASE_URL}/functions/v1/resend-email`;
+        
+        const response = await fetch(functionUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+            "apikey": SUPABASE_ANON_KEY
+          },
+          body: JSON.stringify({
             user_email: userEmail || "keine-angabe@quapsattack.de",
             survey_data: finalPayload
-          }
+          })
         });
 
-        if (fnError) {
-          console.error("Edge Function Fehler:", fnError);
-          throw new Error(fnError.message || JSON.stringify(fnError));
+        const resData = await response.json();
+        console.log("Antwort von Edge Function:", resData);
+
+        if (!response.ok) {
+          throw new Error("HTTP Fehler " + response.status + ": " + JSON.stringify(resData));
         }
 
-        console.log("Erfolgreich gesendet:", fnData);
+        alert("E-Mail wurde erfolgreich ausgelöst!");
 
         statusMessage.textContent = "Mega! Deine Ideen und dein Style-Wunsch wurden erfolgreich abgeschickt!";
         statusMessage.className = "success";
@@ -962,12 +973,9 @@
 
       } catch (err) {
         console.error("Fehler beim Absenden:", err);
-        alert("Fehler aufgetreten: " + err.message);
-        statusMessage.textContent = "Hat leider nicht geklappt, versuch es noch einmal!";
+        alert("GESTOPPT BEI FEHLER: " + err.message);
+        statusMessage.textContent = "Hat leider nicht geklappt: " + err.message;
         statusMessage.className = "error";
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Alle Ideen absenden";
       }
     });
   </script>
