@@ -5,7 +5,7 @@
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quapsattack Windows-App - Feature & Redesign Umfrage</title>
+  <title>Quapsattack PC App - Umfrage und Redesign</title>
 
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -51,7 +51,7 @@
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     }
 
-    /* Animierter Header & Logo */
+    /* Header & Logo */
     .header {
       text-align: center;
       margin-bottom: 30px;
@@ -100,7 +100,7 @@
       font-size: 1rem;
     }
 
-    /* Intro-Box mit Vorlese-Funktion */
+    /* Intro Box */
     .privacy-notice {
       background: rgba(99, 102, 241, 0.08);
       border: 1px solid rgba(99, 102, 241, 0.3);
@@ -167,7 +167,7 @@
       color: #a5b4fc;
     }
 
-    /* Style Auswahl Grid */
+    /* 8 Styles Grid */
     .styles-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -219,14 +219,14 @@
       font-weight: 600;
     }
 
-    /* Modal / Pop-up Styling */
+    /* Modal Pop-up */
     .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(8px);
       display: none;
       justify-content: center;
@@ -254,7 +254,7 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
-    /* Themen-Previews für das Pop-up */
+    /* Die 8 verschiedenen Style Previews im Popup */
     .preview-cyberpunk {
       background: #0d0221;
       border: 2px solid #ff007f;
@@ -262,12 +262,7 @@
       font-family: 'Courier New', monospace;
       box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
     }
-    .preview-cyberpunk .demo-btn {
-      background: #ff007f;
-      color: #fff;
-      border: none;
-      box-shadow: 0 0 10px #ff007f;
-    }
+    .preview-cyberpunk .demo-btn { background: #ff007f; color: #fff; border: none; box-shadow: 0 0 10px #ff007f; }
 
     .preview-clean {
       background: #f8fafc;
@@ -275,38 +270,57 @@
       color: #0f172a;
       font-family: sans-serif;
     }
-    .preview-clean .demo-btn {
-      background: #2563eb;
-      color: #fff;
-      border: none;
-    }
+    .preview-clean .demo-btn { background: #2563eb; color: #fff; border: none; }
 
     .preview-retro {
       background: #281d18;
       border: 3px solid #5c4033;
       color: #55ff55;
       font-family: monospace;
-      image-rendering: pixelated;
     }
-    .preview-retro .demo-btn {
-      background: #55ff55;
-      color: #000;
-      font-weight: bold;
-      border: 2px solid #00aa00;
-    }
+    .preview-retro .demo-btn { background: #55ff55; color: #000; font-weight: bold; border: 2px solid #00aa00; }
 
     .preview-glass {
       background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(16px);
       color: #ffffff;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
-    .preview-glass .demo-btn {
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.4);
+    .preview-glass .demo-btn { background: rgba(255, 255, 255, 0.2); color: #fff; border: 1px solid rgba(255, 255, 255, 0.4); }
+
+    .preview-matrix {
+      background: #000000;
+      border: 2px solid #00ff41;
+      color: #00ff41;
+      font-family: monospace;
+      box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
     }
+    .preview-matrix .demo-btn { background: #003b00; color: #00ff41; border: 1px solid #00ff41; }
+
+    .preview-synthwave {
+      background: #1a0b2e;
+      border: 2px solid #ff7700;
+      color: #ff007f;
+      font-family: sans-serif;
+    }
+    .preview-synthwave .demo-btn { background: linear-gradient(45deg, #ff007f, #ff7700); color: #fff; border: none; }
+
+    .preview-minimal {
+      background: #050505;
+      border: 1px solid #222222;
+      color: #888888;
+      font-family: sans-serif;
+    }
+    .preview-minimal .demo-btn { background: #ffffff; color: #000000; border: none; font-weight: 600; }
+
+    .preview-anime {
+      background: #fff5f5;
+      border: 3px solid #000000;
+      color: #2d3748;
+      font-family: sans-serif;
+      box-shadow: 5px 5px 0px #000000;
+    }
+    .preview-anime .demo-btn { background: #ff4757; color: #ffffff; border: 2px solid #000000; box-shadow: 3px 3px 0px #000000; }
 
     .demo-window {
       border-radius: 10px;
@@ -349,7 +363,7 @@
       font-weight: 500;
     }
 
-    /* Multi-Step Visibility Control */
+    /* Steps visibility */
     .step {
       display: none;
     }
@@ -358,7 +372,7 @@
       display: block;
     }
 
-    /* Item Card & Fragestellungen */
+    /* Item Card */
     .item-card {
       background: rgba(0, 0, 0, 0.2);
       border: 1px solid var(--border-color);
@@ -439,7 +453,7 @@
       min-height: 90px;
     }
 
-    /* Buttons & Navigationsleiste */
+    /* Buttons */
     .button-group {
       display: flex;
       gap: 12px;
@@ -484,7 +498,7 @@
       cursor: not-allowed;
     }
 
-    /* Pagination / Fragenleiste */
+    /* Pagination */
     .pagination-bar {
       display: flex;
       justify-content: space-between;
@@ -530,7 +544,7 @@
       color: #ffffff;
     }
 
-    /* E-Mail Section */
+    /* Email Section */
     .email-section {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-color);
@@ -598,110 +612,132 @@
 <body>
 
   <div class="container">
-    <!-- Header & Logo mit Animation -->
+    <!-- Header -->
     <div class="header">
       <img src="unnamed.jpg" alt="Quapsattack Logo" class="logo">
       <div class="header-text">
-        <h1>Quapsattack Windows-App</h1>
-        <p class="subtitle">PC-App Planung & Redesign – Bestimme das neue Look & Feel!</p>
+        <h1>Quapsattack PC App</h1>
+        <p class="subtitle">Windows App Umfrage und neues Design</p>
       </div>
     </div>
 
-    <!-- STEP 0: Intro, Anonymität, Sprachwiedergabe & Style-Auswahl -->
+    <!-- STEP 0: Intro & 8 Style Karten -->
     <div id="step-0" class="step active">
       <div class="privacy-notice">
-        <h2>Willkommen zur PC-App & Redesign-Umfrage! 🖥️</h2>
+        <h2>Umfrage zur neuen Windows App 🖥️</h2>
         <p id="introText">
-          Digger, wir bauen eine eigene <span class="highlight-bold-underline">Windows-Desktop-App</span> für Quapsattack und verpassen allem ein frisches Design! Klicke unten auf ein Style-Beispiel, um eine <span class="highlight-bold-underline">visuelle Live-Vorschau (Pop-up)</span> zu öffnen. Wähle deinen Favoriten und sag uns deine Meinung! Alles zu <span class="highlight-bold-underline">100 % anonym</span>. 🚀
+          Hey leute ich baue gerade an einer eigenen <span class="highlight-bold-underline">Windows PC App für Quapsattack</span> und will dem ganzen gleichzeitig ein neues Design verpassen. Ich habe unten 8 verschiedene Styles gebaut die man sich im Popup angucken kann. Klickt einfach drauf sucht euch euer Lieblingsdesign aus und antwortet kurz auf die Fragen. Die Umfrage ist wie immer <span class="highlight-bold-underline">zu 100 prozent anonym</span> und hilft mir mega weiter! 🚀
         </p>
         
-        <!-- Wiedergabe-Button falls zu faul zum Lesen -->
+        <!-- Vorlesebutton -->
         <div class="tts-container">
           <button type="button" class="btn-tts" id="playAudioBtn">🔊 Text vorlesen lassen</button>
           <button type="button" class="btn-tts" id="stopAudioBtn" style="display: none;">⏹ Stoppen</button>
         </div>
 
-        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 12px; margin-top: 20px;">Wähle dein bevorzugtes Design (Klicken für Pop-up Vorschau):</h3>
+        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 12px; margin-top: 20px;">Wähle dein Lieblingsdesign (draufklicken für Vorschau Popup):</h3>
         
         <div class="styles-grid">
           <div class="style-card-option" id="card-cyberpunk" onclick="openStylePreview('cyberpunk')">
             <div class="style-title">⚡ 1. Cyberpunk Gaming</div>
-            <div class="style-desc">Neon-Glow, dunkler Gamer-Vibe & futuristische Sci-Fi UI.</div>
-            <span class="badge-preview">👁️ Live-Vorschau ansehen</span>
+            <div class="style-desc">Pinker Neon Glow dunkler Look und futuristischer Style</div>
+            <span class="badge-preview">👁️ Popup Vorschau</span>
           </div>
 
           <div class="style-card-option" id="card-clean" onclick="openStylePreview('clean')">
-            <div class="style-title">💎 2. Clean & Modern</div>
-            <div class="style-desc">Minimalistisch, hell/aufgeräumt, flüssige Animationen & edle Kanten.</div>
-            <span class="badge-preview">👁️ Live-Vorschau ansehen</span>
+            <div class="style-title">💎 2. Clean Modern</div>
+            <div class="style-desc">Sehr helle und aufgeräumte Oberfläche ohne schnickschnack</div>
+            <span class="badge-preview">👁️ Popup Vorschau</span>
           </div>
 
           <div class="style-card-option" id="card-retro" onclick="openStylePreview('retro')">
-            <div class="style-title">🧱 3. Retro Pixel / Sandbox</div>
-            <div class="style-desc">Minecraft-Block-Optik, pixelige Elemente & Nostalgie-Look.</div>
-            <span class="badge-preview">👁️ Live-Vorschau ansehen</span>
+            <div class="style-title">🧱 3. Retro Pixel Minecraft</div>
+            <div class="style-desc">Klassische Minecraft Block Optik mit braunem Pixel Look</div>
+            <span class="badge-preview">👁️ Popup Vorschau</span>
           </div>
 
           <div class="style-card-option" id="card-glass" onclick="openStylePreview('glass')">
-            <div class="style-title">🔮 4. Dark Glassmorphism</div>
-            <div class="style-desc">Transparente Glas-Effekte, blurred Backgrounds & edler Dark-Mode.</div>
-            <span class="badge-preview">👁️ Live-Vorschau ansehen</span>
+            <div class="style-title">🔮 4. Dark Glassmorphic</div>
+            <div class="style-desc">Transparenter Glas Look mit weichen Schatten im Darkmode</div>
+            <span class="badge-preview">👁️ Popup Vorschau</span>
+          </div>
+
+          <div class="style-card-option" id="card-matrix" onclick="openStylePreview('matrix')">
+            <div class="style-title">📟 5. Matrix Terminal</div>
+            <div class="style-desc">Komplett schwarzer Hintergrund mit leuchtend grüner Schrift</div>
+            <span class="badge-preview">👁️ Popup Vorschau</span>
+          </div>
+
+          <div class="style-card-option" id="card-synthwave" onclick="openStylePreview('synthwave')">
+            <div class="style-title">🌅 6. Neon Synthwave</div>
+            <div class="style-desc">80s Vibe mit lila und orange Farbverläufen</div>
+            <span class="badge-preview">👁️ Popup Vorschau</span>
+          </div>
+
+          <div class="style-card-option" id="card-minimal" onclick="openStylePreview('minimal')">
+            <div class="style-title">🖤 7. Minimal Deep Dark</div>
+            <div class="style-desc">Extrem schlichtes tiefschwarz mit weißem Kontrast</div>
+            <span class="badge-preview">👁️ Popup Vorschau</span>
+          </div>
+
+          <div class="style-card-option" id="card-anime" onclick="openStylePreview('anime')">
+            <div class="style-title">🎨 8. Anime Comic Style</div>
+            <div class="style-desc">Helle Farben dicke schwarze Ränder und Pop art Style</div>
+            <span class="badge-preview">👁️ Popup Vorschau</span>
           </div>
         </div>
 
         <input type="hidden" id="selectedStyleInput" name="preferredStyle" value="Noch kein Style gewählt">
 
-        <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Warum feierst du genau diesen Style? (Begründung):</label>
-        <textarea id="styleReason" placeholder="Schreib kurz, warum dieser Look perfekt zur Quapsattack Windows-App passt..."></textarea>
+        <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Warum gefällt dir genau dieser Style am besten?</label>
+        <textarea id="styleReason" placeholder="Schreib hier kurz rein warum der Style am besten zu Quapsattack passt..."></textarea>
 
         <label class="checkbox-container" style="margin-top: 20px;">
           <input type="checkbox" id="acceptNotice">
-          <span>Ich habe meinen Lieblings-Style gecheckt und bin bereit für die Fragen!</span>
+          <span>Ich habe einen Style gewählt und bin bereit für die Fragen</span>
         </label>
       </div>
 
       <button type="button" class="btn" id="startSurveyBtn" disabled>Umfrage starten</button>
     </div>
 
-    <!-- FORMULAR / SCHRITTE 1-10 + ABSCHLUSS -->
+    <!-- Formular -->
     <form id="surveyForm">
-      <!-- Dynamisch erstellte Fragen 1 bis 10 -->
       <div id="questionsContainer"></div>
 
-      <!-- STEP 11: Abschluss & E-Mail Option -->
+      <!-- STEP 11 -->
       <div id="step-11" class="step">
         <div class="email-section">
-          <label for="userEmail">Kopie der Windows-App Wünsche per E-Mail erhalten (optional)</label>
+          <label for="userEmail">Eine Kopie per E-Mail bekommen (freiwillig)</label>
           <p class="email-hint">
-            Falls du eine Zusammenfassung als Nachweis haben willst, gib hier deine E-Mail-Adresse ein. Sie wird <span class="highlight-bold-underline">nur für diesen einmaligen Versand genutzt und nicht gespeichert</span>.
+            Wenn du willst kannst du hier deine E-Mail eintragen um deine Antworten zugeschickt zu bekommen. Die Adresse wird <span class="highlight-bold-underline">nirgendwo gespeichert</span> und nur einmal genutzt.
           </p>
           <input type="email" id="userEmail" placeholder="deine-email@beispiel.de">
         </div>
 
         <div class="button-group">
           <button type="button" class="btn btn-secondary" onclick="goToStep(10)">Zurück zu Punkt 10</button>
-          <button type="submit" class="btn" id="submitBtn">Windows-App Wünsche absenden</button>
+          <button type="submit" class="btn" id="submitBtn">Antworten absenden</button>
         </div>
       </div>
 
-      <!-- Pagination / Zahlenleiste (1-10) -->
+      <!-- Pagination -->
       <div class="pagination-bar" id="paginationBar" style="display: none;"></div>
     </form>
 
     <div id="statusMessage"></div>
   </div>
 
-  <!-- MODAL / POP-UP FÜR STYLE VORSCHAU -->
+  <!-- Popup für Style Vorschau -->
   <div class="modal-overlay" id="styleModal">
     <div class="modal-content" id="modalContainer">
       <h2 id="modalTitle">Style Vorschau</h2>
-      <p id="modalDesc" style="margin-bottom: 10px; opacity: 0.8;">So könnte die Quapsattack Windows-App in diesem Styling aussehen:</p>
+      <p id="modalDesc" style="margin-bottom: 10px; opacity: 0.8;">So könnte die Quapsattack PC App in diesem Design aussehen:</p>
 
-      <!-- Beispiel-Oberfläche der App -->
       <div class="demo-window">
-        <h3>Quapsattack Launcher v2.0 (Preview)</h3>
-        <p>Server Status: <span style="font-weight: bold;">ONLINE</span> (24 Spieler aktiv)</p>
-        <div style="margin-top: 10px; font-size: 0.85rem;">News: Neues Update für die Map ist jetzt verfgbar!</div>
+        <h3>Quapsattack Launcher (Preview)</h3>
+        <p>Server Status: <span style="font-weight: bold;">ONLINE</span> (24 Spieler gerade am am Start)</p>
+        <div style="margin-top: 10px; font-size: 0.85rem;">News: Neues Server Update steht bereit zum Download!</div>
         <button type="button" class="demo-btn">🎮 Spiel Jetzt Starten</button>
       </div>
 
@@ -713,37 +749,60 @@
   </div>
 
   <script>
-    // Supabase Konfiguration
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Style Previews Konfiguration
+    // 8 Style Previews Konfiguration
     const stylePreviews = {
       cyberpunk: {
-        title: "⚡ Cyberpunk Gaming Style",
-        desc: "Dunkler Cyber-Look mit neongrünen und pinken Akzenten, futuristischer Schrift und Shader-Effekten.",
+        title: "⚡ Cyberpunk Gaming",
+        desc: "Nachtschwarzer Hintergrund mit neongrünen und pinken Akzenten und Gamer Optik",
         class: "preview-cyberpunk",
         name: "Cyberpunk Gaming"
       },
       clean: {
-        title: "💎 Clean & Modern Style",
-        desc: "Sehr aufgeräumt, helles/modernes Interface, minimalistische Buttons und ultra-flüssige UI.",
+        title: "💎 Clean Modern",
+        desc: "Sehr aufgeräumtes helles Design mit modernen Buttons und klaren Linien",
         class: "preview-clean",
-        name: "Clean & Modern"
+        name: "Clean Modern"
       },
       retro: {
-        title: "🧱 Retro Pixel / Sandbox Style",
-        desc: "Angelehnt an den klassischen Block- & Pixel-Look von Minecraft mit nostalgischer UI.",
+        title: "🧱 Retro Pixel Minecraft",
+        desc: "Minecraft Vibe mit Pixel Schriftarten braunen Tönen und grünem Gras Look",
         class: "preview-retro",
-        name: "Retro Pixel"
+        name: "Retro Pixel Minecraft"
       },
       glass: {
-        title: "🔮 Dark Glassmorphism Style",
-        desc: "Gefrostete Glaseffekte, edle Transparenzen und dunkler Hintergrund für einen High-End Look.",
+        title: "🔮 Dark Glassmorphism",
+        desc: "Leicht durchsichtige Fenster mit Milchglas Effekt auf dunklem Hintergrund",
         class: "preview-glass",
         name: "Dark Glassmorphism"
+      },
+      matrix: {
+        title: "📟 Matrix Terminal",
+        desc: "Komplett schwarzer Bildschirm mit grüner Computerschrift wie bei Hackern",
+        class: "preview-matrix",
+        name: "Matrix Terminal"
+      },
+      synthwave: {
+        title: "🌅 Neon Synthwave",
+        desc: "Lila und orangene Farbverläufe mit 80er Retro Style",
+        class: "preview-synthwave",
+        name: "Neon Synthwave"
+      },
+      minimal: {
+        title: "🖤 Minimal Deep Dark",
+        desc: "Extrem edles tiefschwarz mit weißem Text ohne bunten Schnickschnack",
+        class: "preview-minimal",
+        name: "Minimal Deep Dark"
+      },
+      anime: {
+        title: "🎨 Anime Comic Style",
+        desc: "Dicke schwarze Comic Ränder bunte Buttons und Pop art Design",
+        class: "preview-anime",
+        name: "Anime Comic Style"
       }
     };
 
@@ -758,7 +817,6 @@
       document.getElementById("modalTitle").innerText = data.title;
       document.getElementById("modalDesc").innerText = data.desc;
 
-      // Klassen zurücksetzen & neue Vorschau-Klasse setzen
       container.className = "modal-content " + data.class;
       modal.classList.add("active");
     }
@@ -771,7 +829,6 @@
       const data = stylePreviews[activeStyleKey];
       document.getElementById("selectedStyleInput").value = data.name;
 
-      // Karten visuell aktualisieren
       document.querySelectorAll('.style-card-option').forEach(c => c.classList.remove('selected'));
       const activeCard = document.getElementById(`card-${activeStyleKey}`);
       if (activeCard) activeCard.classList.add('selected');
@@ -779,58 +836,55 @@
       closeStyleModal();
     }
 
-    // =========================================================================
-    // FRAGEN FÜR DIE WINDOWS-APP 🖥️
-    // =========================================================================
+    // Fragen für die PC App
     const questionsConfig = [
       {
-        title: "Feature 1: Windows Tray & Schnellstart",
-        description: "Wie findest du die Möglichkeit, die App minimiert im Windows Infobereich (Tray) laufen zu lassen für den Sofortstart?"
+        title: "Punkt 1: Autostart und Windows Tray",
+        description: "Wie findest du die Idee dass die App unten bei Windows in der Leiste minimiert mitläuft damit sie sofort da ist?"
       },
       {
-        title: "Feature 2: Desktop Benachrichtigungen",
-        description: "Soll die Windows-App native Windows-Benachrichtigungen für wichtige Events und Server-Updates senden?"
+        title: "Punkt 2: Windows Benachrichtigungen",
+        description: "Soll die PC App dir direkt unten rechts in Windows Nachrichten anzeigen wenn Events starten oder News da sind?"
       },
       {
-        title: "Feature 3: Performance & Ressourcen",
-        description: "Wie wichtig ist dir, dass die PC-App extrem ressourcenschonend läuft (wenig RAM/CPU verbraucht)?"
+        title: "Punkt 3: Performance und Auslastung",
+        description: "Wie wichtig ist dir dass die App ganz wenig Arbeitsspeicher und CPU braucht während du zockst?"
       },
       {
-        title: "Feature 4: Auto-Update System",
-        description: "Findest du ein automatisches Update-System direkt in der Windows-App praktisch, damit sie immer aktuell bleibt?"
+        title: "Punkt 4: Automatische Updates",
+        description: "Findest du es gut wenn sich die App von alleine im Hintergrund updatet ohne dass man manuell neu herunterladen muss?"
       },
       {
-        title: "Feature 5: Tastenkombinationen (Shortcuts)",
-        description: "Wären globale Tastenkombinationen (z.B. Strg+Alt+Q) zum schnellen Öffnen der PC-App nützlich?"
+        title: "Punkt 5: Shortcuts und Tastenkombinationen",
+        description: "Wären Hotkeys zum Beispiel Strg+Alt+Q praktisch um die App jederzeit mitten im Spiel zu öffnen?"
       },
       {
-        title: "Feature 6: Community Hub & Chat in der PC-App",
-        description: "Soll die Desktop-App einen integrierten Chat- und Forenbereich für den direkten Austausch bieten?"
+        title: "Punkt 6: Community Chat in der App",
+        description: "Soll es direkt in der PC App einen Bereich geben wo man mit den anderen Schreiben und Chatten kann?"
       },
       {
-        title: "Feature 7: Live-Server Status Monitor",
-        description: "Wie wichtig ist dir ein permanentes Live-Dashboard für alle Server-Daten und Statistiken direkt in der App?"
+        title: "Punkt 7: Live Server Status",
+        description: "Wie wichtig ist dir eine Live Anzeige wo man direkt sieht wer gerade online ist und wie der Server läuft?"
       },
       {
-        title: "Feature 8: Anpassbare Layouts & Widgets",
-        description: "Soll man die Ansicht in der Windows-App mit Widgets individuell anpassen können?"
+        title: "Punkt 8: Eigene Widgets bauen",
+        description: "Wäre es cool wenn man sich die Startseite der App selber zusammenstellen kann mit verschiedenen Boxen?"
       },
       {
-        title: "Feature 9: Stabilität & Windows-Integration",
-        description: "Wie wichtig ist dir eine nahtlose Integration in Windows (z.B. passend zum Windows-Darkmode, Installer etc.)?"
+        title: "Punkt 9: Windows Darkmode Anpassung",
+        description: "Soll sich das Design der App automatisch anpassen je nachdem ob du in Windows Hell oder Dunkel eingestellt hast?"
       },
       {
-        title: "Feature 10: Eure ultimativen Windows-App Wünsche",
-        description: "Was MUSS unbedingt in die Quapsattack Windows-App rein? Hau hier all deine Ideen und Wünsche raus! 🚀"
+        title: "Punkt 10: Deine eigenen Ideen",
+        description: "Was muss deiner Meinung nach unbedingt noch in die Quapsattack PC App eingebaut werden? Schreib einfach alles rein!"
       }
     ];
 
     let currentStep = 0;
     const totalQuestions = questionsConfig.length;
     const ratings = ["Mega wichtig", "Ziemlich cool", "Eher egal", "Brauch ich nicht"];
-    const CUSTOM_EMAIL_TEXT = "Vielen Dank für deine Teilnahme an der Quapsattack Windows-App & Redesign Umfrage! Deine Wünsche wurden anonym erfasst.";
+    const CUSTOM_EMAIL_TEXT = "Vielen Dank für deine Teilnahme an der Quapsattack PC App Umfrage. Deine Antworten wurden anonym gespeichert.";
 
-    // DOM Elemente
     const acceptCheckbox = document.getElementById("acceptNotice");
     const startSurveyBtn = document.getElementById("startSurveyBtn");
     const questionsContainer = document.getElementById("questionsContainer");
@@ -839,7 +893,6 @@
     const form = document.getElementById("surveyForm");
     const submitBtn = document.getElementById("submitBtn");
 
-    // Text-to-Speech (Wiedergabe für Faule)
     const playAudioBtn = document.getElementById("playAudioBtn");
     const stopAudioBtn = document.getElementById("stopAudioBtn");
     const introTextEl = document.getElementById("introText");
@@ -860,7 +913,7 @@
         playAudioBtn.style.display = "none";
         stopAudioBtn.style.display = "inline-flex";
       } else {
-        alert("Dein Browser unterstützt leider keine Sprachwiedergabe, Bro!");
+        alert("Dein Browser unterstützt leider keine Sprachwiedergabe");
       }
     });
 
@@ -872,7 +925,6 @@
       stopAudioBtn.style.display = "none";
     });
 
-    // Enable / Disable Start-Button basierend auf Checkbox
     acceptCheckbox.addEventListener("change", () => {
       startSurveyBtn.disabled = !acceptCheckbox.checked;
     });
@@ -883,7 +935,7 @@
       goToStep(1);
     });
 
-    // Dynamic Creation of Question Cards (Steps 1 to 10)
+    // Dynamische Erstellung der Fragen 1 bis 10
     questionsConfig.forEach((q, index) => {
       const i = index + 1;
       const stepDiv = document.createElement("div");
@@ -902,12 +954,12 @@
             `).join('')}
           </div>
 
-          <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Dein Kommentar / Deine Ideen dazu (Pflichtfeld):</label>
-          <textarea id="p${i}_reason" name="p${i}_reason" placeholder="Schreib hier deine Gedanken dazu..." oninput="updatePaginationStatus(${i})"></textarea>
+          <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Dein Kommentar dazu (Pflichtfeld):</label>
+          <textarea id="p${i}_reason" name="p${i}_reason" placeholder="Schreib hier deine Gedanken rein..." oninput="updatePaginationStatus(${i})"></textarea>
         </div>
 
         <div class="button-group">
-          ${i > 1 ? `<button type="button" class="btn btn-secondary" onclick="goToStep(${i - 1})">Zurück</button>` : `<button type="button" class="btn btn-secondary" onclick="goToStep(0)">Startseite & Style</button>`}
+          ${i > 1 ? `<button type="button" class="btn btn-secondary" onclick="goToStep(${i - 1})">Zurück</button>` : `<button type="button" class="btn btn-secondary" onclick="goToStep(0)">Startseite und Style</button>`}
           <button type="button" class="btn btn-secondary" onclick="skipQuestion(${i})">Überspringen</button>
           <button type="button" class="btn" onclick="nextQuestion(${i})">${i === totalQuestions ? 'Weiter zur Übersicht' : 'Nächster Punkt'}</button>
         </div>
@@ -916,7 +968,7 @@
       questionsContainer.appendChild(stepDiv);
     });
 
-    // Build Pagination Bar (1-10)
+    // Pagination Leiste 1 bis 10
     for (let i = 1; i <= totalQuestions; i++) {
       const pageBtn = document.createElement("div");
       pageBtn.className = "page-num";
@@ -928,7 +980,6 @@
       paginationBar.appendChild(pageBtn);
     }
 
-    // Switch between Steps
     function goToStep(stepNumber) {
       statusMessage.style.display = "none";
       document.querySelectorAll(".step").forEach(el => el.classList.remove("active"));
@@ -937,7 +988,6 @@
       const targetStep = document.getElementById(`step-${stepNumber}`);
       if (targetStep) targetStep.classList.add("active");
 
-      // Update Pagination Bar
       for (let i = 1; i <= totalQuestions; i++) {
         const btn = document.getElementById(`pageNum-${i}`);
         if (i === stepNumber) {
@@ -950,14 +1000,12 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Check if Question i is filled completely
     function isQuestionFilled(i) {
       const ratingSelected = document.querySelector(`input[name="p${i}"]:checked`);
       const reasonFilled = document.getElementById(`p${i}_reason`).value.trim();
       return ratingSelected && reasonFilled !== "";
     }
 
-    // Update Pagination Visual Status
     function updatePaginationStatus(i) {
       const pageBtn = document.getElementById(`pageNum-${i}`);
       if (isQuestionFilled(i)) {
@@ -967,10 +1015,9 @@
       }
     }
 
-    // Next Question Action
     function nextQuestion(i) {
       if (!isQuestionFilled(i)) {
-        statusMessage.textContent = `Bitte wähle eine Option aus und schreib kurz was dazu in Punkt ${i}! 💀`;
+        statusMessage.textContent = `Wähle bitte eine Option aus und schreib kurz was dazu in Punkt ${i}!`;
         statusMessage.className = "error";
         return;
       }
@@ -979,11 +1026,10 @@
       if (i < totalQuestions) {
         goToStep(i + 1);
       } else {
-        goToStep(11); // Step 11: Finish / Email Option
+        goToStep(11);
       }
     }
 
-    // Skip Action
     function skipQuestion(i) {
       statusMessage.style.display = "none";
       if (i < totalQuestions) {
@@ -993,12 +1039,11 @@
       }
     }
 
-    // Submit Handling
+    // Absenden
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       statusMessage.style.display = "none";
 
-      // 1. Prüfen, ob alle Fragen (1 bis 10) ausgefüllt wurden
       const missingQuestions = [];
       for (let i = 1; i <= totalQuestions; i++) {
         if (!isQuestionFilled(i)) {
@@ -1008,7 +1053,7 @@
 
       if (missingQuestions.length > 0) {
         const missingText = missingQuestions.map(num => `Punkt ${num}`).join(", ");
-        statusMessage.textContent = `Achtung, bro! Folgende Punkte sind noch nicht komplett (Bewertung + Textfeld fehlen): ${missingText}.`;
+        statusMessage.textContent = `Folgende Punkte fehlen noch (Bewertung und Kommentar): ${missingText}.`;
         statusMessage.className = "error";
         
         goToStep(missingQuestions[0]);
@@ -1016,7 +1061,7 @@
       }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = "Wird übertragen...";
+      submitBtn.textContent = "Wird gesendet...";
 
       const formData = new FormData(form);
       const userEmail = document.getElementById("userEmail").value.trim();
@@ -1032,7 +1077,6 @@
         });
       }
 
-      // Design-Wahl als extra Info mit reinpacken
       const finalPayload = {
         preferred_style: preferredStyle,
         style_reason: styleReason,
@@ -1040,14 +1084,12 @@
       };
 
       try {
-        // 1. Anonyme Speicherung in Supabase
         const { error: dbError } = await supabaseClient
           .from("quapsattack_survey")
           .insert([finalPayload]);
 
         if (dbError) throw dbError;
 
-        // 2. E-Mail Versand per Supabase Edge Function
         try {
           await supabaseClient.functions.invoke("resend-email", {
             headers: {
@@ -1061,10 +1103,10 @@
             }
           });
         } catch (emailErr) {
-          console.warn("E-Mail-Versand nicht geklappt, aber DB-Eintrag war erfolgreich:", emailErr);
+          console.warn("E-Mail Versand nicht geklappt aber DB Eintrag war erfolgreich:", emailErr);
         }
 
-        statusMessage.textContent = "Geil! Deine Windows-App Wünsche und Style-Auswahl wurden erfolgreich und anonym übermittelt. 🚀";
+        statusMessage.textContent = "Danke dir! Deine Antworten und dein Style Wunsch wurden erfolgreich abgeschickt!";
         statusMessage.className = "success";
         form.reset();
         paginationBar.style.display = "none";
@@ -1072,11 +1114,11 @@
 
       } catch (err) {
         console.error("Fehler beim Absenden:", err);
-        statusMessage.textContent = "Mist, da gab's nen Fehler beim Absenden. Versuch's noch mal! 😢";
+        statusMessage.textContent = "Hat leider nicht geklappt versuch es noch einmal!";
         statusMessage.className = "error";
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Windows-App Wünsche absenden";
+        submitBtn.textContent = "Antworten absenden";
       }
     });
   </script>
