@@ -5,7 +5,7 @@
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quapsattack App - Feature Umfrage</title>
+  <title>Quapsattack Windows-App - Feature & Design Umfrage</title>
 
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -43,7 +43,7 @@
 
     .container {
       width: 100%;
-      max-width: 800px;
+      max-width: 850px;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 20px;
@@ -204,6 +204,56 @@
 
     .step.active {
       display: block;
+    }
+
+    /* Style Auswahl Grid (4-5 Beispiele) */
+    .styles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .style-card-option {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .style-card-option:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: var(--accent-color);
+    }
+
+    .style-card-option input[type="radio"] {
+      display: none;
+    }
+
+    .style-card-option input[type="radio"]:checked + .style-content {
+      border-color: var(--accent-color);
+    }
+
+    /* Wenn gewählt, die Karte hervorheben */
+    .style-option-wrapper input[type="radio"]:checked ~ .style-card-option,
+    .style-card-option.selected {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--accent-color);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .style-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .style-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
 
     /* Item Card & Fragestellungen */
@@ -431,6 +481,9 @@
       .rating-options {
         flex-direction: column;
       }
+      .styles-grid {
+        grid-template-columns: 1fr;
+      }
       .pagination-bar {
         flex-wrap: wrap;
       }
@@ -447,17 +500,17 @@
     <div class="header">
       <img src="unnamed.jpg" alt="Quapsattack Logo" class="logo">
       <div class="header-text">
-        <h1>Quapsattack App - Feature Umfrage</h1>
-        <p class="subtitle">Wir bauen unsere eigene App – gestalte sie mit!</p>
+        <h1>Quapsattack Windows-App</h1>
+        <p class="subtitle">PC-App Planung & Redesign – Bestimme das neue Look & Feel!</p>
       </div>
     </div>
 
-    <!-- STEP 0: Intro, Anonymität & Sprachwiedergabe -->
+    <!-- STEP 0: Intro, Anonymität, Sprachwiedergabe & Style-Auswahl -->
     <div id="step-0" class="step active">
       <div class="privacy-notice">
-        <h2>Willkommen zur App-Planung! 📱</h2>
+        <h2>Willkommen zur PC-App & Redesign-Umfrage! 🖥️</h2>
         <p id="introText">
-          Digger, wir bauen eine eigene App für Quapsattack! Damit das Ding absolut episch wird, brauchen wir deinen Input. In dieser Umfrage kannst du bewerten, welche Features du brauchst und uns deine eigenen Ideen in die Textfelder schreiben. <span class="highlight-bold-underline">Alles ist zu 100 % anonym</span> – niemand checkt, wer was geschrieben hat. Nimm dir kurz Zeit und hilf uns, die App zu perfektionieren! 🚀
+          Digger, wir bauen eine dedizierte <span class="highlight-bold-underline">Windows-Desktop-App</span> für Quapsattack und verpassen der ganzen Plattform ein frisches Styling! Hier kannst du dir 4 verschiedene Design-Beispiele ansehen, deinen Favoriten wählen und abstimmen, was die PC-App alles können muss. Alles ist <span class="highlight-bold-underline">zu 100 % anonym</span>. Check den Infotext, wähle deinen Style und los geht's! 🚀
         </p>
         
         <!-- Wiedergabe-Button falls zu faul zum Lesen -->
@@ -466,9 +519,40 @@
           <button type="button" class="btn-tts" id="stopAudioBtn" style="display: none;">⏹ Stoppen</button>
         </div>
 
-        <label class="checkbox-container">
+        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 10px; margin-top: 20px;">Wähle dein bevorzugtes Design-Beispiel (New Styling):</h3>
+        
+        <div class="styles-grid">
+          <label class="style-card-option" onclick="selectStyleCard(this)">
+            <input type="radio" name="preferredStyle" value="Cyberpunk Gaming">
+            <div class="style-title">⚡ 1. Cyberpunk Gaming</div>
+            <div class="style-desc">Neon-Akzente, dunkler Gamer-Look, Shader-Glow & futuristische Elemente.</div>
+          </label>
+
+          <label class="style-card-option" onclick="selectStyleCard(this)">
+            <input type="radio" name="preferredStyle" value="Clean & Modern">
+            <div class="style-title">💎 2. Clean & Modern</div>
+            <div class="style-desc">Minimalistisch, extrem aufgeräumt, flüssige Animationen & edles Blau/Weiß.</div>
+          </label>
+
+          <label class="style-card-option" onclick="selectStyleCard(this)">
+            <input type="radio" name="preferredStyle" value="Retro Pixel Minecraft">
+            <div class="style-title">🧱 3. Retro Pixel / Sandbox</div>
+            <div class="style-desc">Angelehnt an Block-Optik, pixelige UI-Elemente & nostalgischer Community-Vibe.</div>
+          </label>
+
+          <label class="style-card-option" onclick="selectStyleCard(this)">
+            <input type="radio" name="preferredStyle" value="Dark Glassmorphism">
+            <div class="style-title">🔮 4. Dark Glassmorphism</div>
+            <div class="style-desc">Transparente Glas-Effekte, weiche Schatten, edler Dark-Mode Look.</div>
+          </label>
+        </div>
+
+        <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Warum feierst du genau diesen Style? (Optional, aber nice zu wissen):</label>
+        <textarea id="styleReason" placeholder="Schreib kurz, warum dieser Look perfekt zur Windows-App passt..."></textarea>
+
+        <label class="checkbox-container" style="margin-top: 20px;">
           <input type="checkbox" id="acceptNotice">
-          <span>Ich habe den Infotext gecheckt und bin bereit für die Feature-Abstimmung!</span>
+          <span>Ich habe alles gecheckt und bin bereit für die Windows-App Abstimmung!</span>
         </label>
       </div>
 
@@ -483,16 +567,16 @@
       <!-- STEP 11: Abschluss & E-Mail Option -->
       <div id="step-11" class="step">
         <div class="email-section">
-          <label for="userEmail">Kopie der Einsendung per E-Mail erhalten (optional)</label>
+          <label for="userEmail">Kopie der Windows-App Wünsche per E-Mail erhalten (optional)</label>
           <p class="email-hint">
-            Falls du eine Zusammenfassung deiner Vorschläge als Nachweis haben möchtest, gib hier deine E-Mail-Adresse ein. Sie wird <span class="highlight-bold-underline">nur für diesen einmaligen Versand genutzt und nicht gespeichert</span>.
+            Falls du eine Zusammenfassung als Nachweis haben willst, gib hier deine E-Mail-Adresse ein. Sie wird <span class="highlight-bold-underline">nur für diesen einmaligen Versand genutzt und nicht gespeichert</span>.
           </p>
           <input type="email" id="userEmail" placeholder="deine-email@beispiel.de">
         </div>
 
         <div class="button-group">
           <button type="button" class="btn btn-secondary" onclick="goToStep(10)">Zurück zu Punkt 10</button>
-          <button type="submit" class="btn" id="submitBtn">App-Wünsche absenden</button>
+          <button type="submit" class="btn" id="submitBtn">Windows-App Wünsche absenden</button>
         </div>
       </div>
 
@@ -511,55 +595,55 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // =========================================================================
-    // HIER SIND DIE NEUEN FRAGEN FÜR DIE QUAPSATTACK APP 📱
+    // FRAGEN FÜR DIE WINDOWS-APP 🖥️
     // =========================================================================
     const questionsConfig = [
       {
-        title: "Feature 1: Push-Benachrichtigungen",
-        description: "Wie wichtig findest du direkte Push-Nachrichten auf dein Handy für wichtige News oder Events?"
+        title: "Feature 1: Windows Tray & Schnellstart",
+        description: "Wie findest du die Möglichkeit, die App minimiert im Windows Infobereich (Tray) laufen zu lassen für den Sofortstart?"
       },
       {
-        title: "Feature 2: Community Chat & Forum",
-        description: "Soll die App einen integrierten Chat oder Bereich haben, wo man sich mit allen austauschen kann?"
+        title: "Feature 2: Desktop Benachrichtigungen",
+        description: "Soll die Windows-App native Windows-Benachrichtigungen für wichtige Events und Server-Updates senden?"
       },
       {
-        title: "Feature 3: Live-Status & Server-Infos",
-        description: "Wie findest du die Idee, den aktuellen Server-Status und Live-Daten direkt in der App zu sehen?"
+        title: "Feature 3: Performance & Ressourcen",
+        description: "Wie wichtig ist dir, dass die PC-App extrem ressourcenschonend läuft (wenig RAM/CPU verbraucht)?"
       },
       {
-        title: "Feature 4: Event-Kalender & Reminder",
-        description: "Wäre ein praktischer Kalender mit allen kommenden Events und automatischen Erinnerungen nützlich?"
+        title: "Feature 4: Auto-Update System",
+        description: "Findest du ein automatisches Update-System direkt in der Windows-App praktisch, damit sie immer aktuell bleibt?"
       },
       {
-        title: "Feature 5: Design & Dark Mode",
-        description: "Wie wichtig ist dir ein stylisches, dunkles Design (Dark Mode) für die App?"
+        title: "Feature 5: Tastenkombinationen (Shortcuts)",
+        description: "Wären globale Tastenkombinationen (z.B. Strg+Alt+Q) zum schnellen Öffnen der PC-App nützlich?"
       },
       {
-        title: "Feature 6: Profil & Personalisierung",
-        description: "Soll man sich in der App einen eigenen Account bzw. Profil mit eigenen Einstellungen erstellen können?"
+        title: "Feature 6: Community Hub & Chat in der PC-App",
+        description: "Soll die Desktop-App einen integrierten Chat- und Forenbereich für den direkten Austausch bieten?"
       },
       {
-        title: "Feature 7: Performance & Geschwindigkeit",
-        description: "Wie wichtig ist dir, dass die App extrem schnell lädt und flüssig läuft (auch bei schlechtem Netz)?"
+        title: "Feature 7: Live-Server Status Monitor",
+        description: "Wie wichtig ist dir ein permanentes Live-Dashboard für alle Server-Daten und Statistiken direkt in der App?"
       },
       {
-        title: "Feature 8: Exklusive App-Inhalte",
-        description: "Findest du es cool, wenn es spezielle Inhalte oder Extras gibt, die man nur über die App bekommt?"
+        title: "Feature 8: Anpassbare Layouts & Widgets",
+        description: "Soll man die Ansicht in der Windows-App mit Widgets individuell anpassen können?"
       },
       {
-        title: "Feature 9: Benutzerfreundlichkeit & Bedienung",
-        description: "Wie einfach und übersichtlich sollte die App aufgebaut sein, damit auch jeder sofort klarkommt?"
+        title: "Feature 9: Stabilität & Windows-Integration",
+        description: "Wie wichtig ist dir eine nahtlose Integration in Windows (z.B. passend zum Windows-Darkmode, Installer etc.)?"
       },
       {
-        title: "Feature 10: Eure eigenen Ideen & Must-Haves",
-        description: "Was MUSS unbedingt in die Quapsattack-App rein? Schreib uns hier all deine wilden Ideen und Wünsche rein! 🚀"
+        title: "Feature 10: Eure ultimativen Windows-App Wünsche",
+        description: "Was MUSS unbedingt in die Quapsattack Windows-App rein? Hau hier all deine Ideen und Wünsche raus! 🚀"
       }
     ];
 
     let currentStep = 0;
     const totalQuestions = questionsConfig.length;
     const ratings = ["Mega wichtig", "Ziemlich cool", "Eher egal", "Brauch ich nicht"];
-    const CUSTOM_EMAIL_TEXT = "Vielen Dank für deine Teilnahme an der Quapsattack App-Umfrage! Deine Feature-Wünsche wurden anonym erfasst und helfen uns beim Bau der App.";
+    const CUSTOM_EMAIL_TEXT = "Vielen Dank für deine Teilnahme an der Quapsattack Windows-App & Redesign Umfrage! Deine Wünsche wurden anonym erfasst.";
 
     // DOM Elemente
     const acceptCheckbox = document.getElementById("acceptNotice");
@@ -570,6 +654,14 @@
     const form = document.getElementById("surveyForm");
     const submitBtn = document.getElementById("submitBtn");
 
+    // Style Auswahl Klick-Effekt
+    function selectStyleCard(cardElement) {
+      document.querySelectorAll('.style-card-option').forEach(c => c.classList.remove('selected'));
+      cardElement.classList.add('selected');
+      const radio = cardElement.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+    }
+
     // Text-to-Speech (Wiedergabe für Faule)
     const playAudioBtn = document.getElementById("playAudioBtn");
     const stopAudioBtn = document.getElementById("stopAudioBtn");
@@ -577,7 +669,7 @@
 
     playAudioBtn.addEventListener("click", () => {
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // Vorherige stopppen
+        window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(introTextEl.innerText);
         utterance.lang = 'de-DE';
         utterance.rate = 1.0;
@@ -609,7 +701,7 @@
     });
 
     startSurveyBtn.addEventListener("click", () => {
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel(); // Stoppe Audio beim Start
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       paginationBar.style.display = "flex";
       goToStep(1);
     });
@@ -638,7 +730,7 @@
         </div>
 
         <div class="button-group">
-          ${i > 1 ? `<button type="button" class="btn btn-secondary" onclick="goToStep(${i - 1})">Zurück</button>` : `<button type="button" class="btn btn-secondary" onclick="goToStep(0)">Startseite</button>`}
+          ${i > 1 ? `<button type="button" class="btn btn-secondary" onclick="goToStep(${i - 1})">Zurück</button>` : `<button type="button" class="btn btn-secondary" onclick="goToStep(0)">Startseite & Style</button>`}
           <button type="button" class="btn btn-secondary" onclick="skipQuestion(${i})">Überspringen</button>
           <button type="button" class="btn" onclick="nextQuestion(${i})">${i === totalQuestions ? 'Weiter zur Übersicht' : 'Nächster Punkt'}</button>
         </div>
@@ -751,6 +843,8 @@
 
       const formData = new FormData(form);
       const userEmail = document.getElementById("userEmail").value.trim();
+      const preferredStyle = formData.get("preferredStyle") || "Nicht angegeben";
+      const styleReason = document.getElementById("styleReason").value.trim();
 
       const surveyData = [];
       for (let i = 1; i <= totalQuestions; i++) {
@@ -761,11 +855,18 @@
         });
       }
 
+      // Design-Wahl als extra Info mit reinpacken
+      const finalPayload = {
+        preferred_style: preferredStyle,
+        style_reason: styleReason,
+        responses: surveyData
+      };
+
       try {
         // 1. Anonyme Speicherung in Supabase
         const { error: dbError } = await supabaseClient
           .from("quapsattack_survey")
-          .insert([{ responses: surveyData }]);
+          .insert([finalPayload]);
 
         if (dbError) throw dbError;
 
@@ -778,7 +879,7 @@
             },
             body: {
               user_email: userEmail || null,
-              survey_data: surveyData,
+              survey_data: finalPayload,
               custom_text: CUSTOM_EMAIL_TEXT
             }
           });
@@ -786,7 +887,7 @@
           console.warn("E-Mail-Versand nicht geklappt, aber DB-Eintrag war erfolgreich:", emailErr);
         }
 
-        statusMessage.textContent = "Geil! Deine Wünsche für die Quapsattack-App wurden erfolgreich und anonym übermittelt. 🚀";
+        statusMessage.textContent = "Geil! Deine Windows-App Wünsche und Style-Auswahl wurden erfolgreich und anonym übermittelt. 🚀";
         statusMessage.className = "success";
         form.reset();
         paginationBar.style.display = "none";
@@ -798,7 +899,7 @@
         statusMessage.className = "error";
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "App-Wünsche absenden";
+        submitBtn.textContent = "Windows-App Wünsche absenden";
       }
     });
   </script>
