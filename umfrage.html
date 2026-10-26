@@ -63,11 +63,34 @@
       border-radius: 16px;
       margin-bottom: 15px;
       box-shadow: 0 4px 25px rgba(99, 102, 241, 0.4);
+      opacity: 0;
+      transform: scale(0.6);
+      animation: logoFadeIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes logoFadeIn {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .header-text {
+      opacity: 0;
+      animation: textFadeIn 0.8s ease forwards;
+      animation-delay: 0.8s;
+    }
+
+    @keyframes textFadeIn {
+      to {
+        opacity: 1;
+      }
     }
 
     h1 {
       font-size: 2rem;
       font-weight: 800;
+      letter-spacing: -0.5px;
       color: #ffffff;
       margin-bottom: 8px;
     }
@@ -84,6 +107,19 @@
       border-radius: 12px;
       padding: 24px;
       margin-bottom: 25px;
+      position: relative;
+      animation: pulseGlow 4s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      0% {
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.1);
+        border-color: rgba(99, 102, 241, 0.2);
+      }
+      100% {
+        box-shadow: 0 0 25px rgba(99, 102, 241, 0.35);
+        border-color: rgba(99, 102, 241, 0.6);
+      }
     }
 
     .privacy-notice h2 {
@@ -91,6 +127,7 @@
       color: #ffffff;
       margin-bottom: 12px;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .privacy-notice p {
@@ -113,6 +150,8 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+      font-size: 0.88rem;
+      transition: background 0.2s ease;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -143,6 +182,7 @@
       padding: 16px;
       cursor: pointer;
       transition: all 0.2s ease;
+      position: relative;
     }
 
     .style-card-option:hover {
@@ -179,7 +219,7 @@
       font-weight: 600;
     }
 
-    /* Modal */
+    /* Großes Full-Page Modal Pop-up */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -206,21 +246,50 @@
       overflow-y: auto;
       border-radius: 20px;
       padding: 30px;
-      background: #161c2d;
-      color: #fff;
-      border: 1px solid var(--border-color);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+      position: relative;
+      animation: modalSlide 0.3s ease forwards;
     }
 
-    /* Design Themes für Modal */
-    .preview-cyberpunk { background: #0d0221; border: 2px solid #ff007f; color: #00f6ff; }
-    .preview-clean { background: #f8fafc; color: #0f172a; }
-    .preview-retro { background: #281d18; border: 3px solid #5c4033; color: #55ff55; }
-    .preview-glass { background: rgba(20, 20, 35, 0.9); border: 1px solid rgba(255, 255, 255, 0.2); }
-    .preview-matrix { background: #000000; border: 2px solid #00ff41; color: #00ff41; }
-    .preview-synthwave { background: #1a0b2e; border: 2px solid #ff7700; color: #ff007f; }
-    .preview-minimal { background: #050505; border: 1px solid #222222; color: #888888; }
-    .preview-anime { background: #fff5f5; border: 3px solid #000000; color: #2d3748; }
+    @keyframes modalSlide {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
 
+    /* Design Themes */
+    .preview-cyberpunk { background: #0d0221; border: 2px solid #ff007f; color: #00f6ff; font-family: 'Courier New', monospace; }
+    .preview-cyberpunk .demo-box { background: rgba(255,0,127,0.1); border: 1px solid #ff007f; }
+    .preview-cyberpunk .demo-btn { background: #ff007f; color: #fff; border: none; box-shadow: 0 0 10px #ff007f; }
+
+    .preview-clean { background: #f8fafc; border: 1px solid #cbd5e1; color: #0f172a; font-family: sans-serif; }
+    .preview-clean .demo-box { background: #ffffff; border: 1px solid #e2e8f0; }
+    .preview-clean .demo-btn { background: #2563eb; color: #fff; border: none; }
+
+    .preview-retro { background: #281d18; border: 3px solid #5c4033; color: #55ff55; font-family: monospace; }
+    .preview-retro .demo-box { background: #1a120e; border: 2px solid #5c4033; }
+    .preview-retro .demo-btn { background: #55ff55; color: #000; font-weight: bold; border: 2px solid #00aa00; }
+
+    .preview-glass { background: rgba(20, 20, 35, 0.85); border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(16px); color: #ffffff; }
+    .preview-glass .demo-box { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .preview-glass .demo-btn { background: rgba(255, 255, 255, 0.2); color: #fff; border: 1px solid rgba(255, 255, 255, 0.4); }
+
+    .preview-matrix { background: #000000; border: 2px solid #00ff41; color: #00ff41; font-family: monospace; }
+    .preview-matrix .demo-box { background: #051505; border: 1px solid #00ff41; }
+    .preview-matrix .demo-btn { background: #003b00; color: #00ff41; border: 1px solid #00ff41; }
+
+    .preview-synthwave { background: #1a0b2e; border: 2px solid #ff7700; color: #ff007f; font-family: sans-serif; }
+    .preview-synthwave .demo-box { background: rgba(255,0,127,0.1); border: 1px solid #ff7700; }
+    .preview-synthwave .demo-btn { background: linear-gradient(45deg, #ff007f, #ff7700); color: #fff; border: none; }
+
+    .preview-minimal { background: #050505; border: 1px solid #222222; color: #888888; font-family: sans-serif; }
+    .preview-minimal .demo-box { background: #111111; border: 1px solid #333333; }
+    .preview-minimal .demo-btn { background: #ffffff; color: #000000; border: none; font-weight: 600; }
+
+    .preview-anime { background: #fff5f5; border: 3px solid #000000; color: #2d3748; font-family: sans-serif; box-shadow: 6px 6px 0px #000000; }
+    .preview-anime .demo-box { background: #ffffff; border: 2px solid #000000; box-shadow: 3px 3px 0px #000; }
+    .preview-anime .demo-btn { background: #ff4757; color: #ffffff; border: 2px solid #000000; box-shadow: 3px 3px 0px #000000; }
+
+    /* Layout Vorschau Seite */
     .full-app-preview {
       display: grid;
       grid-template-columns: 220px 1fr;
@@ -231,17 +300,18 @@
     .preview-sidebar {
       padding: 15px;
       border-radius: 10px;
-      background: rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .preview-sidebar a {
-      display: block;
       padding: 8px 12px;
       border-radius: 6px;
       font-size: 0.85rem;
       font-weight: 600;
       opacity: 0.8;
-      margin-bottom: 5px;
+      cursor: pointer;
     }
 
     .preview-sidebar a.active-tab {
@@ -249,14 +319,32 @@
       background: rgba(99, 102, 241, 0.3);
     }
 
+    .preview-main-area {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
     .demo-box {
       padding: 15px;
       border-radius: 10px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-color);
-      margin-bottom: 10px;
     }
 
+    .demo-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .demo-btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+
+    /* Checkbox Styles */
     .checkbox-container {
       display: flex;
       align-items: center;
@@ -276,9 +364,17 @@
       cursor: pointer;
     }
 
+    .checkbox-container span {
+      font-size: 0.92rem;
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    /* Steps visibility */
     .step { display: none; }
     .step.active { display: block; }
 
+    /* Item Card */
     .item-card {
       background: rgba(0, 0, 0, 0.2);
       border: 1px solid var(--border-color);
@@ -297,6 +393,7 @@
       color: var(--text-muted);
       font-size: 0.95rem;
       margin-bottom: 18px;
+      line-height: 1.5;
     }
 
     textarea, input[type="email"] {
@@ -309,6 +406,7 @@
       font-family: inherit;
       font-size: 0.95rem;
       outline: none;
+      transition: border-color 0.2s ease;
     }
 
     textarea:focus, input[type="email"]:focus {
@@ -320,6 +418,7 @@
       min-height: 110px;
     }
 
+    /* Buttons */
     .button-group {
       display: flex;
       gap: 12px;
@@ -336,13 +435,23 @@
       font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
       text-align: center;
     }
 
     .btn:hover { background: var(--accent-hover); }
-    .btn-secondary { background: rgba(255, 255, 255, 0.08); color: var(--text-main); border: 1px solid var(--border-color); }
+    .btn:active { transform: scale(0.99); }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
     .btn:disabled { background: #374151; color: #9ca3af; cursor: not-allowed; }
 
+    /* Pagination */
     .pagination-bar {
       display: flex;
       justify-content: space-between;
@@ -363,11 +472,15 @@
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .page-num.active { background: var(--accent-color); color: #ffffff; border-color: var(--accent-color); }
+    .page-num:hover { background: rgba(255, 255, 255, 0.08); color: #ffffff; }
+    .page-num.active { background: var(--accent-color); color: #ffffff; border-color: var(--accent-color); box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4); }
     .page-num.completed { border-color: var(--success-color); color: var(--success-color); }
+    .page-num.completed.active { background: var(--accent-color); color: #ffffff; }
 
+    /* Email Section */
     .email-section {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-color);
@@ -376,7 +489,7 @@
       margin-bottom: 25px;
     }
 
-    .email-section label { display: block; font-weight: 600; margin-bottom: 6px; color: #ffffff; }
+    .email-section label { display: block; font-weight: 600; margin-bottom: 6px; color: #ffffff; font-size: 0.95rem; }
     .email-hint { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; }
 
     #statusMessage {
@@ -390,11 +503,20 @@
 
     #statusMessage.success { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success-color); color: #6ee7b7; display: block; }
     #statusMessage.error { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--error-color); color: #fca5a5; display: block; }
+
+    @media (max-width: 650px) {
+      .container { padding: 20px; }
+      .styles-grid { grid-template-columns: 1fr; }
+      .full-app-preview { grid-template-columns: 1fr; }
+      .pagination-bar { flex-wrap: wrap; }
+      .page-num { min-width: 35px; }
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
+    <!-- Header -->
     <div class="header">
       <img src="unnamed.jpg" alt="Quapsattack Logo" class="logo">
       <div class="header-text">
@@ -403,7 +525,7 @@
       </div>
     </div>
 
-    <!-- STEP 0 -->
+    <!-- STEP 0: Intro & 8 Style Karten -->
     <div id="step-0" class="step active">
       <div class="privacy-notice">
         <h2>Gestalte die Zukunft der Quapsattack App! 🖥️</h2>
@@ -411,95 +533,106 @@
           Hey leute es gibt bisher noch keine App, aber genau das wollen wir ändern! Wir planen eine allgemeine <span class="highlight-bold-underline">Windows App für das gesamte Quapsattack Projekt</span>. Da soll später alles reinkommen was das Herz begehrt. Klickt unten auf die Styles um eine <span class="highlight-bold-underline">volle Vorschau Seite</span> zu sehen und schreibt uns eure krassesten Ideen und Vorschläge in die Textfelder. Alles ist <span class="highlight-bold-underline">zu 100 prozent anonym</span>! 🚀
         </p>
         
+        <!-- Vorlesebutton -->
         <div class="tts-container">
           <button type="button" class="btn-tts" id="playAudioBtn">🔊 Text vorlesen lassen</button>
           <button type="button" class="btn-tts" id="stopAudioBtn" style="display: none;">⏹ Stoppen</button>
         </div>
 
-        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 12px; margin-top: 20px;">Wähle deinen Lieblingsstyle:</h3>
+        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 12px; margin-top: 20px;">Wähle deinen Lieblingsstyle (Klick öffnet die große Vorschau):</h3>
         
         <div class="styles-grid">
           <div class="style-card-option" id="card-cyberpunk" onclick="openStylePreview('cyberpunk')">
             <div class="style-title">⚡ 1. Cyberpunk Gaming</div>
-            <div class="style-desc">Neon Glow und futuristischer Gamer Vibe</div>
-            <span class="badge-preview">👁️ Ganze Vorschau</span>
+            <div class="style-desc">Neon Glow, dunkler Look und futuristischer Gamer Vibe</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
+
           <div class="style-card-option" id="card-clean" onclick="openStylePreview('clean')">
             <div class="style-title">💎 2. Clean Modern</div>
-            <div class="style-desc">Helle und aufgeräumte Oberfläche</div>
-            <span class="badge-preview">👁️ Ganze Vorschau</span>
+            <div class="style-desc">Sehr helle und aufgeräumte Oberfläche mit klaren Kanten</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
+
           <div class="style-card-option" id="card-retro" onclick="openStylePreview('retro')">
             <div class="style-title">🧱 3. Retro Pixel Sandbox</div>
-            <div class="style-desc">Nostalgischer Retro Look</div>
-            <span class="badge-preview">👁️ Ganze Vorschau</span>
+            <div class="style-desc">Nostalgischer Retro Look mit pixeligen Elementen</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
+
           <div class="style-card-option" id="card-glass" onclick="openStylePreview('glass')">
             <div class="style-title">🔮 4. Dark Glassmorphism</div>
-            <div class="style-desc">Transparenter Glas Look im Darkmode</div>
-            <span class="badge-preview">👁️ Ganze Vorschau</span>
+            <div class="style-desc">Transparenter Glas Look mit weichen Schatten im Darkmode</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
+
           <div class="style-card-option" id="card-matrix" onclick="openStylePreview('matrix')">
             <div class="style-title">📟 5. Matrix Terminal</div>
-            <div class="style-desc">Schwarzer Bildschirm mit Hacker Schrift</div>
-            <span class="badge-preview">👁️ Ganze Vorschau</span>
+            <div class="style-desc">Schwarzer Bildschirm mit leuchtend grüner Hacker Schrift</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
+
           <div class="style-card-option" id="card-synthwave" onclick="openStylePreview('synthwave')">
             <div class="style-title">🌅 6. Neon Synthwave</div>
-            <div class="style-desc">80er Jahre Retro Wave Stil</div>
-            <span class="badge-preview">👁️ Ganze Vorschau</span>
+            <div class="style-desc">80er Jahre Vibes mit lila und orangenen Farbverläufen</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
+
           <div class="style-card-option" id="card-minimal" onclick="openStylePreview('minimal')">
             <div class="style-title">🖤 7. Minimal Deep Dark</div>
-            <div class="style-desc">Schlichtes Tiefschwarz</div>
-            <span class="badge-preview">👁️ Ganze Vorschau</span>
+            <div class="style-desc">Extrem schlichtes tiefschwarz mit weißem Kontrast</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
+
           <div class="style-card-option" id="card-anime" onclick="openStylePreview('anime')">
             <div class="style-title">🎨 8. Anime Comic Style</div>
-            <div class="style-desc">Bunter Pop Art Comic Look</div>
-            <span class="badge-preview">👁️ Ganze Vorschau</span>
+            <div class="style-desc">Dicke schwarze Ränder, bunte Elemente und Pop Art Vibe</div>
+            <span class="badge-preview">👁️ Ganze Vorschau Seite</span>
           </div>
         </div>
 
         <input type="hidden" id="selectedStyleInput" name="preferredStyle" value="Noch kein Style gewählt">
 
         <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Warum feierst du diesen Style am meisten?</label>
-        <textarea id="styleReason" placeholder="Schreib hier kurz rein..."></textarea>
+        <textarea id="styleReason" placeholder="Schreib hier kurz rein warum dieser Look perfekt zur neuen App passen würde..."></textarea>
 
         <label class="checkbox-container" style="margin-top: 20px;">
           <input type="checkbox" id="acceptNotice">
-          <span>Ich habe einen Style gewählt und bin bereit für die Ideen</span>
+          <span>Ich habe einen Style gewählt und bin bereit für die Ideen und Vorschläge</span>
         </label>
       </div>
 
       <button type="button" class="btn" id="startSurveyBtn" disabled>Ideen einreichen starten</button>
     </div>
 
-    <!-- Survey Form -->
-    <div id="surveyFormWrapper">
+    <!-- Formular -->
+    <form id="surveyForm">
       <div id="questionsContainer"></div>
 
       <!-- STEP 11 -->
       <div id="step-11" class="step">
         <div class="email-section">
           <label for="userEmail">Deine E-Mail Adresse (Optional)</label>
-          <p class="email-hint">Falls du möchtest, kannst du hier freiwillig deine E-Mail eintragen.</p>
+          <p class="email-hint">
+            Falls du möchtest, kannst du hier freiwillig deine E-Mail eintragen.
+          </p>
           <input type="email" id="userEmail" placeholder="deine-email@beispiel.de">
         </div>
 
         <div class="button-group">
           <button type="button" class="btn btn-secondary" onclick="goToStep(10)">Zurück zu Punkt 10</button>
-          <button type="button" class="btn" id="submitBtn" onclick="submitSurveyData()">Alle Ideen absenden</button>
+          <button type="submit" class="btn" id="submitBtn">Alle Ideen absenden</button>
         </div>
       </div>
 
+      <!-- Pagination -->
       <div class="pagination-bar" id="paginationBar" style="display: none;"></div>
-    </div>
+    </form>
 
     <div id="statusMessage"></div>
   </div>
 
-  <!-- Modal -->
+  <!-- Großes Full-Page Modal für die App-Vorschau -->
   <div class="modal-overlay" id="styleModal">
     <div class="modal-content" id="modalContainer">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -509,16 +642,32 @@
       <p id="modalDesc" style="margin-bottom: 15px; opacity: 0.8; font-size: 0.9rem;"></p>
 
       <div class="full-app-preview">
-        <div class="preview-sidebar">
+        <div class="preview-sidebar demo-box">
           <div style="font-weight: bold; margin-bottom: 10px; font-size: 0.9rem;">Quapsattack Hub</div>
           <a class="active-tab">🏠 Home & Übersicht</a>
           <a>📰 Projekt News</a>
           <a>💬 Community Bereich</a>
+          <a>📊 Statistiken & Infos</a>
+          <a>⚙️ App Einstellungen</a>
         </div>
+
         <div class="preview-main-area">
           <div class="demo-box">
-            <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Zukunft der App</h3>
-            <p style="font-size: 0.85rem; opacity: 0.8;">Vorschau des Designs.</p>
+            <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Zukunft der Quapsattack App</h3>
+            <p style="font-size: 0.85rem; opacity: 0.8;">Hier siehst du wie das Design und die Aufteilung der zukünftigen Windows App aussehen könnte.</p>
+          </div>
+
+          <div class="demo-grid-2">
+            <div class="demo-box">
+              <h4 style="font-size: 0.95rem; margin-bottom: 5px;">🚀 Geplante Features</h4>
+              <p style="font-size: 0.8rem; opacity: 0.8;">Alle kommenden Updates, News und Projekt Infos direkt an einem Ort.</p>
+              <button type="button" class="demo-btn">Mehr entdecken</button>
+            </div>
+            <div class="demo-box">
+              <h4 style="font-size: 0.95rem; margin-bottom: 5px;">💡 Deine Vorschläge</h4>
+              <p style="font-size: 0.8rem; opacity: 0.8;">Hier kannst du später direkt eigene Ideen einreichen und mitgestalten.</p>
+              <button type="button" class="demo-btn">Idee abschicken</button>
+            </div>
           </div>
         </div>
       </div>
@@ -531,19 +680,21 @@
   </div>
 
   <script>
+    // Supabase Konfiguration
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // 8 Style Previews Konfiguration
     const stylePreviews = {
-      cyberpunk: { title: "⚡ Cyberpunk Gaming Design", desc: "Neon Cyberpunk Look.", class: "preview-cyberpunk", name: "Cyberpunk Gaming" },
-      clean: { title: "💎 Clean Modern Design", desc: "Heller, moderner Stil.", class: "preview-clean", name: "Clean Modern" },
-      retro: { title: "🧱 Retro Pixel Sandbox Design", desc: "Klassischer Pixel Vibe.", class: "preview-retro", name: "Retro Pixel Sandbox" },
-      glass: { title: "🔮 Dark Glassmorphism Design", desc: "Milchglas Elemente.", class: "preview-glass", name: "Dark Glassmorphism" },
-      matrix: { title: "📟 Matrix Terminal Design", desc: "Hacker Stil.", class: "preview-matrix", name: "Matrix Terminal" },
-      synthwave: { title: "🌅 Neon Synthwave Design", desc: "80er Jahre Retro Wave.", class: "preview-synthwave", name: "Neon Synthwave" },
-      minimal: { title: "🖤 Minimal Deep Dark Design", desc: "Schlichtes Tiefschwarz.", class: "preview-minimal", name: "Minimal Deep Dark" },
-      anime: { title: "🎨 Anime Comic Style Design", desc: "Bunter Comic Look.", class: "preview-anime", name: "Anime Comic Style" }
+      cyberpunk: { title: "⚡ Cyberpunk Gaming Design", desc: "Volle Vorschau der App im Neon Cyberpunk Look mit dunklem Hintergrund.", class: "preview-cyberpunk", name: "Cyberpunk Gaming" },
+      clean: { title: "💎 Clean Modern Design", desc: "Volle Vorschau der App im hellen, ultra-sauberen und modernen Stil.", class: "preview-clean", name: "Clean Modern" },
+      retro: { title: "🧱 Retro Pixel Sandbox Design", desc: "Volle Vorschau der App im klassischen Block und Pixel Vibe.", class: "preview-retro", name: "Retro Pixel Sandbox" },
+      glass: { title: "🔮 Dark Glassmorphism Design", desc: "Volle Vorschau der App mit transparenten Milchglas Elementen.", class: "preview-glass", name: "Dark Glassmorphism" },
+      matrix: { title: "📟 Matrix Terminal Design", desc: "Volle Vorschau der App im Hacker Stil mit schwarzem Bildschirm.", class: "preview-matrix", name: "Matrix Terminal" },
+      synthwave: { title: "🌅 Neon Synthwave Design", desc: "Volle Vorschau der App im 80er Jahre Retro Wave Stil.", class: "preview-synthwave", name: "Neon Synthwave" },
+      minimal: { title: "🖤 Minimal Deep Dark Design", desc: "Volle Vorschau der App im schlichten Tiefschwarz.", class: "preview-minimal", name: "Minimal Deep Dark" },
+      anime: { title: "🎨 Anime Comic Style Design", desc: "Volle Vorschau der App im bunten Comic Look.", class: "preview-anime", name: "Anime Comic Style" }
     };
 
     let activeStyleKey = "";
@@ -554,8 +705,9 @@
       const modal = document.getElementById("styleModal");
       const container = document.getElementById("modalContainer");
 
-      document.getElementById("modalTitleinnerText = data.title;
+      document.getElementById("modalTitle").innerText = data.title;
       document.getElementById("modalDesc").innerText = data.desc;
+
       container.className = "modal-content " + data.class;
       modal.classList.add("active");
     }
@@ -567,23 +719,26 @@
     function confirmSelectStyle() {
       const data = stylePreviews[activeStyleKey];
       document.getElementById("selectedStyleInput").value = data.name;
+
       document.querySelectorAll('.style-card-option').forEach(c => c.classList.remove('selected'));
       const activeCard = document.getElementById(`card-${activeStyleKey}`);
       if (activeCard) activeCard.classList.add('selected');
+
       closeStyleModal();
     }
 
+    // Fragen & Vorschläge für die App
     const questionsConfig = [
-      { title: "Punkt 1: Hauptansicht & Startseite", description: "Was soll als Erstes zu sehen sein?" },
-      { title: "Punkt 2: News & Projekt Updates", description: "Wie sollen Infos geteilt werden?" },
-      { title: "Punkt 3: Community & Austausch", description: "Features für den Kontakt?" },
-      { title: "Punkt 4: Benachrichtigungen", description: "Wann Benachrichtigungen?" },
-      { title: "Punkt 5: Eigene Widgets & Anpassung", description: "Welche Schnellzugriffe?" },
-      { title: "Punkt 6: Zusätzliche Tools & Funktionen", description: "Welche Werkzeuge?" },
-      { title: "Punkt 7: Ideen & Vorschläge einreichen", description: "System zum Einreichen?" },
-      { title: "Punkt 8: Performance & Technik", description: "Worauf achten?" },
-      { title: "Punkt 9: Design & visuelle Extras", description: "Visuelle Effekte?" },
-      { title: "Punkt 10: Deine absolut wildesten Ideen", description: "Deine ultimative Vision?" }
+      { title: "Punkt 1: Hauptansicht & Startseite", description: "Was soll als Erstes zu sehen sein, wenn man die neue App öffnet? Welche Infos brauchst du direkt auf einen Blick?" },
+      { title: "Punkt 2: News & Projekt Updates", description: "Wie stellst du dir vor, dass neue Infos zum Quapsattack Projekt in der App geteilt werden? Hast du spezielle Wünsche?" },
+      { title: "Punkt 3: Community & Austausch", description: "Welche Features wünschst du dir für den Kontakt mit anderen Leuten aus dem Projekt direkt in der App?" },
+      { title: "Punkt 4: Benachrichtigungen", description: "In welchen Momenten soll dir die App Benachrichtigungen auf den PC schicken? Was wäre wirklich nützlich?" },
+      { title: "Punkt 5: Eigene Widgets & Anpassung", description: "Welche Schnellzugriffe oder kleinen Boxen würdest du dir am liebsten auf deine Startseite bauen?" },
+      { title: "Punkt 6: Zusätzliche Tools & Funktionen", description: "Gibt es bestimmte Werkzeuge, Statistiken oder nützliche Helferlein die unbedingt in der App stecken sollten?" },
+      { title: "Punkt 7: Ideen & Vorschläge einreichen", description: "Wie stellst du dir ein System vor, bei dem jeder eigene Projektideen einreichen und darüber abstimmen kann?" },
+      { title: "Punkt 8: Performance & Technik", description: "Worauf sollten wir bei der Entwicklung der Windows App technisch besonders achten (z.B. Geschwindigkeit, Speicher)?" },
+      { title: "Punkt 9: Design & visuelle Extras", description: "Welche visuellen Effekte oder Design-Besonderheiten würden die App für dich perfekt machen?" },
+      { title: "Punkt 10: Deine absolut wildesten Ideen", description: "Hau hier alles raus was dir einfällt! Was ist deine ultimative Vision für die Zukunft der Quapsattack App?" }
     ];
 
     let currentStep = 0;
@@ -594,37 +749,78 @@
     const questionsContainer = document.getElementById("questionsContainer");
     const paginationBar = document.getElementById("paginationBar");
     const statusMessage = document.getElementById("statusMessage");
+    const form = document.getElementById("surveyForm");
+    const submitBtn = document.getElementById("submitBtn");
+
+    const playAudioBtn = document.getElementById("playAudioBtn");
+    const stopAudioBtn = document.getElementById("stopAudioBtn");
+    const introTextEl = document.getElementById("introText");
+
+    playAudioBtn.addEventListener("click", () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(introTextEl.innerText);
+        utterance.lang = 'de-DE';
+        utterance.rate = 1.0;
+        
+        utterance.onend = () => {
+          playAudioBtn.style.display = "inline-flex";
+          stopAudioBtn.style.display = "none";
+        };
+
+        window.speechSynthesis.speak(utterance);
+        playAudioBtn.style.display = "none";
+        stopAudioBtn.style.display = "inline-flex";
+      } else {
+        alert("Dein Browser unterstützt leider keine Sprachwiedergabe");
+      }
+    });
+
+    stopAudioBtn.addEventListener("click", () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      playAudioBtn.style.display = "inline-flex";
+      stopAudioBtn.style.display = "none";
+    });
 
     acceptCheckbox.addEventListener("change", () => {
       startSurveyBtn.disabled = !acceptCheckbox.checked;
     });
 
     startSurveyBtn.addEventListener("click", () => {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       paginationBar.style.display = "flex";
       goToStep(1);
     });
 
+    // Dynamische Erstellung der Fragen 1 bis 10
     questionsConfig.forEach((q, index) => {
       const i = index + 1;
       const stepDiv = document.createElement("div");
       stepDiv.id = `step-${i}`;
       stepDiv.className = "step";
+
       stepDiv.innerHTML = `
         <div class="item-card">
           <h3>Punkt ${i} von ${totalQuestions}: ${q.title}</h3>
           <p class="item-description">${q.description}</p>
-          <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Deine Ideen (Pflichtfeld):</label>
-          <textarea id="p${i}_reason" placeholder="Schreib hier all deine Ideen rein..." oninput="updatePaginationStatus(${i})"></textarea>
+          
+          <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Deine Ideen und Vorschläge dazu (Pflichtfeld):</label>
+          <textarea id="p${i}_reason" placeholder="Schreib hier all deine Ideen und Vorstellungen rein..." oninput="updatePaginationStatus(${i})"></textarea>
         </div>
+
         <div class="button-group">
-          ${i > 1 ? `<button type="button" class="btn btn-secondary" onclick="goToStep(${i - 1})">Zurück</button>` : `<button type="button" class="btn btn-secondary" onclick="goToStep(0)">Startseite</button>`}
+          ${i > 1 ? `<button type="button" class="btn btn-secondary" onclick="goToStep(${i - 1})">Zurück</button>` : `<button type="button" class="btn btn-secondary" onclick="goToStep(0)">Startseite und Style</button>`}
           <button type="button" class="btn btn-secondary" onclick="skipQuestion(${i})">Überspringen</button>
           <button type="button" class="btn" onclick="nextQuestion(${i})">${i === totalQuestions ? 'Weiter zur Übersicht' : 'Nächster Punkt'}</button>
         </div>
       `;
+
       questionsContainer.appendChild(stepDiv);
     });
 
+    // Pagination Leiste 1 bis 10
     for (let i = 1; i <= totalQuestions; i++) {
       const pageBtn = document.createElement("div");
       pageBtn.className = "page-num";
@@ -639,6 +835,7 @@
     function goToStep(stepNumber) {
       statusMessage.style.display = "none";
       document.querySelectorAll(".step").forEach(el => el.classList.remove("active"));
+      
       currentStep = stepNumber;
       const targetStep = document.getElementById(`step-${stepNumber}`);
       if (targetStep) targetStep.classList.add("active");
@@ -651,6 +848,7 @@
           btn.classList.remove("active");
         }
       }
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -670,11 +868,12 @@
 
     function nextQuestion(i) {
       if (!isQuestionFilled(i)) {
-        statusMessage.textContent = `Schreib bitte kurz deine Ideen in Punkt ${i} rein!`;
+        statusMessage.textContent = `Schreib bitte kurz deine Ideen oder Vorschläge in Punkt ${i} rein!`;
         statusMessage.className = "error";
         return;
       }
       statusMessage.style.display = "none";
+
       if (i < totalQuestions) {
         goToStep(i + 1);
       } else {
@@ -691,10 +890,10 @@
       }
     }
 
-    // Direkte Funktion für den Absende-Button (ohne Event-Listener Hänger)
-    async function submitSurveyData() {
+    // Absenden über Supabase Database + Resend Edge Function
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
       statusMessage.style.display = "none";
-      const submitBtn = document.getElementById("submitBtn");
 
       const missingQuestions = [];
       for (let i = 1; i <= totalQuestions; i++) {
@@ -740,7 +939,7 @@
 
         if (dbError) throw dbError;
 
-        // 2. E-Mail über Edge Function anfordern
+        // 2. E-Mail über die Resend Edge Function verschicken
         const { error: fnError } = await supabaseClient.functions.invoke("resend-email", {
           body: {
             user_email: userEmail || "keine-angabe@quapsattack.de",
@@ -752,8 +951,9 @@
           console.error("Edge Function Fehler:", fnError);
         }
 
-        statusMessage.textContent = "Mega! Deine Ideen wurden erfolgreich gespeichert und verschickt!";
+        statusMessage.textContent = "Mega! Deine Ideen und dein Style-Wunsch wurden erfolgreich abgeschickt!";
         statusMessage.className = "success";
+        form.reset();
         paginationBar.style.display = "none";
         goToStep(0);
 
@@ -766,7 +966,7 @@
         submitBtn.disabled = false;
         submitBtn.textContent = "Alle Ideen absenden";
       }
-    }
+    });
   </script>
 </body>
 </html>
