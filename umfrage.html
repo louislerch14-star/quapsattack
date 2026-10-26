@@ -680,7 +680,7 @@
   </div>
 
   <script>
-    // Supabase Konfiguration mit deinen eingebauten Keys
+    // Supabase Konfiguration (mit deinen fest integrierten Keys)
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -890,9 +890,10 @@
       }
     }
 
-    // Absenden über Supabase Database + Resend Edge Function
+    // Absenden über Supabase Database + Resend Edge Function mit Test-Alerts
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      alert("Absenden-Button wurde geklickt!"); // Test ob JS anspringt
       statusMessage.style.display = "none";
 
       const missingQuestions = [];
@@ -932,6 +933,7 @@
       };
 
       try {
+        alert("Versuche in Supabase zu speichern...");
         // 1. In Supabase speichern
         const { error: dbError } = await supabaseClient
           .from("quapsattack_survey")
@@ -939,8 +941,9 @@
 
         if (dbError) throw dbError;
 
+        alert("Supabase erfolgreich! Rufe E-Mail Edge Function auf...");
         // 2. E-Mail über die Resend Edge Function verschicken
-        await supabaseClient.functions.invoke("resend-email", {
+        const { error: fnError } = await supabaseClient.functions.invoke("resend-email", {
           headers: {
             "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
             "apikey": SUPABASE_ANON_KEY
@@ -952,6 +955,13 @@
           }
         });
 
+        if (fnError) {
+          console.error("Edge Function Fehler:", fnError);
+          alert("Edge Function Fehler: " + JSON.stringify(fnError));
+        } else {
+          alert("E-Mail Function erfolgreich ausgelöst!");
+        }
+
         statusMessage.textContent = "Mega! Deine Ideen und dein Style-Wunsch wurden erfolgreich abgeschickt!";
         statusMessage.className = "success";
         form.reset();
@@ -960,6 +970,7 @@
 
       } catch (err) {
         console.error("Fehler beim Absenden:", err);
+        alert("Fehler aufgetreten: " + err.message);
         statusMessage.textContent = "Hat leider nicht geklappt, versuch es noch einmal!";
         statusMessage.className = "error";
       } finally {
