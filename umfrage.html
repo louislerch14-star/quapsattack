@@ -591,6 +591,8 @@
           </div>
         </div>
 
+        <input type="hidden" id="selectedStyleInput" name="preferredStyle" value="Noch kein Style gewählt">
+
         <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Warum feierst du diesen Style am meisten?</label>
         <textarea id="styleReason" placeholder="Schreib hier kurz rein warum dieser Look perfekt zur neuen App passen würde..."></textarea>
 
@@ -603,16 +605,8 @@
       <button type="button" class="btn" id="startSurveyBtn" disabled>Ideen einreichen starten</button>
     </div>
 
-    <!-- WEB3FORMS FORMULAR (Direktes Absenden per POST) -->
-    <form id="surveyForm" action="https://api.web3forms.com/submit" method="POST">
-      
-      <!-- Web3Forms Pflicht-Felder -->
-      <input type="hidden" name="access_key" value="4a3b0e87-7016-47dd-9aa6-1efb77c02af8">
-      <input type="hidden" name="from_name" value="Quapsattack App Ideen">
-      <input type="hidden" name="subject" value="Neue Ideen für die Quapsattack App!">
-      <input type="hidden" id="selectedStyleInput" name="Gewaehlter_Style" value="Noch kein Style gewählt">
-      <input type="hidden" id="styleReasonHidden" name="Style_Begruendung" value="">
-
+    <!-- Formular -->
+    <form id="surveyForm">
       <div id="questionsContainer"></div>
 
       <!-- STEP 11 -->
@@ -620,9 +614,9 @@
         <div class="email-section">
           <label for="userEmail">Deine E-Mail Adresse (Optional)</label>
           <p class="email-hint">
-            Falls du möchtest, dass wir dich bei Rückfragen zu deinen Ideen kontaktieren können, kannst du hier freiwillig deine E-Mail eintragen.
+            Falls du möchtest, kannst du hier freiwillig deine E-Mail eintragen.
           </p>
-          <input type="email" id="userEmail" name="email" placeholder="deine-email@beispiel.de">
+          <input type="email" id="userEmail" placeholder="deine-email@beispiel.de">
         </div>
 
         <div class="button-group">
@@ -686,7 +680,7 @@
   </div>
 
   <script>
-    // Supabase Konfiguration (Datenbank)
+    // Supabase Konfiguration mit deinen eingebauten Keys
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -735,16 +729,16 @@
 
     // Fragen & Vorschläge für die App
     const questionsConfig = [
-      { title: "Hauptansicht & Startseite", description: "Was soll als Erstes zu sehen sein, wenn man die neue App öffnet? Welche Infos brauchst du direkt auf einen Blick?" },
-      { title: "News & Projekt Updates", description: "Wie stellst du dir vor, dass neue Infos zum Quapsattack Projekt in der App geteilt werden? Hast du spezielle Wünsche?" },
-      { title: "Community & Austausch", description: "Welche Features wünschst du dir für den Kontakt mit anderen Leuten aus dem Projekt direkt in der App?" },
-      { title: "Benachrichtigungen", description: "In welchen Momenten soll dir die App Benachrichtigungen auf den PC schicken? Was wäre wirklich nützlich?" },
-      { title: "Eigene Widgets & Anpassung", description: "Welche Schnellzugriffe oder kleinen Boxen würdest du dir am liebsten auf deine Startseite bauen?" },
-      { title: "Zusätzliche Tools & Funktionen", description: "Gibt es bestimmte Werkzeuge, Statistiken oder nützliche Helferlein die unbedingt in der App stecken sollten?" },
-      { title: "Ideen & Vorschläge einreichen", description: "Wie stellst du dir ein System vor, bei dem jeder eigene Projektideen einreichen und darüber abstimmen kann?" },
-      { title: "Performance & Technik", description: "Worauf sollten wir bei der Entwicklung der Windows App technisch besonders achten (z.B. Geschwindigkeit, Speicher)?" },
-      { title: "Design & visuelle Extras", description: "Welche visuellen Effekte oder Design-Besonderheiten würden die App für dich perfekt machen?" },
-      { title: "Deine absolut wildesten Ideen", description: "Hau hier alles raus was dir einfällt! Was ist deine ultimative Vision für die Zukunft der Quapsattack App?" }
+      { title: "Punkt 1: Hauptansicht & Startseite", description: "Was soll als Erstes zu sehen sein, wenn man die neue App öffnet? Welche Infos brauchst du direkt auf einen Blick?" },
+      { title: "Punkt 2: News & Projekt Updates", description: "Wie stellst du dir vor, dass neue Infos zum Quapsattack Projekt in der App geteilt werden? Hast du spezielle Wünsche?" },
+      { title: "Punkt 3: Community & Austausch", description: "Welche Features wünschst du dir für den Kontakt mit anderen Leuten aus dem Projekt direkt in der App?" },
+      { title: "Punkt 4: Benachrichtigungen", description: "In welchen Momenten soll dir die App Benachrichtigungen auf den PC schicken? Was wäre wirklich nützlich?" },
+      { title: "Punkt 5: Eigene Widgets & Anpassung", description: "Welche Schnellzugriffe oder kleinen Boxen würdest du dir am liebsten auf deine Startseite bauen?" },
+      { title: "Punkt 6: Zusätzliche Tools & Funktionen", description: "Gibt es bestimmte Werkzeuge, Statistiken oder nützliche Helferlein die unbedingt in der App stecken sollten?" },
+      { title: "Punkt 7: Ideen & Vorschläge einreichen", description: "Wie stellst du dir ein System vor, bei dem jeder eigene Projektideen einreichen und darüber abstimmen kann?" },
+      { title: "Punkt 8: Performance & Technik", description: "Worauf sollten wir bei der Entwicklung der Windows App technisch besonders achten (z.B. Geschwindigkeit, Speicher)?" },
+      { title: "Punkt 9: Design & visuelle Extras", description: "Welche visuellen Effekte oder Design-Besonderheiten würden die App für dich perfekt machen?" },
+      { title: "Punkt 10: Deine absolut wildesten Ideen", description: "Hau hier alles raus was dir einfällt! Was ist deine ultimative Vision für die Zukunft der Quapsattack App?" }
     ];
 
     let currentStep = 0;
@@ -813,7 +807,7 @@
           <p class="item-description">${q.description}</p>
           
           <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Deine Ideen und Vorschläge dazu (Pflichtfeld):</label>
-          <textarea id="p${i}_reason" name="Punkt_${i}_${q.title.replace(/\s+/g, '_')}" placeholder="Schreib hier all deine Ideen und Vorstellungen rein..." oninput="updatePaginationStatus(${i})"></textarea>
+          <textarea id="p${i}_reason" placeholder="Schreib hier all deine Ideen und Vorstellungen rein..." oninput="updatePaginationStatus(${i})"></textarea>
         </div>
 
         <div class="button-group">
@@ -859,7 +853,7 @@
     }
 
     function isQuestionFilled(i) {
-      const reasonEl = document.querySelector(`textarea[name^="Punkt_${i}_"]`);
+      const reasonEl = document.getElementById(`p${i}_reason`);
       return reasonEl && reasonEl.value.trim() !== "";
     }
 
@@ -896,10 +890,10 @@
       }
     }
 
-    // Beim Absenden: Erst in Supabase eintragen, dann Formular abschicken!
+    // Absenden über Supabase Database + Resend Edge Function
     form.addEventListener("submit", async (e) => {
-      const styleReasonVal = document.getElementById("styleReason").value.trim();
-      document.getElementById("styleReasonHidden").value = styleReasonVal;
+      e.preventDefault();
+      statusMessage.style.display = "none";
 
       const missingQuestions = [];
       for (let i = 1; i <= totalQuestions; i++) {
@@ -909,7 +903,6 @@
       }
 
       if (missingQuestions.length > 0) {
-        e.preventDefault();
         const missingText = missingQuestions.map(num => `Punkt ${num}`).join(", ");
         statusMessage.textContent = `Folgende Punkte haben noch keine Ideen: ${missingText}.`;
         statusMessage.className = "error";
@@ -917,32 +910,62 @@
         return;
       }
 
-      // Speicherung in Supabase vor dem Absenden der Mail
-      try {
-        const preferredStyle = document.getElementById("selectedStyleInput").value;
-        const formData = new FormData(form);
-        const surveyData = [];
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Wird gesendet...";
 
-        for (let i = 1; i <= totalQuestions; i++) {
-          const val = formData.get(`Punkt_${i}_${questionsConfig[i-1].title.replace(/\s+/g, '_')}`);
-          surveyData.push({
-            item: questionsConfig[i - 1].title,
-            ideas: val
-          });
-        }
+      const userEmail = document.getElementById("userEmail").value.trim();
+      const preferredStyle = document.getElementById("selectedStyleInput").value;
+      const styleReason = document.getElementById("styleReason").value.trim();
 
-        await supabaseClient
-          .from("quapsattack_survey")
-          .insert([{
-            preferred_style: preferredStyle,
-            style_reason: styleReasonVal,
-            responses: surveyData
-          }]);
-      } catch (err) {
-        console.warn("Supabase Eintrag fehlgeschlagen:", err);
+      const surveyData = [];
+      for (let i = 1; i <= totalQuestions; i++) {
+        surveyData.push({
+          item: questionsConfig[i - 1].title,
+          ideas: document.getElementById(`p${i}_reason`).value.trim()
+        });
       }
 
-      // Das HTML-Formular schickt die Mail jetzt direkt über Web3Forms ab!
+      const finalPayload = {
+        preferred_style: preferredStyle,
+        style_reason: styleReason,
+        responses: surveyData
+      };
+
+      try {
+        // 1. In Supabase speichern
+        const { error: dbError } = await supabaseClient
+          .from("quapsattack_survey")
+          .insert([finalPayload]);
+
+        if (dbError) throw dbError;
+
+        // 2. E-Mail über die Resend Edge Function verschicken
+        await supabaseClient.functions.invoke("resend-email", {
+          headers: {
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+            "apikey": SUPABASE_ANON_KEY
+          },
+          body: {
+            user_email: userEmail || null,
+            survey_data: finalPayload,
+            custom_text: "Neue Vorschläge und Ideen für die zukünftige Quapsattack App eingegangen!"
+          }
+        });
+
+        statusMessage.textContent = "Mega! Deine Ideen und dein Style-Wunsch wurden erfolgreich abgeschickt!";
+        statusMessage.className = "success";
+        form.reset();
+        paginationBar.style.display = "none";
+        goToStep(0);
+
+      } catch (err) {
+        console.error("Fehler beim Absenden:", err);
+        statusMessage.textContent = "Hat leider nicht geklappt, versuch es noch einmal!";
+        statusMessage.className = "error";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Alle Ideen absenden";
+      }
     });
   </script>
 </body>
