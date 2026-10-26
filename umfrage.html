@@ -5,7 +5,7 @@
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quapsattack App - Umfrage und Redesign</title>
+  <title>Quapsattack App - Ideen & Zukunft</title>
 
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -442,43 +442,6 @@
       line-height: 1.5;
     }
 
-    .rating-options {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .rating-label {
-      flex: 1;
-      min-width: 100px;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 12px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-
-    .rating-label:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .rating-options input[type="radio"] {
-      display: none;
-    }
-
-    .rating-options input[type="radio"]:checked + .rating-label {
-      background: var(--accent-color);
-      border-color: var(--accent-color);
-      color: #ffffff;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-    }
-
     textarea, input[type="email"] {
       width: 100%;
       background: rgba(0, 0, 0, 0.3);
@@ -498,7 +461,7 @@
 
     textarea {
       resize: vertical;
-      min-height: 90px;
+      min-height: 110px;
     }
 
     /* Buttons */
@@ -640,7 +603,6 @@
 
     @media (max-width: 650px) {
       .container { padding: 20px; }
-      .rating-options { flex-direction: column; }
       .styles-grid { grid-template-columns: 1fr; }
       .full-app-preview { grid-template-columns: 1fr; }
       .pagination-bar { flex-wrap: wrap; }
@@ -655,17 +617,17 @@
     <div class="header">
       <img src="unnamed.jpg" alt="Quapsattack Logo" class="logo">
       <div class="header-text">
-        <h1>Quapsattack Project App</h1>
-        <p class="subtitle">Windows App Umfrage und neues Redesign</p>
+        <h1>Quapsattack Projekt App</h1>
+        <p class="subtitle">Zukunft, Ideen und Design Planung</p>
       </div>
     </div>
 
     <!-- STEP 0: Intro & 8 Style Karten -->
     <div id="step-0" class="step active">
       <div class="privacy-notice">
-        <h2>Umfrage zur neuen Quapsattack Projekt App 🖥️</h2>
+        <h2>Gestalte die Zukunft der Quapsattack App! 🖥️</h2>
         <p id="introText">
-          Hey leute wir planen eine allgemeine <span class="highlight-bold-underline">Windows App über das gesamte Quapsattack Projekt</span> wo alles zusammenläuft. Keine Sorge das wird kein Launcher, sondern eine riesige Hub App für News, Community, Infos und alle zukünftigen Ideen! Unten sind 8 verschiedene Styles – klickt auf einen Style um eine <span class="highlight-bold-underline">volle App Vorschau Seite</span> zu öffnen. Die Umfrage ist <span class="highlight-bold-underline">zu 100 prozent anonym</span>! 🚀
+          Hey leute es gibt bisher noch keine App, aber genau das wollen wir ändern! Wir planen eine allgemeine <span class="highlight-bold-underline">Windows App für das gesamte Quapsattack Projekt</span>. Da soll später alles reinkommen was das Herz begehrt. Klickt unten auf die Styles um eine <span class="highlight-bold-underline">volle Vorschau Seite</span> zu sehen und schreibt uns eure krassesten Ideen und Vorschläge in die Textfelder. Alles ist <span class="highlight-bold-underline">zu 100 prozent anonym</span>! 🚀
         </p>
         
         <!-- Vorlesebutton -->
@@ -674,7 +636,7 @@
           <button type="button" class="btn-tts" id="stopAudioBtn" style="display: none;">⏹ Stoppen</button>
         </div>
 
-        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 12px; margin-top: 20px;">Wähle dein Lieblingsdesign (Klick öffnet die große Vorschau):</h3>
+        <h3 style="font-size: 1rem; color: #ffffff; margin-bottom: 12px; margin-top: 20px;">Wähle deinen Lieblingsstyle (Klick öffnet die große Vorschau):</h3>
         
         <div class="styles-grid">
           <div class="style-card-option" id="card-cyberpunk" onclick="openStylePreview('cyberpunk')">
@@ -728,16 +690,16 @@
 
         <input type="hidden" id="selectedStyleInput" name="preferredStyle" value="Noch kein Style gewählt">
 
-        <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Warum gefällt dir genau dieser Style am besten?</label>
-        <textarea id="styleReason" placeholder="Schreib hier kurz rein warum dieser Look perfekt zur Quapsattack App passt..."></textarea>
+        <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Warum feierst du diesen Style am meisten?</label>
+        <textarea id="styleReason" placeholder="Schreib hier kurz rein warum dieser Look perfekt zur neuen App passen würde..."></textarea>
 
         <label class="checkbox-container" style="margin-top: 20px;">
           <input type="checkbox" id="acceptNotice">
-          <span>Ich habe einen Style gewählt und bin bereit für die Fragen</span>
+          <span>Ich habe einen Style gewählt und bin bereit für die Ideen und Vorschläge</span>
         </label>
       </div>
 
-      <button type="button" class="btn" id="startSurveyBtn" disabled>Umfrage starten</button>
+      <button type="button" class="btn" id="startSurveyBtn" disabled>Ideen einreichen starten</button>
     </div>
 
     <!-- Formular -->
@@ -749,14 +711,14 @@
         <div class="email-section">
           <label for="userEmail">Eine Kopie per E-Mail bekommen (freiwillig)</label>
           <p class="email-hint">
-            Wenn du willst kannst du hier deine E-Mail eintragen um deine Antworten zugeschickt zu bekommen. Die Adresse wird <span class="highlight-bold-underline">nirgendwo gespeichert</span> und nur einmal genutzt.
+            Wenn du möchtest kannst du hier deine E-Mail eintragen um deine Ideen als Übersicht zugeschickt zu bekommen. Die Adresse wird <span class="highlight-bold-underline">nirgendwo gespeichert</span> und nur für den einmaligen Versand genutzt.
           </p>
           <input type="email" id="userEmail" placeholder="deine-email@beispiel.de">
         </div>
 
         <div class="button-group">
           <button type="button" class="btn btn-secondary" onclick="goToStep(10)">Zurück zu Punkt 10</button>
-          <button type="submit" class="btn" id="submitBtn">Antworten absenden</button>
+          <button type="submit" class="btn" id="submitBtn">Alle Ideen absenden</button>
         </div>
       </div>
 
@@ -782,29 +744,29 @@
         <div class="preview-sidebar demo-box">
           <div style="font-weight: bold; margin-bottom: 10px; font-size: 0.9rem;">Quapsattack Hub</div>
           <a class="active-tab">🏠 Home & Übersicht</a>
-          <a>📰 News & Updates</a>
-          <a>💬 Community Feed</a>
-          <a>📊 Projekt Statistiken</a>
+          <a>📰 Projekt News</a>
+          <a>💬 Community Bereich</a>
+          <a>📊 Statistiken & Infos</a>
           <a>⚙️ App Einstellungen</a>
         </div>
 
         <!-- Main Content Area -->
         <div class="preview-main-area">
           <div class="demo-box">
-            <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Willkommen zurück, Quaps!</h3>
-            <p style="font-size: 0.85rem; opacity: 0.8;">Hier siehst du alle wichtigen Infos rund um das gesamte Projekt auf einen Blick.</p>
+            <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Zukunft der Quapsattack App</h3>
+            <p style="font-size: 0.85rem; opacity: 0.8;">Hier siehst du wie das Design und die Aufteilung der zukünftigen Windows App aussehen könnte.</p>
           </div>
 
           <div class="demo-grid-2">
             <div class="demo-box">
-              <h4 style="font-size: 0.95rem; margin-bottom: 5px;">🔥 Aktuelle Highlights</h4>
-              <p style="font-size: 0.8rem; opacity: 0.8;">Schau dir die neuesten Umfragen, Community Projekte und kommenden Aktionen an.</p>
-              <button type="button" class="demo-btn">Mehr erfahren</button>
+              <h4 style="font-size: 0.95rem; margin-bottom: 5px;">🚀 Geplante Features</h4>
+              <p style="font-size: 0.8rem; opacity: 0.8;">Alle kommenden Updates, News und Projekt Infos direkt an einem Ort.</p>
+              <button type="button" class="demo-btn">Mehr entdecken</button>
             </div>
             <div class="demo-box">
-              <h4 style="font-size: 0.95rem; margin-bottom: 5px;">💡 Deine Ideen</h4>
-              <p style="font-size: 0.8rem; opacity: 0.8;">Reiche direkt über die App neue Vorschläge ein und stimme über Features ab.</p>
-              <button type="button" class="demo-btn">Vorschlag einreichen</button>
+              <h4 style="font-size: 0.95rem; margin-bottom: 5px;">💡 Deine Vorschläge</h4>
+              <p style="font-size: 0.8rem; opacity: 0.8;">Hier kannst du später direkt eigene Ideen einreichen und mitgestalten.</p>
+              <button type="button" class="demo-btn">Idee abschicken</button>
             </div>
           </div>
         </div>
@@ -905,54 +867,53 @@
       closeStyleModal();
     }
 
-    // Fragen für die Allgemeine Projekt App
+    // Zukunftsorientierte Fragen & Vorschläge für die App (Keine aktuelle Umfrage)
     const questionsConfig = [
       {
-        title: "Punkt 1: App Navigation und Übersicht",
-        description: "Wie findest du die Aufteilung in verschiedene Bereiche wie News, Community und Statistiken in der App?"
+        title: "Punkt 1: Hauptansicht & Startseite",
+        description: "Was soll als Erstes zu sehen sein, wenn man die neue App öffnet? Welche Infos brauchst du direkt auf einen Blick?"
       },
       {
-        title: "Punkt 2: Projekt News und Updates",
-        description: "Soll die App dir immer direkt neue Infos und Ankündigungen zum Quapsattack Projekt anzeigen?"
+        title: "Punkt 2: News & Projekt Updates",
+        description: "Wie stellst du dir vor, dass neue Infos zum Quapsattack Projekt in der App geteilt werden? Hast du spezielle Wünsche?"
       },
       {
-        title: "Punkt 3: Performance und Schnelligkeit",
-        description: "Wie wichtig ist dir, dass die App extrem flüssig läuft und sofort startet ohne Ladezeiten?"
+        title: "Punkt 3: Community & Austausch",
+        description: "Welche Features wünschst du dir für den Kontakt mit anderen Leuten aus dem Projekt direkt in der App?"
       },
       {
-        title: "Punkt 4: Push Benachrichtigungen",
-        description: "Soll die App dich informieren, wenn es wichtige Neuigkeiten oder neue Umfragen gibt?"
+        title: "Punkt 4: Benachrichtigungen",
+        description: "In welchen Momenten soll dir die App Benachrichtigungen auf den PC schicken? Was wäre wirklich nützlich?"
       },
       {
-        title: "Punkt 5: Community Feed und Austausch",
-        description: "Wäre ein direkter Community Bereich in der App cool, wo man sich über alles austauschen kann?"
+        title: "Punkt 5: Eigene Widgets & Anpassung",
+        description: "Welche Schnellzugriffe oder kleinen Boxen würdest du dir am liebsten auf deine Startseite bauen?"
       },
       {
-        title: "Punkt 6: Design und Optik Anpassung",
-        description: "Findest du es wichtig, dass man das Design und den Look der App nach eigenen Wünschen ändern kann?"
+        title: "Punkt 6: Zusätzliche Tools & Funktionen",
+        description: "Gibt es bestimmte Werkzeuge, Statistiken oder nützliche Helferlein die unbedingt in der App stecken sollten?"
       },
       {
-        title: "Punkt 7: Ideen und Vorschläge einreichen",
-        description: "Soll es einen extra Bereich in der App geben, wo jeder ganz easy neue Ideen für das Projekt vorschlagen kann?"
+        title: "Punkt 7: Ideen & Vorschläge einreichen",
+        description: "Wie stellst du dir ein System vor, bei dem jeder eigene Projektideen einreichen und darüber abstimmen kann?"
       },
       {
-        title: "Punkt 8: Widgets und Schnellzugriff",
-        description: "Wäre es praktisch, wenn man sich wichtige Infos direkt auf eine Startseite in der App legen kann?"
+        title: "Punkt 8: Performance & Technik",
+        description: "Worauf sollten wir bei der Entwicklung der Windows App technisch besonders achten (z.B. Geschwindigkeit, Speicher)? "
       },
       {
-        title: "Punkt 9: Windows Integration",
-        description: "Wie wichtig ist dir, dass sich die Windows App perfekt in dein Betriebssystem einfügt?"
+        title: "Punkt 9: Design & visuelle Extras",
+        description: "Welche visuellen Effekte oder Design-Besonderheiten würden die App für dich perfekt machen?"
       },
       {
-        title: "Punkt 10: Deine ultimativen Projekt Wünsche",
-        description: "Was soll deiner Meinung nach in Zukunft unbedingt in dieser All-in-One App enthalten sein? Schreib alles rein!"
+        title: "Punkt 10: Deine absolut wildesten Ideen",
+        description: "Hau hier alles raus was dir einfällt! Was ist deine ultimative Vision für die Zukunft der Quapsattack App?"
       }
     ];
 
     let currentStep = 0;
     const totalQuestions = questionsConfig.length;
-    const ratings = ["Mega wichtig", "Ziemlich cool", "Eher egal", "Brauch ich nicht"];
-    const CUSTOM_EMAIL_TEXT = "Vielen Dank für deine Teilnahme an der Quapsattack App Umfrage. Deine Antworten wurden anonym gespeichert.";
+    const CUSTOM_EMAIL_TEXT = "Vielen Dank für deine Vorschläge und Ideen zur Zukunft der Quapsattack App. Deine Einsendung wurde anonym gespeichert.";
 
     const acceptCheckbox = document.getElementById("acceptNotice");
     const startSurveyBtn = document.getElementById("startSurveyBtn");
@@ -1004,7 +965,7 @@
       goToStep(1);
     });
 
-    // Dynamische Erstellung der Fragen 1 bis 10
+    // Dynamische Erstellung der Fragen 1 bis 10 als reine Textfeld-Ideen-Punkte
     questionsConfig.forEach((q, index) => {
       const i = index + 1;
       const stepDiv = document.createElement("div");
@@ -1016,15 +977,8 @@
           <h3>Punkt ${i} von ${totalQuestions}: ${q.title}</h3>
           <p class="item-description">${q.description}</p>
           
-          <div class="rating-options">
-            ${ratings.map(r => `
-              <input type="radio" id="p${i}_${r}" name="p${i}" value="${r}" onchange="updatePaginationStatus(${i})">
-              <label for="p${i}_${r}" class="rating-label">${r}</label>
-            `).join('')}
-          </div>
-
-          <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Dein Kommentar dazu (Pflichtfeld):</label>
-          <textarea id="p${i}_reason" name="p${i}_reason" placeholder="Schreib hier deine Gedanken rein..." oninput="updatePaginationStatus(${i})"></textarea>
+          <label style="display:block; margin-bottom: 8px; font-weight:600; font-size: 0.9rem;">Deine Ideen und Vorschläge dazu (Pflichtfeld):</label>
+          <textarea id="p${i}_reason" name="p${i}_reason" placeholder="Schreib hier all deine Ideen und Vorstellungen rein..." oninput="updatePaginationStatus(${i})"></textarea>
         </div>
 
         <div class="button-group">
@@ -1070,9 +1024,8 @@
     }
 
     function isQuestionFilled(i) {
-      const ratingSelected = document.querySelector(`input[name="p${i}"]:checked`);
       const reasonFilled = document.getElementById(`p${i}_reason`).value.trim();
-      return ratingSelected && reasonFilled !== "";
+      return reasonFilled !== "";
     }
 
     function updatePaginationStatus(i) {
@@ -1086,7 +1039,7 @@
 
     function nextQuestion(i) {
       if (!isQuestionFilled(i)) {
-        statusMessage.textContent = `Wähle bitte eine Option aus und schreib kurz was dazu in Punkt ${i}!`;
+        statusMessage.textContent = `Schreib bitte kurz deine Ideen oder Vorschläge in Punkt ${i} rein!`;
         statusMessage.className = "error";
         return;
       }
@@ -1122,7 +1075,7 @@
 
       if (missingQuestions.length > 0) {
         const missingText = missingQuestions.map(num => `Punkt ${num}`).join(", ");
-        statusMessage.textContent = `Folgende Punkte fehlen noch (Bewertung und Kommentar): ${missingText}.`;
+        statusMessage.textContent = `Folgende Punkte haben noch keine Ideen: ${missingText}.`;
         statusMessage.className = "error";
         
         goToStep(missingQuestions[0]);
@@ -1141,8 +1094,7 @@
       for (let i = 1; i <= totalQuestions; i++) {
         surveyData.push({
           item: questionsConfig[i - 1].title,
-          rating: formData.get(`p${i}`),
-          reason: formData.get(`p${i}_reason`)
+          ideas: formData.get(`p${i}_reason`)
         });
       }
 
@@ -1175,7 +1127,7 @@
           console.warn("E-Mail Versand nicht geklappt aber DB Eintrag war erfolgreich:", emailErr);
         }
 
-        statusMessage.textContent = "Danke dir! Deine Antworten und dein Style Wunsch wurden erfolgreich abgeschickt!";
+        statusMessage.textContent = "Mega! Deine Ideen und dein Style Wunsch wurden erfolgreich und anonym abgeschickt!";
         statusMessage.className = "success";
         form.reset();
         paginationBar.style.display = "none";
@@ -1187,7 +1139,7 @@
         statusMessage.className = "error";
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Antworten absenden";
+        submitBtn.textContent = "Alle Ideen absenden";
       }
     });
   </script>
