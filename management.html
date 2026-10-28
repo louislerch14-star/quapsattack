@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CorpseTech Management & Support</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg-color: #080b11;
+      --card-bg: #111827;
+      --accent-color: #ef4444; /* CorpseTech Rot/Crimson */
+      --accent-hover: #dc2626;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-color: rgba(239, 68, 68, 0.2);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      padding: 40px 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 35px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+    }
+    h1 { font-size: 1.8rem; margin-bottom: 8px; color: #fff; }
+    p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+    input, select, textarea {
+      width: 100%;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent-color); }
+    textarea { resize: vertical; min-height: 120px; }
+    .btn {
+      width: 100%;
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    #statusMsg { margin-top: 15px; padding: 12px; border-radius: 6px; text-align: center; font-weight: 600; display: none; }
+    #statusMsg.success { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; display: block; }
+    #statusMsg.error { background: rgba(239, 68, 68, 0.2); color: #fca5a5; display: block; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>💀 CorpseTech Management</h1>
+    <p>Reiche hier Beschwerden, Support-Anfragen oder Management-Vorschläge ein. Wir kümmern uns darum.</p>
+
+    <form id="managementForm">
+      <div class="form-group">
+        <label for="ticketType">Anfrage-Typ</label>
+        <select id="ticketType">
+          <option value="Beschwerde">Beschwerde / Issue</option>
+          <option value="Support">Technischer Support</option>
+          <option value="Management-Idee">Management & Business</option>
+          <option value="Sonstiges">Sonstiges</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="userEmail">Deine E-Mail (optional für Rückmeldung)</label>
+        <input type="email5" id="userEmail" placeholder="name@beispiel.de">
+      </div>
+
+      <div class="form-group">
+        <label for="ticketMessage">Deine Nachricht / Beschreibung</label>
+        <textarea id="ticketMessage" placeholder="Schreib hier dein Anliegen rein..." required></textarea>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">Ticket absenden</button>
+    </form>
+
+    <div id="statusMsg"></div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById("managementForm");
+    const statusMsg = document.getElementById("statusMsg");
+    const submitBtn = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusMsg.style.display = "none";
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Wird übermittelt...";
+
+      const type = document.getElementById("ticketType").value;
+      const email = document.getElementById("userEmail").value.trim();
+      const message = document.getElementById("ticketMessage").value.trim();
+
+      try {
+        // In Supabase speichern (du kannst dafür eine Tabelle 'corpsetech_tickets' anlegen)
+        const { error } = await supabaseClient
+          .from("corpsetech_tickets")
+          .insert([{ type, user_email: email || "anonym", message }]);
+
+        if (error) throw error;
+
+        statusMsg.textContent = "Ticket erfolgreich eingereicht! Das Management kümmert sich drum.";
+        statusMsg.className = "success";
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        statusMsg.textContent = "Fehler beim Senden: " + err.message;
+        statusMsg.className = "error";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Ticket absenden";
+      }
+    });
+  </script>
+</body>
+</html>
