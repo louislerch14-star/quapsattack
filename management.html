@@ -163,8 +163,18 @@
       border-color: rgba(255, 255, 255, 0.25);
     }
 
-    .member-info .name { font-weight: 700; font-size: 0.95rem; }
+    .member-info .name { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
     .member-info .role { font-size: 0.8rem; color: var(--text-sub); }
+
+    .badge-disabled {
+      font-size: 0.7rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-sub);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
 
     /* Button Style matching .demo-btn */
     .demo-btn {
@@ -185,6 +195,19 @@
       background: rgba(255, 255, 255, 0.35);
       border-color: rgba(255, 255, 255, 0.6);
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+
+    .demo-btn.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .demo-btn.disabled:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: none;
     }
 
     /* System Status Widget */
@@ -341,6 +364,10 @@
   <!-- Header Navigation -->
   <header>
     <a href="/" class="brand">QUAPS<span>ATTACK</span></a>
+    <div class="nav-links">
+      <a href="/" class="nav-btn">Home</a>
+      <a href="/downloads" class="nav-btn">Downloads</a>
+    </div>
   </header>
 
   <!-- Hero Section -->
@@ -384,42 +411,42 @@
 
         <div class="demo-box">
           <div class="member-info">
-            <div class="name">Jonas</div>
+            <div class="name">Jonas <span class="badge-disabled">Bald verfügbar</span></div>
             <div class="role">Mitglied & Community</div>
           </div>
-          <button class="demo-btn" onclick="copyEmail('jonas@quapsattack.airbusfan.de')">jonas@...</button>
+          <button class="demo-btn disabled" onclick="showDisabledNotice('Jonas')">In Kürze</button>
         </div>
 
         <div class="demo-box">
           <div class="member-info">
-            <div class="name">Joschi</div>
+            <div class="name">Joschi <span class="badge-disabled">Bald verfügbar</span></div>
             <div class="role">Mitglied & Community</div>
           </div>
-          <button class="demo-btn" onclick="copyEmail('joschi@quapsattack.airbusfan.de')">joschi@...</button>
+          <button class="demo-btn disabled" onclick="showDisabledNotice('Joschi')">In Kürze</button>
         </div>
 
         <div class="demo-box">
           <div class="member-info">
-            <div class="name">Mika</div>
+            <div class="name">Mika <span class="badge-disabled">Bald verfügbar</span></div>
             <div class="role">Mitglied & Community</div>
           </div>
-          <button class="demo-btn" onclick="copyEmail('mika@quapsattack.airbusfan.de')">mika@...</button>
+          <button class="demo-btn disabled" onclick="showDisabledNotice('Mika')">In Kürze</button>
         </div>
 
         <div class="demo-box">
           <div class="member-info">
-            <div class="name">Nils</div>
+            <div class="name">Nils <span class="badge-disabled">Bald verfügbar</span></div>
             <div class="role">Mitglied & Community</div>
           </div>
-          <button class="demo-btn" onclick="copyEmail('nils@quapsattack.airbusfan.de')">nils@...</button>
+          <button class="demo-btn disabled" onclick="showDisabledNotice('Nils')">In Kürze</button>
         </div>
 
         <div class="demo-box">
           <div class="member-info">
-            <div class="name">Lukas</div>
+            <div class="name">Lukas <span class="badge-disabled">Bald verfügbar</span></div>
             <div class="role">Mitglied & Community</div>
           </div>
-          <button class="demo-btn" onclick="copyEmail('lukas@quapsattack.airbusfan.de')">lukas@...</button>
+          <button class="demo-btn disabled" onclick="showDisabledNotice('Lukas')">In Kürze</button>
         </div>
       </div>
     </div>
@@ -524,10 +551,15 @@
   </footer>
 
   <script>
-    // Email-Kopier-Funktion
+    // Email-Kopier-Funktion für aktive Mails
     function copyEmail(email) {
       navigator.clipboard.writeText(email);
       alert("E-Mail kopiert: " + email);
+    }
+
+    // Hinweis für noch nicht freigeschaltete Mails
+    function showDisabledNotice(name) {
+      alert("Die E-Mail-Adresse von " + name + " wird in Kürze freigeschaltet. Bitte wende dich vorübergehend an management@quapsattack.airbusfan.de!");
     }
 
     // FAQ Accordion Toggle
