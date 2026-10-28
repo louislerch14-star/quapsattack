@@ -10,15 +10,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-main: #06090e;
-      --bg-card: #0d131d;
-      --bg-card-hover: #131b2a;
+      --bg-main: #0a0a12;
+      --glass-bg: rgba(20, 20, 35, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --demo-box-bg: rgba(255, 255, 255, 0.05);
+      --demo-box-border: rgba(255, 255, 255, 0.1);
+      --demo-btn-bg: rgba(255, 255, 255, 0.2);
+      --demo-btn-border: rgba(255, 255, 255, 0.4);
       --accent: #ef4444;
-      --accent-glow: rgba(239, 68, 68, 0.35);
-      --accent-hover: #dc2626;
-      --text-bright: #ffffff;
-      --text-sub: #94a3b8;
-      --border: rgba(255, 255, 255, 0.08);
+      --accent-glow: rgba(239, 68, 68, 0.4);
+      --text-main: #ffffff;
+      --text-sub: rgba(255, 255, 255, 0.7);
       --success: #10b981;
     }
 
@@ -26,7 +28,11 @@
 
     body {
       background-color: var(--bg-main);
-      color: var(--text-bright);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(239, 68, 68, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 45%);
+      background-attachment: fixed;
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -42,16 +48,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--border);
     }
 
     .brand {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 900;
       letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      color: #fff;
     }
 
     .brand span { color: var(--accent); }
@@ -60,13 +63,14 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      background: var(--demo-box-bg);
+      border: 1px solid var(--demo-box-border);
       color: var(--success);
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
+      backdrop-filter: blur(16px);
     }
 
     .pulse {
@@ -80,7 +84,7 @@
     /* Hero Section */
     .hero {
       text-align: center;
-      margin: 50px 20px 40px;
+      margin: 40px 20px 35px;
       max-width: 800px;
     }
 
@@ -111,22 +115,27 @@
       .main-grid { grid-template-columns: 1fr; }
     }
 
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+    /* Glassmorphism Card Style */
+    .preview-glass {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--text-main);
+      border-radius: 20px;
       padding: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
     }
 
-    .card h2 {
+    .preview-glass h2 {
       font-size: 1.4rem;
+      font-weight: 700;
       margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 10px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 12px;
+      border-bottom: 1px solid var(--demo-box-border);
+      padding-bottom: 14px;
     }
 
     /* Team Directory */
@@ -136,85 +145,117 @@
       gap: 12px;
     }
 
-    .team-member {
+    .demo-box {
+      background: var(--demo-box-bg);
+      border: 1px solid var(--demo-box-border);
+      border-radius: 12px;
+      padding: 12px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 12px 16px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
 
-    .team-member:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--accent-glow);
+    .demo-box:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.25);
     }
 
     .member-info .name { font-weight: 700; font-size: 0.95rem; }
     .member-info .role { font-size: 0.8rem; color: var(--text-sub); }
 
-    .email-chip {
-      background: rgba(239, 68, 68, 0.1);
-      color: #fca5a5;
-      padding: 6px 12px;
-      border-radius: 6px;
+    /* Button Style matching .demo-btn */
+    .demo-btn {
+      background: var(--demo-btn-bg);
+      color: #fff;
+      border: 1px solid var(--demo-btn-border);
+      border-radius: 8px;
+      padding: 8px 14px;
       font-size: 0.85rem;
+      font-weight: 600;
       font-family: monospace;
       cursor: pointer;
-      border: 1px solid var(--accent-glow);
-      transition: background 0.2s;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
     }
 
-    .email-chip:hover {
-      background: var(--accent);
-      color: #fff;
+    .demo-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
     }
 
     /* Form Styles */
     .form-group { margin-bottom: 18px; }
-    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-sub); }
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-sub); }
+
     input, select, textarea {
       width: 100%;
-      background: rgba(0,0,0,0.5);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
-      color: var(--text-bright);
+      background: var(--demo-box-bg);
+      border: 1px solid var(--demo-box-border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text-main);
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s;
+      backdrop-filter: blur(8px);
+      transition: border-color 0.2s ease, background 0.2s ease;
     }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--demo-btn-border);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    select option {
+      background: #141423;
+      color: #fff;
+    }
+
     textarea { resize: vertical; min-height: 110px; }
 
     .btn-submit {
       width: 100%;
       background: var(--accent);
       color: #fff;
-      border: none;
-      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
       padding: 14px;
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 4px 20px var(--accent-glow);
-      transition: background 0.2s;
+      box-shadow: 0 4px 25px var(--accent-glow);
+      transition: all 0.2s ease;
     }
-    .btn-submit:hover { background: var(--accent-hover); }
+
+    .btn-submit:hover {
+      background: #dc2626;
+      box-shadow: 0 4px 35px rgba(239, 68, 68, 0.6);
+    }
 
     #statusMsg {
       margin-top: 15px;
       padding: 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       text-align: center;
       font-size: 0.9rem;
       font-weight: 600;
       display: none;
     }
-    #statusMsg.success { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); display: block; }
-    #statusMsg.error { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); display: block; }
+
+    #statusMsg.success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: block;
+    }
+
+    #statusMsg.error {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      display: block;
+    }
 
     /* Accordion FAQ */
     .full-width {
@@ -225,11 +266,12 @@
     }
 
     .faq-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 10px;
+      background: var(--demo-box-bg);
+      border: 1px solid var(--demo-box-border);
+      border-radius: 12px;
+      margin-bottom: 12px;
       overflow: hidden;
+      transition: all 0.2s ease;
     }
 
     .faq-question {
@@ -250,8 +292,13 @@
       display: none;
     }
 
+    .faq-item.active {
+      border-color: var(--demo-btn-border);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
     .faq-item.active .faq-answer { display: block; }
-    .faq-item.active .faq-question { color: var(--accent); }
+    .faq-item.active .faq-question { color: #fff; }
 
     /* Footer */
     footer {
@@ -268,93 +315,93 @@
   <header>
     <div class="brand">QUAPS<span>ATTACK</span></div>
     <div class="status-badge">
-      <div class="pulse"></div> Operational Infrastructure
+      <div class="pulse"></div> Infrastructure Active
     </div>
   </header>
 
   <!-- Hero Section -->
   <section class="hero">
-    <h1>Management & Official Support</h1>
-    <p>Willkommen auf der zentralen Schnittstelle von Quapsattack. Hier kannst du Tickets für Support, Beschwerden oder Feature-Ideen einreichen sowie unser offizielles Team kontaktieren.</p>
+    <h1>Management & Official Support Hub</h1>
+    <p>Willkommen auf der zentralen Schnittstelle von Quapsattack. Reiche Tickets für Support, Beschwerden oder Ideen ein und kontaktiere unser offizielles Team direkt.</p>
   </section>
 
   <!-- Main Content Grid -->
   <div class="main-grid">
 
     <!-- Column 1: Team Directory -->
-    <div class="card">
+    <div class="preview-glass">
       <h2>🌐 Offizielle Mail-Adressen</h2>
-      <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 20px;">Klicke auf eine Adresse, um sie sofort in deine Zwischenablage zu kopieren.</p>
+      <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 20px;">Klicke auf den Button, um die Adresse sofort in deine Zwischenablage zu kopieren.</p>
       
       <div class="team-list">
-        <div class="team-member">
+        <div class="demo-box">
           <div class="member-info">
             <div class="name">Zentrales Management</div>
-            <div class="role">Offizielle Anfragen & Governance</div>
+            <div class="role">Governance & Business</div>
           </div>
-          <div class="email-chip" onclick="copyEmail('management@quapsattack.airbusfan.de')">management@...</div>
+          <button class="demo-btn" onclick="copyEmail('management@quapsattack.airbusfan.de')">management@...</button>
         </div>
 
-        <div class="team-member">
+        <div class="demo-box">
           <div class="member-info">
             <div class="name">Louis</div>
             <div class="role">Projektleitung & App Lead</div>
           </div>
-          <div class="email-chip" onclick="copyEmail('louis@quapsattack.airbusfan.de')">louis@...</div>
+          <button class="demo-btn" onclick="copyEmail('louis@quapsattack.airbusfan.de')">louis@...</button>
         </div>
 
-        <div class="team-member">
+        <div class="demo-box">
           <div class="member-info">
             <div class="name">Jonas</div>
             <div class="role">Management & Ops</div>
           </div>
-          <div class="email-chip" onclick="copyEmail('jonas@quapsattack.airbusfan.de')">jonas@...</div>
+          <button class="demo-btn" onclick="copyEmail('jonas@quapsattack.airbusfan.de')">jonas@...</button>
         </div>
 
-        <div class="team-member">
+        <div class="demo-box">
           <div class="member-info">
             <div class="name">Giorgio</div>
             <div class="role">Management & Support</div>
           </div>
-          <div class="email-chip" onclick="copyEmail('giorgio@quapsattack.airbusfan.de')">giorgio@...</div>
+          <button class="demo-btn" onclick="copyEmail('giorgio@quapsattack.airbusfan.de')">giorgio@...</button>
         </div>
 
-        <div class="team-member">
+        <div class="demo-box">
           <div class="member-info">
             <div class="name">Joschi</div>
-            <div class="role">Development & Moderation</div>
+            <div class="role">Development & Mod</div>
           </div>
-          <div class="email-chip" onclick="copyEmail('joschi@quapsattack.airbusfan.de')">joschi@...</div>
+          <button class="demo-btn" onclick="copyEmail('joschi@quapsattack.airbusfan.de')">joschi@...</button>
         </div>
 
-        <div class="team-member">
+        <div class="demo-box">
           <div class="member-info">
             <div class="name">Mika</div>
             <div class="role">Community & Content</div>
           </div>
-          <div class="email-chip" onclick="copyEmail('mika@quapsattack.airbusfan.de')">mika@...</div>
+          <button class="demo-btn" onclick="copyEmail('mika@quapsattack.airbusfan.de')">mika@...</button>
         </div>
 
-        <div class="team-member">
+        <div class="demo-box">
           <div class="member-info">
             <div class="name">Nils</div>
             <div class="role">Community & Support</div>
           </div>
-          <div class="email-chip" onclick="copyEmail('nils@quapsattack.airbusfan.de')">nils@...</div>
+          <button class="demo-btn" onclick="copyEmail('nils@quapsattack.airbusfan.de')">nils@...</button>
         </div>
 
-        <div class="team-member">
+        <div class="demo-box">
           <div class="member-info">
             <div class="name">Lukas</div>
             <div class="role">Support Team</div>
           </div>
-          <div class="email-chip" onclick="copyEmail('lukas@quapsattack.airbusfan.de')">lukas@...</div>
+          <button class="demo-btn" onclick="copyEmail('lukas@quapsattack.airbusfan.de')">lukas@...</button>
         </div>
       </div>
     </div>
 
     <!-- Column 2: Ticket Form -->
-    <div class="card">
+    <div class="preview-glass">
       <h2>📑 Support & Beschwerde Ticket</h2>
       <form id="ticketForm">
         <div class="form-group">
@@ -369,7 +416,7 @@
         </div>
 
         <div class="form-group">
-          <label for="userEmail">Deine E-Mail Adresse (für direkte Antwort)</label>
+          <label for="userEmail">Deine E-Mail Adresse (für Rückmeldung)</label>
           <input type="email" id="userEmail" placeholder="deine-mail@domain.de" required>
         </div>
 
@@ -387,7 +434,7 @@
 
   <!-- FAQ Section -->
   <div class="full-width">
-    <div class="card">
+    <div class="preview-glass">
       <h2>❓ Häufig gestellte Fragen (FAQ)</h2>
 
       <div class="faq-item">
@@ -425,7 +472,7 @@
 
   <!-- Footer -->
   <footer>
-    &copy; 2026 Quapsattack Infrastructure • All rights reserved. Powered by Supabase & ImprovMX.
+    &copy; 2026 Quapsattack Infrastructure • Powered by Supabase & ImprovMX.
   </footer>
 
   <script>
