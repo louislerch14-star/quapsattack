@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <link rel="icon" type="image/jpeg" href="unnamed.jpg">
+  <link rel="icon" type="image/jpeg" href="unnamed.jpg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quapsattack | Management</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
@@ -41,35 +40,6 @@
       padding-bottom: 60px;
     }
 
-    /* Header Navigation */
-    header {
-      width: 100%;
-      max-width: 1200px;
-      padding: 25px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .brand {
-      font-size: 1.6rem;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      color: #fff;
-    }
-
-    .brand span { color: var(--accent); }
-
-   
-
-    .pulse {
-      width: 8px;
-      height: 8px;
-      background: var(--success);
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--success);
-    }
-
     /* Hero Section */
     .hero {
       text-align: center;
@@ -96,7 +66,7 @@
       max-width: 1200px;
       padding: 0 20px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.1fr 0.9fr;
       gap: 30px;
     }
 
@@ -174,76 +144,101 @@
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
     }
 
-    /* Form Styles */
-    .form-group { margin-bottom: 18px; }
-    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-sub); }
+    /* System Status Widget */
+    .status-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
 
-    input, select, textarea {
-      width: 100%;
+    .status-item {
       background: var(--demo-box-bg);
       border: 1px solid var(--demo-box-border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      color: var(--text-main);
-      font-size: 0.95rem;
-      outline: none;
-      backdrop-filter: blur(8px);
-      transition: border-color 0.2s ease, background 0.2s ease;
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--demo-btn-border);
-      background: rgba(255, 255, 255, 0.08);
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--success);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
     }
 
-    select option {
-      background: #141423;
-      color: #fff;
+    .pulse {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--success);
     }
 
-    textarea { resize: vertical; min-height: 110px; }
+    /* Support Steps */
+    .steps-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 15px;
+    }
 
-    .btn-submit {
+    .step-card {
+      background: var(--demo-box-bg);
+      border: 1px solid var(--demo-box-border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .step-num {
+      background: var(--demo-btn-bg);
+      border: 1px solid var(--demo-btn-border);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .step-text h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+    .step-text p { font-size: 0.85rem; color: var(--text-sub); line-height: 1.4; }
+
+    .btn-action {
       width: 100%;
       background: var(--accent);
       color: #fff;
       border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 14px;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.95rem;
       cursor: pointer;
       box-shadow: 0 4px 25px var(--accent-glow);
       transition: all 0.2s ease;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      margin-top: 20px;
     }
 
-    .btn-submit:hover {
+    .btn-action:hover {
       background: #dc2626;
       box-shadow: 0 4px 35px rgba(239, 68, 68, 0.6);
-    }
-
-    #statusMsg {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 10px;
-      text-align: center;
-      font-size: 0.9rem;
-      font-weight: 600;
-      display: none;
-    }
-
-    #statusMsg.success {
-      background: rgba(16, 185, 129, 0.15);
-      color: #6ee7b7;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      display: block;
-    }
-
-    #statusMsg.error {
-      background: rgba(239, 68, 68, 0.15);
-      color: #fca5a5;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      display: block;
     }
 
     /* Accordion FAQ */
@@ -300,13 +295,10 @@
 </head>
 <body>
 
-  <!-- Header -->
- 
-
   <!-- Hero Section -->
   <section class="hero">
     <h1>Management & Official Support</h1>
-    <p>Willkommen auf der zentralen Schnittstelle von Quapsattack. Reiche Tickets für Support, Beschwerden oder Ideen ein und kontaktiere unser offizielles Team direkt.</p>
+    <p>Willkommen auf der zentralen Schnittstelle von Quapsattack. Hier findest du alle offiziellen Ansprechpartner, System-Zustände sowie Kontaktwege für unser Team.</p>
   </section>
 
   <!-- Main Content Grid -->
@@ -314,7 +306,7 @@
 
     <!-- Column 1: Team Directory -->
     <div class="preview-glass">
-      <h2>🌐 Offizielle Mail Adressen</h2>
+      <h2>🌐 Offizielle Mail-Adressen</h2>
       <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 20px;">Klicke auf den Button, um die Adresse sofort in deine Zwischenablage zu kopieren.</p>
       
       <div class="team-list">
@@ -329,17 +321,9 @@
         <div class="demo-box">
           <div class="member-info">
             <div class="name">Louis</div>
-            <div class="role">Projektleitung(außerhalb vom Game) & Support & Developer(Web/App)</div>
+            <div class="role">Projektleitung (außerhalb Game) & Dev (Web/App)</div>
           </div>
           <button class="demo-btn" onclick="copyEmail('louis@quapsattack.airbusfan.de')">louis@...</button>
-        </div>
-
-        <div class="demo-box">
-          <div class="member-info">
-            <div class="name">Jonas</div>
-            <div class="role">Mitglied & Community</div>
-          </div>
-          <button class="demo-btn" onclick="copyEmail('jonas@quapsattack.airbusfan.de')">jonas@...</button>
         </div>
 
         <div class="demo-box">
@@ -348,6 +332,14 @@
             <div class="role">Management & Support & Projektleitung</div>
           </div>
           <button class="demo-btn" onclick="copyEmail('giorgio@quapsattack.airbusfan.de')">giorgio@...</button>
+        </div>
+
+        <div class="demo-box">
+          <div class="member-info">
+            <div class="name">Jonas</div>
+            <div class="role">Mitglied & Community</div>
+          </div>
+          <button class="demo-btn" onclick="copyEmail('jonas@quapsattack.airbusfan.de')">jonas@...</button>
         </div>
 
         <div class="demo-box">
@@ -384,34 +376,58 @@
       </div>
     </div>
 
-    <!-- Column 2: Ticket Form -->
+    <!-- Column 2: Live Status & Support Dashboard -->
     <div class="preview-glass">
-      <h2>📑 Support & Beschwerde Ticket</h2>
-      <form id="ticketForm">
-        <div class="form-group">
-          <label for="ticketType">Kategorie</label>
-          <select id="ticketType">
-            <option value="Beschwerde">Beschwerde / Spielermeldung</option>
-            <option value="Support">Technischer Support / Bug</option>
-            <option value="App-Feedback">Quapsattack App Feedback</option>
-            <option value="Management-Idee">Management & Partnerschaft</option>
-            <option value="Sonstiges">Sonstiges</option>
-          </select>
+      <h2>📡 Live Infrastructure Status</h2>
+      
+      <div class="status-list">
+        <div class="status-item">
+          <div>
+            <div style="font-weight: 700; font-size: 0.95rem;">Management Subdomain</div>
+            <div style="font-size: 0.8rem; color: var(--text-sub);">quapsattack.airbusfan.de</div>
+          </div>
+          <div class="status-badge"><div class="pulse"></div> Online</div>
         </div>
 
-        <div class="form-group">
-          <label for="userEmail">Deine E-Mail Adresse (für Rückmeldung)</label>
-          <input type="email" id="userEmail" placeholder="MaxMusterman@mail.de" required>
+        <div class="status-item">
+          <div>
+            <div style="font-weight: 700; font-size: 0.95rem;">Mail Relay Infrastructure</div>
+            <div style="font-size: 0.8rem; color: var(--text-sub);">ImprovMX Direct Routing</div>
+          </div>
+          <div class="status-badge"><div class="pulse"></div> Active</div>
+        </div>
+      </div>
+
+      <h2>📩 Wie kontaktiere ich das Team?</h2>
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <h4>Ansprechpartner wählen</h4>
+            <p>Wähle aus der Liste links das passende Team-Mitglied oder die Haupt-Mail des Managements aus.</p>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="ticketMessage">Detaillierte Beschreibung</label>
-          <textarea id="ticketMessage" placeholder="Bitte schildere dein Anliegen so genau wie möglich..." required></textarea>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <h4>E-Mail Absenden</h4>
+            <p>Klicke auf den Mail-Button zum Kopieren oder sende dein Anliegen direkt über deinen Mail-Client.</p>
+          </div>
         </div>
 
-        <button type="submit" class="btn-submit" id="submitBtn">Ticket jetzt übermitteln</button>
-      </form>
-      <div id="statusMsg"></div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <h4>Rückmeldung erhalten</h4>
+            <p>Alle Anfragen an die Offiziellen Adressen werden zeitnah im Team bearbeitet.</p>
+          </div>
+        </div>
+      </div>
+
+      <a href="mailto:management@quapsattack.airbusfan.de" class="btn-action">
+        ✉️ Direkt E-Mail an Management schreiben
+      </a>
     </div>
 
   </div>
@@ -423,11 +439,11 @@
 
       <div class="faq-item">
         <div class="faq-question" onclick="toggleFaq(this)">
-          Wie schnell antwortet das Quapsattack Management auf Tickets?
+          Wie schnell antwortet das Quapsattack Management auf E-Mails?
           <span>+</span>
         </div>
         <div class="faq-answer">
-          Standardmäßig bearbeiten wir alle eingehenden Tickets innerhalb von 24 Stunden. Dringende Beschwerden oder Serverprobleme werden priorisiert.
+          Standardmäßig bearbeiten wir alle eingehenden E-Mails innerhalb von 24 Stunden. Dringende Beschwerden oder technische Anliegen werden priorisiert.
         </div>
       </div>
 
@@ -437,7 +453,7 @@
           <span>+</span>
         </div>
         <div class="faq-answer">
-          Ja! Alle Adressen unter `@quapsattack.airbusfan.de` sind aktive Weiterleitungen an das jeweilige Team-Mitglied.
+          Ja! Alle Adressen unter `@quapsattack.airbusfan.de` sind aktive Weiterleitungen an die jeweiligen Team-Mitglieder.
         </div>
       </div>
 
@@ -460,86 +476,19 @@
   </footer>
 
   <script>
-  // Supabase Setup
-  const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
-  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // Dein Resend API Key
-  const RESEND_API_KEY = "a0d180ff14e21da27342ee0653149b5bc5f7019a4628d80b09e12c08edcdd0f7";
-
-  // Formular Logik
-  const form = document.getElementById("ticketForm");
-  const statusMsg = document.getElementById("statusMsg");
-  const submitBtn = document.getElementById("submitBtn");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    statusMsg.className = "";
-    statusMsg.style.display = "none";
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Wird gesendet...";
-
-    const type = document.getElementById("ticketType").value;
-    const email = document.getElementById("userEmail").value.trim();
-    const message = document.getElementById("ticketMessage").value.trim();
-
-    try {
-      // 1. In Supabase speichern
-      const { error } = await supabaseClient
-        .from("quapsattack_tickets")
-        .insert([{ type, user_email: email, message }]);
-
-      if (error) throw error;
-
-      // 2. Direkt per Resend E-Mail an das Management schicken
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${RESEND_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          from: "Quapsattack Tickets <onboarding@resend.dev>",
-          to: ["management@quapsattack.airbusfan.de"],
-          subject: `💀 Neues Quapsattack Ticket: [${type}]`,
-          html: `
-            <h2>Neues Ticket auf Quapsattack eingereicht!</h2>
-            <p><strong>Kategorie:</strong> ${type}</p>
-            <p><strong>Absender Mail:</strong> ${email}</p>
-            <hr />
-            <p><strong>Nachricht:</strong></p>
-            <p style="background: #f4f4f4; padding: 12px; border-radius: 6px; color: #000;">${message}</p>
-          `
-        })
-      });
-
-      statusMsg.textContent = "✅ Ticket erfolgreich an das Quapsattack Management übermittelt!";
-      statusMsg.className = "success";
-      form.reset();
-    } catch (err) {
-      console.error(err);
-      statusMsg.textContent = "❌ Fehler beim Senden: " + err.message;
-      statusMsg.className = "error";
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Ticket jetzt übermitteln";
+    // Email-Kopier-Funktion
+    function copyEmail(email) {
+      navigator.clipboard.writeText(email);
+      alert("E-Mail kopiert: " + email);
     }
-  });
 
-  // Email-Kopier-Funktion
-  function copyEmail(email) {
-    navigator.clipboard.writeText(email);
-    alert("E-Mail kopiert: " + email);
-  }
-
-  // FAQ Accordion Toggle
-  function toggleFaq(element) {
-    const item = element.parentElement;
-    item.classList.toggle("active");
-    const span = element.querySelector("span");
-    span.textContent = item.classList.contains("active") ? "−" : "+";
-  }
-</script>
+    // FAQ Accordion Toggle
+    function toggleFaq(element) {
+      const item = element.parentElement;
+      item.classList.toggle("active");
+      const span = element.querySelector("span");
+      span.textContent = item.classList.contains("active") ? "−" : "+";
+    }
+  </script>
 </body>
 </html>
