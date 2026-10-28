@@ -460,60 +460,76 @@
   </footer>
 
   <script>
-    // Supabase Setup
-    const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // Supabase Setup
+  const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Formular Logik
-    const form = document.getElementById("ticketForm");
-    const statusMsg = document.getElementById("statusMsg");
-    const submitBtn = document.getElementById("submitBtn");
+  // Formular Logik
+  const form = document.getElementById("ticketForm");
+  const statusMsg = document.getElementById("statusMsg");
+  const submitBtn = document.getElementById("submitBtn");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      statusMsg.className = "";
-      statusMsg.style.display = "none";
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Wird gesendet...";
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    statusMsg.className = "";
+    statusMsg.style.display = "none";
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Wird gesendet...";
 
-      const type = document.getElementById("ticketType").value;
-      const email = document.getElementById("userEmail").value.trim();
-      const message = document.getElementById("ticketMessage").value.trim();
+    const type = document.getElementById("ticketType").value;
+    const email = document.getElementById("userEmail").value.trim();
+    const message = document.getElementById("ticketMessage").value.trim();
 
-      try {
-        const { error } = await supabaseClient
-          .from("quapsattack_tickets")
-          .insert([{ type, user_email: email, message }]);
+    try {
+      // 1. In Supabase Datenbank speichern
+      const { error } = await supabaseClient
+        .from("quapsattack_tickets")
+        .insert([{ type, user_email: email, message }]);
 
-        if (error) throw error;
+      if (error) throw error;
 
-        statusMsg.textContent = "✅ Ticket erfolgreich an das Quapsattack Management übermittelt!";
-        statusMsg.className = "success";
-        form.reset();
-      } catch (err) {
-        console.error(err);
-        statusMsg.textContent = "❌ Fehler beim Senden: " + err.message;
-        statusMsg.className = "error";
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Ticket jetzt übermitteln";
-      }
-    });
+      // 2. E-Mail per FormSubmit an das Management senden
+      await fetch("https://formsubmit.co/ajax/management@quapsattack.airbusfan.de", {
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          _subject: `💀 Neues Quapsattack Ticket: [${type}]`,
+          Kategorie: type,
+          Absender_Email: email,
+          Nachricht: message
+        })
+      });
 
-    // Email-Kopier-Funktion
-    function copyEmail(email) {
-      navigator.clipboard.writeText(email);
-      alert("E-Mail kopiert: " + email);
+      statusMsg.textContent = "✅ Ticket erfolgreich eingereicht & an das Management gesendet!";
+      statusMsg.className = "success";
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      statusMsg.textContent = "❌ Fehler beim Senden: " + err.message;
+      statusMsg.className = "error";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Ticket jetzt übermitteln";
     }
+  });
 
-    // FAQ Accordion Toggle
-    function toggleFaq(element) {
-      const item = element.parentElement;
-      item.classList.toggle("active");
-      const span = element.querySelector("span");
-      span.textContent = item.classList.contains("active") ? "−" : "+";
-    }
-  </script>
+  // Email-Kopier-Funktion
+  function copyEmail(email) {
+    navigator.clipboard.writeText(email);
+    alert("E-Mail kopiert: " + email);
+  }
+
+  // FAQ Accordion Toggle
+  function toggleFaq(element) {
+    const item = element.parentElement;
+    item.classList.toggle("active");
+    const span = element.querySelector("span");
+    span.textContent = item.classList.contains("active") ? "−" : "+";
+  }
+</script>
 </body>
 </html>
