@@ -465,6 +465,9 @@
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // Dein Resend API Key
+  const RESEND_API_KEY = "a0d180ff14e21da27342ee0653149b5bc5f7019a4628d80b09e12c08edcdd0f7";
+
   // Formular Logik
   const form = document.getElementById("ticketForm");
   const statusMsg = document.getElementById("statusMsg");
@@ -482,29 +485,36 @@
     const message = document.getElementById("ticketMessage").value.trim();
 
     try {
-      // 1. In Supabase Datenbank speichern
+      // 1. In Supabase speichern
       const { error } = await supabaseClient
         .from("quapsattack_tickets")
         .insert([{ type, user_email: email, message }]);
 
       if (error) throw error;
 
-      // 2. E-Mail per FormSubmit an das Management senden
-      await fetch("https://formsubmit.co/ajax/management@quapsattack.airbusfan.de", {
+      // 2. Direkt per Resend E-Mail an das Management schicken
+      await fetch("https://api.resend.com/emails", {
         method: "POST",
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+        headers: {
+          "Authorization": `Bearer ${RESEND_API_KEY}`,
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          _subject: `💀 Neues Quapsattack Ticket: [${type}]`,
-          Kategorie: type,
-          Absender_Email: email,
-          Nachricht: message
+          from: "Quapsattack Tickets <onboarding@resend.dev>",
+          to: ["management@quapsattack.airbusfan.de"],
+          subject: `💀 Neues Quapsattack Ticket: [${type}]`,
+          html: `
+            <h2>Neues Ticket auf Quapsattack eingereicht!</h2>
+            <p><strong>Kategorie:</strong> ${type}</p>
+            <p><strong>Absender Mail:</strong> ${email}</p>
+            <hr />
+            <p><strong>Nachricht:</strong></p>
+            <p style="background: #f4f4f4; padding: 12px; border-radius: 6px; color: #000;">${message}</p>
+          `
         })
       });
 
-      statusMsg.textContent = "✅ Ticket erfolgreich eingereicht & an das Management gesendet!";
+      statusMsg.textContent = "✅ Ticket erfolgreich an das Quapsattack Management übermittelt!";
       statusMsg.className = "success";
       form.reset();
     } catch (err) {
