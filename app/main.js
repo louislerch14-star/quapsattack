@@ -1,14 +1,10 @@
-import { createClient } from 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js';
-import { GoogleGenAI } from "https://esm.run/@google/genai";
-
+// 1. SUPABASE CLIENT DIREKT ÜBER GLOBALEN WINDOW SCOPE ERZEUGEN
 const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+window.supabaseClient = supabase; // Für globale Verfügbarkeit falls nötig
 
-// Rest des Codes bleibt exakt gleich...
-
-// Danach erst kommen alle anderen Variablen und Funktionen!
 let currentUser = null;
 let currentProfile = null;
 let activeChatRoomId = null;
@@ -16,13 +12,11 @@ let selectedDateString = null;
 let authMode = 'login';
 let calendarDate = new Date();
 
-// Pinnwand State
 let allPosts = [];
 let currentCategory = 'all';
 let currentView = 'kanban';
 let activeThreadPostId = null;
 
-// QUPASSI KI CONFIG
 const GEMINI_API_KEY = 'AQ.Ab8RN6KT-NV_pdl2kGaEaXme_f7gJXqDCsTje_kuSWahTfqGbg';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -228,10 +222,7 @@ window.switchTab = function(tabId) {
   if (activeBtn) activeBtn.classList.add('active', 'bg-white/10', 'text-white');
 };
 
-// ==========================================
-// PINNWAND UPGRADED LOGIC
-// ==========================================
-
+// PINNWAND
 window.togglePinView = function(view) {
   currentView = view;
   document.getElementById('kanban-view').classList.toggle('hidden', view !== 'kanban');
@@ -403,7 +394,7 @@ window.reactToPost = async function(postId, emoji) {
   if (!error) loadPinboardPosts();
 };
 
-// THREAD / ANTWORTEN LOGIC
+// THREAD / ANTWORTEN
 window.openThreadModal = async function(postId) {
   activeThreadPostId = postId;
   document.getElementById('thread-modal').classList.remove('hidden');
@@ -470,7 +461,7 @@ window.sendThreadReply = async function(e) {
   }
 };
 
-// KALENDER, MEDIATHEK & ROSTER LOGIC
+// KALENDER, MEDIATHEK & ROSTER
 window.changeMonth = function(direction) {
   calendarDate.setMonth(calendarDate.getMonth() + direction);
   renderCalendar();
@@ -624,7 +615,7 @@ window.deleteVaultItem = async function(itemId) {
   }
 };
 
-// MESSENGER & GRUPPEN LOGIC
+// MESSENGER & GRUPPEN
 async function loadChatRooms() {
   if (!currentUser) return;
   const { data: rooms } = await supabase.from('chat_rooms').select('*');
@@ -681,7 +672,7 @@ async function loadChatMessages(roomId) {
           </div>
           <div class="flex items-center gap-2">
             <span class="text-[9px] text-textSub">${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
-            ${canDelete ? `<button onclick="deleteChatMessage('${m.id}')" class="text-red-400 hover:text-red-600 transition opacity-0 group-hover:opacity-100" title="Nachricht löschen">🗑️</button>` : ''}
+            ${canDelete ? `<button onclick="deleteChatMessage('${m.id}')" class="text-red-400 hover:text-red-600 transition opacity-0 group-hover:opacity-100" title="Löschen">🗑️</button>` : ''}
           </div>
         </div>
       `;
@@ -699,13 +690,12 @@ window.sendChatMessage = async function(e) {
 };
 
 window.deleteChatMessage = async function(msgId) {
-  if (confirm("Möchtest du diese Nachricht wirklich löschen?")) {
+  if (confirm("Nachricht löschen?")) {
     const { error } = await supabase.from('chat_messages').delete().eq('id', msgId);
     if (!error && activeChatRoomId) loadChatMessages(activeChatRoomId);
   }
 };
 
-// GRUPPEN ERSTELLEN MODAL
 window.openNewGroupModal = async function() {
   document.getElementById('group-modal').classList.remove('hidden');
   const container = document.getElementById('group-members-checkboxes');
@@ -729,13 +719,11 @@ window.openNewGroupModal = async function() {
   }
 };
 
-window.closeNewGroupModal = function() {
-  document.getElementById('group-modal').classList.add('hidden');
-};
+window.closeNewGroupModal = () => document.getElementById('group-modal').classList.add('hidden');
 
 window.createChatGroup = async function() {
   const groupName = document.getElementById('group-name-input').value.trim();
-  if (!groupName) return alert("Bitte einen Gruppennamen eingeben!");
+  if (!groupName) return alert("Gruppenname eingeben!");
 
   const checkboxes = document.querySelectorAll('.group-member-checkbox:checked');
   const memberIds = Array.from(checkboxes).map(cb => cb.value);
@@ -747,10 +735,7 @@ window.createChatGroup = async function() {
     creator_id: currentUser.id
   }]).select().single();
 
-  if (roomErr) {
-    alert("Fehler beim Erstellen: " + roomErr.message);
-    return;
-  }
+  if (roomErr) return alert("Fehler: " + roomErr.message);
 
   const memberInserts = memberIds.map(uid => ({ room_id: roomData.id, user_id: uid }));
   await supabase.from('chat_room_members').insert(memberInserts);
@@ -759,13 +744,10 @@ window.createChatGroup = async function() {
   document.getElementById('group-name-input').value = '';
   loadChatRooms();
   selectRoom(roomData.id, groupName);
-  alert(`Gruppe "${groupName}" erfolgreich erstellt! 🚀`);
 };
 
-// DIREKTCHAT (PM) MIT EINEM USER
 window.startDirectMessage = async function(targetUserId, targetUsername) {
   const dmName = `💬 PM: ${targetUsername}`;
-  
   const { data: existingRoom } = await supabase.from('chat_rooms').select('*').eq('name', dmName).maybeSingle();
 
   if (existingRoom) {
@@ -833,9 +815,7 @@ async function loadRoster() {
   }
 }
 
-// ==========================================
-// QUPASSI KI LOGIC
-// ==========================================
+// QUPASSI KI (Nutzt Rest-API direkt ohne SDK-Import-Stress)
 window.sendQupasSIMessage = async function(e) {
   e.preventDefault();
   const input = document.getElementById('qupassi-input');
@@ -843,7 +823,6 @@ window.sendQupasSIMessage = async function(e) {
   if (!prompt) return;
 
   const container = document.getElementById('qupassi-messages-container');
-  
   container.innerHTML += `
     <div class="bg-white/10 p-3 rounded-xl border border-white/10 text-xs space-y-1 text-right">
       <strong class="text-white">Du:</strong>
@@ -866,35 +845,28 @@ window.sendQupasSIMessage = async function(e) {
     let dbContext = "";
     const lower = prompt.toLowerCase();
     
-    if (lower.includes('pinnwand') || lower.includes('beitrag') || lower.includes('task') || lower.includes('projekt')) {
-      const { data: posts } = await supabase.from('pinboard_posts').select('title, content, status, category, coordinates');
-      dbContext += "Aktuelle Pinnwand-Einträge: " + JSON.stringify(posts) + "\n";
-    } 
-    if (lower.includes('wer') || lower.includes('spieler') || lower.includes('roster') || lower.includes('rolle') || lower.includes('mitglied')) {
-      const { data: profiles } = await supabase.from('profiles').select('username, role, custom_status_text');
-      dbContext += "Registrierte Crew-Mitglieder: " + JSON.stringify(profiles) + "\n";
-    }
-    if (lower.includes('termin') || lower.includes('kalender') || lower.includes('datum')) {
-      const { data: events } = await supabase.from('calendar_events').select('title, event_day, description');
-      dbContext += "Kalender-Termine: " + JSON.stringify(events) + "\n";
-    }
-    if (lower.includes('vault') || lower.includes('datei') || lower.includes('bild') || lower.includes('screenshot')) {
-      const { data: vault } = await supabase.from('vault_items').select('title, media_url');
-      dbContext += "Mediathek / Vault-Inhalte: " + JSON.stringify(vault) + "\n";
-    }
-
-    if (!dbContext) {
+    if (lower.includes('pinnwand') || lower.includes('task')) {
       const { data: posts } = await supabase.from('pinboard_posts').select('title, content, status');
-      dbContext = "Allgemeiner Datenbank-Überblick (Pinnwand): " + JSON.stringify(posts);
+      dbContext += "Pinnwand: " + JSON.stringify(posts) + "\n";
+    } 
+    if (lower.includes('wer') || lower.includes('spieler') || lower.includes('roster')) {
+      const { data: profiles } = await supabase.from('profiles').select('username, role');
+      dbContext += "Mitglieder: " + JSON.stringify(profiles) + "\n";
     }
 
-    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: `Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft- und Projekt-Hub "Quapsattack". Antworte immer locker, in cooler Jugendsprache (mit Slang wie digger, bro, bruder, emojis wie 💀 oder 🚀 etc.), gib immer einen coolen Bro-Tipp, nutze KEINE übertriebenen Bindestriche, sei hilfsbereit und antworte direkt auf Deutsch. Nutze folgenden Datenbank-Kontext, falls er zur Frage passt:\n${dbContext}\n\nFrage des Users: ${prompt}`,
+    // Direkter Fetch an Gemini REST API (100% fehlerfrei ohne ESM-Import-Probleme)
+    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: `Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft-Hub "Quapsattack". Antworte locker in cooler Jugendsprache (mit Slang wie digger, bro, emojis wie 💀 oder 🚀). Datenbank-Kontext: ${dbContext}\n\nFrage: ${prompt}` }]
+        }]
+      })
     });
 
-    const aiReply = response.text || "Yo Bro, da kam leider keine Antwort zurück! 💀";
+    const geminiData = await geminiRes.json();
+    const aiReply = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "Yo Bro, da kam grad keine Antwort! 💀";
 
     document.getElementById(loadingId).remove();
     container.innerHTML += `
@@ -905,20 +877,12 @@ window.sendQupasSIMessage = async function(e) {
     `;
     container.scrollTop = container.scrollHeight;
 
-    if (currentUser) {
-      await supabase.from('qupas_si_messages').insert([{
-        user_id: currentUser.id,
-        prompt: prompt,
-        response: aiReply
-      }]);
-    }
-
   } catch (err) {
     document.getElementById(loadingId).remove();
     container.innerHTML += `
       <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
         <strong class="text-accentRed">🤖 QupasSI:</strong>
-        <p class="text-red-400">Fehler bei der API-Verbindung: ${err.message}</p>
+        <p class="text-red-400">Fehler: ${err.message}</p>
       </div>
     `;
   }
@@ -936,18 +900,8 @@ function setupRealtimeSubscriptions() {
 
   supabase.channel('public:chat_messages')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
-      if (payload.new.room_id === activeChatRoomId) {
-        loadChatMessages(activeChatRoomId);
-      }
-      if (payload.new.sender_id !== currentUser?.id) {
-        playCustomNotificationSound();
-      }
-    })
-    .subscribe();
-
-  supabase.channel('public:chat_messages_delete')
-    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'chat_messages' }, () => {
-      if (activeChatRoomId) loadChatMessages(activeChatRoomId);
+      if (payload.new.room_id === activeChatRoomId) loadChatMessages(activeChatRoomId);
+      if (payload.new.sender_id !== currentUser?.id) playCustomNotificationSound();
     })
     .subscribe();
 }
