@@ -2,10 +2,16 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 import { GoogleGenAI } from "https://esm.run/@google/genai";
 
 // 1. SUPABASE CLIENT DIREKT GANZ OBEN INITIALISIEREN
+// Kein Import von supabase-js mehr nötig, da via HTML-Script geladen!
+import { GoogleGenAI } from "https://esm.run/@google/genai";
+
 const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Globaler Supabase Client
+export const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Rest des Codes bleibt exakt gleich...
 
 // Danach erst kommen alle anderen Variablen und Funktionen!
 let currentUser = null;
