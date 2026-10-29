@@ -8,15 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-   <script src="main.js" defer></script>
- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="importmap">
-  {
-    "imports": {
-      "@google/genai": "https://esm.run/@google/genai"
-    }
-  }
-  </script>
+  <!-- Supabase Global UMD Script -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -121,7 +114,7 @@
       <!-- MAIN WORKSPACE -->
       <main class="flex-1 overflow-y-auto p-6" id="main-content">
 
-        <!-- TAB: PINNWAND (PRO UPGRADED) -->
+        <!-- TAB: PINNWAND -->
         <section id="tab-pinnwand" class="tab-pane space-y-6 max-w-6xl mx-auto">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -129,7 +122,6 @@
               <p class="text-xs text-textSub">Organisiere Projekte im Kanban-Board, teile Koordinaten und diskutiere in Threads.</p>
             </div>
             
-            <!-- Suchleiste & Ansicht-Umschalter -->
             <div class="flex items-center gap-2">
               <input id="pin-search" oninput="filterAndRenderPosts()" type="text" placeholder="🔍 Suche..." class="bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-accentRed w-48">
               <button onclick="togglePinView('kanban')" id="view-kanban-btn" class="px-3 py-1.5 bg-accentRed text-white rounded-xl text-xs font-bold transition">Kanban</button>
@@ -137,7 +129,6 @@
             </div>
           </div>
 
-          <!-- Kategorie Filter Pills -->
           <div class="flex items-center gap-2 overflow-x-auto pb-1" id="category-filter-pills">
             <button onclick="setPinCategory('all')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-accentRed text-white">#alle</button>
             <button onclick="setPinCategory('ankündigungen')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">📢 #ankündigungen</button>
@@ -146,7 +137,6 @@
             <button onclick="setPinCategory('redstone')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">⚙️ #redstone</button>
           </div>
 
-          <!-- Erstellungs-Box -->
           <div id="pinnwand-create-box" class="glass-card p-5 rounded-2xl space-y-4 border-white/15">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-accentRed tracking-wider uppercase">Neuer Beitrag / Task</span>
@@ -177,9 +167,7 @@
             </div>
           </div>
 
-          <!-- KANBAN BOARD VIEW -->
           <div id="kanban-view" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <!-- Spalte 1: Geplant -->
             <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
               <div class="flex items-center justify-between border-b border-white/10 pb-2">
                 <span class="text-xs font-bold text-accentRed">📋 Geplant</span>
@@ -187,7 +175,6 @@
               </div>
               <div id="kanban-Geplant" class="space-y-3 min-h-[300px]"></div>
             </div>
-            <!-- Spalte 2: In Arbeit -->
             <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
               <div class="flex items-center justify-between border-b border-white/10 pb-2">
                 <span class="text-xs font-bold text-yellow-400">🚧 In Arbeit</span>
@@ -195,7 +182,6 @@
               </div>
               <div id="kanban-In Arbeit" class="space-y-3 min-h-[300px]"></div>
             </div>
-            <!-- Spalte 3: Fertig -->
             <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
               <div class="flex items-center justify-between border-b border-white/10 pb-2">
                 <span class="text-xs font-bold text-statusGreen">✅ Fertig</span>
@@ -203,7 +189,6 @@
               </div>
               <div id="kanban-Fertig" class="space-y-3 min-h-[300px]"></div>
             </div>
-            <!-- Spalte 4: Ideen -->
             <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
               <div class="flex items-center justify-between border-b border-white/10 pb-2">
                 <span class="text-xs font-bold text-cyan-400">💡 Ideen</span>
@@ -213,7 +198,6 @@
             </div>
           </div>
 
-          <!-- FEED VIEW (Alternativ) -->
           <div id="feed-view" class="space-y-4 hidden"></div>
         </section>
 
@@ -299,7 +283,6 @@
               <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-accentRed/20 text-accentRed border border-accentRed/30 font-bold">ONLINE</span>
             </div>
 
-            <!-- Chat Verlauf -->
             <div id="qupassi-messages-container" class="flex-1 overflow-y-auto space-y-3 pr-2">
               <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
                 <strong class="text-accentRed">🤖 QupasSI:</strong>
@@ -307,7 +290,6 @@
               </div>
             </div>
 
-            <!-- Eingabeformular -->
             <form onsubmit="sendQupasSIMessage(event)" class="flex gap-2 pt-2 border-t border-white/10">
               <input id="qupassi-input" type="text" placeholder="Frage QupasSI etwas..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
               <button type="submit" class="px-5 py-2.5 bg-accentRed text-white rounded-xl text-xs font-bold shadow-lg shadow-accentRed/30">Fragen 🧠</button>
@@ -381,18 +363,15 @@
     </div>
   </div>
 
-  <!-- MODAL: THREAD ANTWORTEN -->
   <div id="thread-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-6">
     <div class="glass-card max-w-lg w-full rounded-2xl p-5 space-y-4 max-h-[80vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-white/10 pb-3">
         <h4 class="font-bold text-sm text-white">💬 Diskussion & Antworten</h4>
         <button onclick="closeThreadModal()" class="text-textSub hover:text-white text-xs">✕ Schließen</button>
       </div>
-      <!-- Antworten Liste -->
       <div id="thread-messages-list" class="flex-1 overflow-y-auto space-y-3 pr-2 min-h-[200px]">
         <p class="text-xs text-textSub">Lade Antworten...</p>
       </div>
-      <!-- Antwort schreiben Formular -->
       <form onsubmit="sendThreadReply(event)" class="flex gap-2 pt-2 border-t border-white/10">
         <input id="thread-reply-input" type="text" placeholder="Schreibe eine Antwort..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
         <button type="submit" class="px-4 py-2.5 bg-accentRed text-white rounded-xl text-xs font-bold">Senden</button>
@@ -400,7 +379,6 @@
     </div>
   </div>
 
-  <!-- MODAL: NEUE GRUPPE ERSTELLEN -->
   <div id="group-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-6">
     <div class="glass-card max-w-md w-full rounded-2xl p-5 space-y-4">
       <h4 class="font-bold text-sm text-white">💬 Neue Crew-Gruppe erstellen</h4>
@@ -408,9 +386,7 @@
       
       <div>
         <label class="block text-[10px] font-mono text-textSub uppercase mb-2">Mitglieder auswählen:</label>
-        <div id="group-members-checkboxes" class="space-y-2 max-h-40 overflow-y-auto pr-1">
-          <!-- Wird dynamisch gefüllt -->
-        </div>
+        <div id="group-members-checkboxes" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
       </div>
 
       <div class="flex gap-2 pt-2">
@@ -420,5 +396,7 @@
     </div>
   </div>
 
+  <!-- Kein type="module" mehr, ganz normales Skript ohne Import-Zoff! -->
+  <script src="app/main.js"></script>
 </body>
 </html>
