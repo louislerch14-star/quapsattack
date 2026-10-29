@@ -3,23 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quaps Attack | Main Hub</title>
+    <title>Quapsattack | Main Hub</title>
     <link rel="icon" type="image/png" href="unnamed.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Press+Start+2P&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #a8ff78;
-            --diamond: #44d4d4;
-            --gold: #f5c518;
-            --bg: #080c14;
-            --panel: rgba(22, 27, 34, 0.75);
-            --panel2: #0d1117;
-            --border: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(168, 255, 120, 0.3);
-            --text: #f0f0f0;
-            --muted: #94a3b8;
             --bg-main: #0a0a12;
             --glass-bg: rgba(20, 20, 35, 0.85);
             --glass-border: rgba(255, 255, 255, 0.2);
@@ -38,7 +28,7 @@
         html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-main);
             background-image: 
                 radial-gradient(circle at 15% 20%, rgba(239, 68, 68, 0.15) 0%, transparent 45%),
@@ -46,167 +36,108 @@
             background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
-            font-size: 1rem;
-            line-height: 1.6;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding-bottom: 60px;
-            overflow-x: hidden;
         }
 
-        .bg-glow {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            background: 
-                radial-gradient(circle at 15% 20%, rgba(168, 255, 120, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 85% 80%, rgba(68, 212, 212, 0.05) 0%, transparent 40%);
-        }
-
-        /* SIDEBAR NAVBAR */
-        .sidebar {
-            position: fixed;
-            top: 0; left: 0;
-            width: 260px;
-            height: 100vh;
-            background: var(--panel2);
-            border-right: 1px solid var(--border);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            backdrop-filter: blur(12px);
-        }
-
-        .sidebar-logo {
-            padding: 25px 20px;
-            border-bottom: 1px solid var(--border);
-            background: rgba(0,0,0,0.2);
-            text-align: center;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .sidebar-logo img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
-
-        .sidebar-logo .logo-text {
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.55rem;
-            color: var(--primary);
-            display: block;
-            line-height: 1.5;
-            text-shadow: 0 0 15px rgba(168,255,120,0.4);
-            text-decoration: none;
-        }
-
-        .sidebar-logo .logo-sub {
-            font-size: 0.75rem;
-            color: var(--muted);
-            display: block;
-            letter-spacing: 1px;
-        }
-
-        .sidebar-section {
-            padding: 15px 0;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            overflow-y: auto;
-        }
-
-        .mc-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        /* Header Navigation */
+        header {
             width: 100%;
-            background: transparent;
-            color: var(--muted);
+            max-width: 1200px;
+            padding: 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .brand span { color: var(--accent); }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: var(--demo-btn-bg);
+            border: 1px solid var(--demo-btn-border);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 10px;
+            text-decoration: none;
             font-size: 0.85rem;
             font-weight: 600;
-            padding: 12px 20px;
-            border: none;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
             cursor: pointer;
-            text-align: left;
-            transition: all 0.25s ease;
-            border-left: 3px solid transparent;
-            text-decoration: none;
         }
 
-        .mc-btn:hover, .mc-btn.active {
-            background: rgba(168, 255, 120, 0.04);
-            color: #fff;
-            border-left-color: var(--primary);
-            padding-left: 24px;
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
         }
 
-        .lang-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin: auto 15px 15px 15px;
-            width: calc(100% - 30px);
-            justify-content: center;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.5rem;
-            color: var(--primary);
-            padding: 12px;
-        }
-
-        .lang-btn:hover {
-            background: rgba(168, 255, 120, 0.1);
-            border-color: var(--primary);
-            padding-left: 12px;
-        }
-
-        /* Main Content Layout */
-        main {
-            margin-left: 260px;
-            padding: 50px 60px;
-            position: relative;
-            z-index: 1;
-            width: calc(100% - 260px);
-            max-width: 1300px;
-        }
-
+        /* Hero Section */
         .hero {
-            text-align: left;
-            margin-bottom: 40px;
+            text-align: center;
+            margin: 40px 20px 35px;
+            max-width: 800px;
         }
 
         .hero h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 900;
             margin-bottom: 15px;
             line-height: 1.2;
-            color: #fff;
         }
 
-        .hero h1 span {
-            background: linear-gradient(135deg, var(--gold), #ff9900);
+        .hero h1 span { 
+            background: linear-gradient(135deg, #f5c518, #ff9900);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .hero-sub {
+        .hero p {
             color: var(--text-sub);
             font-size: 1.1rem;
             line-height: 1.6;
-            max-width: 750px;
         }
 
+        /* Main Container Grid */
         .main-grid {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
         }
 
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Glassmorphism Card Style */
         .preview-glass {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -214,19 +145,18 @@
             -webkit-backdrop-filter: blur(16px);
             color: var(--text-main);
             border-radius: 20px;
-            padding: 35px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
         .preview-glass:hover {
-            border-color: var(--border-hover);
+            border-color: rgba(255, 255, 255, 0.35);
             transform: translateY(-3px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
 
         .preview-glass h2 {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 700;
             margin-bottom: 20px;
             display: flex;
@@ -236,18 +166,12 @@
             padding-bottom: 14px;
         }
 
-        .features-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
         .demo-box {
             background: var(--demo-box-bg);
             border: 1px solid var(--demo-box-border);
             border-radius: 12px;
             padding: 16px;
+            margin-bottom: 12px;
             backdrop-filter: blur(8px);
             transition: all 0.2s ease;
         }
@@ -257,39 +181,29 @@
             border-color: rgba(255, 255, 255, 0.25);
         }
 
-        .demo-box .title {
+        .demo-box .title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+        .demo-box .desc { font-size: 0.85rem; color: var(--text-sub); }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 14px 28px;
             font-weight: 700;
             font-size: 0.95rem;
-            margin-bottom: 4px;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.55rem;
-            color: var(--diamond);
-        }
-
-        .demo-box .desc {
-            font-size: 0.85rem;
-            color: var(--text-sub);
-            margin-top: 6px;
-        }
-
-        .btn-cta {
-            display: inline-block;
-            background: var(--primary);
-            color: #000;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 0.6rem;
-            padding: 14px 24px;
-            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 25px var(--accent-glow);
+            transition: all 0.2s ease;
             text-decoration: none;
+            display: inline-block;
             margin-top: 20px;
-            transition: all 0.25s ease;
-            box-shadow: 0 0 15px rgba(168,255,120,0.3);
-            font-weight: bold;
         }
 
-        .btn-cta:hover {
+        .btn-primary:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 35px rgba(239, 68, 68, 0.6);
             transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(168,255,120,0.5);
         }
 
         [data-reveal] {
@@ -309,81 +223,67 @@
             color: var(--text-sub);
             font-size: 0.85rem;
             text-align: center;
-            width: 100%;
-            margin-left: 130px;
-        }
-
-        @media (max-width: 900px) {
-            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
-            .sidebar-section { flex-direction: row; flex-wrap: wrap; padding: 10px; justify-content: center; overflow-y: visible; }
-            .mc-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; padding: 10px 15px; font-size: 0.8rem; }
-            main { margin-left: 0; width: 100%; padding: 30px 20px; }
-            .main-grid { grid-template-columns: 1fr; }
-            footer { margin-left: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
+    <!-- Header Navigation -->
+    <header>
+        <a href="/" class="brand">
+            <img src="unnamed.jpg" alt="Logo">
+            QUAPS<span>ATTACK</span>
+        </a>
+        <div class="nav-links">
+            <a href="/downloads" class="nav-btn" data-i18n="nav-download">🔗 Downloads</a>
+            <a href="/management" class="nav-btn" data-i18n="nav-management">💼 Management</a>
+            <button class="nav-btn" id="langToggle">🌐 EN / DE</button>
+        </div>
+    </header>
 
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-            <img src="unnamed.jpg" alt="Quaps Attack Logo">
-            <div>
-                <span class="logo-text">Quaps Attack</span>
-                <span class="logo-sub">Community Hub</span>
+    <!-- Hero Section -->
+    <section class="hero" data-reveal>
+        <h1 data-i18n="hero-title">Willkommen bei <br><span>Quaps Attack</span></h1>
+        <p data-i18n="hero-sub">Echte Vanilla-Events, monatliche Server-Projekte und maximale Performance. Seit über 1 Jahr verbinden wir reines Teamplay mit eigenen Welten & Custom Modpacks.</p>
+        <div>
+            <a href="/downloads" class="btn-primary" data-i18n="hero-cta">🚀 Zu den Downloads & Modpack</a>
+        </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <main class="main-grid">
+
+        <!-- Column 1: About the Project -->
+        <div class="preview-glass" data-reveal>
+            <h2>📖 <span data-i18n="about-title">Über das Projekt</span></h2>
+            <p style="color: var(--text-sub); font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px;" data-i18n="about-text1">
+                Quaps Attack ist ein etabliertes Minecraft-Projekt. Bei uns steht das gemeinsame Zocken, Bauen und Entdecken im Vordergrund. Wir veranstalten regelmäßig monatliche Vanilla-Projekte und stellen der Community eigene Client-Modpacks und Welt-Downloads bereit.
+            </p>
+            <p style="color: var(--text-sub); font-size: 0.95rem; line-height: 1.6;" data-i18n="about-text2">
+                Egal ob du mit unserem Client-Modpack auf jedem Vanilla-Server mit maximalen FPS durchstarten oder unsere vergangenen Projekt-Welten erkunden willst – hier bist du genau richtig!
+            </p>
+        </div>
+
+        <!-- Column 2: Highlights -->
+        <div class="preview-glass" data-reveal>
+            <h2>⚡ <span data-i18n="features-title">Projekt Highlights</span></h2>
+            
+            <div class="demo-box">
+                <div class="title" data-i18n="feat1-title">🔄 Monatliche Welten</div>
+                <div class="desc" data-i18n="feat1-desc">Jeden Monat starten wir frische Projekte und Welten für ununterbrochenen Spielspaß.</div>
+            </div>
+
+            <div class="demo-box">
+                <div class="title" data-i18n="feat2-title">⚙️ Performance Client</div>
+                <div class="desc" data-i18n="feat2-desc">Unser Modpack läuft zu 100% Client-side. Zocke überall mit max FPS & geiler Optik.</div>
+            </div>
+
+            <div class="demo-box">
+                <div class="title" data-i18n="feat3-title">🌐 Aktive Community & Support</div>
+                <div class="desc" data-i18n="feat3-desc">Ein starkes Team und direkte Ansprechpartner über unser zentrales Management-Hub.</div>
             </div>
         </div>
-        <div class="sidebar-section">
-            <a href="/" class="mc-btn active" data-i18n="nav-home">🏠 Home</a>
-            <a href="#about" class="mc-btn" data-i18n="nav-about">📖 Über das Projekt</a>
-            <a href="#features" class="mc-btn" data-i18n="nav-features">⚡ Gameplay</a>
-            <a href="/downloads" class="mc-btn" data-i18n="nav-download">🔗 Downloads & Modpack</a>
-            <a href="/management" class="mc-btn" data-i18n="nav-management">💼 Management Hub</a>
-        </div>
-        <button class="mc-btn lang-btn" id="langToggle">🌐 EN / DE</button>
-    </aside>
 
-    <main>
-        <section id="home" class="hero" data-reveal>
-            <h1 data-i18n="hero-title">Willkommen bei <br><span>Quaps Attack</span>!</h1>
-            <p class="hero-sub" data-i18n="hero-sub">Echte Vanilla-Events, monatliche Server-Projekte und maximale Performance. Seit über 1 Jahr verbinden wir reines Teamplay mit eigenen Welten & Custom Modpacks.</p>
-            <a href="/downloads" class="btn-cta" data-i18n="hero-cta">🚀 Zu den Downloads & Modpack</a>
-        </section>
-
-        <div class="main-grid">
-            <!-- Column 1: About the Project -->
-            <section id="about" class="preview-glass" data-reveal>
-                <h2 data-i18n="about-title">📖 Was ist Quaps Attack?</h2>
-                <p style="color: var(--text-sub); font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px;" data-i18n="about-text1">
-                    Quaps Attack ist ein etabliertes Minecraft-Projekt. Bei uns steht das gemeinsame Zocken, Bauen und Entdecken im Vordergrund. Wir veranstalten regelmäßig monatliche Vanilla-Projekte und stellen der Community eigene Client-Modpacks und Welt-Downloads bereit.
-                </p>
-                <p style="color: var(--text-sub); font-size: 0.95rem; line-height: 1.6;" data-i18n="about-text2">
-                    Egal ob du mit unserem Client-Modpack auf jedem Vanilla-Server mit maximalen FPS durchstarten oder unsere vergangenen Projekt-Welten erkunden willst – hier bist du genau richtig!
-                </p>
-            </section>
-
-            <!-- Column 2: Highlights -->
-            <section id="features" class="preview-glass" data-reveal>
-                <h2 data-i18n="features-title">⚡ Projekt Highlights</h2>
-                <div class="features-grid">
-                    <div class="demo-box">
-                        <div class="title" data-i18n="feat1-title">🔄 Monatliche Welten</div>
-                        <div class="desc" data-i18n="feat1-desc">Jeden Monat starten wir frische Projekte und Welten für ununterbrochenen Spielspaß.</div>
-                    </div>
-                    <div class="demo-box">
-                        <div class="title" data-i18n="feat2-title">⚙️ Performance Client</div>
-                        <div class="desc" data-i18n="feat2-desc">Unser Modpack läuft zu 100% Client-side. Zocke überall mit max FPS & geiler Optik.</div>
-                    </div>
-                    <div class="demo-box">
-                        <div class="title" data-i18n="feat3-title">🌐 Aktive Community & Support</div>
-                        <div class="desc" data-i18n="feat3-desc">Ein starkes Team und direkte Ansprechpartner über unser zentrales Management-Hub.</div>
-                    </div>
-                </div>
-            </section>
-        </div>
     </main>
 
     <!-- Footer -->
@@ -394,18 +294,15 @@
     <script>
         const translations = {
             de: {
-                "nav-home": "🏠 Home",
-                "nav-about": "📖 Über das Projekt",
-                "nav-features": "⚡ Gameplay",
-                "nav-download": "🔗 Downloads & Modpack",
-                "nav-management": "💼 Management Hub",
-                "hero-title": "Willkommen bei <br><span>Quaps Attack</span>!",
+                "nav-download": "🔗 Downloads",
+                "nav-management": "💼 Management",
+                "hero-title": "Willkommen bei <br><span>Quaps Attack</span>",
                 "hero-sub": "Echte Vanilla-Events, monatliche Server-Projekte und maximale Performance. Seit über 1 Jahr verbinden wir reines Teamplay mit eigenen Welten & Custom Modpacks.",
                 "hero-cta": "🚀 Zu den Downloads & Modpack",
-                "about-title": "📖 Was ist Quaps Attack?",
+                "about-title": "Über das Projekt",
                 "about-text1": "Quaps Attack ist ein etabliertes Minecraft-Projekt. Bei uns steht das gemeinsame Zocken, Bauen und Entdecken im Vordergrund. Wir veranstalten regelmäßig monatliche Vanilla-Projekte und stellen der Community eigene Client-Modpacks und Welt-Downloads bereit.",
                 "about-text2": "Egal ob du mit unserem Client-Modpack auf jedem Vanilla-Server mit maximalen FPS durchstarten oder unsere vergangenen Projekt-Welten erkunden willst – hier bist du genau richtig!",
-                "features-title": "⚡ Projekt Highlights",
+                "features-title": "Projekt Highlights",
                 "feat1-title": "🔄 Monatliche Welten",
                 "feat1-desc": "Jeden Monat starten wir frische Projekte und Welten für ununterbrochenen Spielspaß.",
                 "feat2-title": "⚙️ Performance Client",
@@ -414,24 +311,21 @@
                 "feat3-desc": "Ein starkes Team und direkte Ansprechpartner über unser zentrales Management-Hub."
             },
             en: {
-                "nav-home": "🏠 Home",
-                "nav-about": "📖 About the Project",
-                "nav-features": "⚡ Gameplay",
-                "nav-download": "🔗 Downloads & Modpack",
-                "nav-management": "💼 Management Hub",
-                "hero-title": "Welcome to <br><span>Quaps Attack</span>!",
+                "nav-download": "🔗 Downloads",
+                "nav-management": "💼 Management",
+                "hero-title": "Welcome to <br><span>Quaps Attack</span>",
                 "hero-sub": "Pure vanilla events, monthly server projects, and maximum performance. For over a year, we've combined teamwork with custom worlds & modpacks.",
                 "hero-cta": "🚀 Go to Downloads & Modpack",
-                "about-title": "📖 What is Quaps Attack?",
+                "about-title": "About the Project",
                 "about-text1": "Quaps Attack is an established Minecraft project focused on multiplayer gaming, building, and exploring. We host monthly vanilla projects and provide our community with client modpacks and world downloads.",
                 "about-text2": "Whether you want to play on any vanilla server with maximum FPS or explore our past project worlds – you'll find it all here!",
-                "features-title": "⚡ Project Highlights",
+                "features-title": "Project Highlights",
                 "feat1-title": "🔄 Monthly Worlds",
                 "feat1-desc": "Every month we launch fresh projects and worlds for non-stop gaming fun.",
                 "feat2-title": "⚙️ Performance Client",
                 "feat2-desc": "Our modpack is 100% client-side. Play anywhere with max FPS & stunning visuals.",
                 "feat3-title": "🌐 Active Community & Support",
-                "feat3-desc": "A strong team, transparent support, and direct contacts via our management hub."
+                "feat3-desc": "A strong team and direct contacts via our central management hub."
             }
         };
 
