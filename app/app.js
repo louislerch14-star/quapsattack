@@ -1,11 +1,13 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 import { GoogleGenAI } from "https://esm.run/@google/genai";
 
+// 1. SUPABASE CLIENT DIREKT GANZ OBEN INITIALISIEREN
 const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Danach erst kommen alle anderen Variablen und Funktionen!
 let currentUser = null;
 let currentProfile = null;
 let activeChatRoomId = null;
@@ -19,9 +21,7 @@ let currentCategory = 'all';
 let currentView = 'kanban';
 let activeThreadPostId = null;
 
-// ==========================================
-// QUPASSI KI CONFIG (Offizielles Google Gen AI SDK)
-// ==========================================
+// QUPASSI KI CONFIG
 const GEMINI_API_KEY = 'AQ.Ab8RN6KT-NV_pdl2kGaEaXme_f7gJXqDCsTje_kuSWahTfqGbg';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -43,7 +43,6 @@ function playCopySound() {
   } catch(e) {}
 }
 
-// Kostenloser Custom Benachrichtigungs-Sound (Web Audio API)
 function playCustomNotificationSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -51,8 +50,8 @@ function playCustomNotificationSound() {
     const gain = ctx.createGain();
     
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.08); // A5
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.08);
     
     gain.gain.setValueAtTime(0.1, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.3);
@@ -825,7 +824,7 @@ async function loadRoster() {
           </div>
           <div class="flex gap-2">
             ${p.id !== currentUser?.id ? `<button onclick="startDirectMessage('${p.id}', '${p.username}')" class="flex-1 py-1.5 bg-accentRed/20 hover:bg-accentRed text-accentRed hover:text-white border border-accentRed/40 text-xs font-bold rounded-lg transition">💬 PM</button>` : ''}
-            <button onclick="alert('BOOM! 💥\\n\\n${p.username}: \\\"${p.personality_quote || 'Profi Coder'}\\\ "')" class="flex-1 py-1.5 bg-white/5 border border-white/10 text-xs font-bold text-white rounded-lg hover:bg-accentRed/20 transition">💥 BOOM Check</button>
+            <button onclick="alert('BOOM! 💥\\n\\n${p.username}: \\\"${p.personality_quote || 'Profi Coder'}\\\ "')" class="flex-1 py-1.5 bg-white/5 border border-white/10 text-xs font-bold text-white rounded-lg hover:bg-accentRed/25 transition">💥 BOOM Check</button>
           </div>
         </div>
       `;
@@ -834,7 +833,7 @@ async function loadRoster() {
 }
 
 // ==========================================
-// QUPASSI KI LOGIC (Google Gen AI SDK + Vollständiger DB-Kontext)
+// QUPASSI KI LOGIC
 // ==========================================
 window.sendQupasSIMessage = async function(e) {
   e.preventDefault();
@@ -866,7 +865,6 @@ window.sendQupasSIMessage = async function(e) {
     let dbContext = "";
     const lower = prompt.toLowerCase();
     
-    // Umfassender Kontext-Abruf aus allen wichtigen Tabellen
     if (lower.includes('pinnwand') || lower.includes('beitrag') || lower.includes('task') || lower.includes('projekt')) {
       const { data: posts } = await supabase.from('pinboard_posts').select('title, content, status, category, coordinates');
       dbContext += "Aktuelle Pinnwand-Einträge: " + JSON.stringify(posts) + "\n";
@@ -884,13 +882,11 @@ window.sendQupasSIMessage = async function(e) {
       dbContext += "Mediathek / Vault-Inhalte: " + JSON.stringify(vault) + "\n";
     }
 
-    // Falls keine spezifische Erwähnung, lade Standard-Pinnwand als Kontext dazu
     if (!dbContext) {
       const { data: posts } = await supabase.from('pinboard_posts').select('title, content, status');
       dbContext = "Allgemeiner Datenbank-Überblick (Pinnwand): " + JSON.stringify(posts);
     }
 
-    // Verwendung des offiziellen Google Gen AI SDKs (gemini-1.5-flash)
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
@@ -928,7 +924,6 @@ window.sendQupasSIMessage = async function(e) {
 };
 
 function setupRealtimeSubscriptions() {
-  // Pinnwand Realtime Live-Updates + Sound-Trigger
   supabase.channel('public:pinboard_posts')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'pinboard_posts' }, payload => {
       loadPinboardPosts();
@@ -938,7 +933,6 @@ function setupRealtimeSubscriptions() {
     })
     .subscribe();
 
-  // Chat Realtime Live-Updates + Sound-Trigger
   supabase.channel('public:chat_messages')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
       if (payload.new.room_id === activeChatRoomId) {
