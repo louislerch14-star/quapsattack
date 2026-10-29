@@ -43,6 +43,28 @@ function playCopySound() {
   } catch(e) {}
 }
 
+// Kostenloser Custom Benachrichtigungs-Sound (Web Audio API)
+function playCustomNotificationSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.08); // A5
+    
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.3);
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.start();
+    osc.stop(ctx.currentTime + 0.3);
+  } catch(e) {}
+}
+
 async function checkSession() {
   const { data: { session } } = await supabase.auth.getSession();
   if (session) {
@@ -812,7 +834,7 @@ async function loadRoster() {
 }
 
 // ==========================================
-// QUPASSI KI LOGIC (Google Gen AI SDK + Supabase Context)
+// QUPASSI KI LOGIC (Google Gen AI SDK + Vollständiger DB-Kontext)
 // ==========================================
 window.sendQupasSIMessage = async function(e) {
   e.preventDefault();
@@ -844,19 +866,35 @@ window.sendQupasSIMessage = async function(e) {
     let dbContext = "";
     const lower = prompt.toLowerCase();
     
+    // Umfassender Kontext-Abruf aus allen wichtigen Tabellen
     if (lower.includes('pinnwand') || lower.includes('beitrag') || lower.includes('task') || lower.includes('projekt')) {
       const { data: posts } = await supabase.from('pinboard_posts').select('title, content, status, category, coordinates');
-      dbContext = "Aktuelle Pinnwand-Einträge in der Datenbank: " + JSON.stringify(posts);
-    } else if (lower.includes('wer') || lower.includes('spieler') || lower.includes('roster') || lower.includes('rolle')) {
+      dbContext += "Aktuelle Pinnwand-Einträge: " + JSON.stringify(posts) + "\n";
+    } 
+    if (lower.includes('wer') || lower.includes('spieler') || lower.includes('roster') || lower.includes('rolle') || lower.includes('mitglied')) {
       const { data: profiles } = await supabase.from('profiles').select('username, role, custom_status_text');
-      dbContext = "Registrierte Crew-Mitglieder: " + JSON.stringify(profiles);
+      dbContext += "Registrierte Crew-Mitglieder: " + JSON.stringify(profiles) + "\n";
+    }
+    if (lower.includes('termin') || lower.includes('kalender') || lower.includes('datum')) {
+      const { data: events } = await supabase.from('calendar_events').select('title, event_day, description');
+      dbContext += "Kalender-Termine: " + JSON.stringify(events) + "\n";
+    }
+    if (lower.includes('vault') || lower.includes('datei') || lower.includes('bild') || lower.includes('screenshot')) {
+      const { data: vault } = await supabase.from('vault_items').select('title, media_url');
+      dbContext += "Mediathek / Vault-Inhalte: " + JSON.stringify(vault) + "\n";
     }
 
- // Verwendung des offiziellen Google Gen AI SDKs
+    // Falls keine spezifische Erwähnung, lade Standard-Pinnwand als Kontext dazu
+    if (!dbContext) {
+      const { data: posts } = await supabase.from('pinboard_posts').select('title, content, status');
+      dbContext = "Allgemeiner Datenbank-Überblick (Pinnwand): " + JSON.stringify(posts);
+    }
+
+    // Verwendung des offiziellen Google Gen AI SDKs (gemini-1.5-flash)
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft- und Projekt-Hub "Quapsattack". Antworte immer locker, in cooler Jugendsprache (mit Slang wie digger, bro, bruder, emojis wie 💀 oder 🚀 etc.), gib immer Bro-Tipp, aber bitte nicht imemr diese Bindestriche nutzen, hilfsbereit und direkt auf Deutsch. Nutze folgenden Datenbank-Kontext, falls er zur Frage passt:\n${dbContext}\n\nFrage des Users: ${prompt}`,
+      model: 'gemini-1.5-flash',
+      contents: `Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft- und Projekt-Hub "Quapsattack". Antworte immer locker, in cooler Jugendsprache (mit Slang wie digger, bro, bruder, emojis wie 💀 oder 🚀 etc.), gib immer einen coolen Bro-Tipp, nutze KEINE übertriebenen Bindestriche, sei hilfsbereit und antworte direkt auf Deutsch. Nutze folgenden Datenbank-Kontext, falls er zur Frage passt:\n${dbContext}\n\nFrage des Users: ${prompt}`,
     });
 
     const aiReply = response.text || "Yo Bro, da kam leider keine Antwort zurück! 💀";
@@ -890,13 +928,33 @@ window.sendQupasSIMessage = async function(e) {
 };
 
 function setupRealtimeSubscriptions() {
-  supabase.channel('public:pinboard_posts').on('postgres_changes', { event: '*', schema: 'public', table: 'pinboard_posts' }, () => loadPinboardPosts()).subscribe();
-  supabase.channel('public:chat_messages').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
-    if (payload.new.room_id === activeChatRoomId) loadChatMessages(activeChatRoomId);
-  }).subscribe();
-  supabase.channel('public:chat_messages_delete').on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'chat_messages' }, payload => {
-    if (activeChatRoomId) loadChatMessages(activeChatRoomId);
-  }).subscribe();
+  // Pinnwand Realtime Live-Updates + Sound-Trigger
+  supabase.channel('public:pinboard_posts')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'pinboard_posts' }, payload => {
+      loadPinboardPosts();
+      if (payload.eventType === 'INSERT' && payload.new.author_id !== currentUser?.id) {
+        playCustomNotificationSound();
+      }
+    })
+    .subscribe();
+
+  // Chat Realtime Live-Updates + Sound-Trigger
+  supabase.channel('public:chat_messages')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
+      if (payload.new.room_id === activeChatRoomId) {
+        loadChatMessages(activeChatRoomId);
+      }
+      if (payload.new.sender_id !== currentUser?.id) {
+        playCustomNotificationSound();
+      }
+    })
+    .subscribe();
+
+  supabase.channel('public:chat_messages_delete')
+    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'chat_messages' }, () => {
+      if (activeChatRoomId) loadChatMessages(activeChatRoomId);
+    })
+    .subscribe();
 }
 
 function loadAllData() {
