@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quapsattack Command Center Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "@google/genai": "https://esm.run/@google/genai"
+    }
+  }
+</script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            appBg: '#030307',
+            glassBorder: 'rgba(255, 255, 255, 0.12)',
+            accentRed: '#ef4444',
+            textSub: 'rgba(255, 255, 255, 0.65)',
+            statusGreen: '#10b981'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(3, 3, 7, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(239, 68, 68, 0.6); }
+
+    .glass-card {
+      background: rgba(15, 15, 26, 0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    }
+    .modal-backdrop { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(16px); }
+    .pinned-glow { border: 1px solid #ef4444 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+  </style>
+</head>
+<body class="bg-appBg text-white h-screen flex flex-col overflow-hidden select-none font-sans antialiased">
+
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen" class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-6">
+    <div class="glass-card max-w-md w-full rounded-2xl p-6 border-white/20 space-y-6">
+      <div class="text-center space-y-2">
+        <span class="font-black tracking-wider text-xl">QUAPS<span class="text-accentRed">ATTACK</span> HUB</span>
+        <p class="text-xs text-textSub">Login mit deinem Profil</p>
+      </div>
+
+      <div class="flex border-b border-white/10 text-xs font-bold text-center">
+        <button id="tab-login-btn" onclick="toggleAuthMode('login')" class="flex-1 py-2 text-accentRed border-b-2 border-accentRed">Anmelden</button>
+        <button id="tab-register-btn" onclick="toggleAuthMode('register')" class="flex-1 py-2 text-textSub hover:text-white">Registrieren</button>
+      </div>
+
+      <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        <div id="username-field-wrapper" class="hidden">
+          <label class="block text-[10px] font-mono text-textSub uppercase mb-1">Username</label>
+          <input id="auth-username" type="text" placeholder="z. B. Louis" class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono text-textSub uppercase mb-1">E-Mail</label>
+          <input id="auth-email" type="email" required placeholder="louis@beispiel.de" class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono text-textSub uppercase mb-1">Passwort</label>
+          <input id="auth-password" type="password" required placeholder="••••••••" class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
+        </div>
+        <button id="auth-submit-btn" type="submit" class="w-full py-3 bg-accentRed hover:bg-red-600 text-white rounded-xl text-xs font-bold transition shadow-lg shadow-accentRed/30">Einloggen</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="main-app-container" class="flex flex-col h-screen hidden">
+    <!-- HEADER -->
+    <header class="h-13 border-b border-glassBorder bg-black/50 px-5 flex items-center justify-between shrink-0 z-40">
+      <div class="flex items-center gap-3">
+        <span class="font-black tracking-wider text-base">QUAPS<span class="text-accentRed">ATTACK</span></span>
+        <span id="user-role-badge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-accentRed/10 border border-accentRed/30 text-accentRed font-bold uppercase">Rolle</span>
+      </div>
+      <button onclick="handleLogout()" class="px-3 py-1 bg-accentRed/20 hover:bg-accentRed text-accentRed hover:text-white border border-accentRed/40 text-xs font-bold rounded-lg transition">Logout</button>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+      <!-- SIDEBAR -->
+      <aside class="w-64 border-r border-glassBorder bg-black/30 p-4 flex flex-col justify-between shrink-0">
+        <nav class="space-y-1.5" id="nav-container">
+          <button onclick="switchTab('pinnwand')" class="nav-btn active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">📌 Pinnwand (Pro)</button>
+          <button onclick="switchTab('messenger')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">💬 Messenger</button>
+          <button onclick="switchTab('calendar')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">📅 Interaktiver Kalender</button>
+          <button onclick="switchTab('mediathek')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">🖼️ Mediathek (Upload)</button>
+          <button onclick="switchTab('roster')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">💥 Player Roster</button>
+          <button onclick="switchTab('qupassi')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">🤖 QupasSI (KI)</button>
+        </nav>
+
+        <!-- PROFILE SIDEBAR CARD -->
+        <div class="glass-card p-3 rounded-xl flex items-center gap-3 cursor-pointer hover:border-white/20 transition" onclick="switchTab('profile')">
+          <div class="relative shrink-0">
+            <img id="sidebar-avatar-img" src="https://i.imgur.com/6VBx3io.png" class="w-10 h-10 rounded-xl object-cover border border-white/20">
+            <span id="sidebar-status-dot" class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-statusGreen rounded-full border-2 border-appBg"></span>
+          </div>
+          <div class="truncate">
+            <h4 id="sidebar-username" class="text-xs font-bold truncate">Loading...</h4>
+            <p id="sidebar-status-text" class="text-[10px] text-textSub truncate">Online</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN WORKSPACE -->
+      <main class="flex-1 overflow-y-auto p-6" id="main-content">
+
+        <!-- TAB: PINNWAND (PRO UPGRADED) -->
+        <section id="tab-pinnwand" class="tab-pane space-y-6 max-w-6xl mx-auto">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-xl font-extrabold">📌 Quapsattack Pro Pinnwand</h1>
+              <p class="text-xs text-textSub">Organisiere Projekte im Kanban-Board, teile Koordinaten und diskutiere in Threads.</p>
+            </div>
+            
+            <!-- Suchleiste & Ansicht-Umschalter -->
+            <div class="flex items-center gap-2">
+              <input id="pin-search" oninput="filterAndRenderPosts()" type="text" placeholder="🔍 Suche..." class="bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-accentRed w-48">
+              <button onclick="togglePinView('kanban')" id="view-kanban-btn" class="px-3 py-1.5 bg-accentRed text-white rounded-xl text-xs font-bold transition">Kanban</button>
+              <button onclick="togglePinView('feed')" id="view-feed-btn" class="px-3 py-1.5 bg-white/5 border border-white/10 text-textSub hover:text-white rounded-xl text-xs font-bold transition">Feed</button>
+            </div>
+          </div>
+
+          <!-- Kategorie Filter Pills -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1" id="category-filter-pills">
+            <button onclick="setPinCategory('all')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-accentRed text-white">#alle</button>
+            <button onclick="setPinCategory('ankündigungen')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">📢 #ankündigungen</button>
+            <button onclick="setPinCategory('basen')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">🏠 #basen</button>
+            <button onclick="setPinCategory('ideen')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">💡 #ideen</button>
+            <button onclick="setPinCategory('redstone')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">⚙️ #redstone</button>
+          </div>
+
+          <!-- Erstellungs-Box -->
+          <div id="pinnwand-create-box" class="glass-card p-5 rounded-2xl space-y-4 border-white/15">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-accentRed tracking-wider uppercase">Neuer Beitrag / Task</span>
+              <div class="flex items-center gap-3">
+                <select id="post-category-select" class="bg-black/50 border border-white/15 rounded-lg px-3 py-1 text-xs text-white outline-none">
+                  <option value="ankündigungen">📢 #ankündigungen</option>
+                  <option value="basen" selected>🏠 #basen</option>
+                  <option value="ideen">💡 #ideen</option>
+                  <option value="redstone">⚙️ #redstone</option>
+                </select>
+                <select id="post-status-select" class="bg-black/50 border border-white/15 rounded-lg px-3 py-1 text-xs text-white outline-none">
+                  <option value="Geplant">📋 Geplant</option>
+                  <option value="In Arbeit">🚧 In Arbeit</option>
+                  <option value="Fertig">✅ Fertig</option>
+                  <option value="Ideen">💡 Ideen</option>
+                </select>
+              </div>
+            </div>
+
+            <input id="post-title" type="text" placeholder="Titel / Überschrift..." class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
+            <textarea id="post-content" rows="3" placeholder="Beschreibung oder Projekt-Details..." class="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-xs text-white outline-none focus:border-accentRed resize-none"></textarea>
+            
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <input id="post-coords" type="text" placeholder="📍 Minecraft Koord. (z. B. X: 420 Z: -1200)" class="bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none w-72">
+              <button onclick="createNewPost()" class="px-5 py-2.5 bg-accentRed hover:bg-red-600 text-white rounded-xl text-xs font-bold transition shadow-lg shadow-accentRed/30">
+                📌 Beitrag Erstellen
+              </button>
+            </div>
+          </div>
+
+          <!-- KANBAN BOARD VIEW -->
+          <div id="kanban-view" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Spalte 1: Geplant -->
+            <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <span class="text-xs font-bold text-accentRed">📋 Geplant</span>
+                <span id="count-Geplant" class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5">0</span>
+              </div>
+              <div id="kanban-Geplant" class="space-y-3 min-h-[300px]"></div>
+            </div>
+            <!-- Spalte 2: In Arbeit -->
+            <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <span class="text-xs font-bold text-yellow-400">🚧 In Arbeit</span>
+                <span id="count-In Arbeit" class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5">0</span>
+              </div>
+              <div id="kanban-In Arbeit" class="space-y-3 min-h-[300px]"></div>
+            </div>
+            <!-- Spalte 3: Fertig -->
+            <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <span class="text-xs font-bold text-statusGreen">✅ Fertig</span>
+                <span id="count-Fertig" class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5">0</span>
+              </div>
+              <div id="kanban-Fertig" class="space-y-3 min-h-[300px]"></div>
+            </div>
+            <!-- Spalte 4: Ideen -->
+            <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <span class="text-xs font-bold text-cyan-400">💡 Ideen</span>
+                <span id="count-Ideen" class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5">0</span>
+              </div>
+              <div id="kanban-Ideen" class="space-y-3 min-h-[300px]"></div>
+            </div>
+          </div>
+
+          <!-- FEED VIEW (Alternativ) -->
+          <div id="feed-view" class="space-y-4 hidden"></div>
+        </section>
+
+        <!-- TAB: MESSENGER -->
+        <section id="tab-messenger" class="tab-pane hidden h-full">
+          <div class="glass-card rounded-2xl h-full flex overflow-hidden border-white/10">
+            <div class="w-64 border-r border-glassBorder bg-black/30 p-3 space-y-4 shrink-0">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-textSub">CHATS</span>
+                <button onclick="openNewGroupModal()" class="px-2 py-0.5 bg-accentRed/20 text-accentRed text-xs font-bold rounded">+ Gruppe</button>
+              </div>
+              <div class="space-y-1" id="chat-rooms-list"></div>
+            </div>
+            <div class="flex-1 flex flex-col justify-between bg-black/10">
+              <div class="h-12 border-b border-glassBorder px-5 flex items-center bg-black/20 font-bold text-xs" id="active-chat-title">Chat Raum</div>
+              <div class="flex-1 overflow-y-auto p-5 space-y-4" id="chat-messages-container"></div>
+              <form onsubmit="sendChatMessage(event)" class="p-4 border-t border-glassBorder bg-black/30 flex gap-3">
+                <input id="chat-input" type="text" placeholder="Nachricht schreiben..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none">
+                <button type="submit" class="px-5 py-2.5 bg-accentRed text-white rounded-xl text-xs font-bold">Senden</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: KALENDER -->
+        <section id="tab-calendar" class="tab-pane hidden space-y-6 max-w-5xl mx-auto">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-xl font-extrabold">📅 Interaktiver Kalender</h1>
+              <p class="text-xs text-textSub">Wechsle die Monate und klicke auf Tage für Termine!</p>
+            </div>
+            <button id="calendar-add-btn" onclick="openAddEventModal()" class="px-4 py-2 bg-accentRed text-white rounded-xl text-xs font-bold">+ Termin Hinzufügen</button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-2 glass-card p-5 rounded-2xl space-y-4">
+              <div class="flex justify-between items-center border-b border-white/10 pb-3 font-bold text-sm">
+                <button onclick="changeMonth(-1)" class="p-1 rounded hover:bg-white/10 text-textSub hover:text-white transition">◀ Vorheriger</button>
+                <span id="calendar-month-year">Monat Jahr</span>
+                <button onclick="changeMonth(1)" class="p-1 rounded hover:bg-white/10 text-textSub hover:text-white transition">Nächster ▶</button>
+              </div>
+              <div class="grid grid-cols-7 gap-2 text-center text-xs font-mono text-textSub">
+                <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+              </div>
+              <div class="grid grid-cols-7 gap-2 text-xs font-medium" id="calendar-days-grid"></div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl space-y-4">
+              <h3 class="font-bold text-sm border-b border-white/10 pb-2" id="selected-date-title">Termine an diesem Tag</h3>
+              <div class="space-y-3" id="day-events-container">
+                <p class="text-xs text-textSub">Klicke auf ein Datum im Kalender...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: MEDIATHEK -->
+        <section id="tab-mediathek" class="tab-pane hidden space-y-6 max-w-5xl mx-auto">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-xl font-extrabold">🖼️ Vault & Mediathek</h1>
+              <p class="text-xs text-textSub">Lade Screenshots & Memes direkt hoch!</p>
+            </div>
+            <button id="vault-upload-btn" onclick="openUploadModal()" class="px-4 py-2 bg-accentRed text-white rounded-xl text-xs font-bold">+ Datei Hochladen</button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="media-grid"></div>
+        </section>
+
+        <!-- TAB: ROSTER -->
+        <section id="tab-roster" class="tab-pane hidden space-y-6 max-w-5xl mx-auto">
+          <h1 class="text-xl font-extrabold">💥 Player Roster & Rollen</h1>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="roster-grid"></div>
+        </section>
+
+        <!-- TAB: QUPASSI AI -->
+        <section id="tab-qupassi" class="tab-pane hidden h-full max-w-4xl mx-auto">
+          <div class="glass-card rounded-2xl h-[80vh] flex flex-col justify-between border-white/10 p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <h1 class="text-base font-extrabold text-white">🤖 QupasSI Command AI</h1>
+                <p class="text-[11px] text-textSub">Deine intelligente Crew-Assistenz mit direktem Datenbank-Zugriff.</p>
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-accentRed/20 text-accentRed border border-accentRed/30 font-bold">ONLINE</span>
+            </div>
+
+            <!-- Chat Verlauf -->
+            <div id="qupassi-messages-container" class="flex-1 overflow-y-auto space-y-3 pr-2">
+              <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
+                <strong class="text-accentRed">🤖 QupasSI:</strong>
+                <p class="text-white">Moin Bro! QupasSI am Start. Was wollen wir heute reißen? Frag mich zu Projekten, Koords oder Mitgliedern! 🚀</p>
+              </div>
+            </div>
+
+            <!-- Eingabeformular -->
+            <form onsubmit="sendQupasSIMessage(event)" class="flex gap-2 pt-2 border-t border-white/10">
+              <input id="qupassi-input" type="text" placeholder="Frage QupasSI etwas..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
+              <button type="submit" class="px-5 py-2.5 bg-accentRed text-white rounded-xl text-xs font-bold shadow-lg shadow-accentRed/30">Fragen 🧠</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- TAB: PROFILE -->
+        <section id="tab-profile" class="tab-pane hidden space-y-6 max-w-2xl mx-auto">
+          <h1 class="text-xl font-extrabold">⚙️ Profil & Status Anpassen</h1>
+          <div class="glass-card p-6 rounded-2xl space-y-5">
+            <div class="flex items-center gap-4 border-b border-white/10 pb-4">
+              <img id="edit-avatar-preview" src="https://i.imgur.com/6VBx3io.png" class="w-16 h-16 rounded-2xl object-cover border-2 border-accentRed">
+              <div>
+                <label class="block text-xs font-bold text-white mb-1">Profilbild hochladen:</label>
+                <input id="upload-avatar-file" type="file" accept="image/*" class="text-xs text-textSub file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-accentRed/20 file:text-accentRed file:font-bold hover:file:bg-accentRed hover:file:text-white transition cursor-pointer">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-textSub mb-1">Discord Online-Status:</label>
+              <select id="edit-discord-status" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none">
+                <option value="online">🟢 Online</option>
+                <option value="dnd">⛔ Bitte nicht stören (DND)</option>
+                <option value="idle">🌙 Abwesend (Idle)</option>
+                <option value="offline">⚪ Unsichtbar / Offline</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-textSub mb-1">Username / Name:</label>
+              <input id="edit-username-input" type="text" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-textSub mb-1">Custom Status Text:</label>
+              <input id="edit-status-text" type="text" placeholder="z. B. Zockt Minecraft..." class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-textSub mb-1">BOOM Personality Quote:</label>
+              <input id="edit-quote" type="text" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none">
+            </div>
+            <button onclick="saveFullProfile()" class="w-full py-3 bg-accentRed hover:bg-red-600 text-white rounded-xl text-xs font-bold transition shadow-lg shadow-accentRed/30">Profil Speichern</button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <div id="event-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-6">
+    <div class="glass-card max-w-md w-full rounded-2xl p-5 space-y-4">
+      <h4 class="font-bold text-sm">Neuen Termin eintragen</h4>
+      <input id="event-title" type="text" placeholder="Titel (z. B. Base-Tour)" class="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-xs text-white outline-none">
+      <input id="event-date-input" type="date" class="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-xs text-white outline-none">
+      <textarea id="event-desc" placeholder="Beschreibung..." class="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-xs text-white outline-none resize-none"></textarea>
+      <div class="flex gap-2">
+        <button onclick="closeAddEventModal()" class="flex-1 py-2 bg-white/10 text-xs font-bold rounded-xl">Abbrechen</button>
+        <button onclick="saveNewCalendarEvent()" class="flex-1 py-2 bg-accentRed text-white text-xs font-bold rounded-xl">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="upload-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-6">
+    <div class="glass-card max-w-md w-full rounded-2xl p-5 space-y-4">
+      <h4 class="font-bold text-sm">Datei in Vault hochladen</h4>
+      <input id="upload-media-title" type="text" placeholder="Titel des Screenshots/Clips" class="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-xs text-white outline-none">
+      <input id="upload-media-file" type="file" accept="image/*,video/*" class="w-full text-xs text-textSub file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-accentRed/20 file:text-accentRed file:font-bold">
+      <div class="flex gap-2">
+        <button onclick="closeUploadModal()" class="flex-1 py-2 bg-white/10 text-xs font-bold rounded-xl">Abbrechen</button>
+        <button onclick="uploadMediaToVault()" class="flex-1 py-2 bg-accentRed text-white text-xs font-bold rounded-xl">Hochladen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: THREAD ANTWORTEN -->
+  <div id="thread-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-6">
+    <div class="glass-card max-w-lg w-full rounded-2xl p-5 space-y-4 max-h-[80vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h4 class="font-bold text-sm text-white">💬 Diskussion & Antworten</h4>
+        <button onclick="closeThreadModal()" class="text-textSub hover:text-white text-xs">✕ Schließen</button>
+      </div>
+      <!-- Antworten Liste -->
+      <div id="thread-messages-list" class="flex-1 overflow-y-auto space-y-3 pr-2 min-h-[200px]">
+        <p class="text-xs text-textSub">Lade Antworten...</p>
+      </div>
+      <!-- Antwort schreiben Formular -->
+      <form onsubmit="sendThreadReply(event)" class="flex gap-2 pt-2 border-t border-white/10">
+        <input id="thread-reply-input" type="text" placeholder="Schreibe eine Antwort..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
+        <button type="submit" class="px-4 py-2.5 bg-accentRed text-white rounded-xl text-xs font-bold">Senden</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: NEUE GRUPPE ERSTELLEN -->
+  <div id="group-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-6">
+    <div class="glass-card max-w-md w-full rounded-2xl p-5 space-y-4">
+      <h4 class="font-bold text-sm text-white">💬 Neue Crew-Gruppe erstellen</h4>
+      <input id="group-name-input" type="text" placeholder="Gruppenname (z. B. Redstone-Bauer)" class="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-xs text-white outline-none">
+      
+      <div>
+        <label class="block text-[10px] font-mono text-textSub uppercase mb-2">Mitglieder auswählen:</label>
+        <div id="group-members-checkboxes" class="space-y-2 max-h-40 overflow-y-auto pr-1">
+          <!-- Wird dynamisch gefüllt -->
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeNewGroupModal()" class="flex-1 py-2 bg-white/10 text-xs font-bold rounded-xl">Abbrechen</button>
+        <button onclick="createChatGroup()" class="flex-1 py-2 bg-accentRed text-white text-xs font-bold rounded-xl">Gruppe Erstellen</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
