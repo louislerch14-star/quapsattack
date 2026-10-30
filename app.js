@@ -856,7 +856,7 @@ window.sendQupasSIMessage = async function(e) {
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: `Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft- und Projekt-Hub "Quapsattack". Antworte immer locker, in cooler Jugendsprache (mit Slang wie digger, bro, bruder, emojis wie 💀 oder 🚀 etc.), gib immer Bro-Tipp, aber bitte nicht imemr diese Bindestriche nutzen, hilfsbereit und direkt auf Deutsch. Nutze folgenden Datenbank-Kontext, falls er zur Frage passt:\n${dbContext}\n\nFrage des Users: ${prompt}`,
+      contents: Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft-Hub Quapsattack. Antworte extrem kurz, direkt und locker in cooler Jugendsprache mit Slang wie digger, bro, emojis wie 💀 oder 🚀. WICHTIG: Nutze KEINE übertriebenen Bindestriche. Gib am Ende GENAU EINEN kurzen Bro-Tipp. Datenbank-Kontext: ${dbContext}\n\nFrage: ${prompt}`,
     });
 
     const aiReply = response.text || "Yo Bro, da kam leider keine Antwort zurück! 💀";
