@@ -803,7 +803,7 @@ async function loadRoster() {
           </div>
           <div class="flex gap-2">
             ${p.id !== currentUser?.id ? `<button onclick="startDirectMessage('${p.id}', '${p.username}')" class="flex-1 py-1.5 bg-accentRed/20 hover:bg-accentRed text-accentRed hover:text-white border border-accentRed/40 text-xs font-bold rounded-lg transition">💬 PM</button>` : ''}
-            <button onclick="alert('BOOM! 💥\\n\\n${p.username}: \\\"${p.personality_quote || 'Profi Coder'}\\\ "')" class="flex-1 py-1.5 bg-white/5 border border-white/10 text-xs font-bold text-white rounded-lg hover:bg-accentRed/20 transition">💥 BOOM Check</button>
+            <button onclick="alert('BOOM! 💥\\n\\n${p.username}: ${p.personality_quote || 'Profi Coder'}')" class="flex-1 py-1.5 bg-white/5 border border-white/10 text-xs font-bold text-white rounded-lg hover:bg-accentRed/20 transition">💥 BOOM Check</button>
           </div>
         </div>
       `;
@@ -852,10 +852,10 @@ window.sendQupasSIMessage = async function(e) {
       dbContext = "Registrierte Crew-Mitglieder: " + JSON.stringify(profiles);
     }
 
- // Verwendung des offiziellen Google Gen AI SDKs
+    // Verwendung des offiziellen Google Gen AI SDKs (Korrekt mit gemini-1.5-flash)
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: `Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft- und Projekt-Hub "Quapsattack". Antworte immer locker, in cooler Jugendsprache (mit Slang wie digger, bro, bruder, emojis wie 💀 oder 🚀 etc.), gib immer Bro-Tipp, aber bitte nicht imemr diese Bindestriche nutzen, hilfsbereit und direkt auf Deutsch. Nutze folgenden Datenbank-Kontext, falls er zur Frage passt:\n${dbContext}\n\nFrage des Users: ${prompt}`,
     });
 
