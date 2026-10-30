@@ -1,5 +1,4 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { GoogleGenAI } from "https://esm.run/@google/genai";
 
 const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
@@ -20,7 +19,7 @@ let currentView = 'kanban';
 let activeThreadPostId = null;
 
 // ==========================================
-// QUPASSI KI CONFIG (Offizielles Google Gen AI SDK)
+// QUPASSI KI CONFIG (Direkter API Fetch)
 // ==========================================
 const GEMINI_API_KEY = 'AQ.Ab8RN6KT-NV_pdl2kGaEaXme_f7gJXqDCsTje_kuSWahTfqGbg';
 
@@ -812,7 +811,7 @@ async function loadRoster() {
 }
 
 // ==========================================
-// QUPASSI KI LOGIC (Google Gen AI SDK + Supabase Context)
+// QUPASSI KI LOGIC
 // ==========================================
 window.sendQupasSIMessage = async function(e) {
   e.preventDefault();
@@ -851,8 +850,9 @@ window.sendQupasSIMessage = async function(e) {
       const { data: profiles } = await supabase.from('profiles').select('username, role, custom_status_text');
       dbContext = "Registrierte Crew-Mitglieder: " + JSON.stringify(profiles);
     }
-// Direkter API-Fetch, der zu 100% ohne SDK-Modell-Zicken läuft
-    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+
+    // Direkter API-Fetch mit aktuellem Modell gemini-2.0-flash
+    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -866,8 +866,6 @@ window.sendQupasSIMessage = async function(e) {
 
     const geminiData = await geminiRes.json();
     const aiReply = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "Yo Bro, da kam leider keine Antwort zurück! 💀";
-
-    const aiReply = response.text || "Yo Bro, da kam leider keine Antwort zurück! 💀";
 
     document.getElementById(loadingId).remove();
     container.innerHTML += `
