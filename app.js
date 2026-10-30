@@ -2,7 +2,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 import { GoogleGenAI } from "https://esm.run/@google/genai";
 
 const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiqm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -852,11 +852,11 @@ window.sendQupasSIMessage = async function(e) {
       dbContext = "Registrierte Crew-Mitglieder: " + JSON.stringify(profiles);
     }
 
-    // Verwendung des offiziellen Google Gen AI SDKs (Korrekt mit Anführungszeichen & gemini-1.5-flash)
+ // Verwendung des offiziellen Google Gen AI SDKs
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: `Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft-Hub Quapsattack. Antworte extrem kurz, direkt und locker in cooler Jugendsprache mit Slang wie digger, bro, emojis wie 💀 oder 🚀. WICHTIG: Nutze KEINE übertriebenen Bindestriche. Gib am Ende GENAU EINEN kurzen Bro-Tipp. Datenbank-Kontext: ${dbContext}\n\nFrage: ${prompt}`
+      model: 'gemini-2.5-flash',
+      contents: Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft-Hub Quapsattack. Antworte extrem kurz, direkt und locker in cooler Jugendsprache mit Slang wie digger, bro, emojis wie 💀 oder 🚀. WICHTIG: Nutze KEINE übertriebenen Bindestriche. Gib am Ende GENAU EINEN kurzen Bro-Tipp. Datenbank-Kontext: ${dbContext}\n\nFrage: ${prompt}`,
     });
 
     const aiReply = response.text || "Yo Bro, da kam leider keine Antwort zurück! 💀";
