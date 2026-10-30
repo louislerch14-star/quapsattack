@@ -852,11 +852,11 @@ window.sendQupasSIMessage = async function(e) {
       dbContext = "Registrierte Crew-Mitglieder: " + JSON.stringify(profiles);
     }
 
-    // Verwendung des offiziellen Google Gen AI SDKs (Korrekt mit gemini-1.5-flash)
+  // Verwendung des offiziellen Google Gen AI SDKs
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
-      contents: `Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft- und Projekt-Hub "Quapsattack". Antworte immer locker, in cooler Jugendsprache (mit Slang wie digger, bro, bruder, emojis wie 💀 oder 🚀 etc.), gib immer Bro-Tipp, aber bitte nicht imemr diese Bindestriche nutzen, hilfsbereit und direkt auf Deutsch. Nutze folgenden Datenbank-Kontext, falls er zur Frage passt:\n${dbContext}\n\nFrage des Users: ${prompt}`,
+      contents: `Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft- und Projekt-Hub "Quapsattack". Antworte immer locker, in cooler Jugendsprache (mit Slang wie digger, bro, bruder, emojis wie 💀 oder 🚀 etc.), gib immer Bro-Tipp, aber bitte nicht immer diese Bindestriche nutzen, hilfsbereit und direkt auf Deutsch. Nutze folgenden Datenbank-Kontext, falls er zur Frage passt:\n${dbContext}\n\nFrage des Users: ${prompt}`,
     });
 
     const aiReply = response.text || "Yo Bro, da kam leider keine Antwort zurück! 💀";
