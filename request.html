@@ -445,199 +445,199 @@
         <span id="toastMsg">Mod erfolgreich eingereicht!</span>
     </div>
 
-    <script>
-        // Configuration
-        const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
-        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1501553557512523877/RbCh_J1zwgRZcn3q-TqU2Qzr4vuZp7m6bDjRELijH7qqVNI25Gc1VKXALiY7GdC9V50f';
+   <script>
+    // Configuration
+    const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
+    const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1501553557512523877/RbCh_J1zwgRZcn3q-TqU2Qzr4vuZp7m6bDjRELijH7qqVNI25Gc1VKXALiY7GdC9V50f';
 
-        // Init Supabase Client
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Init Supabase Client (benannt als supabaseClient, um Konflikte zu vermeiden)
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Elements
-        const requestForm = document.getElementById('requestForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const requestsContainer = document.getElementById('requestsContainer');
-        const toast = document.getElementById('toast');
-        const toastMsg = document.getElementById('toastMsg');
+    // Elements
+    const requestForm = document.getElementById('requestForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const requestsContainer = document.getElementById('requestsContainer');
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
 
-        // Reveal Animation
-        function initReveal() {
-            const reveals = document.querySelectorAll('[data-reveal]');
-            reveals.forEach(el => el.classList.add('revealed'));
-        }
+    // Reveal Animation
+    function initReveal() {
+        const reveals = document.querySelectorAll('[data-reveal]');
+        reveals.forEach(el => el.classList.add('revealed'));
+    }
 
-        // Show Toast
-        function showToast(message) {
-            toastMsg.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3500);
-        }
+    // Show Toast
+    function showToast(message) {
+        toastMsg.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3500);
+    }
 
-        // Load Requests from Supabase
-        async function loadRequests() {
-            try {
-                const { data, error } = await supabase
-                    .from('mod_requests')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+    // Load Requests from Supabase
+    async function loadRequests() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('mod_requests')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-                if (error) throw error;
+            if (error) throw error;
 
-                if (!data || data.length === 0) {
-                    requestsContainer.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fa-solid fa-box-open"></i>
-                            <p>Noch keine Mods angefragt. Sei der Erste!</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                requestsContainer.innerHTML = data.map(req => {
-                    const dateStr = new Date(req.created_at).toLocaleDateString('de-DE', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-
-                    return `
-                        <div class="demo-box">
-                            <div class="box-header">
-                                <span class="title">${escapeHtml(req.mod_name)}</span>
-                                <span class="status-badge">${escapeHtml(req.status || 'Ausstehend')}</span>
-                            </div>
-                            ${req.description ? `<p class="desc">${escapeHtml(req.description)}</p>` : ''}
-                            <div class="box-footer">
-                                <a href="${escapeHtml(req.mod_link)}" target="_blank" rel="noopener noreferrer" class="link-btn">
-                                    <i class="fa-solid fa-external-link-alt"></i> Mod-Link öffnen
-                                </a>
-                                <span class="time-text">${dateStr}</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-            } catch (err) {
-                console.error('Fehler beim Laden:', err);
+            if (!data || data.length === 0) {
                 requestsContainer.innerHTML = `
-                    <div class="empty-state" style="color: #ef4444;">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <p>Fehler beim Laden der Einträge aus der Datenbank.</p>
+                    <div class="empty-state">
+                        <i class="fa-solid fa-box-open"></i>
+                        <p>Noch keine Mods angefragt. Sei der Erste!</p>
                     </div>
                 `;
+                return;
             }
-        }
 
-        // Discord Webhook Sender
-        async function sendToDiscord(modName, modLink, description) {
-            const payload = {
-                username: "Mod Request Bot",
-                avatar_url: "https://i.imgur.com/4M34hi2.png",
-                embeds: [
-                    {
-                        title: `📦 Neue Mod-Anfrage: ${modName}`,
-                        color: 15680100,
-                        fields: [
-                            {
-                                name: "Mod Name",
-                                value: modName,
-                                inline: true
-                            },
-                            {
-                                name: "Status",
-                                value: "⏳ Ausstehend",
-                                inline: true
-                            },
-                            {
-                                name: "🔗 Mod Link",
-                                value: `[Link aufrufen](${modLink})`
-                            },
-                            {
-                                name: "📝 Beschreibung / Grund",
-                                value: description || "Keine Beschreibung angegeben."
-                            }
-                        ],
-                        footer: {
-                            text: "Minecraft Mod Request System"
+            requestsContainer.innerHTML = data.map(req => {
+                const dateStr = new Date(req.created_at).toLocaleDateString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                return `
+                    <div class="demo-box">
+                        <div class="box-header">
+                            <span class="title">${escapeHtml(req.mod_name)}</span>
+                            <span class="status-badge">${escapeHtml(req.status || 'Ausstehend')}</span>
+                        </div>
+                        ${req.description ? `<p class="desc">${escapeHtml(req.description)}</p>` : ''}
+                        <div class="box-footer">
+                            <a href="${escapeHtml(req.mod_link)}" target="_blank" rel="noopener noreferrer" class="link-btn">
+                                <i class="fa-solid fa-external-link-alt"></i> Mod-Link öffnen
+                            </a>
+                            <span class="time-text">${dateStr}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (err) {
+            console.error('Fehler beim Laden:', err);
+            requestsContainer.innerHTML = `
+                <div class="empty-state" style="color: #ef4444;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <p>Fehler beim Laden der Einträge aus der Datenbank.</p>
+                </div>
+            `;
+        }
+    }
+
+    // Discord Webhook Sender
+    async function sendToDiscord(modName, modLink, description) {
+        const payload = {
+            username: "Mod Request Bot",
+            avatar_url: "https://i.imgur.com/4M34hi2.png",
+            embeds: [
+                {
+                    title: `📦 Neue Mod-Anfrage: ${modName}`,
+                    color: 15680100,
+                    fields: [
+                        {
+                            name: "Mod Name",
+                            value: modName,
+                            inline: true
                         },
-                        timestamp: new Date().toISOString()
-                    }
-                ]
-            };
-
-            await fetch(DISCORD_WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-        }
-
-        // Form Submit Event
-        requestForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const modName = document.getElementById('modName').value.trim();
-            const modLink = document.getElementById('modLink').value.trim();
-            const modDesc = document.getElementById('modDesc').value.trim();
-
-            if (!modName || !modLink) return;
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sende Anfrage...`;
-
-            try {
-                // 1. In Supabase speichern
-                const { error } = await supabase
-                    .from('mod_requests')
-                    .insert([
-                        { 
-                            mod_name: modName, 
-                            mod_link: modLink, 
-                            description: modDesc || null,
-                            status: 'Ausstehend'
+                        {
+                            name: "Status",
+                            value: "⏳ Ausstehend",
+                            inline: true
+                        },
+                        {
+                            name: "🔗 Mod Link",
+                            value: `[Link aufrufen](${modLink})`
+                        },
+                        {
+                            name: "📝 Beschreibung / Grund",
+                            value: description || "Keine Beschreibung angegeben."
                         }
-                    ]);
+                    ],
+                    footer: {
+                        text: "Minecraft Mod Request System"
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        };
 
-                if (error) throw error;
-
-                // 2. An Discord senden
-                await sendToDiscord(modName, modLink, modDesc);
-
-                // 3. UI Aktualisieren
-                showToast("Mod erfolgreich eingereicht & an Discord gesendet!");
-                requestForm.reset();
-                await loadRequests();
-
-            } catch (err) {
-                console.error('Fehler beim Einreichen:', err);
-                alert('Fehler beim Einreichen der Mod-Anfrage: ' + err.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fa-solid fa-plus-circle"></i> Mod jetzt anfragen`;
-            }
+        await fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
+    }
 
-        // Safe HTML
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#032;");
+    // Form Submit Event
+    requestForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const modName = document.getElementById('modName').value.trim();
+        const modLink = document.getElementById('modLink').value.trim();
+        const modDesc = document.getElementById('modDesc').value.trim();
+
+        if (!modName || !modLink) return;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sende Anfrage...`;
+
+        try {
+            // 1. In Supabase speichern
+            const { error } = await supabaseClient
+                .from('mod_requests')
+                .insert([
+                    { 
+                        mod_name: modName, 
+                        mod_link: modLink, 
+                        description: modDesc || null,
+                        status: 'Ausstehend'
+                    }
+                ]);
+
+            if (error) throw error;
+
+            // 2. An Discord senden
+            await sendToDiscord(modName, modLink, modDesc);
+
+            // 3. UI Aktualisieren
+            showToast("Mod erfolgreich eingereicht & an Discord gesendet!");
+            requestForm.reset();
+            await loadRequests();
+
+        } catch (err) {
+            console.error('Fehler beim Einreichen:', err);
+            alert('Fehler beim Einreichen der Mod-Anfrage: ' + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fa-solid fa-plus-circle"></i> Mod jetzt anfragen`;
         }
+    });
 
-        // Run
-        window.addEventListener('DOMContentLoaded', () => {
-            initReveal();
-            loadRequests();
-        });
-    </script>
+    // Safe HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#032;");
+    }
+
+    // Run
+    window.addEventListener('DOMContentLoaded', () => {
+        initReveal();
+        loadRequests();
+    });
+</script>
 </body>
 </html>
