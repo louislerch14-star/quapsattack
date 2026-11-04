@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Mod Request</title>
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-main: #0a0a12;
+            --glass-bg: rgba(20, 20, 35, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --demo-box-bg: rgba(255, 255, 255, 0.05);
+            --demo-box-border: rgba(255, 255, 255, 0.1);
+            --demo-btn-bg: rgba(255, 255, 255, 0.2);
+            --demo-btn-border: rgba(255, 255, 255, 0.4);
+            --accent: #ef4444;
+            --accent-glow: rgba(239, 68, 68, 0.4);
+            --text-main: #ffffff;
+            --text-sub: rgba(255, 255, 255, 0.7);
+            --success: #10b981;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(239, 68, 68, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 45%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        /* Header Navigation */
+        header {
+            width: 100%;
+            max-width: 1200px;
+            padding: 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand i {
+            color: var(--accent);
+            font-size: 1.8rem;
+        }
+
+        .brand span { color: var(--accent); }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: var(--demo-btn-bg);
+            border: 1px solid var(--demo-btn-border);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin: 40px 20px 35px;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .hero h1 span { 
+            background: linear-gradient(135deg, #f5c518, #ff9900);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-sub);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Main Container Grid */
+        .main-grid {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Glassmorphism Card Style */
+        .preview-glass {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: var(--text-main);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .preview-glass:hover {
+            border-color: rgba(255, 255, 255, 0.35);
+            transform: translateY(-3px);
+        }
+
+        .preview-glass h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--demo-box-border);
+            padding-bottom: 14px;
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--demo-box-bg);
+            border: 1px solid var(--demo-box-border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .demo-box {
+            background: var(--demo-box-bg);
+            border: 1px solid var(--demo-box-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .demo-box:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .demo-box .box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .demo-box .title { 
+            font-weight: 700; 
+            font-size: 1rem; 
+            color: #fff;
+        }
+
+        .demo-box .desc { 
+            font-size: 0.85rem; 
+            color: var(--text-sub); 
+            line-height: 1.4;
+        }
+
+        .demo-box .status-badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            font-weight: 600;
+        }
+
+        .demo-box .box-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .link-btn {
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .link-btn:hover {
+            color: #93c5fd;
+            text-decoration: underline;
+        }
+
+        .time-text {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 4px 25px var(--accent-glow);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 35px rgba(239, 68, 68, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-reveal].revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--success);
+            color: #fff;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 10px;
+            color: var(--text-sub);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="#" class="brand">
+            <i class="fa-solid fa-cube"></i> Mod<span>Requests</span>
+        </a>
+        <div class="nav-links">
+            <a href="#requests-list" class="nav-btn">
+                <i class="fa-solid fa-list"></i> Liste ansehen
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" data-reveal>
+        <h1>Wünsche dir deine <span>Minecraft Mods</span></h1>
+        <p>Reiche hier einfach deine gewünschten Mods ein! Sie werden sofort in der Supabase-Datenbank gelistet und direkt an unseren Discord-Server übermittelt.</p>
+    </section>
+
+    <!-- Main Grid -->
+    <main class="main-grid">
+        
+        <!-- Left: Request Form -->
+        <div class="preview-glass" data-reveal>
+            <h2><i class="fa-solid fa-paper-plane" style="color: var(--accent);"></i> Mod Anfragen</h2>
+            <form id="requestForm">
+                <div class="form-group">
+                    <label for="modName"><i class="fa-solid fa-tag"></i> Mod Name *</label>
+                    <input type="text" id="modName" class="form-control" placeholder="z. B. Create Mod" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="modLink"><i class="fa-solid fa-link"></i> Download / Mod-Link *</label>
+                    <input type="url" id="modLink" class="form-control" placeholder="https://curseforge.com/... oder Modrinth" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="modDesc"><i class="fa-solid fa-align-left"></i> Beschreibung / Begründung (Optional)</label>
+                    <textarea id="modDesc" class="form-control" placeholder="Warum sollte diese Mod auf den Server?"></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-primary">
+                    <i class="fa-solid fa-plus-circle"></i> Mod Anfragen
+                </button>
+            </form>
+        </div>
+
+        <!-- Right: Requests List -->
+        <div class="preview-glass" id="requests-list" data-reveal>
+            <h2><i class="fa-solid fa-layer-group" style="color: #60a5fa;"></i> Eingereichte Mods</h2>
+            <div id="requestsContainer">
+                <div class="empty-state">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>Lade Mods aus der Datenbank...</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        &copy; 2026 Minecraft Mod Requests • Powered by Supabase & Discord
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 1.2rem;"></i>
+        <span id="toastMsg">Mod erfolgreich eingereicht!</span>
+    </div>
+
+    <script>
+        // Configuration
+        const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1501553557512523877/RbCh_J1zwgRZcn3q-TqU2Qzr4vuZp7m6bDjRELijH7qqVNI25Gc1VKXALiY7GdC9V50f';
+
+        // Initialize Supabase Client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // DOM Elements
+        const requestForm = document.getElementById('requestForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const requestsContainer = document.getElementById('requestsContainer');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
+
+        // Scroll Reveal Animation
+        function initReveal() {
+            const reveals = document.querySelectorAll('[data-reveal]');
+            reveals.forEach(el => el.classList.add('revealed'));
+        }
+
+        // Show Toast Notification
+        function showToast(message) {
+            toastMsg.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // Fetch Requests from Supabase
+        async function loadRequests() {
+            try {
+                const { data, error } = await supabase
+                    .from('mod_requests')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    requestsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-box-open"></i>
+                            <p>Noch keine Mods angefragt. Sei der Erste!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                requestsContainer.innerHTML = data.map(req => {
+                    const dateStr = new Date(req.created_at).toLocaleDateString('de-DE', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    return `
+                        <div class="demo-box">
+                            <div class="box-header">
+                                <span class="title">${escapeHtml(req.mod_name)}</span>
+                                <span class="status-badge">${escapeHtml(req.status || 'Ausstehend')}</span>
+                            </div>
+                            ${req.description ? `<p class="desc">${escapeHtml(req.description)}</p>` : ''}
+                            <div class="box-footer">
+                                <a href="${escapeHtml(req.mod_link)}" target="_blank" rel="noopener noreferrer" class="link-btn">
+                                    <i class="fa-solid fa-external-link-alt"></i> Mod-Link öffnen
+                                </a>
+                                <span class="time-text">${dateStr}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error('Fehler beim Laden:', err);
+                requestsContainer.innerHTML = `
+                    <div class="empty-state" style="color: #ef4444;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <p>Fehler beim Laden der Einträge aus der Datenbank.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Send Embed to Discord Webhook
+        async function sendToDiscord(modName, modLink, description) {
+            const payload = {
+                username: "Mod Request Bot",
+                avatar_url: "https://i.imgur.com/4M34hi2.png",
+                embeds: [
+                    {
+                        title: `📦 Neue Mod-Anfrage: ${modName}`,
+                        color: 15680100, // Red Accent Color
+                        fields: [
+                            {
+                                name: "Mod Name",
+                                value: modName,
+                                inline: true
+                            },
+                            {
+                                name: "Status",
+                                value: "⏳ Ausstehend",
+                                inline: true
+                            },
+                            {
+                                name: "🔗 Mod Link",
+                                value: `[Link aufrufen](${modLink})`
+                            },
+                            {
+                                name: "📝 Beschreibung / Grund",
+                                value: description || "Keine Beschreibung angegeben."
+                            }
+                        ],
+                        footer: {
+                            text: "Minecraft Mod Request System"
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+
+            await fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        // Form Submit Handler
+        requestForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const modName = document.getElementById('modName').value.trim();
+            const modLink = document.getElementById('modLink').value.trim();
+            const modDesc = document.getElementById('modDesc').value.trim();
+
+            if (!modName || !modLink) return;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sende Anfrage...`;
+
+            try {
+                // 1. Insert into Supabase Table
+                const { error } = await supabase
+                    .from('mod_requests')
+                    .insert([
+                        { 
+                            mod_name: modName, 
+                            mod_link: modLink, 
+                            description: modDesc || null,
+                            status: 'Ausstehend'
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                // 2. Send Discord Webhook
+                await sendToDiscord(modName, modLink, modDesc);
+
+                // 3. UI Feedback
+                showToast("Mod erfolgreich eingereicht & an Discord gesendet!");
+                requestForm.reset();
+                await loadRequests();
+
+            } catch (err) {
+                console.error('Fehler beim Einreichen:', err);
+                alert('Fehler beim Einreichen der Mod-Anfrage: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-plus-circle"></i> Mod Anfragen`;
+            }
+        });
+
+        // Helper: Escape HTML string to prevent XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#032;");
+        }
+
+        // Init
+        window.addEventListener('DOMContentLoaded', () => {
+            initReveal();
+            loadRequests();
+        });
+    </script>
+</body>
+</html>
