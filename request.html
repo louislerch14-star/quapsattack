@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Mod Request</title>
-    <!-- Font Awesome icons -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap">
@@ -169,7 +169,7 @@
             padding-bottom: 14px;
         }
 
-        /* Form Inputs */
+        /* Form Controls */
         .form-group {
             margin-bottom: 18px;
         }
@@ -207,6 +207,7 @@
             min-height: 100px;
         }
 
+        /* Requests List Elements */
         .demo-box {
             background: var(--demo-box-bg);
             border: 1px solid var(--demo-box-border);
@@ -326,7 +327,7 @@
             transform: translateY(0);
         }
 
-        /* Toast notification */
+        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -390,15 +391,15 @@
     <!-- Hero Section -->
     <section class="hero" data-reveal>
         <h1>Wünsche dir deine <span>Minecraft Mods</span></h1>
-        <p>Reiche hier einfach deine gewünschten Mods ein! Sie werden sofort in der Supabase-Datenbank gelistet und direkt an unseren Discord-Server übermittelt.</p>
+        <p>Reiche hier einfach deine gewünschten Mods ein! Sie werden direkt in der Supabase-Datenbank gesichert und live an Discord gesendet.</p>
     </section>
 
     <!-- Main Grid -->
     <main class="main-grid">
         
-        <!-- Left: Request Form -->
+        <!-- LEFT: EINGABEFORMULAR (Hier fügt man Mod-Name & Link ein) -->
         <div class="preview-glass" data-reveal>
-            <h2><i class="fa-solid fa-paper-plane" style="color: var(--accent);"></i> Mod Anfragen</h2>
+            <h2><i class="fa-solid fa-paper-plane" style="color: var(--accent);"></i> Mod Einreichen</h2>
             <form id="requestForm">
                 <div class="form-group">
                     <label for="modName"><i class="fa-solid fa-tag"></i> Mod Name *</label>
@@ -407,27 +408,27 @@
 
                 <div class="form-group">
                     <label for="modLink"><i class="fa-solid fa-link"></i> Download / Mod-Link *</label>
-                    <input type="url" id="modLink" class="form-control" placeholder="https://curseforge.com/... oder Modrinth" required>
+                    <input type="url" id="modLink" class="form-control" placeholder="https://curseforge.com/minecraft/mc-mods/..." required>
                 </div>
 
                 <div class="form-group">
                     <label for="modDesc"><i class="fa-solid fa-align-left"></i> Beschreibung / Begründung (Optional)</label>
-                    <textarea id="modDesc" class="form-control" placeholder="Warum sollte diese Mod auf den Server?"></textarea>
+                    <textarea id="modDesc" class="form-control" placeholder="Warum soll diese Mod auf den Server?"></textarea>
                 </div>
 
                 <button type="submit" id="submitBtn" class="btn-primary">
-                    <i class="fa-solid fa-plus-circle"></i> Mod Anfragen
+                    <i class="fa-solid fa-plus-circle"></i> Mod jetzt anfragen
                 </button>
             </form>
         </div>
 
-        <!-- Right: Requests List -->
+        <!-- RIGHT: LIVE-LISTE DER ANFRAGEN -->
         <div class="preview-glass" id="requests-list" data-reveal>
-            <h2><i class="fa-solid fa-layer-group" style="color: #60a5fa;"></i> Eingereichte Mods</h2>
+            <h2><i class="fa-solid fa-layer-group" style="color: #60a5fa;"></i> Bereits angefragte Mods</h2>
             <div id="requestsContainer">
                 <div class="empty-state">
                     <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p>Lade Mods aus der Datenbank...</p>
+                    <p>Lade Mods aus Supabase...</p>
                 </div>
             </div>
         </div>
@@ -450,23 +451,23 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
         const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1501553557512523877/RbCh_J1zwgRZcn3q-TqU2Qzr4vuZp7m6bDjRELijH7qqVNI25Gc1VKXALiY7GdC9V50f';
 
-        // Initialize Supabase Client
+        // Init Supabase Client
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // DOM Elements
+        // Elements
         const requestForm = document.getElementById('requestForm');
         const submitBtn = document.getElementById('submitBtn');
         const requestsContainer = document.getElementById('requestsContainer');
         const toast = document.getElementById('toast');
         const toastMsg = document.getElementById('toastMsg');
 
-        // Scroll Reveal Animation
+        // Reveal Animation
         function initReveal() {
             const reveals = document.querySelectorAll('[data-reveal]');
             reveals.forEach(el => el.classList.add('revealed'));
         }
 
-        // Show Toast Notification
+        // Show Toast
         function showToast(message) {
             toastMsg.textContent = message;
             toast.classList.add('show');
@@ -475,7 +476,7 @@
             }, 3500);
         }
 
-        // Fetch Requests from Supabase
+        // Load Requests from Supabase
         async function loadRequests() {
             try {
                 const { data, error } = await supabase
@@ -532,7 +533,7 @@
             }
         }
 
-        // Send Embed to Discord Webhook
+        // Discord Webhook Sender
         async function sendToDiscord(modName, modLink, description) {
             const payload = {
                 username: "Mod Request Bot",
@@ -540,7 +541,7 @@
                 embeds: [
                     {
                         title: `📦 Neue Mod-Anfrage: ${modName}`,
-                        color: 15680100, // Red Accent Color
+                        color: 15680100,
                         fields: [
                             {
                                 name: "Mod Name",
@@ -576,7 +577,7 @@
             });
         }
 
-        // Form Submit Handler
+        // Form Submit Event
         requestForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -590,7 +591,7 @@
             submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sende Anfrage...`;
 
             try {
-                // 1. Insert into Supabase Table
+                // 1. In Supabase speichern
                 const { error } = await supabase
                     .from('mod_requests')
                     .insert([
@@ -604,10 +605,10 @@
 
                 if (error) throw error;
 
-                // 2. Send Discord Webhook
+                // 2. An Discord senden
                 await sendToDiscord(modName, modLink, modDesc);
 
-                // 3. UI Feedback
+                // 3. UI Aktualisieren
                 showToast("Mod erfolgreich eingereicht & an Discord gesendet!");
                 requestForm.reset();
                 await loadRequests();
@@ -617,11 +618,11 @@
                 alert('Fehler beim Einreichen der Mod-Anfrage: ' + err.message);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fa-solid fa-plus-circle"></i> Mod Anfragen`;
+                submitBtn.innerHTML = `<i class="fa-solid fa-plus-circle"></i> Mod jetzt anfragen`;
             }
         });
 
-        // Helper: Escape HTML string to prevent XSS
+        // Safe HTML
         function escapeHtml(str) {
             if (!str) return '';
             return str
@@ -632,7 +633,7 @@
                 .replace(/'/g, "&#032;");
         }
 
-        // Init
+        // Run
         window.addEventListener('DOMContentLoaded', () => {
             initReveal();
             loadRequests();
