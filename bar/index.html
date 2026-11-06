@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Friendship Bar – Wo Fremde hingehen und zu Homies werden</title>
+  <title>The Friendship Bar – Minecraft Kaleidoscope Lounge</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,26 +11,27 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Google Fonts -->
+  <!-- Google Fonts: VT323 (Minecraft Vibe) + Outfit + Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            brand: {
-              gold: '#F59E0B',
-              amber: '#D97706',
-              dark: '#0F172A',
-              card: '#1E293B',
-              accent: '#3B82F6',
-              purple: '#8B5CF6'
+            mc: {
+              green: '#55FF55',
+              gold: '#FFAA00',
+              dark: '#0D1117',
+              card: '#161B22',
+              border: '#30363D',
+              purple: '#AA00AA'
             }
           },
           fontFamily: {
+            mc: ['VT323', 'monospace'],
             heading: ['Outfit', 'sans-serif'],
             body: ['Plus Jakarta Sans', 'sans-serif'],
           }
@@ -42,37 +43,52 @@
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #0B0F19;
-      color: #F3F4F6;
+      background-color: #0B0E14;
+      color: #E6EDF3;
     }
-    h1, h2, h3, h4, .font-heading {
-      font-family: 'Outfit', sans-serif;
-    }
+
     .glass {
-      background: rgba(30, 41, 59, 0.7);
+      background: rgba(22, 27, 34, 0.75);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
+
     .glass-nav {
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(13, 17, 23, 0.85);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
+
+    .mc-border {
+      box-shadow: 0 0 0 2px #30363D, 0 8px 25px rgba(0,0,0,0.5);
+    }
+
     .text-gradient {
-      background: linear-gradient(135deg, #F59E0B 0%, #EC4899 50%, #8B5CF6 100%);
+      background: linear-gradient(135deg, #FFAA00 0%, #FF5555 50%, #AA00AA 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .text-gradient-gold {
-      background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+
+    /* Background Slideshow Animations */
+    .bg-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out, transform 8s ease-out;
+      transform: scale(1.05);
+    }
+
+    .bg-slide.active {
+      opacity: 1;
+      transform: scale(1);
     }
   </style>
 </head>
-<body class="antialiased selection:bg-amber-500 selection:text-white">
+<body class="antialiased selection:bg-amber-500 selection:text-black">
 
   <!-- NAVIGATION -->
   <nav class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300">
@@ -82,13 +98,13 @@
         <!-- Logo -->
         <a href="#" class="flex items-center gap-3 group">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-            🍻
+            🍖
           </div>
           <div class="flex flex-col">
-            <span class="font-heading font-extrabold text-xl sm:text-2xl tracking-tight text-white group-hover:text-amber-400 transition-colors">
+            <span class="font-mc text-2xl sm:text-3xl tracking-wider text-amber-400 group-hover:text-amber-300 transition-colors">
               The Friendship Bar
             </span>
-            <span class="text-[10px] uppercase tracking-widest text-amber-400 font-semibold -mt-1">Homie Lounge</span>
+            <span class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold -mt-2">Kaleidoscope Minecraft Lounge</span>
           </div>
         </a>
 
@@ -96,7 +112,7 @@
         <div class="hidden md:flex items-center gap-8">
           <a href="#about" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Über Uns</a>
           <a href="#gallery" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Galerie</a>
-          <a href="#menu" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Karte</a>
+          <a href="#menu" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Speisekarte</a>
           <a href="#events" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Events</a>
           <a href="#contact" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Kontakt</a>
           
@@ -116,7 +132,7 @@
     <div id="mobile-menu" class="hidden md:hidden glass border-t border-slate-800 px-4 pt-4 pb-6 space-y-3">
       <a href="#about" class="block text-base font-medium text-slate-200 hover:text-amber-400">Über Uns</a>
       <a href="#gallery" class="block text-base font-medium text-slate-200 hover:text-amber-400">Galerie</a>
-      <a href="#menu" class="block text-base font-medium text-slate-200 hover:text-amber-400">Karte</a>
+      <a href="#menu" class="block text-base font-medium text-slate-200 hover:text-amber-400">Speisekarte</a>
       <a href="#events" class="block text-base font-medium text-slate-200 hover:text-amber-400">Events</a>
       <a href="#contact" class="block text-base font-medium text-slate-200 hover:text-amber-400">Kontakt</a>
       <a href="#reservation" class="block text-center py-3 rounded-xl bg-amber-500 text-slate-950 font-bold mt-4">
@@ -125,61 +141,73 @@
     </div>
   </nav>
 
-  <!-- HERO SECTION -->
+  <!-- HERO SECTION WITH SLIDESHOW (bar1.jpg - bar7.jpg) -->
   <section class="relative min-h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden">
-    <!-- Ambient Lights -->
-    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none"></div>
-    <div class="absolute bottom-10 right-10 w-[400px] h-[400px] bg-purple-500/15 rounded-full blur-[120px] pointer-events-none"></div>
+    
+    <!-- Slideshow Backgrounds (/bar/bar1.jpg bis /bar/bar7.jpg) -->
+    <div class="absolute inset-0 z-0">
+      <div class="bg-slide active" style="background-image: url('/bar/bar1.jpg');"></div>
+      <div class="bg-slide" style="background-image: url('/bar/bar2.jpg');"></div>
+      <div class="bg-slide" style="background-image: url('/bar/bar3.jpg');"></div>
+      <div class="bg-slide" style="background-image: url('/bar/bar4.jpg');"></div>
+      <div class="bg-slide" style="background-image: url('/bar/bar5.jpg');"></div>
+      <div class="bg-slide" style="background-image: url('/bar/bar6.jpg');"></div>
+      <div class="bg-slide" style="background-image: url('/bar/bar7.jpg');"></div>
+      
+      <!-- Overlay Gradation for Dark Mode -->
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/80 to-[#0B0E14]/60"></div>
+    </div>
 
+    <!-- Hero Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
       
       <!-- Badge -->
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-amber-500/30 text-amber-400 text-xs sm:text-sm font-semibold mb-8 animate-bounce">
-        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-        Willkommen in deiner neuen Lieblings-Bar
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-amber-500/40 text-amber-400 text-xs sm:text-sm font-semibold mb-8 shadow-lg">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Powered by Kaleidoscope Mod 🎨
       </div>
 
-      <!-- Slogan / Heading -->
+      <!-- Slogan -->
       <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
         Wo Fremde hingehen und zu <br class="hidden sm:inline" />
         <span class="text-gradient">Homies werden.</span>
       </h1>
 
-      <p class="max-w-2xl mx-auto text-lg sm:text-xl text-slate-400 mb-10 leading-relaxed font-normal">
-        Egal ob du alleine auf ein Feierabendbier vorbeikommst oder deine Gang mitbringst – bei uns findest du handgemachte Drinks, gute Vibe-Musik und deinen neuen besten Kumpel an der Bar.
+      <p class="max-w-2xl mx-auto text-lg sm:text-xl text-slate-300 mb-10 leading-relaxed font-normal">
+        Trete ein in das gemütlichste Restaurant der Minecraft-Welt! Dank dem **Kaleidoscope Mod** erwarten dich bei uns einzigartige Speisen, bunte Drinks und der perfekte Ort zum Chillen mit deiner Gang.
       </p>
 
       <!-- CTA Buttons -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
         <a href="#reservation" class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-extrabold text-base shadow-xl shadow-amber-500/20 hover:shadow-amber-500/40 hover:-translate-y-1 transition-all">
-          Jetzt Tisch Sichern <i class="fa-solid fa-arrow-right ml-2"></i>
+          Tisch Reservieren <i class="fa-solid fa-utensils ml-2"></i>
         </a>
         <a href="#menu" class="w-full sm:w-auto px-8 py-4 rounded-full glass hover:bg-white/10 text-white font-bold text-base transition-all border border-slate-700">
-          Getränkekarte Ansehen
+          Speisekarte Erkunden
         </a>
       </div>
 
-      <!-- Quick Info Cards -->
+      <!-- Quick Stats -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-20">
-        <div class="glass p-4 rounded-2xl text-center">
-          <i class="fa-solid fa-cocktail text-amber-400 text-2xl mb-2"></i>
-          <p class="text-xs text-slate-400 uppercase font-semibold">Drinks</p>
-          <p class="text-base font-bold text-white">Craft & Signatures</p>
+        <div class="glass p-4 rounded-2xl text-center mc-border">
+          <i class="fa-solid fa-[#55FF55] fa-cubes text-amber-400 text-2xl mb-2"></i>
+          <p class="text-xs text-slate-400 uppercase font-semibold">Modding</p>
+          <p class="text-base font-bold text-white">Kaleidoscope Food</p>
         </div>
-        <div class="glass p-4 rounded-2xl text-center">
+        <div class="glass p-4 rounded-2xl text-center mc-border">
           <i class="fa-solid fa-users text-amber-400 text-2xl mb-2"></i>
           <p class="text-xs text-slate-400 uppercase font-semibold">Community</p>
-          <p class="text-base font-bold text-white">100% Homie Vibe</p>
+          <p class="text-base font-bold text-white">Homie Vibe</p>
         </div>
-        <div class="glass p-4 rounded-2xl text-center">
-          <i class="fa-solid fa-gamepad text-amber-400 text-2xl mb-2"></i>
-          <p class="text-xs text-slate-400 uppercase font-semibold">Action</p>
-          <p class="text-base font-bold text-white">Quiz & Game Nights</p>
+        <div class="glass p-4 rounded-2xl text-center mc-border">
+          <i class="fa-solid fa-wine-glass text-amber-400 text-2xl mb-2"></i>
+          <p class="text-xs text-slate-400 uppercase font-semibold">Drinks</p>
+          <p class="text-base font-bold text-white">Custom Potions</p>
         </div>
-        <div class="glass p-4 rounded-2xl text-center">
+        <div class="glass p-4 rounded-2xl text-center mc-border">
           <i class="fa-solid fa-clock text-amber-400 text-2xl mb-2"></i>
-          <p class="text-xs text-slate-400 uppercase font-semibold">Open</p>
-          <p class="text-base font-bold text-white">Di - So ab 18 Uhr</p>
+          <p class="text-xs text-slate-400 uppercase font-semibold">Server-Time</p>
+          <p class="text-base font-bold text-white">24/7 Geöffnet</p>
         </div>
       </div>
 
@@ -187,17 +215,17 @@
   </section>
 
   <!-- ABOUT SECTION -->
-  <section id="about" class="py-24 relative border-t border-slate-800/60">
+  <section id="about" class="py-24 relative border-t border-slate-800/80 bg-slate-950/60">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
         <div>
-          <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Der Homie Vibe</span>
+          <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Minecraft Restaurant & Bar</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-2 mb-6">
-            Mehr als nur eine Kneipe. <br />Ein Wohnzimmer für alle.
+            Kulinarik trifft auf Pixel-Magie.
           </h2>
-          <p class="text-slate-400 text-lg mb-6 leading-relaxed">
-            Wir hatten keine Lust mehr auf sterile Bars, in denen jeder nur auf sein Smartphone starrt. Die <strong>The Friendship Bar</strong> ist der Ort, an dem man ins Gespräch kommt, gemeinsame Erinnerungen schafft und wo aus zufälligen Tischnachbarn echte Freunde werden.
+          <p class="text-slate-300 text-lg mb-6 leading-relaxed">
+            In der <strong>The Friendship Bar</strong> nutzen wir die Vielfalt des <strong>Kaleidoscope Mods</strong>, um feinstes Essen und farbenfrohe Spezialitäten auf die Tische zu bringen. Egal ob nach einer langen Mining-Tour oder zum entspannten Ausklang des Bauprojekts – hier findet jeder Spieler einen Platz.
           </p>
           
           <ul class="space-y-4 mb-8">
@@ -205,30 +233,30 @@
               <div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-1">
                 <i class="fa-solid fa-check text-xs"></i>
               </div>
-              <span class="text-slate-300"><strong>Kein Dresscode, kein Snobismus:</strong> Komm einfach so, wie du bist.</span>
+              <span class="text-slate-300"><strong>Kaleidoscope Gerichte:</strong> Exklusive Rezepte & farbenfrohe Snacks.</span>
             </li>
             <li class="flex items-start gap-3">
               <div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-1">
                 <i class="fa-solid fa-check text-xs"></i>
               </div>
-              <span class="text-slate-300"><strong>Kicker & Brettspiele:</strong> Der schnellste Weg, um mit neuen Leuten ins Team zu kommen.</span>
+              <span class="text-slate-300"><strong>Cozy Atmosphere:</strong> Gemütliche Ecken, Kaminfeuer & chilliger Soundtrack.</span>
             </li>
             <li class="flex items-start gap-3">
               <div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-1">
                 <i class="fa-solid fa-check text-xs"></i>
               </div>
-              <span class="text-slate-300"><strong>Leckere Drinks zu fairen Preisen:</strong> Vom kühlen Pilsener bis zum kreativen Homie-Cocktail.</span>
+              <span class="text-slate-300"><strong>Homie Garantie:</strong> Niemand isst oder trinkt hier alleine!</span>
             </li>
           </ul>
         </div>
 
         <div class="relative">
-          <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 group">
-            <img src="bar1.jpg" alt="The Friendship Bar Atmosphäre" class="w-full h-[450px] object-cover group-hover:scale-105 transition-transform duration-700">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
-            <div class="absolute bottom-6 left-6 right-6 p-4 glass rounded-2xl">
-              <p class="text-amber-400 font-bold text-sm">„Der Ort, an dem Fremde zu Homies werden.“</p>
-              <p class="text-slate-300 text-xs">Gute Musik, ehrliche Drinks & entspannte Leute.</p>
+          <div class="relative rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl group">
+            <img src="/bar/bar1.jpg" alt="Restaurant Atmosphäre" class="w-full h-[450px] object-cover group-hover:scale-105 transition-transform duration-700">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-70"></div>
+            <div class="absolute bottom-6 left-6 right-6 p-5 glass rounded-2xl border border-slate-700">
+              <p class="text-amber-400 font-bold text-base">„Der Ort, an dem Fremde zu Homies werden.“</p>
+              <p class="text-slate-300 text-xs">Frisch gekocht in Minecraft mit dem Kaleidoscope Mod.</p>
             </div>
           </div>
         </div>
@@ -238,69 +266,62 @@
   </section>
 
   <!-- GALLERY SECTION (bar1.jpg - bar7.jpg) -->
-  <section id="gallery" class="py-24 bg-slate-950/50 relative">
+  <section id="gallery" class="py-24 relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center max-w-2xl mx-auto mb-16">
-        <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Impressionen</span>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">Ein Blick in unsere Bar</h2>
-        <p class="text-slate-400 mt-3">Schau dir an, was dich erwartet. Klicke auf die Bilder für eine vergrößerte Ansicht.</p>
+        <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Galerie</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">Ein Blick ins Restaurant</h2>
+        <p class="text-slate-400 mt-3">Klicke auf die Bilder, um die Location aus der Nähe zu sehen.</p>
       </div>
 
-      <!-- Masonry Grid -->
+      <!-- Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         
-        <!-- Image 1 -->
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('bar1.jpg')">
-          <img src="bar1.jpg" alt="Bar Bild 1" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar1.jpg')">
+          <img src="/bar/bar1.jpg" alt="Bar Bild 1" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
           <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
           </div>
         </div>
 
-        <!-- Image 2 -->
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('bar2.jpg')">
-          <img src="bar2.jpg" alt="Bar Bild 2" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar2.jpg')">
+          <img src="/bar/bar2.jpg" alt="Bar Bild 2" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
           <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
           </div>
         </div>
 
-        <!-- Image 3 -->
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('bar3.jpg')">
-          <img src="bar3.jpg" alt="Bar Bild 3" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar3.jpg')">
+          <img src="/bar/bar3.jpg" alt="Bar Bild 3" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
           <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
           </div>
         </div>
 
-        <!-- Image 4 -->
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('bar4.jpg')">
-          <img src="bar4.jpg" alt="Bar Bild 4" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar4.jpg')">
+          <img src="/bar/bar4.jpg" alt="Bar Bild 4" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
           <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
           </div>
         </div>
 
-        <!-- Image 5 -->
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('bar5.jpg')">
-          <img src="bar5.jpg" alt="Bar Bild 5" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar5.jpg')">
+          <img src="/bar/bar5.jpg" alt="Bar Bild 5" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
           <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
           </div>
         </div>
 
-        <!-- Image 6 -->
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('bar6.jpg')">
-          <img src="bar6.jpg" alt="Bar Bild 6" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar6.jpg')">
+          <img src="/bar/bar6.jpg" alt="Bar Bild 6" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
           <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
           </div>
         </div>
 
-        <!-- Image 7 -->
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 sm:col-span-2 md:col-span-1 border border-slate-800" onclick="openLightbox('bar7.jpg')">
-          <img src="bar7.jpg" alt="Bar Bild 7" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 sm:col-span-2 md:col-span-1 border border-slate-800" onclick="openLightbox('/bar/bar7.jpg')">
+          <img src="/bar/bar7.jpg" alt="Bar Bild 7" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
           <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
           </div>
@@ -319,124 +340,77 @@
   </div>
 
   <!-- MENU SECTION -->
-  <section id="menu" class="py-24 relative">
+  <section id="menu" class="py-24 bg-slate-950/60 relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center max-w-2xl mx-auto mb-12">
-        <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Genuss & Drinks</span>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">Unsere Speise- & Getränkekarte</h2>
-        <p class="text-slate-400 mt-2">Von unseren hauseigenen Signatures bis zu Klassikern für den großen Durst.</p>
+        <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Minecraft Delikatessen</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">Kaleidoscope Speisekarte</h2>
+        <p class="text-slate-400 mt-2">Berauschende Tränke, frische Gerichte und Pixel-Snacks für echte Abenteurer.</p>
       </div>
 
-      <!-- Menu Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         
-        <!-- Cocktails & Signatures -->
+        <!-- Speisen -->
         <div class="glass p-6 sm:p-8 rounded-3xl border border-slate-800">
           <div class="flex items-center gap-3 mb-6 border-b border-slate-700/60 pb-4">
-            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">🍹</div>
-            <h3 class="text-2xl font-bold text-white">Signature Cocktails</h3>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">🍲</div>
+            <h3 class="text-2xl font-bold text-white">Hauptspeisen</h3>
           </div>
           
           <div class="space-y-6">
             <div>
               <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-amber-300">The Homie Sour</h4>
-                <span class="text-amber-400 font-bold">9,50 €</span>
+                <h4 class="text-lg font-bold text-amber-300">Kaleidoscope Stew</h4>
+                <span class="text-amber-400 font-bold">5 Smaragde</span>
               </div>
-              <p class="text-sm text-slate-400">Bourbon, frischer Zitrone, Passionsfrucht & Eiweiß-Schaum. Der Klassiker der Bar.</p>
+              <p class="text-sm text-slate-400">Der Klassiker des Hauses: Bunter Eintopf mit seltenen Zutaten & Regenbogen-Effekt.</p>
             </div>
             <div>
               <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Friendship Mule</h4>
-                <span class="text-amber-400 font-bold">8,90 €</span>
+                <h4 class="text-lg font-bold text-white">Gebratenes Porkchop Deluxe</h4>
+                <span class="text-amber-400 font-bold">4 Smaragde</span>
               </div>
-              <p class="text-sm text-slate-400">Vodka, Spicy Ginger Beer, Gurke, frische Minze & Limette.</p>
+              <p class="text-sm text-slate-400">Serviert mit Ofenkartoffeln, Kräuterbutter & frischem Seetang.</p>
             </div>
             <div>
               <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Midnight Connection</h4>
-                <span class="text-amber-400 font-bold">10,20 €</span>
+                <h4 class="text-lg font-bold text-white">Golden Apple Tart</h4>
+                <span class="text-amber-400 font-bold">8 Smaragde</span>
               </div>
-              <p class="text-sm text-slate-400">Dark Rum, Espresso, Kahlúa & Tonkabohne.</p>
-            </div>
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Wild Berry Bestie (Alkoholfrei)</h4>
-                <span class="text-amber-400 font-bold">6,50 €</span>
-              </div>
-              <p class="text-sm text-slate-400">Wild Berry, Lime, frische Beeren & Basilikum.</p>
+              <p class="text-sm text-slate-400">Süße Versuchung mit echter Goldglasur. Verleiht Regeneration!</p>
             </div>
           </div>
         </div>
 
-        <!-- Bier & Shots -->
+        <!-- Drinks & Potions -->
         <div class="glass p-6 sm:p-8 rounded-3xl border border-slate-800">
           <div class="flex items-center gap-3 mb-6 border-b border-slate-700/60 pb-4">
-            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">🍺</div>
-            <h3 class="text-2xl font-bold text-white">Bier & Kurze</h3>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">🧪</div>
+            <h3 class="text-2xl font-bold text-white">Drinks & Potions</h3>
           </div>
           
           <div class="space-y-6">
             <div>
               <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Hausbier Frisch vom Fass (0,4l)</h4>
-                <span class="text-amber-400 font-bold">4,20 €</span>
+                <h4 class="text-lg font-bold text-amber-300">Homie Potion</h4>
+                <span class="text-amber-400 font-bold">3 Smaragde</span>
               </div>
-              <p class="text-sm text-slate-400">Kalt, süffig, perfekt für den Start in den Abend.</p>
+              <p class="text-sm text-slate-400">Unser Signature-Cocktail! Schmeckt fruchtig und lässt dich leuchten.</p>
             </div>
             <div>
               <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Craft Beer Auswahl (Flasche)</h4>
-                <span class="text-amber-400 font-bold">4,80 €</span>
+                <h4 class="text-lg font-bold text-white">Honey Mead (Honigmet)</h4>
+                <span class="text-amber-400 font-bold">2 Smaragde</span>
               </div>
-              <p class="text-sm text-slate-400">Wechselnde IPAs, Pale Ales und regionale Spezialitäten.</p>
+              <p class="text-sm text-slate-400">Frisch aus dem Bienenstock gekeltert. Süß, süffig und eisgekühlt.</p>
             </div>
             <div>
               <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-amber-300">Der „Homie-Shot“ (4er Tablett)</h4>
-                <span class="text-amber-400 font-bold">8,00 €</span>
+                <h4 class="text-lg font-bold text-white">Ender Shake (Alkoholfrei)</h4>
+                <span class="text-amber-400 font-bold">3 Smaragde</span>
               </div>
-              <p class="text-sm text-slate-400">Unser Geheimrezept. Ein Shot für dich, drei für neue Freunde.</p>
-            </div>
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Mexikaner Hausgemacht</h4>
-                <span class="text-amber-400 font-bold">2,50 €</span>
-              </div>
-              <p class="text-sm text-slate-400">Fruchtig, scharf & genau richtig gewürzt.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Snacks -->
-        <div class="glass p-6 sm:p-8 rounded-3xl border border-slate-800 md:col-span-2">
-          <div class="flex items-center gap-3 mb-6 border-b border-slate-700/60 pb-4">
-            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">🍕</div>
-            <h3 class="text-2xl font-bold text-white">Bar Snacks zum Teilen</h3>
-          </div>
-          
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Loaded Nachos</h4>
-                <span class="text-amber-400 font-bold">7,90 €</span>
-              </div>
-              <p class="text-sm text-slate-400">Überbacken mit Käse, Jalapeños, Guacamole & Salsa.</p>
-            </div>
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Warme Brezel-Sticks</h4>
-                <span class="text-amber-400 font-bold">5,50 €</span>
-              </div>
-              <p class="text-sm text-slate-400">Mit feurigem Obazda oder Bier-Käse-Dip.</p>
-            </div>
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Homie Snack Platter</h4>
-                <span class="text-amber-400 font-bold">12,50 €</span>
-              </div>
-              <p class="text-sm text-slate-400">Nüsse, Oliven, Nachos, Mini-Salami & Mozzarella-Sticks.</p>
+              <p class="text-sm text-slate-400">Cremiger Milchshake aus Chorus-Früchten & Vanille.</p>
             </div>
           </div>
         </div>
@@ -445,53 +419,7 @@
     </div>
   </section>
 
-  <!-- EVENTS SECTION -->
-  <section id="events" class="py-24 bg-slate-950/40 relative">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Community Specials</span>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">Regelmäßige Homie Events</h2>
-        <p class="text-slate-400 mt-2">Bei uns passiert immer was. Komm vorbei und spiel mit!</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        
-        <!-- Event 1 -->
-        <div class="glass rounded-3xl p-6 border border-slate-800 hover:border-amber-500/50 transition-all">
-          <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl mb-6">🎯</div>
-          <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Jeden Dienstag</span>
-          <h3 class="text-xl font-bold text-white mt-1 mb-3">Pub Quiz Night</h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4">
-            Melde dein Team an oder lass dich an der Bar einer Gruppe zuteilen. Gewinnt Freigetränke und den Friendship-Pokal!
-          </p>
-        </div>
-
-        <!-- Event 2 -->
-        <div class="glass rounded-3xl p-6 border border-slate-800 hover:border-amber-500/50 transition-all">
-          <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl mb-6">🎲</div>
-          <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Jeden Donnerstag</span>
-          <h3 class="text-xl font-bold text-white mt-1 mb-3">Board Game & Beats</h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4">
-            Über 30 Brettspiele stehen bereit. Dazu chillige Lo-Fi Beats und 20% Rabatt auf alle Craft-Biere.
-          </p>
-        </div>
-
-        <!-- Event 3 -->
-        <div class="glass rounded-3xl p-6 border border-slate-800 hover:border-amber-500/50 transition-all">
-          <div class="w-12 h-12 rounded-2xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-2xl mb-6">🎧</div>
-          <span class="text-xs font-bold text-pink-400 uppercase tracking-wider">Freitag & Samstag</span>
-          <h3 class="text-xl font-bold text-white mt-1 mb-3">Weekend DJ Sessions</h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4">
-            Funk, Hip-Hop, House & Indie Vibes von lokalen DJs. Tanzen, quatschen, anstoßen – Open End.
-          </p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- RESERVATION & CONTACT SECTION -->
+  <!-- RESERVATION SECTION -->
   <section id="reservation" class="py-24 relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
@@ -500,17 +428,17 @@
         <!-- Form -->
         <div class="glass p-8 rounded-3xl border border-slate-800">
           <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Sicher dir deinen Platz</span>
-          <h2 class="text-3xl font-extrabold text-white mt-2 mb-6">Tisch reservieren</h2>
+          <h2 class="text-3xl font-extrabold text-white mt-2 mb-6">Tisch im Restaurant buchen</h2>
 
           <form id="booking-form" onsubmit="handleReservation(event)" class="space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs text-slate-300 font-semibold mb-1">Name</label>
-                <input type="text" required placeholder="Dein Name" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                <label class="block text-xs text-slate-300 font-semibold mb-1">Spielername / Name</label>
+                <input type="text" required placeholder="z.B. Steve_MC" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
               </div>
               <div>
-                <label class="block text-xs text-slate-300 font-semibold mb-1">Telefon</label>
-                <input type="tel" required placeholder="0176 1234567" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                <label class="block text-xs text-slate-300 font-semibold mb-1">Discord / Telefon</label>
+                <input type="text" required placeholder="User#1234 oder Telefon" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
               </div>
             </div>
 
@@ -521,47 +449,46 @@
               </div>
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Uhrzeit</label>
-                <input type="time" required value="20:00" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
+                <input type="time" required value="19:00" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
               </div>
               <div>
-                <label class="block text-xs text-slate-300 font-semibold mb-1">Personen</label>
+                <label class="block text-xs text-slate-300 font-semibold mb-1">Homies / Personen</label>
                 <select class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
-                  <option>1 Person (Solo Homie)</option>
+                  <option>1 Person (Solo Explorer)</option>
                   <option selected>2 Personen</option>
-                  <option>3 - 4 Personen</option>
-                  <option>5 - 8 Personen</option>
-                  <option>Große Gruppe (9+)</option>
+                  <option>3 - 4 Personen (Squad)</option>
+                  <option>5+ Personen (Gilde/Clan)</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label class="block text-xs text-slate-300 font-semibold mb-1">Anmerkung (Optional)</label>
-              <textarea rows="3" placeholder="Sonderwünsche, Geburtstagstisch etc." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
+              <label class="block text-xs text-slate-300 font-semibold mb-1">Anmerkungen & Wünsche</label>
+              <textarea rows="3" placeholder="Sitzecke am Kamin, Server-Event, etc." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
             </div>
 
             <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-base hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20">
-              Reservierung Anfragen
+              Tisch Reservieren
             </button>
           </form>
 
           <div id="reservation-success" class="hidden mt-4 p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-center font-medium">
-            🎉 Reservierungsanfrage erhalten! Wir senden dir gleich eine Bestätigung.
+            🎉 Reservierung gespeichert! Wir halten dir den besten Platz frei.
           </div>
         </div>
 
-        <!-- Info & Map -->
+        <!-- Info & Server Contact -->
         <div id="contact" class="flex flex-col justify-between space-y-8">
           <div>
-            <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Finde Uns</span>
-            <h2 class="text-3xl font-extrabold text-white mt-2 mb-6">Öffnungszeiten & Lage</h2>
+            <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Server Details</span>
+            <h2 class="text-3xl font-extrabold text-white mt-2 mb-6">Location & Zeiten</h2>
             
             <div class="space-y-4">
               <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg shrink-0">📍</div>
                 <div>
-                  <h4 class="font-bold text-white">Adresse</h4>
-                  <p class="text-slate-400 text-sm">Freundschaftsallee 42, 10115 Berlin</p>
+                  <h4 class="font-bold text-white">Server Koordinaten</h4>
+                  <p class="text-slate-400 text-sm">X: -420 / Y: 68 / Z: 1337 (Spawn-Nähe)</p>
                 </div>
               </div>
 
@@ -569,38 +496,24 @@
                 <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg shrink-0">🕒</div>
                 <div>
                   <h4 class="font-bold text-white">Öffnungszeiten</h4>
-                  <p class="text-slate-400 text-sm">Dienstag – Donnerstag: 18:00 – 01:00 Uhr</p>
-                  <p class="text-slate-400 text-sm">Freitag – Samstag: 18:00 – 03:00 Uhr</p>
-                  <p class="text-slate-400 text-sm">Sonntag: 17:00 – 00:00 Uhr</p>
-                  <p class="text-slate-500 text-xs mt-1">Montag Ruhetag (Homie Rest Day)</p>
+                  <p class="text-slate-400 text-sm">Täglich durchgehend geöffnet (24/7 Server)</p>
+                  <p class="text-slate-400 text-sm">Hauptbetrieb: 18:00 – 02:00 Uhr</p>
                 </div>
               </div>
 
               <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg shrink-0">📞</div>
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg shrink-0">💬</div>
                 <div>
-                  <h4 class="font-bold text-white">Kontakt</h4>
-                  <p class="text-slate-400 text-sm">Telefon: 030 / 987 654 321</p>
-                  <p class="text-slate-400 text-sm">E-Mail: hey@thefriendshipbar.de</p>
+                  <h4 class="font-bold text-white">Community & Discord</h4>
+                  <p class="text-slate-400 text-sm">Discord: discord.gg/friendship-bar</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Social Links -->
           <div class="glass p-6 rounded-2xl border border-slate-800">
-            <h4 class="text-white font-bold mb-3">Folge uns auf Social Media</h4>
-            <div class="flex gap-4">
-              <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:bg-amber-500 hover:text-slate-950 flex items-center justify-center transition-all">
-                <i class="fa-brands fa-instagram text-lg"></i>
-              </a>
-              <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:bg-amber-500 hover:text-slate-950 flex items-center justify-center transition-all">
-                <i class="fa-brands fa-tiktok text-lg"></i>
-              </a>
-              <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:bg-amber-500 hover:text-slate-950 flex items-center justify-center transition-all">
-                <i class="fa-brands fa-spotify text-lg"></i>
-              </a>
-            </div>
+            <h4 class="text-white font-bold mb-2">Required Mods</h4>
+            <p class="text-slate-400 text-sm mb-3">Stelle sicher, dass du den **Kaleidoscope Mod** auf deinem Client installiert hast, um alle Texturen & Gerichte perfekt zu sehen!</p>
           </div>
 
         </div>
@@ -613,8 +526,8 @@
   <footer class="border-t border-slate-800/80 bg-slate-950 py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
       <div class="flex items-center gap-3">
-        <span class="text-xl">🍻</span>
-        <span class="font-heading font-extrabold text-lg text-white">The Friendship Bar</span>
+        <span class="text-xl">🍖</span>
+        <span class="font-mc text-2xl text-amber-400">The Friendship Bar</span>
       </div>
       <p class="text-slate-500 text-sm text-center sm:text-left">
         &copy; 2026 The Friendship Bar. Wo Fremde hingehen und zu Homies werden.
@@ -628,6 +541,19 @@
 
   <!-- JAVASCRIPT -->
   <script>
+    // Background Slideshow Script
+    const slides = document.querySelectorAll('.bg-slide');
+    let currentSlide = 0;
+
+    function nextSlide() {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+    }
+
+    // Wechselt alle 5 Sekunden das Hintergrundbild
+    setInterval(nextSlide, 5000);
+
     // Mobile Menu Toggle
     const btn = document.getElementById('mobile-menu-btn');
     const menu = document.getElementById('mobile-menu');
