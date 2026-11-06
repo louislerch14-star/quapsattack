@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Friendship Bar – Minecraft Kaleidoscope Lounge</title>
   
-  <!-- FAVICON (logo.jpg) -->
+  <!-- FAVICON (/bar/logo.jpg) -->
   <link rel="icon" type="image/jpeg" href="/bar/logo.jpg">
-  <link rel="apple-touch-icon" href="logo.jpg">
+  <link rel="apple-touch-icon" href="/bar/logo.jpg">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -99,7 +99,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20">
         
-        <!-- Logo mit logo.jpg -->
+        <!-- Logo mit /bar/logo.jpg -->
         <a href="#" class="flex items-center gap-3 group">
           <div class="w-11 h-11 rounded-xl overflow-hidden border border-amber-500/40 shadow-lg shadow-amber-500/20 group-hover:scale-105 group-hover:border-amber-400 transition-all">
             <img src="/bar/logo.jpg" alt="The Friendship Bar Logo" class="w-full h-full object-cover">
@@ -148,7 +148,7 @@
   <!-- HERO SECTION WITH SLIDESHOW (bar1.jpg - bar7.jpg) -->
   <section class="relative min-h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden">
     
-    <!-- Slideshow Backgrounds (/bar/bar1.jpg bis /bar/bar7.jpg) -->
+    <!-- Slideshow Backgrounds -->
     <div class="absolute inset-0 z-0">
       <div class="bg-slide active" style="background-image: url('/bar/bar1.jpg');"></div>
       <div class="bg-slide" style="background-image: url('/bar/bar2.jpg');"></div>
@@ -438,46 +438,65 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Spielername / Name</label>
-                <input type="text" required placeholder="z.B. Steve_MC" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                <input id="res-name" type="text" required placeholder="z.B. Steve_MC" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
               </div>
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Discord / Telefon</label>
-                <input type="text" required placeholder="User#1234 oder Telefon" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                <input id="res-contact" type="text" required placeholder="User#1234 oder Telefon" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Datum</label>
-                <input type="date" required class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
+                <input id="res-date" type="date" required class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
               </div>
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Uhrzeit</label>
-                <input type="time" required value="19:00" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
+                <input id="res-time" type="time" required value="19:00" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs text-slate-300 font-semibold mb-1">Tisch Auswählen (1-8)</label>
+                <select id="res-table" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
+                  <option value="Tisch 1 (Fensterplatz)">Tisch 1 (Fensterplatz)</option>
+                  <option value="Tisch 2 (Am Kamin)" selected>Tisch 2 (Am Kamin)</option>
+                  <option value="Tisch 3 (Lounge Eck)">Tisch 3 (Lounge Eck)</option>
+                  <option value="Tisch 4 (Hauptsaal)">Tisch 4 (Hauptsaal)</option>
+                  <option value="Tisch 5 (Bar-Vordergrund)">Tisch 5 (Bar-Vordergrund)</option>
+                  <option value="Tisch 6 (Terrasse)">Tisch 6 (Terrasse)</option>
+                  <option value="Tisch 7 (VIP Nische)">Tisch 7 (VIP Nische)</option>
+                  <option value="Tisch 8 (Große Tafel)">Tisch 8 (Große Tafel)</option>
+                </select>
               </div>
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Homies / Personen</label>
-                <select class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
-                  <option>1 Person (Solo Explorer)</option>
-                  <option selected>2 Personen</option>
-                  <option>3 - 4 Personen (Squad)</option>
-                  <option>5+ Personen (Gilde/Clan)</option>
+                <select id="res-guests" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
+                  <option value="1 Person (Solo Explorer)">1 Person (Solo Explorer)</option>
+                  <option value="2 Personen" selected>2 Personen</option>
+                  <option value="3 - 4 Personen (Squad)">3 - 4 Personen (Squad)</option>
+                  <option value="5+ Personen (Gilde/Clan)">5+ Personen (Gilde/Clan)</option>
                 </select>
               </div>
             </div>
 
             <div>
               <label class="block text-xs text-slate-300 font-semibold mb-1">Anmerkungen & Wünsche</label>
-              <textarea rows="3" placeholder="Sitzecke am Kamin, Server-Event, etc." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
+              <textarea id="res-notes" rows="3" placeholder="Sitzecke am Kamin, Server-Event, etc." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
             </div>
 
-            <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-base hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20">
+            <button id="res-btn" type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-base hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20">
               Tisch Reservieren
             </button>
           </form>
 
           <div id="reservation-success" class="hidden mt-4 p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-center font-medium">
-            🎉 Reservierung gespeichert! Wir halten dir den besten Platz frei.
+            🎉 Reservierung gespeichert und an Discord gesendet! Wir halten dir den besten Platz frei.
+          </div>
+          <div id="reservation-error" class="hidden mt-4 p-4 rounded-xl bg-rose-500/20 border border-rose-500/50 text-rose-300 text-center font-medium">
+            ⚠️ Fehler beim Senden an Discord. Versuch es bitte erneut!
           </div>
         </div>
 
@@ -555,7 +574,6 @@
       slides[currentSlide].classList.add('active');
     }
 
-    // Wechselt alle 5 Sekunden das Hintergrundbild
     setInterval(nextSlide, 5000);
 
     // Mobile Menu Toggle
@@ -579,11 +597,76 @@
       lightbox.classList.add('hidden');
     }
 
-    // Reservation Form Handling
-    function handleReservation(event) {
+    // Reservation & Discord Webhook Integration
+    async function handleReservation(event) {
       event.preventDefault();
-      document.getElementById('reservation-success').classList.remove('hidden');
-      document.getElementById('booking-form').reset();
+      
+      const submitBtn = document.getElementById('res-btn');
+      const successBox = document.getElementById('reservation-success');
+      const errorBox = document.getElementById('reservation-error');
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Wird gesendet...";
+      successBox.classList.add('hidden');
+      errorBox.classList.add('hidden');
+
+      const name = document.getElementById('res-name').value;
+      const contact = document.getElementById('res-contact').value;
+      const date = document.getElementById('res-date').value;
+      const time = document.getElementById('res-time').value;
+      const table = document.getElementById('res-table').value;
+      const guests = document.getElementById('res-guests').value;
+      const notes = document.getElementById('res-notes').value || "Keine Anmerkungen";
+
+      const webhookUrl = "https://discord.com/api/webhooks/1568409426875121757/7AknN5B851S6V8WsCkFOaZLMqp26vpEAjG0EemOeS5g7XkWNI5kIecGriU0FGfX0YLcK";
+
+      const discordPayload = {
+        username: "Friendship Bar Bot",
+        avatar_url: window.location.origin + "/bar/logo.jpg",
+        embeds: [
+          {
+            title: "🍻 Neue Tisch-Reservierung!",
+            description: "Ein Homie hat einen Tisch in **The Friendship Bar** reserviert!",
+            color: 16111360, // Gold / Amber Color
+            fields: [
+              { name: "👤 Name / GamerTag", value: name, inline: true },
+              { name: "📞 Discord / Kontakt", value: contact, inline: true },
+              { name: "🪑 Tisch", value: `**${table}**`, inline: true },
+              { name: "📅 Datum", value: date, inline: true },
+              { name: "⏰ Uhrzeit", value: time, inline: true },
+              { name: "👥 Personen", value: guests, inline: true },
+              { name: "📝 Anmerkungen", value: notes, inline: false }
+            ],
+            footer: {
+              text: "The Friendship Bar • Kaleidoscope Lounge"
+            },
+            timestamp: new Date().toISOString()
+          }
+        ]
+      };
+
+      try {
+        const response = await fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(discordPayload)
+        });
+
+        if (response.ok) {
+          successBox.classList.remove('hidden');
+          document.getElementById('booking-form').reset();
+        } else {
+          errorBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error("Webhook Error:", err);
+        errorBox.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Tisch Reservieren";
+      }
     }
   </script>
 </body>
