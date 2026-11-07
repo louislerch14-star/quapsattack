@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Friendship Bar – Minecraft Kaleidoscope Lounge</title>
   
-  <!-- FAVICON (/bar/logo.jpg) -->
+  <!-- FAVICON -->
   <link rel="icon" type="image/jpeg" href="/bar/logo.jpg">
   <link rel="apple-touch-icon" href="/bar/logo.jpg">
 
@@ -15,7 +15,10 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Google Fonts: VT323 (Minecraft Vibe) + Outfit + Plus Jakarta Sans -->
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -50,32 +53,26 @@
       background-color: #0B0E14;
       color: #E6EDF3;
     }
-
     .glass {
       background: rgba(22, 27, 34, 0.75);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-
     .glass-nav {
       background: rgba(13, 17, 23, 0.85);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-
     .mc-border {
       box-shadow: 0 0 0 2px #30363D, 0 8px 25px rgba(0,0,0,0.5);
     }
-
     .text-gradient {
       background: linear-gradient(135deg, #FFAA00 0%, #FF5555 50%, #AA00AA 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
-    /* Background Slideshow Animations */
     .bg-slide {
       position: absolute;
       inset: 0;
@@ -85,7 +82,6 @@
       transition: opacity 1.5s ease-in-out, transform 8s ease-out;
       transform: scale(1.05);
     }
-
     .bg-slide.active {
       opacity: 1;
       transform: scale(1);
@@ -99,10 +95,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20">
         
-        <!-- Logo mit /bar/logo.jpg -->
         <a href="#" class="flex items-center gap-3 group">
           <div class="w-11 h-11 rounded-xl overflow-hidden border border-amber-500/40 shadow-lg shadow-amber-500/20 group-hover:scale-105 group-hover:border-amber-400 transition-all">
-            <img src="/bar/logo.jpg" alt="The Friendship Bar Logo" class="w-full h-full object-cover">
+            <img src="/bar/logo.jpg" alt="Logo" class="w-full h-full object-cover">
           </div>
           <div class="flex flex-col">
             <span class="font-mc text-2xl sm:text-3xl tracking-wider text-amber-400 group-hover:text-amber-300 transition-colors">
@@ -112,43 +107,31 @@
           </div>
         </a>
 
-        <!-- Desktop Menu -->
-        <div class="hidden md:flex items-center gap-8">
+        <div class="hidden md:flex items-center gap-6">
           <a href="#about" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Über Uns</a>
           <a href="#gallery" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Galerie</a>
           <a href="#menu" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Speisekarte</a>
           <a href="#events" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Events</a>
           <a href="#contact" class="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">Kontakt</a>
           
-          <a href="#reservation" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:-translate-y-0.5 transition-all">
+          <button onclick="openAdminModal()" class="text-xs text-amber-400 hover:text-white px-3 py-1.5 rounded-lg border border-amber-500/30 hover:bg-amber-500/10 transition-all">
+            <i class="fa-solid fa-lock mr-1"></i> Admin
+          </button>
+
+          <a href="#reservation" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/25 transition-all">
             Tisch Reservieren
           </a>
         </div>
 
-        <!-- Mobile Menu Button -->
-        <button id="mobile-menu-btn" class="md:hidden text-slate-300 hover:text-white p-2 focus:outline-none">
+        <button id="mobile-menu-btn" class="md:hidden text-slate-300 p-2">
           <i class="fa-solid fa-bars text-2xl"></i>
         </button>
       </div>
     </div>
-
-    <!-- Mobile Dropdown -->
-    <div id="mobile-menu" class="hidden md:hidden glass border-t border-slate-800 px-4 pt-4 pb-6 space-y-3">
-      <a href="#about" class="block text-base font-medium text-slate-200 hover:text-amber-400">Über Uns</a>
-      <a href="#gallery" class="block text-base font-medium text-slate-200 hover:text-amber-400">Galerie</a>
-      <a href="#menu" class="block text-base font-medium text-slate-200 hover:text-amber-400">Speisekarte</a>
-      <a href="#events" class="block text-base font-medium text-slate-200 hover:text-amber-400">Events</a>
-      <a href="#contact" class="block text-base font-medium text-slate-200 hover:text-amber-400">Kontakt</a>
-      <a href="#reservation" class="block text-center py-3 rounded-xl bg-amber-500 text-slate-950 font-bold mt-4">
-        Tisch Reservieren
-      </a>
-    </div>
   </nav>
 
-  <!-- HERO SECTION WITH SLIDESHOW (bar1.jpg - bar7.jpg) -->
+  <!-- HERO SECTION WITH SLIDESHOW -->
   <section class="relative min-h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden">
-    
-    <!-- Slideshow Backgrounds -->
     <div class="absolute inset-0 z-0">
       <div class="bg-slide active" style="background-image: url('/bar/bar1.jpg');"></div>
       <div class="bg-slide" style="background-image: url('/bar/bar2.jpg');"></div>
@@ -157,196 +140,38 @@
       <div class="bg-slide" style="background-image: url('/bar/bar5.jpg');"></div>
       <div class="bg-slide" style="background-image: url('/bar/bar6.jpg');"></div>
       <div class="bg-slide" style="background-image: url('/bar/bar7.jpg');"></div>
-      
-      <!-- Overlay Gradation for Dark Mode -->
       <div class="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/80 to-[#0B0E14]/60"></div>
     </div>
 
-    <!-- Hero Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-      
-      <!-- Badge -->
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-amber-500/40 text-amber-400 text-xs sm:text-sm font-semibold mb-8 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-amber-500/40 text-amber-400 text-xs sm:text-sm font-semibold mb-8">
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
         Powered by Kaleidoscope Mod 🎨
       </div>
 
-      <!-- Slogan -->
       <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
         Wo Fremde hingehen und zu <br class="hidden sm:inline" />
-        <span class="text-gradient">Homies werden.</span>
+        <span id="dyn-hero-slogan" class="text-gradient">Homies werden.</span>
       </h1>
 
-      <p class="max-w-2xl mx-auto text-lg sm:text-xl text-slate-300 mb-10 leading-relaxed font-normal">
-        Trete ein in das gemütlichste Restaurant der Minecraft-Welt! Dank dem **Kaleidoscope Mod** erwarten dich bei uns einzigartige Speisen, bunte Drinks und der perfekte Ort zum Chillen mit deiner Gang.
+      <p id="dyn-hero-subtext" class="max-w-2xl mx-auto text-lg sm:text-xl text-slate-300 mb-10 leading-relaxed">
+        Trete ein in das gemütlichste Restaurant der Minecraft-Welt! Dank dem Kaleidoscope Mod erwarten dich bei uns einzigartige Speisen, bunte Drinks und der perfekte Ort zum Chillen mit deiner Gang.
       </p>
 
-      <!-- CTA Buttons -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="#reservation" class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-extrabold text-base shadow-xl shadow-amber-500/20 hover:shadow-amber-500/40 hover:-translate-y-1 transition-all">
+        <a href="#reservation" class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-extrabold text-base shadow-xl hover:-translate-y-1 transition-all">
           Tisch Reservieren <i class="fa-solid fa-utensils ml-2"></i>
         </a>
         <a href="#menu" class="w-full sm:w-auto px-8 py-4 rounded-full glass hover:bg-white/10 text-white font-bold text-base transition-all border border-slate-700">
           Speisekarte Erkunden
         </a>
       </div>
-
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-20">
-        <div class="glass p-4 rounded-2xl text-center mc-border">
-          <i class="fa-solid fa-[#55FF55] fa-cubes text-amber-400 text-2xl mb-2"></i>
-          <p class="text-xs text-slate-400 uppercase font-semibold">Modding</p>
-          <p class="text-base font-bold text-white">Kaleidoscope Food</p>
-        </div>
-        <div class="glass p-4 rounded-2xl text-center mc-border">
-          <i class="fa-solid fa-users text-amber-400 text-2xl mb-2"></i>
-          <p class="text-xs text-slate-400 uppercase font-semibold">Community</p>
-          <p class="text-base font-bold text-white">Homie Vibe</p>
-        </div>
-        <div class="glass p-4 rounded-2xl text-center mc-border">
-          <i class="fa-solid fa-wine-glass text-amber-400 text-2xl mb-2"></i>
-          <p class="text-xs text-slate-400 uppercase font-semibold">Drinks</p>
-          <p class="text-base font-bold text-white">Custom Potions</p>
-        </div>
-        <div class="glass p-4 rounded-2xl text-center mc-border">
-          <i class="fa-solid fa-clock text-amber-400 text-2xl mb-2"></i>
-          <p class="text-xs text-slate-400 uppercase font-semibold">Server-Time</p>
-          <p class="text-base font-bold text-white">24/7 Geöffnet</p>
-        </div>
-      </div>
-
     </div>
   </section>
 
-  <!-- ABOUT SECTION -->
-  <section id="about" class="py-24 relative border-t border-slate-800/80 bg-slate-950/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        
-        <div>
-          <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Minecraft Restaurant & Bar</span>
-          <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-2 mb-6">
-            Kulinarik trifft auf Pixel-Magie.
-          </h2>
-          <p class="text-slate-300 text-lg mb-6 leading-relaxed">
-            In der <strong>The Friendship Bar</strong> nutzen wir die Vielfalt des <strong>Kaleidoscope Mods</strong>, um feinstes Essen und farbenfrohe Spezialitäten auf die Tische zu bringen. Egal ob nach einer langen Mining-Tour oder zum entspannten Ausklang des Bauprojekts – hier findet jeder Spieler einen Platz.
-          </p>
-          
-          <ul class="space-y-4 mb-8">
-            <li class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-1">
-                <i class="fa-solid fa-check text-xs"></i>
-              </div>
-              <span class="text-slate-300"><strong>Kaleidoscope Gerichte:</strong> Exklusive Rezepte & farbenfrohe Snacks.</span>
-            </li>
-            <li class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-1">
-                <i class="fa-solid fa-check text-xs"></i>
-              </div>
-              <span class="text-slate-300"><strong>Cozy Atmosphere:</strong> Gemütliche Ecken, Kaminfeuer & chilliger Soundtrack.</span>
-            </li>
-            <li class="flex items-start gap-3">
-              <div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-1">
-                <i class="fa-solid fa-check text-xs"></i>
-              </div>
-              <span class="text-slate-300"><strong>Homie Garantie:</strong> Niemand isst oder trinkt hier alleine!</span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="relative">
-          <div class="relative rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl group">
-            <img src="/bar/bar1.jpg" alt="Restaurant Atmosphäre" class="w-full h-[450px] object-cover group-hover:scale-105 transition-transform duration-700">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-70"></div>
-            <div class="absolute bottom-6 left-6 right-6 p-5 glass rounded-2xl border border-slate-700">
-              <p class="text-amber-400 font-bold text-base">„Der Ort, an dem Fremde zu Homies werden.“</p>
-              <p class="text-slate-300 text-xs">Frisch gekocht in Minecraft mit dem Kaleidoscope Mod.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- GALLERY SECTION (bar1.jpg - bar7.jpg) -->
-  <section id="gallery" class="py-24 relative">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Galerie</span>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">Ein Blick ins Restaurant</h2>
-        <p class="text-slate-400 mt-3">Klicke auf die Bilder, um die Location aus der Nähe zu sehen.</p>
-      </div>
-
-      <!-- Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar1.jpg')">
-          <img src="/bar/bar1.jpg" alt="Bar Bild 1" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
-          </div>
-        </div>
-
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar2.jpg')">
-          <img src="/bar/bar2.jpg" alt="Bar Bild 2" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
-          </div>
-        </div>
-
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar3.jpg')">
-          <img src="/bar/bar3.jpg" alt="Bar Bild 3" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
-          </div>
-        </div>
-
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar4.jpg')">
-          <img src="/bar/bar4.jpg" alt="Bar Bild 4" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
-          </div>
-        </div>
-
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar5.jpg')">
-          <img src="/bar/bar5.jpg" alt="Bar Bild 5" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
-          </div>
-        </div>
-
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 border border-slate-800" onclick="openLightbox('/bar/bar6.jpg')">
-          <img src="/bar/bar6.jpg" alt="Bar Bild 6" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
-          </div>
-        </div>
-
-        <div class="relative group rounded-2xl overflow-hidden cursor-pointer h-64 sm:col-span-2 md:col-span-1 border border-slate-800" onclick="openLightbox('/bar/bar7.jpg')">
-          <img src="/bar/bar7.jpg" alt="Bar Bild 7" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl"></i>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- LIGHTBOX MODAL -->
-  <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-    <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-3xl hover:text-amber-400">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-    <img id="lightbox-img" src="" alt="Großansicht" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl border border-slate-700">
-  </div>
-
-  <!-- MENU SECTION -->
+  <!-- MENU SECTION (DYNAMIC FROM SUPABASE) -->
   <section id="menu" class="py-24 bg-slate-950/60 relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
       <div class="text-center max-w-2xl mx-auto mb-12">
         <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Minecraft Delikatessen</span>
         <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">Kaleidoscope Speisekarte</h2>
@@ -354,71 +179,27 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        
-        <!-- Speisen -->
+        <!-- Speisen Container -->
         <div class="glass p-6 sm:p-8 rounded-3xl border border-slate-800">
           <div class="flex items-center gap-3 mb-6 border-b border-slate-700/60 pb-4">
             <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">🍲</div>
             <h3 class="text-2xl font-bold text-white">Hauptspeisen</h3>
           </div>
-          
-          <div class="space-y-6">
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-amber-300">Kaleidoscope Stew</h4>
-                <span class="text-amber-400 font-bold">5 Smaragde</span>
-              </div>
-              <p class="text-sm text-slate-400">Der Klassiker des Hauses: Bunter Eintopf mit seltenen Zutaten & Regenbogen-Effekt.</p>
-            </div>
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Gebratenes Porkchop Deluxe</h4>
-                <span class="text-amber-400 font-bold">4 Smaragde</span>
-              </div>
-              <p class="text-sm text-slate-400">Serviert mit Ofenkartoffeln, Kräuterbutter & frischem Seetang.</p>
-            </div>
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Golden Apple Tart</h4>
-                <span class="text-amber-400 font-bold">8 Smaragde</span>
-              </div>
-              <p class="text-sm text-slate-400">Süße Versuchung mit echter Goldglasur. Verleiht Regeneration!</p>
-            </div>
+          <div id="food-list" class="space-y-6">
+            <p class="text-slate-500 text-sm">Lade Speisen aus Supabase...</p>
           </div>
         </div>
 
-        <!-- Drinks & Potions -->
+        <!-- Drinks Container -->
         <div class="glass p-6 sm:p-8 rounded-3xl border border-slate-800">
           <div class="flex items-center gap-3 mb-6 border-b border-slate-700/60 pb-4">
             <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">🧪</div>
             <h3 class="text-2xl font-bold text-white">Drinks & Potions</h3>
           </div>
-          
-          <div class="space-y-6">
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-amber-300">Homie Potion</h4>
-                <span class="text-amber-400 font-bold">3 Smaragde</span>
-              </div>
-              <p class="text-sm text-slate-400">Unser Signature-Cocktail! Schmeckt fruchtig und lässt dich leuchten.</p>
-            </div>
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Honey Mead (Honigmet)</h4>
-                <span class="text-amber-400 font-bold">2 Smaragde</span>
-              </div>
-              <p class="text-sm text-slate-400">Frisch aus dem Bienenstock gekeltert. Süß, süffig und eisgekühlt.</p>
-            </div>
-            <div>
-              <div class="flex justify-between items-baseline">
-                <h4 class="text-lg font-bold text-white">Ender Shake (Alkoholfrei)</h4>
-                <span class="text-amber-400 font-bold">3 Smaragde</span>
-              </div>
-              <p class="text-sm text-slate-400">Cremiger Milchshake aus Chorus-Früchten & Vanille.</p>
-            </div>
+          <div id="drinks-list" class="space-y-6">
+            <p class="text-slate-500 text-sm">Lade Drinks aus Supabase...</p>
           </div>
         </div>
-
       </div>
     </div>
   </section>
@@ -426,10 +207,8 @@
   <!-- RESERVATION SECTION -->
   <section id="reservation" class="py-24 relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
         
-        <!-- Form -->
         <div class="glass p-8 rounded-3xl border border-slate-800">
           <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Sicher dir deinen Platz</span>
           <h2 class="text-3xl font-extrabold text-white mt-2 mb-6">Tisch im Restaurant buchen</h2>
@@ -438,42 +217,42 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Spielername / Name</label>
-                <input id="res-name" type="text" required placeholder="z.B. Steve_MC" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                <input id="res-name" type="text" required placeholder="z.B. Steve_MC" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
               </div>
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Discord / Telefon</label>
-                <input id="res-contact" type="text" required placeholder="User#1234 oder Telefon" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                <input id="res-contact" type="text" required placeholder="User#1234" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
               </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Datum</label>
-                <input id="res-date" type="date" required class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
+                <input id="res-date" type="date" required class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
               </div>
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Uhrzeit</label>
-                <input id="res-time" type="time" required value="19:00" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
+                <input id="res-time" type="time" required value="19:00" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
               </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Tisch Auswählen (1-8)</label>
-                <select id="res-table" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
-                  <option value="Tisch 1 ">Tisch 1 </option>
-                  <option value="Tisch 2 ">Tisch 2</option>
-                  <option value="Tisch 3 ">Tisch 3 </option>
-                  <option value="Tisch 4 ">Tisch 4 </option>
-                  <option value="Tisch 5 ">Tisch 5 </option>
-                  <option value="Tisch 6 ">Tisch 6 </option>
-                  <option value="Tisch 7 ">Tisch 7 </option>
-                  <option value="Tisch 8 ">Tisch 8 </option>
+                <select id="res-table" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
+                  <option value="Tisch 1 (Fensterplatz)">Tisch 1 (Fensterplatz)</option>
+                  <option value="Tisch 2 (Am Kamin)" selected>Tisch 2 (Am Kamin)</option>
+                  <option value="Tisch 3 (Lounge Eck)">Tisch 3 (Lounge Eck)</option>
+                  <option value="Tisch 4 (Hauptsaal)">Tisch 4 (Hauptsaal)</option>
+                  <option value="Tisch 5 (Bar-Vordergrund)">Tisch 5 (Bar-Vordergrund)</option>
+                  <option value="Tisch 6 (Terrasse)">Tisch 6 (Terrasse)</option>
+                  <option value="Tisch 7 (VIP Nische)">Tisch 7 (VIP Nische)</option>
+                  <option value="Tisch 8 (Große Tafel)">Tisch 8 (Große Tafel)</option>
                 </select>
               </div>
               <div>
                 <label class="block text-xs text-slate-300 font-semibold mb-1">Homies / Personen</label>
-                <select id="res-guests" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
+                <select id="res-guests" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
                   <option value="1 Person (Solo Explorer)">1 Person (Solo Explorer)</option>
                   <option value="2 Personen" selected>2 Personen</option>
                   <option value="3 - 4 Personen (Squad)">3 - 4 Personen (Squad)</option>
@@ -484,23 +263,19 @@
 
             <div>
               <label class="block text-xs text-slate-300 font-semibold mb-1">Anmerkungen & Wünsche</label>
-              <textarea id="res-notes" rows="3" placeholder="Sitzecke am Kamin, Server-Event, etc." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
+              <textarea id="res-notes" rows="3" placeholder="Sitzecke am Kamin..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none"></textarea>
             </div>
 
-            <button id="res-btn" type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-base hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20">
+            <button id="res-btn" type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-base hover:from-amber-400 transition-all shadow-lg">
               Tisch Reservieren
             </button>
           </form>
 
           <div id="reservation-success" class="hidden mt-4 p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-center font-medium">
-            🎉 Reservierung gespeichert und an Discord gesendet! Wir halten dir den besten Platz frei.
-          </div>
-          <div id="reservation-error" class="hidden mt-4 p-4 rounded-xl bg-rose-500/20 border border-rose-500/50 text-rose-300 text-center font-medium">
-            ⚠️ Fehler beim Senden an Discord. Versuch es bitte erneut!
+            🎉 Reservierung gespeichert und an Discord gesendet!
           </div>
         </div>
 
-        <!-- Info & Server Contact -->
         <div id="contact" class="flex flex-col justify-between space-y-8">
           <div>
             <span class="text-amber-400 font-bold uppercase tracking-wider text-xs">Server Details</span>
@@ -511,163 +286,254 @@
                 <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg shrink-0">📍</div>
                 <div>
                   <h4 class="font-bold text-white">Server Koordinaten</h4>
-                  <p class="text-slate-400 text-sm">X: -420 / Y: 68 / Z: 1337 (Spawn-Nähe)</p>
-                </div>
-              </div>
-
-              <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg shrink-0">🕒</div>
-                <div>
-                  <h4 class="font-bold text-white">Öffnungszeiten</h4>
-                  <p class="text-slate-400 text-sm">Täglich durchgehend geöffnet (24/7 Server)</p>
-                  <p class="text-slate-400 text-sm">Hauptbetrieb: 18:00 – 02:00 Uhr</p>
-                </div>
-              </div>
-
-              <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg shrink-0">💬</div>
-                <div>
-                  <h4 class="font-bold text-white">Community & Discord</h4>
-                  <p class="text-slate-400 text-sm">Discord: discord.gg/friendship-bar</p>
+                  <p id="dyn-coords" class="text-slate-400 text-sm">X: -420 / Y: 68 / Z: 1337 (Spawn-Nähe)</p>
                 </div>
               </div>
             </div>
           </div>
-
-          <div class="glass p-6 rounded-2xl border border-slate-800">
-            <h4 class="text-white font-bold mb-2">Required Mods</h4>
-            <p class="text-slate-400 text-sm mb-3">Stelle sicher, dass du den **Kaleidoscope Mod** auf deinem Client installiert hast, um alle Texturen & Gerichte perfekt zu sehen!</p>
-          </div>
-
         </div>
 
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-slate-800/80 bg-slate-950 py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-      <div class="flex items-center gap-3">
-        <img src="/bar/logo.jpg" alt="Logo" class="w-8 h-8 rounded-lg object-cover border border-amber-500/40">
-        <span class="font-mc text-2xl text-amber-400">The Friendship Bar</span>
+  <!-- ADMIN MODAL -->
+  <div id="admin-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass w-full max-w-2xl p-6 sm:p-8 rounded-3xl border border-slate-700 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-user-gear text-amber-400 mr-2"></i> Admin Lounge</h3>
+        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-2xl"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <p class="text-slate-500 text-sm text-center sm:text-left">
-        &copy; 2026 The Friendship Bar. Wo Fremde hingehen und zu Homies werden.
-      </p>
-      <div class="flex gap-6 text-sm text-slate-400">
-        <a href="#" class="hover:text-amber-400">Impressum</a>
-        <a href="#" class="hover:text-amber-400">Datenschutz</a>
+
+      <!-- STEP 1: LOGIN -->
+      <div id="admin-auth" class="space-y-4">
+        <p class="text-sm text-slate-300">Gib das Admin-Passwort ein, um Speisekarte und Texte live zu bearbeiten.</p>
+        <input id="admin-pass" type="password" placeholder="Passwort eingeben..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white outline-none focus:border-amber-500">
+        <button onclick="checkAdminPassword()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl">Einloggen</button>
       </div>
+
+      <!-- STEP 2: DASHBOARD -->
+      <div id="admin-panel" class="hidden space-y-8">
+        
+        <!-- Text Editor -->
+        <div class="border-b border-slate-800 pb-6">
+          <h4 class="text-lg font-bold text-amber-400 mb-4">1. Texte Bearbeiten</h4>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs text-slate-400">Hero Slogan</label>
+              <input id="edit-slogan" type="text" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white">
+            </div>
+            <div>
+              <label class="text-xs text-slate-400">Hero Beschreibung</label>
+              <textarea id="edit-subtext" rows="2" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white"></textarea>
+            </div>
+            <button onclick="saveSiteContent()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg text-sm">Texte Speichern</button>
+          </div>
+        </div>
+
+        <!-- Menu Item Manager -->
+        <div>
+          <h4 class="text-lg font-bold text-amber-400 mb-4">2. Speisekarte Verwalten</h4>
+          
+          <form onsubmit="addMenuItem(event)" class="space-y-3 glass p-4 rounded-xl border border-slate-800 mb-6">
+            <p class="text-xs font-bold text-white uppercase">Neues Gericht / Drink hinzufügen</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input id="item-name" type="text" required placeholder="Name (z.B. Ender Taco)" class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm">
+              <input id="item-price" type="text" required placeholder="Preis (z.B. 4 Smaragde)" class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm">
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <select id="item-category" class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm">
+                <option value="food">Hauptspeise (Food)</option>
+                <option value="drink">Drink / Potion</option>
+              </select>
+              <label class="flex items-center gap-2 text-xs text-slate-300">
+                <input id="item-signature" type="checkbox" class="w-4 h-4 rounded bg-slate-900 border-slate-700"> Signature Item (Gold hervorheben)
+              </label>
+            </div>
+            <textarea id="item-desc" rows="2" placeholder="Beschreibung..." class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm"></textarea>
+            <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-sm">Gericht Hinzufügen</button>
+          </form>
+
+          <div id="admin-menu-list" class="space-y-2">
+            <!-- Dynamisch -->
+          </div>
+        </div>
+
+      </div>
+
     </div>
-  </footer>
+  </div>
 
-  <!-- JAVASCRIPT -->
+  <!-- JAVASCRIPT & SUPABASE INTEGRATION -->
   <script>
-    // Background Slideshow Script
-    const slides = document.querySelectorAll('.bg-slide');
-    let currentSlide = 0;
+    // Supabase Init
+    const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    function nextSlide() {
-      slides[currentSlide].classList.remove('active');
-      currentSlide = (currentSlide + 1) % slides.length;
-      slides[currentSlide].classList.add('active');
+    const ADMIN_PASS = "once_gurke123!";
+
+    // --- DATA LOADING ---
+    async function loadSiteData() {
+      // 1. Speisekarte laden
+      const { data: menuData } = await supabase.from('menu_items').select('*').order('created_at', { ascending: true });
+      if (menuData) {
+        renderMenu(menuData);
+        renderAdminMenuList(menuData);
+      }
+
+      // 2. Texte laden
+      const { data: contentData } = await supabase.from('site_content').select('*');
+      if (contentData) {
+        contentData.forEach(item => {
+          if (item.key === 'hero_slogan') document.getElementById('dyn-hero-slogan').innerText = item.value;
+          if (item.key === 'hero_subtext') document.getElementById('dyn-hero-subtext').innerText = item.value;
+          if (item.key === 'coords') document.getElementById('dyn-coords').innerText = item.value;
+        });
+      }
     }
 
-    setInterval(nextSlide, 5000);
+    function renderMenu(items) {
+      const foodBox = document.getElementById('food-list');
+      const drinkBox = document.getElementById('drinks-list');
 
-    // Mobile Menu Toggle
-    const btn = document.getElementById('mobile-menu-btn');
-    const menu = document.getElementById('mobile-menu');
+      foodBox.innerHTML = '';
+      drinkBox.innerHTML = '';
 
-    btn.addEventListener('click', () => {
-      menu.classList.toggle('hidden');
-    });
+      items.forEach(item => {
+        const html = `
+          <div>
+            <div class="flex justify-between items-baseline">
+              <h4 class="text-lg font-bold ${item.is_signature ? 'text-amber-300' : 'text-white'}">${item.name}</h4>
+              <span class="text-amber-400 font-bold">${item.price}</span>
+            </div>
+            <p class="text-sm text-slate-400">${item.description || ''}</p>
+          </div>
+        `;
 
-    // Lightbox Functionality
-    function openLightbox(imageSrc) {
-      const lightbox = document.getElementById('lightbox');
-      const lightboxImg = document.getElementById('lightbox-img');
-      lightboxImg.src = imageSrc;
-      lightbox.classList.remove('hidden');
+        if (item.category === 'food') foodBox.innerHTML += html;
+        else drinkBox.innerHTML += html;
+      });
     }
 
-    function closeLightbox() {
-      const lightbox = document.getElementById('lightbox');
-      lightbox.classList.add('hidden');
+    // --- ADMIN MODAL & FUNCTIONS ---
+    function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
+    function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
+
+    function checkAdminPassword() {
+      const pass = document.getElementById('admin-pass').value;
+      if (pass === ADMIN_PASS) {
+        document.getElementById('admin-auth').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('hidden');
+        
+        // Populating text inputs
+        document.getElementById('edit-slogan').value = document.getElementById('dyn-hero-slogan').innerText;
+        document.getElementById('edit-subtext').value = document.getElementById('dyn-hero-subtext').innerText;
+      } else {
+        alert("Falsches Passwort, Bro! 💀");
+      }
     }
 
-    // Reservation & Discord Webhook Integration
+    async function saveSiteContent() {
+      const slogan = document.getElementById('edit-slogan').value;
+      const subtext = document.getElementById('edit-subtext').value;
+
+      await supabase.from('site_content').upsert([{ key: 'hero_slogan', value: slogan }, { key: 'hero_subtext', value: subtext }]);
+      alert("Texte erfolgreich aktualisiert! 🔥");
+      loadSiteData();
+    }
+
+    async function addMenuItem(e) {
+      e.preventDefault();
+      const name = document.getElementById('item-name').value;
+      const price = document.getElementById('item-price').value;
+      const category = document.getElementById('item-category').value;
+      const is_signature = document.getElementById('item-signature').checked;
+      const description = document.getElementById('item-desc').value;
+
+      await supabase.from('menu_items').insert([{ name, price, category, is_signature, description }]);
+      loadSiteData();
+      e.target.reset();
+    }
+
+    async function deleteMenuItem(id) {
+      if (confirm("Sicher, dass du das löschen willst?")) {
+        await supabase.from('menu_items').delete().eq('id', id);
+        loadSiteData();
+      }
+    }
+
+    function renderAdminMenuList(items) {
+      const list = document.getElementById('admin-menu-list');
+      list.innerHTML = '';
+      items.forEach(item => {
+        list.innerHTML += `
+          <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
+            <div>
+              <p class="font-bold text-white text-sm">${item.name} (${item.price})</p>
+              <p class="text-xs text-slate-400">${item.category.toUpperCase()} ${item.is_signature ? '• Signature' : ''}</p>
+            </div>
+            <button onclick="deleteMenuItem('${item.id}')" class="text-rose-400 hover:text-rose-300 p-2"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `;
+      });
+    }
+
+    // --- DISCORD WEBHOOK ---
     async function handleReservation(event) {
       event.preventDefault();
-      
       const submitBtn = document.getElementById('res-btn');
       const successBox = document.getElementById('reservation-success');
-      const errorBox = document.getElementById('reservation-error');
 
       submitBtn.disabled = true;
       submitBtn.innerText = "Wird gesendet...";
-      successBox.classList.add('hidden');
-      errorBox.classList.add('hidden');
-
-      const name = document.getElementById('res-name').value;
-      const contact = document.getElementById('res-contact').value;
-      const date = document.getElementById('res-date').value;
-      const time = document.getElementById('res-time').value;
-      const table = document.getElementById('res-table').value;
-      const guests = document.getElementById('res-guests').value;
-      const notes = document.getElementById('res-notes').value || "Keine Anmerkungen";
-
-      const webhookUrl = "https://discord.com/api/webhooks/1568409426875121757/7AknN5B851S6V8WsCkFOaZLMqp26vpEAjG0EemOeS5g7XkWNI5kIecGriU0FGfX0YLcK";
 
       const discordPayload = {
         username: "Friendship Bar Bot",
         avatar_url: window.location.origin + "/bar/logo.jpg",
-        embeds: [
-          {
-            title: "🍻 Neue Tisch-Reservierung!",
-            description: "Ein Homie hat einen Tisch in **The Friendship Bar** reserviert!",
-            color: 16111360, // Gold / Amber Color
-            fields: [
-              { name: "👤 Name / GamerTag", value: name, inline: true },
-              { name: "📞 Discord / Kontakt", value: contact, inline: true },
-              { name: "🪑 Tisch", value: `**${table}**`, inline: true },
-              { name: "📅 Datum", value: date, inline: true },
-              { name: "⏰ Uhrzeit", value: time, inline: true },
-              { name: "👥 Personen", value: guests, inline: true },
-              { name: "📝 Anmerkungen", value: notes, inline: false }
-            ],
-            footer: {
-              text: "The Friendship Bar • Kaleidoscope Lounge"
-            },
-            timestamp: new Date().toISOString()
-          }
-        ]
+        embeds: [{
+          title: "🍻 Neue Tisch-Reservierung!",
+          color: 16111360,
+          fields: [
+            { name: "👤 Name", value: document.getElementById('res-name').value, inline: true },
+            { name: "📞 Kontakt", value: document.getElementById('res-contact').value, inline: true },
+            { name: "🪑 Tisch", value: document.getElementById('res-table').value, inline: true },
+            { name: "📅 Datum", value: document.getElementById('res-date').value, inline: true },
+            { name: "⏰ Uhrzeit", value: document.getElementById('res-time').value, inline: true },
+            { name: "👥 Personen", value: document.getElementById('res-guests').value, inline: true },
+            { name: "📝 Anmerkungen", value: document.getElementById('res-notes').value || "Keine", inline: false }
+          ]
+        }]
       };
 
       try {
-        const response = await fetch(webhookUrl, {
+        await fetch("https://discord.com/api/webhooks/1568409426875121757/7AknN5B851S6V8WsCkFOaZLMqp26vpEAjG0EemOeS5g7XkWNI5kIecGriU0FGfX0YLcK", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(discordPayload)
         });
-
-        if (response.ok) {
-          successBox.classList.remove('hidden');
-          document.getElementById('booking-form').reset();
-        } else {
-          errorBox.classList.remove('hidden');
-        }
+        successBox.classList.remove('hidden');
+        document.getElementById('booking-form').reset();
       } catch (err) {
-        console.error("Webhook Error:", err);
-        errorBox.classList.remove('hidden');
+        alert("Fehler beim Senden!");
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Tisch Reservieren";
       }
     }
+
+    // Slideshow
+    const slides = document.querySelectorAll('.bg-slide');
+    let currentSlide = 0;
+    setInterval(() => {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+    }, 5000);
+
+    // Initial Load
+    loadSiteData();
   </script>
 </body>
 </html>
