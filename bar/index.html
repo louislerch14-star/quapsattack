@@ -400,15 +400,9 @@
           <h2 class="text-3xl font-extrabold text-white mt-2 mb-6">Tisch im Restaurant buchen</h2>
 
           <form id="booking-form" onsubmit="handleReservation(event)" class="space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs text-slate-300 font-semibold mb-1">Spielername / Name</label>
-                <input id="res-name" type="text" required placeholder="z.B. Steve_MC" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-300 font-semibold mb-1">Discord / Telefon</label>
-                <input id="res-contact" type="text" required placeholder="User#1234" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
-              </div>
+            <div>
+              <label class="block text-xs text-slate-300 font-semibold mb-1">Name / Ingame-Name</label>
+              <input id="res-name" type="text" required placeholder="z.B. Steve_MC" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -422,29 +416,9 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs text-slate-300 font-semibold mb-1">Tisch Auswählen (1-8)</label>
-                <select id="res-table" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
-                  <option value="Tisch 1 (Fensterplatz)">Tisch 1 (Fensterplatz)</option>
-                  <option value="Tisch 2 (Am Kamin)" selected>Tisch 2 (Am Kamin)</option>
-                  <option value="Tisch 3 (Lounge Eck)">Tisch 3 (Lounge Eck)</option>
-                  <option value="Tisch 4 (Hauptsaal)">Tisch 4 (Hauptsaal)</option>
-                  <option value="Tisch 5 (Bar-Vordergrund)">Tisch 5 (Bar-Vordergrund)</option>
-                  <option value="Tisch 6 (Terrasse)">Tisch 6 (Terrasse)</option>
-                  <option value="Tisch 7 (VIP Nische)">Tisch 7 (VIP Nische)</option>
-                  <option value="Tisch 8 (Große Tafel)">Tisch 8 (Große Tafel)</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs text-slate-300 font-semibold mb-1">Homies / Personen</label>
-                <select id="res-guests" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
-                  <option value="1 Person (Solo Explorer)">1 Person (Solo Explorer)</option>
-                  <option value="2 Personen" selected>2 Personen</option>
-                  <option value="3 - 4 Personen (Squad)">3 - 4 Personen (Squad)</option>
-                  <option value="5+ Personen (Gilde/Clan)">5+ Personen (Gilde/Clan)</option>
-                </select>
-              </div>
+            <div>
+              <label class="block text-xs text-slate-300 font-semibold mb-1">Für wie viele Personen? (Max. 6)</label>
+              <input id="res-guests" type="number" min="1" max="6" value="2" required class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white focus:border-amber-500 outline-none">
             </div>
 
             <div>
@@ -592,7 +566,6 @@
 
   <!-- JAVASCRIPT & SUPABASE INTEGRATION -->
   <script>
-    // Supabase Client (Umbenannt zu supabaseClient zur Vermeidung von SyntaxErrors)
     const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -639,14 +612,12 @@
 
     // --- DATA LOADING ---
     async function loadSiteData() {
-      // 1. Speisekarte laden
       const { data: menuData } = await supabaseClient.from('menu_items').select('*').order('created_at', { ascending: true });
       if (menuData) {
         renderMenu(menuData);
         renderAdminMenuList(menuData);
       }
 
-      // 2. Texte laden
       const { data: contentData } = await supabaseClient.from('site_content').select('*');
       if (contentData) {
         contentData.forEach(item => {
@@ -737,6 +708,12 @@
       submitBtn.disabled = true;
       submitBtn.innerText = "Wird gesendet...";
 
+      const name = document.getElementById('res-name').value;
+      const date = document.getElementById('res-date').value;
+      const time = document.getElementById('res-time').value;
+      const guests = document.getElementById('res-guests').value;
+      const notes = document.getElementById('res-notes').value || "Keine";
+
       const discordPayload = {
         username: "Friendship Bar Bot",
         avatar_url: window.location.origin + "/bar/logo.jpg",
@@ -744,13 +721,11 @@
           title: "🍻 Neue Tisch-Reservierung!",
           color: 16111360,
           fields: [
-            { name: "👤 Name", value: document.getElementById('res-name').value, inline: true },
-            { name: "📞 Kontakt", value: document.getElementById('res-contact').value, inline: true },
-            { name: "🪑 Tisch", value: document.getElementById('res-table').value, inline: true },
-            { name: "📅 Datum", value: document.getElementById('res-date').value, inline: true },
-            { name: "⏰ Uhrzeit", value: document.getElementById('res-time').value, inline: true },
-            { name: "👥 Personen", value: document.getElementById('res-guests').value, inline: true },
-            { name: "📝 Anmerkungen", value: document.getElementById('res-notes').value || "Keine", inline: false }
+            { name: "👤 Name", value: name, inline: true },
+            { name: "👥 Personen", value: `${guests} Personen (max. 6)`, inline: true },
+            { name: "📅 Datum", value: date, inline: true },
+            { name: "⏰ Uhrzeit", value: time, inline: true },
+            { name: "📝 Anmerkungen", value: notes, inline: false }
           ]
         }]
       };
