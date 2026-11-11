@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Q-Rail | Dein Netz. Deine Freiheit.</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="/q-rail/logo.jpg">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -50,7 +54,7 @@
         .nav-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1rem 1.5rem;
+            padding: 0.75rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -63,18 +67,11 @@
             text-decoration: none;
         }
 
-        .brand-logo {
-            background: var(--primary);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.25rem;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        .brand-logo-img {
+            height: 42px;
+            width: auto;
+            border-radius: 8px;
+            object-fit: contain;
         }
 
         .brand-name {
@@ -139,7 +136,7 @@
         }
 
         .hero {
-            padding: 4rem 1.5rem 3rem;
+            padding: 3.5rem 1.5rem 2.5rem;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -384,7 +381,7 @@
     <header class="header">
         <div class="nav-container">
             <a href="#" class="brand">
-                <div class="brand-logo">Q</div>
+                <img src="/q-rail/logo.jpg" alt="Q-Rail Logo" class="brand-logo-img">
                 <div>
                     <div class="brand-name">Q-Rail</div>
                 </div>
