@@ -123,7 +123,8 @@
 
         .nav-links {
             display: flex;
-            gap: 2.25rem;
+            align-items: center;
+            gap: 2rem;
             list-style: none;
         }
 
@@ -137,6 +138,30 @@
 
         .nav-link:hover {
             color: var(--primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 9px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-hover);
         }
 
         .theme-toggle {
@@ -428,6 +453,7 @@
             gap: 0.65rem;
             border-top: 1px solid var(--border);
             padding-top: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         .fleet-features li {
@@ -436,6 +462,21 @@
             gap: 0.6rem;
             font-size: 0.9rem;
             font-weight: 500;
+        }
+
+        .fleet-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            transition: gap 0.2s ease;
+        }
+
+        .fleet-link:hover {
+            gap: 0.65rem;
         }
 
         /* Footer */
@@ -455,6 +496,21 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
         }
 
         @media (max-width: 860px) {
@@ -486,7 +542,7 @@
 
     <header class="header">
         <div class="nav-container">
-            <a href="#" class="brand">
+            <a href="/q-rail/" class="brand">
                 <img src="/q-rail/logo.jpg" alt="Q-Rail Logo" class="brand-logo-img" onerror="this.style.display='none'">
                 <div class="brand-text">
                     <span class="brand-name">Q-Rail</span>
@@ -498,11 +554,18 @@
                 <li><a href="#ueber-uns" class="nav-link">Über uns</a></li>
                 <li><a href="#zuggattungen" class="nav-link">Zuggattungen</a></li>
                 <li><a href="#werte" class="nav-link">Unsere Mission</a></li>
+                <li><a href="/q-rail/tickets" class="nav-link">Tickets &amp; Preise</a></li>
             </ul>
 
-            <button class="theme-toggle" id="theme-toggle" aria-label="Farbschema wechseln" title="Light / Dark Mode wechseln">
-                <i data-lucide="moon" id="theme-icon" size="18"></i>
-            </button>
+            <div class="nav-actions">
+                <a href="/q-rail/tickets" class="nav-cta">
+                    <i data-lucide="ticket" size="16"></i> Tickets
+                </a>
+
+                <button class="theme-toggle" id="theme-toggle" aria-label="Farbschema wechseln" title="Light / Dark Mode wechseln">
+                    <i data-lucide="moon" id="theme-icon" size="18"></i>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -518,11 +581,11 @@
                     Q-Rail steht für moderne, zuverlässige und nahtlose Schienenmobilität in ganz Quapsattack. Wir verbinden Zentren, Regionen und Menschen – schnell, komfortabel und ohne Umwege.
                 </p>
                 <div class="hero-buttons">
-                    <a href="#ueber-uns" class="btn-primary">
-                        Mehr über Q-Rail <i data-lucide="arrow-right" size="17"></i>
+                    <a href="/q-rail/tickets" class="btn-primary">
+                        Tickets &amp; Preise ansehen <i data-lucide="arrow-right" size="17"></i>
                     </a>
-                    <a href="#zuggattungen" class="btn-secondary">
-                        Unsere Züge entdecken
+                    <a href="#ueber-uns" class="btn-secondary">
+                        Über Q-Rail
                     </a>
                 </div>
             </div>
@@ -600,12 +663,15 @@
                             <p>
                                 Das Rückgrat für den urbanen Raum. Die Q-City-Linien verbinden wichtige Stadtteile, Knotenpunkte und lokale Zentren in dichter Taktung.
                             </p>
+                            <ul class="fleet-features">
+                                <li><i data-lucide="check-circle-2" size="17" color="var(--primary)"></i> Hohe Taktfrequenz für spontane Fahrten</li>
+                                <li><i data-lucide="check-circle-2" size="17" color="var(--primary)"></i> Kurze Wege &amp; direkter Anschluss an den Fernverkehr</li>
+                                <li><i data-lucide="check-circle-2" size="17" color="var(--primary)"></i> Ideal für den täglichen Stadtverkehr</li>
+                            </ul>
                         </div>
-                        <ul class="fleet-features">
-                            <li><i data-lucide="check-circle-2" size="17" color="var(--primary)"></i> Hohe Taktfrequenz für spontane Fahrten</li>
-                            <li><i data-lucide="check-circle-2" size="17" color="var(--primary)"></i> Kurze Wege &amp; direkter Anschluss an den Fernverkehr</li>
-                            <li><i data-lucide="check-circle-2" size="17" color="var(--primary)"></i> Ideal für den täglichen Stadtverkehr</li>
-                        </ul>
+                        <a href="/q-rail/tickets" class="fleet-link">
+                            Q-City Tarife entdecken <i data-lucide="arrow-right" size="16"></i>
+                        </a>
                     </div>
 
                     <!-- Q-InterCity -->
@@ -616,12 +682,15 @@
                             <p>
                                 Gebaut für Geschwindigkeit und Distanz. Der Q-InterCity verbindet die großen Hauptbahnhöfe und entlegenen Regionen auf direktem Weg.
                             </p>
+                            <ul class="fleet-features">
+                                <li><i data-lucide="check-circle-2" size="17" color="var(--accent-purple)"></i> Hohe Reisegeschwindigkeit ohne unnötige Zwischenhalte</li>
+                                <li><i data-lucide="check-circle-2" size="17" color="var(--accent-purple)"></i> Direkte Verbindung zwischen den Haupt-Hubs</li>
+                                <li><i data-lucide="check-circle-2" size="17" color="var(--accent-purple)"></i> Perfekt für weite Reisen durch ganz Quapsattack</li>
+                            </ul>
                         </div>
-                        <ul class="fleet-features">
-                            <li><i data-lucide="check-circle-2" size="17" color="var(--accent-purple)"></i> Hohe Reisegeschwindigkeit ohne unnötige Zwischenhalte</li>
-                            <li><i data-lucide="check-circle-2" size="17" color="var(--accent-purple)"></i> Direkte Verbindung zwischen den Haupt-Hubs</li>
-                            <li><i data-lucide="check-circle-2" size="17" color="var(--accent-purple)"></i> Perfekt für weite Reisen durch ganz Quapsattack</li>
-                        </ul>
+                        <a href="/q-rail/tickets" class="fleet-link" style="color: var(--accent-purple);">
+                            Q-InterCity Tarife entdecken <i data-lucide="arrow-right" size="16"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -631,6 +700,11 @@
     <footer class="footer">
         <div class="footer-inner">
             <div><strong>Q-Rail</strong> &bull; Dein Netz. Deine Freiheit.</div>
+            <div class="footer-links">
+                <a href="#ueber-uns">Über uns</a>
+                <a href="#zuggattungen">Zuggattungen</a>
+                <a href="/q-rail/tickets">Tickets &amp; Preise</a>
+            </div>
             <div>&copy; 2026 Q-Rail &ndash; A Quapsattack Project</div>
         </div>
     </footer>
