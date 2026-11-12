@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q-Rail | Tickets &amp; Preise</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="/q-rail/logo.jpg">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root[data-theme="light"] {
+            --bg-body: #ffffff;
+            --bg-section: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-header: rgba(255, 255, 255, 0.88);
+            --bg-subtle: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --accent-purple: #7c3aed;
+            --accent-purple-light: #f5f3ff;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 14px 30px -8px rgba(15, 23, 42, 0.06);
+        }
+
+        :root[data-theme="dark"] {
+            --bg-body: #090d16;
+            --bg-section: #0d1320;
+            --bg-card: #111827;
+            --bg-header: rgba(9, 13, 22, 0.88);
+            --bg-subtle: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-hover: #60a5fa;
+            --primary-light: rgba(59, 130, 246, 0.14);
+            --accent-purple: #a78bfa;
+            --accent-purple-light: rgba(167, 139, 250, 0.14);
+            --border: #1e293b;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 14px 30px -8px rgba(0, 0, 0, 0.45);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        /* Navigation */
+        .header {
+            background: var(--bg-header);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background-color 0.25s ease, border-color 0.25s ease;
+        }
+
+        .nav-container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .brand-logo-img {
+            height: 40px;
+            width: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .brand-sub {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.92rem;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-back {
+            background: var(--bg-subtle);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            padding: 0.5rem 0.95rem;
+            border-radius: 9px;
+            font-size: 0.86rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .btn-back:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Page Header */
+        .page-hero {
+            padding: 4.5rem 1.5rem 3rem;
+            max-width: 1140px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 0.4rem 0.85rem;
+            border-radius: 9999px;
+            margin-bottom: 1.25rem;
+        }
+
+        .page-title {
+            font-size: 2.9rem;
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+        }
+
+        .page-title span {
+            color: var(--primary);
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 620px;
+            margin: 0 auto 2.25rem;
+        }
+
+        /* Filter / Category Switch */
+        .category-switch {
+            display: inline-flex;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            padding: 0.35rem;
+            border-radius: 12px;
+            gap: 0.35rem;
+        }
+
+        .switch-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.55rem 1.15rem;
+            border-radius: 9px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .switch-btn.active {
+            background: var(--bg-card);
+            color: var(--text-main);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Pricing Cards */
+        .pricing-section {
+            padding: 1rem 1.5rem 5rem;
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.75rem;
+            align-items: stretch;
+        }
+
+        .price-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.25rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .price-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .price-card.featured {
+            border: 2px solid var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -13px;
+            right: 24px;
+            background: var(--primary);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+
+        .tier-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.28rem 0.7rem;
+            border-radius: 7px;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+
+        .badge-qc {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .badge-qic {
+            background: var(--accent-purple-light);
+            color: var(--accent-purple);
+        }
+
+        .tier-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.4rem;
+        }
+
+        .tier-desc {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .price-box {
+            padding: 1.25rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .price-amount {
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .price-period {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            font-size: 0.92rem;
+            color: var(--text-main);
+        }
+
+        .btn-select {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--bg-subtle);
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .btn-select:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .price-card.featured .btn-select {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .price-card.featured .btn-select:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Info Banner / FAQ */
+        .info-section {
+            padding: 4.5rem 1.5rem;
+            background: var(--bg-section);
+            border-top: 1px solid var(--border);
+        }
+
+        .info-grid {
+            max-width: 1140px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.75rem;
+        }
+
+        .faq-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+        }
+
+        .faq-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .faq-card p {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 13, 22, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            max-width: 440px;
+            width: 100%;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+
+        .modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+        }
+
+        .modal-box h3 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-box p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 3rem 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+        .footer-inner {
+            max-width: 1140px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 900px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 480px;
+                margin: 0 auto;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                display: none;
+            }
+            .page-title {
+                font-size: 2.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="nav-container">
+            <a href="/q-rail/" class="brand">
+                <img src="/q-rail/logo.jpg" alt="Q-Rail Logo" class="brand-logo-img" onerror="this.style.display='none'">
+                <div class="brand-text">
+                    <span class="brand-name">Q-Rail</span>
+                    <span class="brand-sub">A Quapsattack Project</span>
+                </div>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="/q-rail/#ueber-uns" class="nav-link">Über uns</a></li>
+                <li><a href="/q-rail/#zuggattungen" class="nav-link">Zuggattungen</a></li>
+                <li><a href="/q-rail/tickets" class="nav-link active">Tickets &amp; Preise</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <a href="/q-rail/" class="btn-back">
+                    <i data-lucide="arrow-left" size="15"></i> Startseite
+                </a>
+
+                <button class="theme-toggle" id="theme-toggle" aria-label="Farbschema wechseln" title="Light / Dark Mode wechseln">
+                    <i data-lucide="moon" id="theme-icon" size="18"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero -->
+        <section class="page-hero">
+            <div class="hero-eyebrow">
+                <i data-lucide="ticket" size="14"></i> Transparente Tarife
+            </div>
+            <h1 class="page-title">Ein Ticket. <span>Volle Freiheit.</span></h1>
+            <p class="page-subtitle">
+                Wähle den passenden Tarif für deine Reise – egal ob du spontan mit der <strong>Q-City (QC)</strong> unterwegs bist oder mit dem <strong>Q-InterCity (QIC)</strong> weite Strecken zurücklegst.
+            </p>
+
+            <div class="category-switch" role="tablist">
+                <button class="switch-btn active" onclick="filterTickets('ALL', this)">Alle Tarife</button>
+                <button class="switch-btn" onclick="filterTickets('QC', this)">Q-City (Metro)</button>
+                <button class="switch-btn" onclick="filterTickets('QIC', this)">Q-InterCity (Fernverkehr)</button>
+            </div>
+        </section>
+
+        <!-- Pricing Cards -->
+        <section class="pricing-section">
+            <div class="pricing-grid">
+                <!-- Karte 1: Q-City Einzelticket -->
+                <div class="price-card" data-category="QC">
+                    <div>
+                        <span class="tier-badge badge-qc">Q-City (QC)</span>
+                        <h2 class="tier-name">City Einzelfahrt</h2>
+                        <p class="tier-desc">Ideal für schnelle Wege innerhalb des Stadtgebiets und kurze Strecken.</p>
+
+                        <div class="price-box">
+                            <div class="price-amount">1 Diamant</div>
+                            <div class="price-period">pro Einzelfahrt &bull; sofort gültig</div>
+                        </div>
+
+                        <ul class="feature-list">
+                            <li><i data-lucide="check" size="18" color="var(--primary)"></i> Gültig auf allen Q-City (QC) Linien</li>
+                            <li><i data-lucide="check" size="18" color="var(--primary)"></i> Beliebiges Umsteigen im Stadtnetz</li>
+                            <li><i data-lucide="check" size="18" color="var(--primary)"></i> Direkt an jedem Bahnsteig erhältlich</li>
+                        </ul>
+                    </div>
+
+                    <button class="btn-select" onclick="openTicketModal('City Einzelfahrt (QC)', '1 Diamant')">
+                        Tarif auswählen
+                    </button>
+                </div>
+
+                <!-- Karte 2: Q-Rail Netzpass (Featured) -->
+                <div class="price-card featured" data-category="ALL">
+                    <span class="popular-badge">Beliebtester Tarif</span>
+                    <div>
+                        <span class="tier-badge badge-qc">Q-City &amp; Q-InterCity</span>
+                        <h2 class="tier-name">Q-Rail Netzpass</h2>
+                        <p class="tier-desc">Uneingeschränkte Mobilität im gesamten Schienennetz – ohne Einzelbuchung.</p>
+
+                        <div class="price-box">
+                            <div class="price-amount">12 Diamanten</div>
+                            <div class="price-period">für 7 Tage &bull; Flatrate im gesamten Netz</div>
+                        </div>
+
+                        <ul class="feature-list">
+                            <li><i data-lucide="check" size="18" color="var(--primary)"></i> Unbegrenzte Fahrten in Q-City (QC)</li>
+                            <li><i data-lucide="check" size="18" color="var(--primary)"></i> Unbegrenzte Fahrten im Q-InterCity (QIC)</li>
+                            <li><i data-lucide="check" size="18" color="var(--primary)"></i> Voller Zugang zu allen Haupt- &amp; Regionalbahnhöfen</li>
+                            <li><i data-lucide="check" size="18" color="var(--primary)"></i> Kein Ticketkauf vor der Abfahrt nötig</li>
+                        </ul>
+                    </div>
+
+                    <button class="btn-select" onclick="openTicketModal('Q-Rail Netzpass (7 Tage)', '12 Diamanten')">
+                        Netzpass auswählen
+                    </button>
+                </div>
+
+                <!-- Karte 3: Q-InterCity Fernverkehr -->
+                <div class="price-card" data-category="QIC">
+                    <div>
+                        <span class="tier-badge badge-qic">Q-InterCity (QIC)</span>
+                        <h2 class="tier-name">InterCity Direkt</h2>
+                        <p class="tier-desc">Für lange Distanzen und direkte High-Speed-Verbindungen zwischen den Hubs.</p>
+
+                        <div class="price-box">
+                            <div class="price-amount">4 Diamanten</div>
+                            <div class="price-period">pro Langstrecke &bull; inkl. City-Anschluss</div>
+                        </div>
+
+                        <ul class="feature-list">
+                            <li><i data-lucide="check" size="18" color="var(--accent-purple)"></i> Gültig für alle Q-InterCity (QIC) Züge</li>
+                            <li><i data-lucide="check" size="18" color="var(--accent-purple)"></i> Direkte Verbindung ohne Umwege</li>
+                            <li><i data-lucide="check" size="18" color="var(--accent-purple)"></i> Q-City Weiterfahrt am Zielort inklusive</li>
+                        </ul>
+                    </div>
+
+                    <button class="btn-select" onclick="openTicketModal('InterCity Direkt (QIC)', '4 Diamanten')">
+                        Tarif auswählen
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hinweise -->
+        <section class="info-section">
+            <div class="info-grid">
+                <div class="faq-card">
+                    <h3><i data-lucide="info" size="19" color="var(--primary)"></i> Wo erhalte ich mein Ticket?</h3>
+                    <p>
+                        Alle Tickets sind direkt an den Ticketautomaten in den Q-Rail Bahnhöfen sowie an den zentralen Hauptbahnhöfen erhältlich.
+                    </p>
+                </div>
+
+                <div class="faq-card">
+                    <h3><i data-lucide="repeat" size="19" color="var(--primary)"></i> Gilt mein QIC-Ticket auch in der Metro?</h3>
+                    <p>
+                        Ja! Mit jedem Q-InterCity Ticket kannst du am Start- und Zielbahnhof kostenlos die Q-City (QC) Linien für deinen Anschluss nutzen.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-backdrop" id="ticket-modal" onclick="if(event.target === this) closeTicketModal()">
+        <div class="modal-box">
+            <div class="modal-icon">
+                <i data-lucide="ticket" size="26"></i>
+            </div>
+            <h3 id="modal-title">Tarif ausgewählt</h3>
+            <p id="modal-text">Dein Ticket steht am Bahnhof für dich bereit.</p>
+            <button class="btn-select" style="background: var(--primary); color: #fff; border-color: var(--primary);" onclick="closeTicketModal()">
+                Alles klar
+            </button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div><strong>Q-Rail</strong> &bull; Dein Netz. Deine Freiheit.</div>
+            <div class="footer-links">
+                <a href="/q-rail/">Startseite</a>
+                <a href="/q-rail/#ueber-uns">Über uns</a>
+                <a href="/q-rail/#zuggattungen">Zuggattungen</a>
+            </div>
+            <div>&copy; 2026 Q-Rail &ndash; A Quapsattack Project</div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Dark & Light Mode Toggle
+        const htmlEl = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        function setTheme(theme) {
+            htmlEl.setAttribute('data-theme', theme);
+            localStorage.setItem('qrail-theme', theme);
+            themeIcon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+            lucide.createIcons();
+        }
+
+        const savedTheme = localStorage.getItem('qrail-theme') ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        setTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const current = htmlEl.getAttribute('data-theme');
+            setTheme(current === 'light' ? 'dark' : 'light');
+        });
+
+        // Tarif-Filter
+        function filterTickets(category, btn) {
+            document.querySelectorAll('.switch-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.price-card').forEach(card => {
+                const cardCat = card.getAttribute('data-category');
+                if (category === 'ALL' || cardCat === category || cardCat === 'ALL') {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Modal Steuerung
+        function openTicketModal(name, price) {
+            document.getElementById('modal-title').textContent = name;
+            document.getElementById('modal-text').innerHTML =
+                `Preis: <strong>${price}</strong>.<br>Du kannst dieses Ticket direkt an jedem Q-Rail Ticketautomaten am Bahnhof lösen.`;
+            document.getElementById('ticket-modal').classList.add('open');
+        }
+
+        function closeTicketModal() {
+            document.getElementById('ticket-modal').classList.remove('open');
+        }
+    </script>
+</body>
+</html>
