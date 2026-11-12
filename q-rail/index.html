@@ -12,53 +12,39 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root[data-theme="light"] {
-            --bg-body: #f8fafc;
+            --bg-body: #ffffff;
+            --bg-section: #f8fafc;
             --bg-card: #ffffff;
-            --bg-header: rgba(255, 255, 255, 0.85);
+            --bg-header: rgba(255, 255, 255, 0.88);
             --bg-subtle: #f1f5f9;
-            --bg-input: #f8fafc;
             --text-main: #0f172a;
-            --text-muted: #64748b;
+            --text-muted: #475569;
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
             --primary-light: #eff6ff;
+            --accent-purple: #7c3aed;
+            --accent-purple-light: #f5f3ff;
             --border: #e2e8f0;
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 12px 28px -6px rgba(0, 0, 0, 0.06), 0 4px 10px -4px rgba(0, 0, 0, 0.02);
-            --badge-qc-bg: #dbeafe;
-            --badge-qc-text: #1e40af;
-            --badge-qic-bg: #f3e8ff;
-            --badge-qic-text: #6b21a8;
-            --status-ok-bg: #f0fdf4;
-            --status-ok-text: #15803d;
-            --status-ok-border: #bbf7d0;
-            --status-delay-bg: #fef2f2;
-            --status-delay-text: #b91c1c;
+            --shadow-md: 0 14px 30px -8px rgba(15, 23, 42, 0.06);
         }
 
         :root[data-theme="dark"] {
             --bg-body: #090d16;
+            --bg-section: #0d1320;
             --bg-card: #111827;
-            --bg-header: rgba(17, 24, 39, 0.85);
+            --bg-header: rgba(9, 13, 22, 0.88);
             --bg-subtle: #1e293b;
-            --bg-input: #0f172a;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --primary: #3b82f6;
             --primary-hover: #60a5fa;
-            --primary-light: rgba(59, 130, 246, 0.15);
+            --primary-light: rgba(59, 130, 246, 0.14);
+            --accent-purple: #a78bfa;
+            --accent-purple-light: rgba(167, 139, 250, 0.14);
             --border: #1e293b;
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 12px 28px -6px rgba(0, 0, 0, 0.45);
-            --badge-qc-bg: rgba(59, 130, 246, 0.2);
-            --badge-qc-text: #93c5fd;
-            --badge-qic-bg: rgba(168, 85, 247, 0.2);
-            --badge-qic-text: #d8b4fe;
-            --status-ok-bg: rgba(34, 197, 94, 0.15);
-            --status-ok-text: #4ade80;
-            --status-ok-border: rgba(34, 197, 94, 0.3);
-            --status-delay-bg: rgba(239, 68, 68, 0.15);
-            --status-delay-text: #f87171;
+            --shadow-md: 0 14px 30px -8px rgba(0, 0, 0, 0.45);
         }
 
         * {
@@ -67,20 +53,24 @@
             padding: 0;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
-            line-height: 1.5;
+            line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             transition: background-color 0.25s ease, color 0.25s ease;
         }
 
-        /* Header */
+        /* Navigation */
         .header {
             background: var(--bg-header);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
@@ -89,13 +79,12 @@
         }
 
         .nav-container {
-            max-width: 1200px;
+            max-width: 1140px;
             margin: 0 auto;
-            padding: 0.75rem 1.5rem;
+            padding: 0.85rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 1rem;
         }
 
         .brand {
@@ -113,25 +102,28 @@
             border: 1px solid var(--border);
         }
 
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
         .brand-name {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 800;
             color: var(--text-main);
             letter-spacing: -0.02em;
+            line-height: 1.1;
         }
 
-        .brand-tag {
-            font-size: 0.75rem;
-            background: var(--bg-subtle);
+        .brand-sub {
+            font-size: 0.7rem;
+            font-weight: 500;
             color: var(--text-muted);
-            padding: 0.2rem 0.55rem;
-            border-radius: 6px;
-            font-weight: 600;
         }
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 2.25rem;
             list-style: none;
         }
 
@@ -139,45 +131,12 @@
             text-decoration: none;
             color: var(--text-muted);
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             transition: color 0.2s;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover {
             color: var(--primary);
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .server-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--status-ok-bg);
-            border: 1px solid var(--status-ok-border);
-            color: var(--status-ok-text);
-            padding: 0.4rem 0.85rem;
-            border-radius: 9999px;
-            font-size: 0.82rem;
-            font-weight: 600;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #22c55e;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(1.15); }
-            100% { opacity: 1; transform: scale(1); }
         }
 
         .theme-toggle {
@@ -201,311 +160,325 @@
 
         /* Hero Section */
         .hero {
-            padding: 3.5rem 1.5rem 2.5rem;
-            max-width: 1200px;
+            padding: 6rem 1.5rem 5rem;
+            max-width: 1140px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 3.5rem;
+            align-items: center;
         }
 
-        .hero-badge {
+        .hero-eyebrow {
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            background: var(--primary-light);
-            color: var(--primary);
+            gap: 0.45rem;
             font-size: 0.8rem;
-            font-weight: 600;
-            padding: 0.35rem 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 0.4rem 0.85rem;
             border-radius: 9999px;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .hero-title {
-            font-size: 2.85rem;
+            font-size: 3.4rem;
             font-weight: 800;
-            letter-spacing: -0.03em;
-            line-height: 1.15;
-            margin-bottom: 0.75rem;
+            letter-spacing: -0.035em;
+            line-height: 1.1;
+            margin-bottom: 1.25rem;
         }
 
         .hero-title span {
             color: var(--primary);
         }
 
-        .hero-subtitle {
-            font-size: 1.1rem;
+        .hero-description {
+            font-size: 1.12rem;
             color: var(--text-muted);
-            max-width: 620px;
-            margin-bottom: 2.25rem;
+            margin-bottom: 2rem;
+            max-width: 540px;
         }
 
-        /* Booking Widget */
-        .booking-widget {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-md);
-            transition: background-color 0.25s ease, border-color 0.25s ease;
-        }
-
-        .widget-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) auto;
+        .hero-buttons {
+            display: flex;
             gap: 1rem;
-            align-items: end;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.45rem;
-        }
-
-        .form-group label {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .form-control {
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            padding: 0.75rem 1rem;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            color: var(--text-main);
-            outline: none;
-            transition: all 0.2s;
-            height: 44px;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
+            flex-wrap: wrap;
         }
 
         .btn-primary {
             background: var(--primary);
             color: #ffffff;
-            border: none;
-            padding: 0 1.5rem;
+            text-decoration: none;
+            padding: 0.85rem 1.6rem;
             border-radius: 10px;
             font-weight: 600;
             font-size: 0.95rem;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 0.5rem;
-            height: 44px;
+            transition: background 0.2s, transform 0.1s;
         }
 
         .btn-primary:hover {
             background: var(--primary-hover);
         }
 
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        /* Search Result Box */
-        .search-result {
-            display: none;
-            margin-top: 1.25rem;
-            padding: 1rem 1.25rem;
-            border-radius: 12px;
+        .btn-secondary {
             background: var(--bg-subtle);
+            color: var(--text-main);
             border: 1px solid var(--border);
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .search-result.visible {
-            display: flex;
-        }
-
-        /* Main Grid */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem 4rem;
-        }
-
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            transition: background-color 0.25s ease, border-color 0.25s ease;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-            padding-bottom: 0.85rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .card-title {
-            font-size: 1.05rem;
-            font-weight: 700;
-            display: flex;
+            text-decoration: none;
+            padding: 0.85rem 1.6rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            transition: border-color 0.2s, color 0.2s;
         }
 
-        /* Filter Tabs */
-        .filter-tabs {
-            display: flex;
-            gap: 0.4rem;
-        }
-
-        .filter-btn {
-            background: var(--bg-subtle);
-            border: 1px solid transparent;
-            color: var(--text-muted);
-            padding: 0.3rem 0.7rem;
-            border-radius: 8px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--primary-light);
+        .btn-secondary:hover {
+            border-color: var(--primary);
             color: var(--primary);
         }
 
-        /* Table */
-        .table-container {
-            overflow-x: auto;
-        }
-
-        .departure-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        .departure-table th {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            padding: 0.75rem 0.85rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .departure-table td {
-            padding: 0.95rem 0.85rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9rem;
-        }
-
-        .departure-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .badge-line {
-            display: inline-block;
-            padding: 0.22rem 0.6rem;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.78rem;
-            letter-spacing: 0.02em;
-        }
-
-        .badge-qc { background: var(--badge-qc-bg); color: var(--badge-qc-text); }
-        .badge-qic { background: var(--badge-qic-bg); color: var(--badge-qic-text); }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.78rem;
-            font-weight: 600;
-            padding: 0.25rem 0.55rem;
-            border-radius: 6px;
-        }
-
-        .status-ontime { background: var(--status-ok-bg); color: var(--status-ok-text); }
-        .status-delayed { background: var(--status-delay-bg); color: var(--status-delay-text); }
-
-        /* Network Status & Products */
-        .network-node {
+        .hero-visual {
             display: flex;
+            justify-content: center;
             align-items: center;
-            justify-content: space-between;
-            padding: 0.85rem;
+        }
+
+        .logo-showcase {
+            background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 0.75rem;
-            background: var(--bg-subtle);
-            transition: background-color 0.25s ease, border-color 0.25s ease;
-        }
-
-        .network-node:last-child {
-            margin-bottom: 0;
-        }
-
-        .node-info {
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.75rem;
+            text-align: center;
+            max-width: 360px;
+            width: 100%;
         }
 
-        .node-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 9px;
+        .logo-showcase img {
+            width: 180px;
+            height: 180px;
+            border-radius: 20px;
+            object-fit: cover;
+            margin-bottom: 1.25rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo-showcase-caption {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Sections */
+        .section {
+            padding: 5rem 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .section-alt {
+            background-color: var(--bg-section);
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            max-width: 650px;
+            margin-bottom: 3rem;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 2.15rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        /* Über uns Grid */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .icon-box {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
             background: var(--primary-light);
             color: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            margin-bottom: 1.25rem;
         }
 
-        .node-name {
-            font-weight: 600;
-            font-size: 0.9rem;
+        .info-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
         }
 
-        .node-sub {
-            font-size: 0.76rem;
+        .info-card p {
+            font-size: 0.94rem;
             color: var(--text-muted);
+        }
+
+        /* Zuggattungen (QC & QIC) */
+        .fleet-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .fleet-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.25rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .fleet-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.3rem 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+
+        .badge-qc {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .badge-qic {
+            background: var(--accent-purple-light);
+            color: var(--accent-purple);
+        }
+
+        .fleet-card h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .fleet-card p {
+            color: var(--text-muted);
+            font-size: 0.96rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .fleet-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1.25rem;
+        }
+
+        .fleet-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         /* Footer */
         .footer {
             background: var(--bg-card);
             border-top: 1px solid var(--border);
-            padding: 2rem 1.5rem;
-            text-align: center;
+            padding: 3rem 1.5rem;
             color: var(--text-muted);
-            font-size: 0.85rem;
-            transition: background-color 0.25s ease, border-color 0.25s ease;
+            font-size: 0.88rem;
         }
 
-        @media (max-width: 820px) {
-            .main-grid { grid-template-columns: 1fr; }
-            .hero-title { font-size: 2.15rem; }
-            .nav-links { display: none; }
-            .server-status span { display: none; }
+        .footer-inner {
+            max-width: 1140px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        @media (max-width: 860px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 3.5rem 1.5rem;
+                text-align: center;
+            }
+            .hero-description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-buttons {
+                justify-content: center;
+            }
+            .about-grid, .fleet-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                display: none;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
@@ -515,200 +488,156 @@
         <div class="nav-container">
             <a href="#" class="brand">
                 <img src="/q-rail/logo.jpg" alt="Q-Rail Logo" class="brand-logo-img" onerror="this.style.display='none'">
-                <div class="brand-name">Q-Rail</div>
-                <span class="brand-tag">Quapsattack</span>
+                <div class="brand-text">
+                    <span class="brand-name">Q-Rail</span>
+                    <span class="brand-sub">A Quapsattack Project</span>
+                </div>
             </a>
 
             <ul class="nav-links">
-                <li><a href="#" class="nav-link active">Fahrplan</a></li>
-                <li><a href="#" class="nav-link">Q-City (Metro)</a></li>
-                <li><a href="#" class="nav-link">Q-InterCity</a></li>
-                <li><a href="#" class="nav-link">Streckennetz</a></li>
+                <li><a href="#ueber-uns" class="nav-link">Über uns</a></li>
+                <li><a href="#zuggattungen" class="nav-link">Zuggattungen</a></li>
+                <li><a href="#werte" class="nav-link">Unsere Mission</a></li>
             </ul>
 
-            <div class="nav-actions">
-                <div class="server-status">
-                    <div class="status-dot"></div>
-                    <span>Netz Online (30 TPS)</span>
-                </div>
-
-                <button class="theme-toggle" id="theme-toggle" aria-label="Design wechseln" title="Light / Dark Mode wechseln">
-                    <i data-lucide="moon" id="theme-icon" size="18"></i>
-                </button>
-            </div>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Farbschema wechseln" title="Light / Dark Mode wechseln">
+                <i data-lucide="moon" id="theme-icon" size="18"></i>
+            </button>
         </div>
     </header>
 
     <main>
+        <!-- Hero -->
         <section class="hero">
-            <div class="hero-badge">
-                <i data-lucide="train-front" size="14"></i> Q-City &amp; Q-InterCity Verbundnetz
+            <div>
+                <div class="hero-eyebrow">
+                    <i data-lucide="train-front" size="14"></i> Mobilität neu gedacht
+                </div>
+                <h1 class="hero-title">Dein Netz.<br><span>Deine Freiheit.</span></h1>
+                <p class="hero-description">
+                    Q-Rail steht für moderne, zuverlässige und nahtlose Schienenmobilität in ganz Quapsattack. Wir verbinden Zentren, Regionen und Menschen – schnell, komfortabel und ohne Umwege.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#ueber-uns" class="btn-primary">
+                        Mehr über Q-Rail <i data-lucide="arrow-right" size="17"></i>
+                    </a>
+                    <a href="#zuggattungen" class="btn-secondary">
+                        Unsere Züge entdecken
+                    </a>
+                </div>
             </div>
-            <h1 class="hero-title">Dein Netz. <span>Deine Freiheit.</span></h1>
-            <p class="hero-subtitle">Schnell durch die Stadt mit <strong>Q-City (QC)</strong> oder direkt über weite Distanzen mit <strong>Q-InterCity (QIC)</strong> – das offizielle Schienennetzwerk von Quapsattack.</p>
 
-            <div class="booking-widget">
-                <form class="widget-form" onsubmit="event.preventDefault(); searchConnections();">
-                    <div class="form-group">
-                        <label><i data-lucide="map-pin" size="15"></i> Startbahnhof</label>
-                        <select class="form-control" id="start-station">
-                            <option>Quaps Hauptbahnhof (Hbf)</option>
-                            <option>Spawn City Mitte (QC)</option>
-                            <option>Industriegebiet Nord</option>
-                            <option>West-Hub Terminal</option>
-                            <option>Süd-Außenposten</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label><i data-lucide="navigation" size="15"></i> Zielbahnhof</label>
-                        <select class="form-control" id="target-station">
-                            <option>West-Hub Terminal</option>
-                            <option>Quaps Hauptbahnhof (Hbf)</option>
-                            <option>Spawn City Mitte (QC)</option>
-                            <option>Industriegebiet Nord</option>
-                            <option>Süd-Außenposten</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label><i data-lucide="layers" size="15"></i> Zugklasse</label>
-                        <select class="form-control" id="train-type">
-                            <option value="Alle">Alle (QC &amp; QIC)</option>
-                            <option value="QIC">Nur Q-InterCity (Fernverkehr)</option>
-                            <option value="QC">Nur Q-City (Metro)</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn-primary">
-                        <i data-lucide="search" size="18"></i> Verbindung suchen
-                    </button>
-                </form>
-
-                <div class="search-result" id="search-result"></div>
+            <div class="hero-visual">
+                <div class="logo-showcase">
+                    <img src="/q-rail/logo.jpg" alt="Q-Rail Markenlogo" onerror="this.style.display='none'">
+                    <div class="logo-showcase-caption">Q-Rail Transit Systems &bull; Quapsattack</div>
+                </div>
             </div>
         </section>
 
-        <section class="main-grid">
-            <!-- Abfahrtstafel -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><i data-lucide="clock" size="19" color="var(--primary)"></i> Live Abfahrtstafel</h2>
-                    <div class="filter-tabs">
-                        <button class="filter-btn active" onclick="filterTable('ALL', this)">Alle</button>
-                        <button class="filter-btn" onclick="filterTable('QC', this)">Q-City</button>
-                        <button class="filter-btn" onclick="filterTable('QIC', this)">Q-InterCity</button>
-                    </div>
+        <!-- Über uns -->
+        <section id="ueber-uns" class="section section-alt">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">Über uns</span>
+                    <h2 class="section-title">Wir bauen die Infrastruktur von morgen.</h2>
+                    <p class="section-subtitle">
+                        Entstanden aus der Vision, jede Ecke von Quapsattack mühelos erreichbar zu machen, entwickelt Q-Rail ein durchdachtes Schienennetz mit höchsten Ansprüchen an Design, Taktung und Zuverlässigkeit.
+                    </p>
                 </div>
 
-                <div class="table-container">
-                    <table class="departure-table">
-                        <thead>
-                            <tr>
-                                <th>Linie</th>
-                                <th>Typ</th>
-                                <th>Zielbahnhof</th>
-                                <th>Gleis</th>
-                                <th>Abfahrt</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="departure-body">
-                            <tr data-type="QIC">
-                                <td><span class="badge-line badge-qic">QIC 10</span></td>
-                                <td style="color: var(--text-muted); font-size: 0.82rem;">Fernverkehr</td>
-                                <td><strong>West-Hub Terminal</strong></td>
-                                <td>Gleis 1</td>
-                                <td>14:04</td>
-                                <td><span class="status-badge status-ontime">Pünktlich</span></td>
-                            </tr>
-                            <tr data-type="QC">
-                                <td><span class="badge-line badge-qc">QC 1</span></td>
-                                <td style="color: var(--text-muted); font-size: 0.82rem;">Metro</td>
-                                <td><strong>Spawn City Mitte</strong></td>
-                                <td>Gleis 3 (U)</td>
-                                <td>14:06</td>
-                                <td><span class="status-badge status-ontime">Pünktlich</span></td>
-                            </tr>
-                            <tr data-type="QIC">
-                                <td><span class="badge-line badge-qic">QIC 22</span></td>
-                                <td style="color: var(--text-muted); font-size: 0.82rem;">Fernverkehr</td>
-                                <td><strong>Süd-Außenposten</strong></td>
-                                <td>Gleis 2</td>
-                                <td>14:12</td>
-                                <td><span class="status-badge status-delayed">+2 Min (Signalblock)</span></td>
-                            </tr>
-                            <tr data-type="QC">
-                                <td><span class="badge-line badge-qc">QC 2</span></td>
-                                <td style="color: var(--text-muted); font-size: 0.82rem;">Metro</td>
-                                <td><strong>Industriegebiet Nord</strong></td>
-                                <td>Gleis 4 (U)</td>
-                                <td>14:15</td>
-                                <td><span class="status-badge status-ontime">Pünktlich</span></td>
-                            </tr>
-                            <tr data-type="QC">
-                                <td><span class="badge-line badge-qc">QC 1</span></td>
-                                <td style="color: var(--text-muted); font-size: 0.82rem;">Metro</td>
-                                <td><strong>Quaps Hauptbahnhof</strong></td>
-                                <td>Gleis 3 (U)</td>
-                                <td>14:20</td>
-                                <td><span class="status-badge status-ontime">Pünktlich</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="about-grid" id="werte">
+                    <div class="info-card">
+                        <div class="icon-box">
+                            <i data-lucide="compass" size="22"></i>
+                        </div>
+                        <h3>Maximale Reichweite</h3>
+                        <p>
+                            Vom belebten Stadtkern bis zu weit entfernten Regionen: Unser Streckennetz wächst kontinuierlich mit den Anforderungen unserer Fahrgäste.
+                        </p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="icon-box">
+                            <i data-lucide="clock" size="22"></i>
+                        </div>
+                        <h3>Verlässliche Taktung</h3>
+                        <p>
+                            Kein langes Warten am Bahnsteig. Durch präzise abgestimmte Fahrpläne greifen Nah- und Fernverkehr nahtlos ineinander.
+                        </p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="icon-box">
+                            <i data-lucide="sparkles" size="22"></i>
+                        </div>
+                        <h3>Modernes Reiseerlebnis</h3>
+                        <p>
+                            Klare Beschilderung, übersichtliche Bahnhöfe und ein einheitliches System sorgen dafür, dass du dich an jeder Station sofort zurechtfindest.
+                        </p>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Netz & Zuggattungen -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><i data-lucide="network" size="19" color="var(--primary)"></i> Liniennetz &amp; Status</h2>
+        <!-- Zuggattungen: Q-City & Q-InterCity -->
+        <section id="zuggattungen" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">Unser Angebot</span>
+                    <h2 class="section-title">Zwei Systeme. Ein starkes Netz.</h2>
+                    <p class="section-subtitle">
+                        Egal ob kurze Wege innerhalb der Stadt oder schnelle Verbindungen über große Distanzen – Q-Rail bietet für jede Strecke den passenden Zug.
+                    </p>
                 </div>
 
-                <div class="network-node">
-                    <div class="node-info">
-                        <div class="node-icon"><i data-lucide="train" size="18"></i></div>
+                <div class="fleet-grid">
+                    <!-- Q-City -->
+                    <div class="fleet-card">
                         <div>
-                            <div class="node-name">Q-City (QC)</div>
-                            <div class="node-sub">Metro &bull; 3-Minuten-Takt im Stadtgebiet</div>
+                            <span class="fleet-badge badge-qc">Metro &amp; Nahverkehr</span>
+                            <h3>Q-City (QC)</h3>
+                            <p>
+                                Das Rückgrat für den urbanen Raum. Die Q-City-Linien verbinden wichtige Stadtteile, Knotenpunkte und lokale Zentren in dichter Taktung.
+                            </p>
                         </div>
+                        <ul class="fleet-features">
+                            <li><i data-lucide="check-circle-2" size="17" color="var(--primary)"></i> Hohe Taktfrequenz für spontane Fahrten</li>
+                            <li><i data-lucide="check-circle-2" size="17" color="var(--primary)"></i> Kurze Wege &amp; direkter Anschluss an den Fernverkehr</li>
+                            <li><i data-lucide="check-circle-2" size="17" color="var(--primary)"></i> Ideal für den täglichen Stadtverkehr</li>
+                        </ul>
                     </div>
-                    <span class="status-badge status-ontime">Aktiv</span>
-                </div>
 
-                <div class="network-node">
-                    <div class="node-info">
-                        <div class="node-icon"><i data-lucide="zap" size="18"></i></div>
+                    <!-- Q-InterCity -->
+                    <div class="fleet-card">
                         <div>
-                            <div class="node-name">Q-InterCity (QIC)</div>
-                            <div class="node-sub">Fernverkehr &bull; High-Speed Langstrecke</div>
+                            <span class="fleet-badge badge-qic">Fernverkehr &amp; Langstrecke</span>
+                            <h3>Q-InterCity (QIC)</h3>
+                            <p>
+                                Gebaut für Geschwindigkeit und Distanz. Der Q-InterCity verbindet die großen Hauptbahnhöfe und entlegenen Regionen auf direktem Weg.
+                            </p>
                         </div>
+                        <ul class="fleet-features">
+                            <li><i data-lucide="check-circle-2" size="17" color="var(--accent-purple)"></i> Hohe Reisegeschwindigkeit ohne unnötige Zwischenhalte</li>
+                            <li><i data-lucide="check-circle-2" size="17" color="var(--accent-purple)"></i> Direkte Verbindung zwischen den Haupt-Hubs</li>
+                            <li><i data-lucide="check-circle-2" size="17" color="var(--accent-purple)"></i> Perfekt für weite Reisen durch ganz Quapsattack</li>
+                        </ul>
                     </div>
-                    <span class="status-badge status-ontime">Aktiv</span>
-                </div>
-
-                <div class="network-node">
-                    <div class="node-info">
-                        <div class="node-icon"><i data-lucide="shield-check" size="18"></i></div>
-                        <div>
-                            <div class="node-name">Create Signaltechnik</div>
-                            <div class="node-sub">Weichen &amp; Blöcke vollautomatisch</div>
-                        </div>
-                    </div>
-                    <span class="status-badge status-ontime">100%</span>
                 </div>
             </div>
         </section>
     </main>
 
     <footer class="footer">
-        <p>&copy; 2026 Q-Rail Transit Systems &bull; Dein Netz. Deine Freiheit. &bull; A Quapsattack Project</p>
+        <div class="footer-inner">
+            <div><strong>Q-Rail</strong> &bull; Dein Netz. Deine Freiheit.</div>
+            <div>&copy; 2026 Q-Rail &ndash; A Quapsattack Project</div>
+        </div>
     </footer>
 
     <script>
         lucide.createIcons();
 
-        // Dark & Light Mode Toggle mit LocalStorage
         const htmlEl = document.documentElement;
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
@@ -720,7 +649,7 @@
             lucide.createIcons();
         }
 
-        const savedTheme = localStorage.getItem('qrail-theme') || 
+        const savedTheme = localStorage.getItem('qrail-theme') ||
             (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         setTheme(savedTheme);
 
@@ -728,55 +657,6 @@
             const current = htmlEl.getAttribute('data-theme');
             setTheme(current === 'light' ? 'dark' : 'light');
         });
-
-        // Abfahrtstafel filtern (Alle / QC / QIC)
-        function filterTable(type, btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            document.querySelectorAll('#departure-body tr').forEach(row => {
-                if (type === 'ALL' || row.getAttribute('data-type') === type) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        // Verbindungssuche mit Inline-Anzeige
-        function searchConnections() {
-            const start = document.getElementById('start-station').value;
-            const target = document.getElementById('target-station').value;
-            const type = document.getElementById('train-type').value;
-            const resultBox = document.getElementById('search-result');
-
-            resultBox.classList.add('visible');
-
-            if (start === target) {
-                resultBox.innerHTML = `
-                    <div style="color: var(--status-delay-text); font-weight: 600; font-size: 0.9rem;">
-                        Bitte wähle zwei unterschiedliche Bahnhöfe aus!
-                    </div>
-                `;
-                return;
-            }
-
-            const isMetro = type === 'QC' || (type === 'Alle' && (start.includes('(QC)') || target.includes('(QC)')));
-            const badgeClass = isMetro ? 'badge-qc' : 'badge-qic';
-            const lineName = isMetro ? 'QC 1 (Q-City Metro)' : 'QIC 10 (Q-InterCity)';
-            const platform = isMetro ? 'Gleis 3 (U)' : 'Gleis 1';
-
-            resultBox.innerHTML = `
-                <div>
-                    <span class="badge-line ${badgeClass}" style="margin-right: 0.5rem;">${lineName}</span>
-                    <strong>${start}</strong> &rarr; <strong>${target}</strong>
-                    <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
-                        Nächste Abfahrt in <strong>2 Min.</strong> von <strong>${platform}</strong> &bull; Planmäßige Fahrzeit: 4 Min.
-                    </div>
-                </div>
-                <span class="status-badge status-ontime">Direktverbindung</span>
-            `;
-        }
     </script>
 </body>
 </html>
