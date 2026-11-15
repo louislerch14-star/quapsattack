@@ -54,7 +54,7 @@
                     <i class="fas fa-shield-halved"></i>
                 </div>
                 <h1 class="font-orbitron text-2xl font-black tracking-wider text-white">QUAPSATTACK</h1>
-                <p class="text-xs text-slate-400 tracking-widest mt-1 uppercase font-semibold">Command Center Pro v3.5</p>
+                <p class="text-xs text-slate-400 tracking-widest mt-1 uppercase font-semibold">Command Center Pro v3.7</p>
             </div>
 
             <div id="authError" class="hidden mb-6 p-4 rounded-xl bg-red-950/50 border border-red-500/50 text-red-300 text-xs flex items-center gap-2">
@@ -176,9 +176,7 @@
                             Zur Pinnwand
                         </button>
                     </div>
-                    <div id="feedActivityList" class="space-y-4">
-                        <!-- Populated dynamically -->
-                    </div>
+                    <div id="feedActivityList" class="space-y-4"></div>
                 </div>
 
                 <!-- 2. PINBOARD / KANBAN VIEW -->
@@ -410,8 +408,8 @@
                             <input type="text" id="settingsQuote" placeholder="Dein persönlicher Motto-Spruch..." class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">Avatar URL</label>
-                            <input type="text" id="settingsAvatarUrl" placeholder="https://..." class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Profilbild per Datei hochladen (Supabase Storage)</label>
+                            <input type="file" id="avatarFileInput" accept="image/*" class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-500 cursor-pointer">
                         </div>
                     </div>
                 </div>
@@ -565,7 +563,6 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
         const GEMINI_API_KEY = 'AQ.Ab8RN6KT-NV_pdl2kGaEaXme_f7gJXqDCsTje_kuSWahTfqGbg';
 
-        // Use global window.supabase instead of redeclaring 'const supabase'
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentUser = null;
@@ -574,6 +571,15 @@
         let activeReplyPostId = null;
         let isSignUpMode = false;
         let ringtoneInterval = null;
+        
+        // Calendar State
+        let currentCalendarDate = new Date();
+
+        // WebRTC State
+        let peerConnection = null;
+        let localStream = null;
+        let signalingChannel = null;
+        const rtcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
         // Init App on Load
         window.addEventListener('DOMContentLoaded', async () => {
@@ -704,14 +710,14 @@
             if (tabName === 'vault') loadVault();
         }
 
-        // Profile & Hardware Settings Modal
+        // Profile & Hardware Settings Modal with File Upload
         window.openProfileSettings = async function() {
             if (!currentProfile) return;
             document.getElementById('settingsUsername').value = currentProfile.username || '';
             document.getElementById('settingsStatus').value = currentProfile.custom_status || 'online';
             document.getElementById('settingsStatusText').value = currentProfile.custom_status_text || '';
             document.getElementById('settingsQuote').value = currentProfile.personality_quote || '';
-            document.getElementById('settingsAvatarUrl').value = currentProfile.avatar_url || '';
+            document.getElementById('avatarFileInput').value = '';
 
             document.getElementById('profileSettingsModal').classList.remove('hidden');
             document.getElementById('profileSettingsModal').classList.add('flex');
@@ -729,12 +735,28 @@
 
         window.saveProfileSettings = async function() {
             if (!currentUser) return;
+            let avatarUrl = currentProfile.avatar_url;
+
+            const fileInput = document.getElementById('avatarFileInput');
+            if (fileInput.files && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${currentUser.id}-${Date.now()}.${fileExt}`;
+                const { error: uploadError } = await supabaseClient.storage.from('avatars').upload(fileName, file);
+                if (!uploadError) {
+                    const { data: publicUrlData } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
+                    if (publicUrlData) avatarUrl = publicUrlData.publicUrl;
+                } else {
+                    console.warn("Storage upload note (avatars bucket might need creation in Supabase):", uploadError.message);
+                }
+            }
+
             const updates = {
                 username: document.getElementById('settingsUsername').value,
                 custom_status: document.getElementById('settingsStatus').value,
                 custom_status_text: document.getElementById('settingsStatusText').value,
                 personality_quote: document.getElementById('settingsQuote').value,
-                avatar_url: document.getElementById('settingsAvatarUrl').value
+                avatar_url: avatarUrl
             };
 
             const { error } = await supabaseClient.from('profiles').update(updates).eq('id', currentUser.id);
@@ -743,6 +765,7 @@
                 updateSidebarProfileUI();
                 closeProfileSettings();
                 playAudioNotification();
+                showToast('Profil erfolgreich aktualisiert! 🚀');
             } else {
                 alert('Fehler beim Speichern: ' + error.message);
             }
@@ -999,7 +1022,6 @@
                 content: content
             });
 
-            // Increment reply count
             const { data: postData } = await supabaseClient.from('pinboard_posts').select('reply_count').eq('id', activeReplyPostId).single();
             await supabaseClient.from('pinboard_posts').update({ reply_count: (postData?.reply_count || 0) + 1 }).eq('id', activeReplyPostId);
 
@@ -1010,7 +1032,6 @@
 
         // 3. Chat & DMs
         async function loadChatRoomsAndRoster() {
-            // Rooms
             const { data: rooms } = await supabaseClient.from('chat_rooms').select('*');
             const roomsList = document.getElementById('chatRoomsList');
             roomsList.innerHTML = (rooms || []).map(r => `
@@ -1019,7 +1040,6 @@
                 </button>
             `).join('');
 
-            // Roster Profiles
             const { data: profiles } = await supabaseClient.from('profiles').select('*');
             const rosterList = document.getElementById('playerRosterList');
             rosterList.innerHTML = (profiles || []).map(p => {
@@ -1154,44 +1174,100 @@
             }
         }
 
-        // WebRTC Calls & Ringtone
+        // WebRTC Real Web & Signaling Calls
         window.startCall = function(targetUserId, targetUsername) {
             playRingingSound();
-            document.getElementById('callModalTitle').innerText = `Anruf mit ${targetUsername} wird aufgebaut...`;
+            document.getElementById('callModalTitle').innerText = `Direkt-Anruf mit ${targetUsername}`;
             document.getElementById('remoteNameLabel').innerText = targetUsername;
             document.getElementById('callModal').classList.remove('hidden');
             document.getElementById('callModal').classList.add('flex');
-            initWebRtcStream();
+            initWebRtcConnection(targetUserId, true);
         }
 
         window.startCallForCurrentRoom = function() {
             playRingingSound();
             document.getElementById('callModalTitle').innerText = 'Taktischer Gruppenanruf aktiv';
-            document.getElementById('remoteNameLabel').innerText = 'Gruppen-Stream';
+            document.getElementById('remoteNameLabel').innerText = 'Gruppen-Teilnehmer';
             document.getElementById('callModal').classList.remove('hidden');
             document.getElementById('callModal').classList.add('flex');
-            initWebRtcStream();
+            initWebRtcConnection(activeRoomId || 'global-room', true);
         }
 
-        async function initWebRtcStream() {
+        async function initWebRtcConnection(roomIdOrTarget, isCaller) {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                document.getElementById('localVideo').srcObject = stream;
-                document.getElementById('remoteVideo').srcObject = stream; // Mirror for local test demo
-                setTimeout(() => stopRingingSound(), 2000);
-            } catch(e) {
-                console.error("WebRTC error:", e);
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('localVideo').srcObject = localStream;
+                stopRingingSound();
+
+                peerConnection = new RTCPeerConnection(rtcConfig);
+                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+                peerConnection.ontrack = event => {
+                    document.getElementById('remoteVideo').srcObject = event.streams[0];
+                };
+
+                peerConnection.onicecandidate = event => {
+                    if (event.candidate && signalingChannel) {
+                        signalingChannel.send({
+                            type: 'broadcast',
+                            event: 'ice-candidate',
+                            payload: { candidate: event.candidate, sender: currentUser.id }
+                        });
+                    }
+                };
+
+                signalingChannel = supabaseClient.channel(`webrtc-${roomIdOrTarget}`);
+                signalingChannel
+                    .on('broadcast', { event: 'offer' }, async ({ payload }) => {
+                        if (payload.sender === currentUser.id) return;
+                        if (!peerConnection) return;
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(payload.offer));
+                        const answer = await peerConnection.createAnswer();
+                        await peerConnection.setLocalDescription(answer);
+                        signalingChannel.send({ type: 'broadcast', event: 'answer', payload: { answer, sender: currentUser.id } });
+                    })
+                    .on('broadcast', { event: 'answer' }, async ({ payload }) => {
+                        if (payload.sender === currentUser.id) return;
+                        if (!peerConnection) return;
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(payload.answer));
+                    })
+                    .on('broadcast', { event: 'ice-candidate' }, async ({ payload }) => {
+                        if (payload.sender === currentUser.id) return;
+                        if (peerConnection && payload.candidate) {
+                            await peerConnection.addIceCandidate(new RTCIceCandidate(payload.candidate));
+                        }
+                    })
+                    .subscribe(async (status) => {
+                        if (status === 'SUBSCRIBED' && isCaller) {
+                            const offer = await peerConnection.createOffer();
+                            await peerConnection.setLocalDescription(offer);
+                            signalingChannel.send({ type: 'broadcast', event: 'offer', payload: { offer, sender: currentUser.id } });
+                        }
+                    });
+
+            } catch (err) {
+                console.error("WebRTC Error:", err);
+                showToast('Kamera/Mikrofon Zugriff fehlgeschlagen! 💀');
             }
         }
 
         window.endCall = function() {
             stopRingingSound();
-            const localVid = document.getElementById('localVideo');
-            if (localVid.srcObject) {
-                localVid.srcObject.getTracks().forEach(t => t.stop());
+            if (localStream) {
+                localStream.getTracks().forEach(t => t.stop());
+                localStream = null;
+            }
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            if (signalingChannel) {
+                supabaseClient.removeChannel(signalingChannel);
+                signalingChannel = null;
             }
             document.getElementById('callModal').classList.add('hidden');
             document.getElementById('callModal').classList.remove('flex');
+            showToast('Anruf beendet.');
         }
 
         function playRingingSound() {
@@ -1224,34 +1300,51 @@
         window.toggleScreenShare = async function() {
             try {
                 const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                const videoTrack = screenStream.getVideoTracks()[0];
+                if (peerConnection) {
+                    const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+                    if (sender) sender.replaceTrack(videoTrack);
+                }
                 document.getElementById('localVideo').srcObject = screenStream;
+                videoTrack.onended = () => {
+                    initHardwareTester(); // Revert back
+                };
                 showToast('Bildschirmübertragung aktiv! 🖥️');
             } catch(e) {}
         }
 
-        // 4. Calendar
+        // 4. Calendar & Month Navigation FIX
+        window.changeCalendarMonth = function(direction) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
+            loadCalendar();
+        }
+
         async function loadCalendar() {
             const { data: events } = await supabaseClient.from('calendar_events').select('*, profiles(username, avatar_url, role)').order('event_date', { ascending: true });
             const listEl = document.getElementById('calendarEventsList');
             
+            const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+            const mIdx = currentCalendarDate.getMonth();
+            const yNum = currentCalendarDate.getFullYear();
+            document.getElementById('calendarMonthTitle').innerText = `${monthNames[mIdx]} ${yNum}`;
+
             if (!events || events.length === 0) {
                 listEl.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">Keine Events geplant.</div>';
-                return;
-            }
-
-            listEl.innerHTML = events.map(e => {
-                const canDel = currentProfile && (currentProfile.role === 'management' || currentProfile.role === 'admin' || e.creator_id === currentUser.id);
-                return `
-                    <div class="bg-cyber-900 p-3 rounded-xl border border-slate-800 space-y-1">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-amber-400">${escapeHtml(e.title)}</span>
-                            ${canDel ? `<button onclick="window.deleteItem('calendar_events', '${e.id}')" class="text-slate-500 hover:text-red-400 text-xs"><i class="fas fa-trash"></i></button>` : ''}
+            } else {
+                listEl.innerHTML = events.map(e => {
+                    const canDel = currentProfile && (currentProfile.role === 'management' || currentProfile.role === 'admin' || e.creator_id === currentUser.id);
+                    return `
+                        <div class="bg-cyber-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-amber-400">${escapeHtml(e.title)}</span>
+                                ${canDel ? `<button onclick="window.deleteItem('calendar_events', '${e.id}')" class="text-slate-500 hover:text-red-400 text-xs"><i class="fas fa-trash"></i></button>` : ''}
+                            </div>
+                            <p class="text-xs text-slate-300">${escapeHtml(e.description || '')}</p>
+                            <p class="text-[10px] text-slate-500 font-mono"><i class="fas fa-clock mr-1"></i> ${new Date(e.event_date).toLocaleString()}</p>
                         </div>
-                        <p class="text-xs text-slate-300">${escapeHtml(e.description || '')}</p>
-                        <p class="text-[10px] text-slate-500 font-mono"><i class="fas fa-clock mr-1"></i> ${new Date(e.event_date).toLocaleString()}</p>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            }
 
             const grid = document.getElementById('calendarGrid');
             let gridHtml = '';
@@ -1415,7 +1508,6 @@ Hier ist der Kontext aus der Datenbank: ${contextStr}`;
             }
         }
 
-        // Global Universal Delete (Admin/Management + Authors)
         window.deleteItem = async function(table, id) {
             if (!confirm('Soll dieses Element wirklich unwiderruflich gelöscht werden?')) return;
             const { error } = await supabaseClient.from(table).delete().eq('id', id);
