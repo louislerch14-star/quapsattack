@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quapsattack Command Center Pro</title>
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS v3 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -12,434 +12,359 @@
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#020205',
-                        panelBg: '#0a0b10',
-                        neonRed: '#ef4444',
-                        neonCyan: '#06b6d4',
-                        neonGreen: '#10b981',
-                        cyberBorder: 'rgba(239, 68, 68, 0.2)'
-                    },
-                    boxShadow: {
-                        'neon-red': '0 0 20px rgba(239, 68, 68, 0.3)',
-                        'neon-cyan': '0 0 20px rgba(6, 182, 212, 0.3)',
-                        'neon-green': '0 0 20px rgba(16, 185, 129, 0.3)',
-                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+                        cyber: {
+                            950: '#020205',
+                            900: '#0a0b10',
+                            800: '#131520',
+                            700: '#1e2235',
+                            accent: '#ef4444',
+                            cyan: '#06b6d4',
+                            green: '#10b981'
+                        }
                     }
                 }
             }
         }
     </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #020205;
-            color: #f3f4f6;
-            overflow-x: hidden;
-        }
-        .font-mono {
-            font-family: 'JetBrains+Mono', monospace;
-        }
-        /* Custom Cyberpunk Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0b10;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #ef4444;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #dc2626;
-        }
-        .glass-panel {
-            background: rgba(10, 11, 16, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-        .glass-panel-cyan {
-            background: rgba(10, 11, 16, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(6, 182, 212, 0.2);
-        }
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.8; }
-        }
-        .animate-pulse-glow {
-            animation: pulseGlow 3s infinite ease-in-out;
-        }
-        .grid-bg {
-            background-image: linear-gradient(to right, rgba(239, 68, 68, 0.05) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(239, 68, 68, 0.05) 1px, transparent 1px);
-            background-size: 24px 24px;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #020205; color: #f8fafc; overflow-x: hidden; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0b10; }
+        ::-webkit-scrollbar-thumb { background: #1e2235; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ef4444; }
+        .glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.25); }
+        .glow-cyan { box-shadow: 0 0 20px rgba(6, 182, 212, 0.25); }
+        .glass-panel { background: rgba(10, 11, 16, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.07); }
     </style>
 </head>
-<body class="grid-bg min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col antialiased selection:bg-red-500 selection:text-white">
 
-    <!-- Toast Notification Container -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
-
-    <!-- AUTH SCREEN -->
-    <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-darkBg/95 backdrop-blur-xl p-4">
-        <div class="glass-panel w-full max-w-md p-8 rounded-2xl shadow-neon-red relative overflow-hidden">
-            <div class="absolute -top-12 -right-12 w-32 h-32 bg-neonRed/10 rounded-full blur-2xl"></div>
-            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-neonCyan/10 rounded-full blur-2xl"></div>
-            
+    <!-- AUTHENTICATION SCREEN -->
+    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-cyber-950 px-4">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.08)_0%,transparent_70%)] pointer-events-none"></div>
+        <div class="glass-panel w-full max-w-md p-8 rounded-3xl glow-red relative">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-neonRed/15 border border-neonRed/30 text-neonRed mb-4 shadow-neon-red">
-                    <i data-lucide="shield-alert" class="w-8 h-8"></i>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-600/10 border border-red-500/30 text-red-500 text-2xl mb-4 glow-red">
+                    <i class="fas fa-shield-halved"></i>
                 </div>
-                <h1 class="text-2xl font-bold tracking-wider font-mono text-white">QUAPSATTACK</h1>
-                <p class="text-xs text-neonRed font-mono tracking-widest uppercase mt-1">Command Center Pro v4.2</p>
+                <h1 class="font-orbitron text-2xl font-black tracking-wider text-white">QUAPSATTACK</h1>
+                <p class="text-xs text-slate-400 tracking-widest mt-1 uppercase font-semibold">Command Center Pro v3.5</p>
             </div>
 
-            <div class="flex rounded-lg bg-black/40 p-1 mb-6 border border-white/10">
-                <button onclick="window.switchAuthTab('login')" id="tab-login-btn" class="flex-1 py-2 text-xs font-mono font-semibold rounded-md bg-neonRed text-white transition-all shadow-neon-red">LOGIN</button>
-                <button onclick="window.switchAuthTab('register')" id="tab-register-btn" class="flex-1 py-2 text-xs font-mono font-semibold rounded-md text-gray-400 hover:text-white transition-all">REGISTRIERUNG</button>
+            <div id="authError" class="hidden mb-6 p-4 rounded-xl bg-red-950/50 border border-red-500/50 text-red-300 text-xs flex items-center gap-2">
+                <i class="fas fa-triangle-exclamation text-red-400 text-sm"></i>
+                <span id="authErrorText"></span>
             </div>
 
-            <form id="auth-form" onsubmit="window.handleAuthSubmit(event)" class="space-y-4">
+            <form id="authForm" onsubmit="window.handleAuth(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1.5 uppercase">E-Mail-Adresse</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500"><i data-lucide="mail" class="w-4 h-4"></i></span>
-                        <input type="email" id="auth-email" required class="w-full pl-10 pr-4 py-2.5 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed transition-all" placeholder="agent@quapsattack.net">
-                    </div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">E-Mail Adresse</label>
+                    <input type="email" id="authEmail" required class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500 transition">
                 </div>
-
                 <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1.5 uppercase">Passwort</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500"><i data-lucide="lock" class="w-4 h-4"></i></span>
-                        <input type="password" id="auth-password" required class="w-full pl-10 pr-4 py-2.5 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed transition-all" placeholder="••••••••••••">
-                    </div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Passwort</label>
+                    <input type="password" id="authPassword" required class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500 transition">
                 </div>
-
-                <div id="register-username-container" class="hidden">
-                    <label class="block text-xs font-mono text-gray-400 mb-1.5 uppercase">Agenten-Codename (Username)</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500"><i data-lucide="user" class="w-4 h-4"></i></span>
-                        <input type="text" id="auth-username" class="w-full pl-10 pr-4 py-2.5 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed transition-all" placeholder="QuapsCommander">
-                    </div>
-                </div>
-
-                <div id="auth-error" class="hidden p-3 rounded-lg bg-neonRed/10 border border-neonRed/30 text-neonRed text-xs font-mono"></div>
-
-                <button type="submit" id="auth-submit-btn" class="w-full py-3 bg-gradient-to-r from-neonRed to-rose-600 hover:from-rose-600 hover:to-neonRed text-white font-mono text-sm font-bold rounded-lg shadow-neon-red transition-all transform hover:scale-[1.01] active:scale-[0.99]">
-                    ZUGRIFF ANFORDERN
+                <button type="submit" id="authSubmitBtn" class="w-full py-3.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-orbitron text-sm font-bold tracking-wider rounded-xl shadow-lg shadow-red-600/30 transition transform active:scale-[0.98]">
+                    SYSTEM LOGIN
                 </button>
             </form>
+
+            <div class="mt-6 text-center">
+                <button onclick="window.toggleAuthMode()" class="text-xs text-slate-400 hover:text-cyan-400 transition">
+                    <span id="authToggleText">Kein Account? Registrieren</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- MAIN APP WRAPPER (Hidden until auth) -->
-    <div id="main-app" class="hidden flex-1 flex h-screen overflow-hidden">
+    <!-- MAIN APP CONTAINER -->
+    <div id="appContainer" class="hidden flex-1 flex h-screen overflow-hidden">
         
-        <!-- SIDEBAR -->
-        <aside class="w-72 glass-panel border-r border-red-500/20 flex flex-col z-20">
-            <!-- App Header Brand -->
-            <div class="p-4 border-b border-red-500/20 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-9 h-9 rounded-lg bg-neonRed/20 border border-neonRed/40 flex items-center justify-center text-neonRed shadow-neon-red">
-                        <i data-lucide="terminal" class="w-5 h-5"></i>
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="w-72 bg-cyber-900 border-r border-slate-800/80 flex flex-col justify-between z-20">
+            <div>
+                <!-- Brand Header -->
+                <div class="p-5 border-b border-slate-800/80 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-500 font-orbitron font-bold text-lg glow-red">
+                        Q
                     </div>
                     <div>
-                        <h2 class="font-mono font-bold text-sm tracking-wider text-white">QUAPSATTACK</h2>
-                        <span class="text-[10px] text-neonRed font-mono uppercase tracking-widest">Command Center</span>
+                        <h2 class="font-orbitron font-bold text-sm tracking-wide text-white">QUAPSATTACK</h2>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span class="text-[10px] text-emerald-400 font-semibold tracking-wider uppercase">Live Secure</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Navigation Tabs -->
-            <div class="p-3 border-b border-red-500/10 space-y-1">
-                <button onclick="window.switchView('pinboard')" id="nav-btn-pinboard" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-neonRed/10 hover:text-white transition-all group">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-neonRed group-hover:scale-110 transition-transform"></i>
-                    <span>Pinnwand & Kanban</span>
-                </button>
-                <button onclick="window.switchView('chat')" id="nav-btn-chat" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-neonRed/10 hover:text-white transition-all group">
-                    <i data-lucide="message-square" class="w-4 h-4 text-neonRed group-hover:scale-110 transition-transform"></i>
-                    <span>Chat & Kanäle</span>
-                </button>
-                <button onclick="window.switchView('calendar')" id="nav-btn-calendar" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-neonRed/10 hover:text-white transition-all group">
-                    <i data-lucide="calendar" class="w-4 h-4 text-neonRed group-hover:scale-110 transition-transform"></i>
-                    <span>Einsatzkalender</span>
-                </button>
-                <button onclick="window.switchView('vault')" id="nav-btn-vault" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-neonRed/10 hover:text-white transition-all group">
-                    <i data-lucide="database" class="w-4 h-4 text-neonRed group-hover:scale-110 transition-transform"></i>
-                    <span>Vault & Mediathek</span>
-                </button>
-                <button onclick="window.switchView('qupassi')" id="nav-btn-qupassi" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-neonCyan/10 hover:text-white transition-all group">
-                    <i data-lucide="bot" class="w-4 h-4 text-neonCyan group-hover:scale-110 transition-transform"></i>
-                    <span>QupasSI KI Assistent</span>
-                </button>
-                <div id="admin-nav-item" class="hidden">
-                    <button onclick="window.switchView('admin')" id="nav-btn-admin" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-amber-400 hover:bg-amber-500/10 transition-all group">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform"></i>
-                        <span>Admin & Management</span>
+                <!-- Nav Tabs -->
+                <nav class="p-4 space-y-1.5">
+                    <button onclick="window.switchTab('feed')" id="nav-feed" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/50 hover:text-white transition active-tab">
+                        <i class="fas fa-rss w-5 text-red-500"></i> Command Feed
                     </button>
-                </div>
-            </div>
-
-            <!-- Direct Messages & Rooms Section -->
-            <div class="flex-1 overflow-y-auto p-3 space-y-4">
-                <div>
-                    <div class="flex items-center justify-between text-xs font-mono text-gray-400 px-2 mb-2 uppercase">
-                        <span>Kanäle</span>
-                        <button onclick="window.openCreateRoomModal()" class="hover:text-white"><i data-lucide="plus" class="w-3.5 h-3.5"></i></button>
-                    </div>
-                    <div id="sidebar-rooms-list" class="space-y-0.5"></div>
-                </div>
-
-                <div>
-                    <div class="flex items-center justify-between text-xs font-mono text-gray-400 px-2 mb-2 uppercase">
-                        <span>Agenten Roster (Direktruf)</span>
-                    </div>
-                    <div id="sidebar-roster-list" class="space-y-1"></div>
-                </div>
+                    <button onclick="window.switchTab('pinboard')" id="nav-pinboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/50 hover:text-white transition">
+                        <i class="fas fa-columns w-5 text-cyan-400"></i> Pinnwand / Kanban
+                    </button>
+                    <button onclick="window.switchTab('chat')" id="nav-chat" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/50 hover:text-white transition">
+                        <i class="fas fa-comments w-5 text-emerald-400"></i> Tactical Chat & DMs
+                    </button>
+                    <button onclick="window.switchTab('calendar')" id="nav-calendar" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/50 hover:text-white transition">
+                        <i class="fas fa-calendar-days w-5 text-amber-400"></i> Operation Calendar
+                    </button>
+                    <button onclick="window.switchTab('vault')" id="nav-vault" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/50 hover:text-white transition">
+                        <i class="fas fa-vault w-5 text-purple-400"></i> Secure Vault
+                    </button>
+                    <button onclick="window.switchTab('qupassi')" id="nav-qupassi" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800/50 hover:text-white transition">
+                        <i class="fas fa-robot w-5 text-red-400"></i> QupasSI AI Assistant
+                    </button>
+                </nav>
             </div>
 
             <!-- User Profile Footer Card -->
-            <div class="p-3 border-t border-red-500/25 bg-black/40 flex items-center justify-between cursor-pointer hover:bg-black/60 transition-all" onclick="window.openProfileSettings()">
-                <div class="flex items-center space-x-3 overflow-hidden">
-                    <div class="relative flex-shrink-0">
-                        <img id="sidebar-user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" class="w-10 h-10 rounded-xl object-cover border border-neonRed/40" alt="Avatar">
-                        <div id="sidebar-user-status-dot" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-darkBg bg-neonGreen"></div>
+            <div class="p-4 border-t border-slate-800/80 bg-cyber-950/50">
+                <div id="currentUserCard" onclick="window.openProfileSettings()" class="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-800/60 transition cursor-pointer group">
+                    <div class="relative">
+                        <img id="userSidebarAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Quaps" class="w-10 h-10 rounded-xl bg-slate-800 object-cover border border-slate-700" alt="Avatar">
+                        <span id="userSidebarStatusDot" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-cyber-900"></span>
                     </div>
-                    <div class="truncate">
-                        <div id="sidebar-user-name" class="font-bold text-sm text-white truncate">Agent Quaps</div>
-                        <div id="sidebar-user-role" class="text-[10px] text-neonRed font-mono uppercase tracking-wider">Mitspieler</div>
+                    <div class="flex-1 min-w-0">
+                        <p id="userSidebarName" class="text-sm font-semibold text-white truncate group-hover:text-red-400 transition">Commander</p>
+                        <p id="userSidebarRole" class="text-[10px] text-slate-400 truncate uppercase">Mitspieler</p>
                     </div>
+                    <i class="fas fa-gear text-slate-500 group-hover:text-white transition text-sm"></i>
                 </div>
-                <button class="text-gray-400 hover:text-white p-1.5"><i data-lucide="settings" class="w-4 h-4"></i></button>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT CONTAINER -->
-        <main class="flex-1 flex flex-col bg-darkBg/80 overflow-hidden relative">
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 flex flex-col overflow-hidden bg-cyber-950">
             
-            <!-- Top Header Bar -->
-            <header class="h-16 glass-panel border-b border-red-500/20 px-6 flex items-center justify-between z-10">
-                <div class="flex items-center space-x-4">
-                    <h2 id="view-title" class="font-mono font-bold text-lg text-white flex items-center space-x-2">
-                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-neonRed"></i>
-                        <span>Pinnwand & Kanban</span>
-                    </h2>
+            <!-- TOP BAR -->
+            <header class="h-16 border-b border-slate-800/80 bg-cyber-900/60 backdrop-blur-md px-6 flex items-center justify-between z-10">
+                <div class="flex items-center gap-4">
+                    <h2 id="currentSectionTitle" class="font-orbitron font-bold text-lg text-white tracking-wider">COMMAND FEED</h2>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="hidden md:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-black/40 border border-white/10 text-xs font-mono text-gray-300">
-                        <span class="w-2 h-2 rounded-full bg-neonGreen animate-pulse"></span>
-                        <span id="header-connection-status">Netzwerk Online</span>
-                    </div>
-                    <button onclick="window.triggerEmergencyAlert()" class="px-3 py-1.5 bg-neonRed/20 border border-neonRed/50 hover:bg-neonRed text-neonRed hover:text-white rounded-lg text-xs font-mono font-bold transition-all shadow-neon-red flex items-center space-x-1.5">
-                        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-                        <span>ALARM</span>
+                <div class="flex items-center gap-4">
+                    <button onclick="window.triggerGlobalNotificationTest()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-2 transition">
+                        <i class="fas fa-bell text-amber-400"></i> Test Alert
                     </button>
-                    <button onclick="window.logout()" class="p-2 rounded-lg bg-black/40 border border-white/10 text-gray-400 hover:text-neonRed hover:border-neonRed/50 transition-all" title="Abmelden">
-                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <div class="h-6 w-[1px] bg-slate-800"></div>
+                    <button onclick="window.handleLogout()" class="px-3 py-1.5 rounded-lg bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-500/30 text-xs font-semibold flex items-center gap-2 transition">
+                        <i class="fas fa-power-off"></i> Logout
                     </button>
                 </div>
             </header>
 
-            <!-- Dynamic View Containers -->
+            <!-- TAB VIEWS CONTAINER -->
             <div class="flex-1 overflow-y-auto p-6 relative">
                 
-                <!-- VIEW 1: PINBOARD & KANBAN -->
-                <div id="view-pinboard" class="space-y-6">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
-                            <button onclick="window.filterPinboard('all')" class="pinboard-filter-btn px-4 py-2 rounded-lg text-xs font-mono font-semibold bg-neonRed text-white shadow-neon-red transition-all">Alle Beiträge</button>
-                            <button onclick="window.filterPinboard('ankündigungen')" class="pinboard-filter-btn px-4 py-2 rounded-lg text-xs font-mono font-semibold bg-black/40 border border-white/10 text-gray-300 hover:border-neonRed transition-all">#ankündigungen</button>
-                            <button onclick="window.filterPinboard('basen')" class="pinboard-filter-btn px-4 py-2 rounded-lg text-xs font-mono font-semibold bg-black/40 border border-white/10 text-gray-300 hover:border-neonRed transition-all">#basen</button>
-                            <button onclick="window.filterPinboard('ideen')" class="pinboard-filter-btn px-4 py-2 rounded-lg text-xs font-mono font-semibold bg-black/40 border border-white/10 text-gray-300 hover:border-neonRed transition-all">#ideen</button>
-                            <button onclick="window.filterPinboard('redstone')" class="pinboard-filter-btn px-4 py-2 rounded-lg text-xs font-mono font-semibold bg-black/40 border border-white/10 text-gray-300 hover:border-neonRed transition-all">#redstone</button>
+                <!-- 1. FEED VIEW -->
+                <div id="view-feed" class="tab-content space-y-6 max-w-5xl mx-auto">
+                    <div class="glass-panel p-6 rounded-2xl flex items-center justify-between">
+                        <div>
+                            <h3 class="font-orbitron text-xl font-bold text-white">Live Operations Feed</h3>
+                            <p class="text-xs text-slate-400 mt-1">Echtzeit-Updates, Aktivitäten und Broadcasts aus dem Command Center.</p>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <button onclick="window.togglePinboardLayout('kanban')" id="layout-kanban-btn" class="p-2 rounded-lg bg-neonRed/20 border border-neonRed text-neonRed"><i data-lucide="kanban" class="w-4 h-4"></i></button>
-                            <button onclick="window.togglePinboardLayout('feed')" id="layout-feed-btn" class="p-2 rounded-lg bg-black/40 border border-white/10 text-gray-400 hover:text-white"><i data-lucide="list" class="w-4 h-4"></i></button>
-                            <button onclick="window.openCreatePostModal()" class="px-4 py-2 bg-gradient-to-r from-neonRed to-rose-600 text-white text-xs font-mono font-bold rounded-lg shadow-neon-red flex items-center space-x-2 hover:opacity-90 transition-all">
-                                <i data-lucide="plus" class="w-4 h-4"></i>
-                                <span>Beitrag Erstellen</span>
+                        <button onclick="window.switchTab('pinboard')" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-orbitron font-bold rounded-xl shadow-lg shadow-red-600/20 transition">
+                            Zur Pinnwand
+                        </button>
+                    </div>
+                    <div id="feedActivityList" class="space-y-4">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- 2. PINBOARD / KANBAN VIEW -->
+                <div id="view-pinboard" class="tab-content hidden space-y-6">
+                    <div class="glass-panel p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-orbitron text-xl font-bold text-white">Pinnwand & Kanban-Taktik</h3>
+                            <p class="text-xs text-slate-400 mt-1">Verwalte Minecraft-Basen, Redstone-Projekte und Ankündigungen mit Ein-Klick-Koordinaten.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <select id="pinCategoryFilter" onchange="window.loadPinboard()" class="bg-cyber-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500">
+                                <option value="all">Alle Kategorien</option>
+                                <option value="ankündigungen">Ankündigungen</option>
+                                <option value="basen">Basen</option>
+                                <option value="ideen">Ideen</option>
+                                <option value="redstone">Redstone</option>
+                            </select>
+                            <button onclick="window.openCreatePostModal()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-orbitron font-bold rounded-xl shadow-lg shadow-red-600/20 transition flex items-center gap-2">
+                                <i class="fas fa-plus">}</i> Neuer Eintrag
                             </button>
                         </div>
                     </div>
 
-                    <!-- Kanban View Container -->
-                    <div id="pinboard-kanban-container" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <!-- Kanban Column: Geplant -->
-                        <div class="glass-panel p-4 rounded-xl flex flex-col min-h-[500px]">
-                            <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-                                <span class="font-mono text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-2">
-                                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                                    <span>Geplant</span>
-                                </span>
-                                <span id="count-geplant" class="text-xs font-mono px-2 py-0.5 rounded bg-black/50 text-gray-400">0</span>
+                    <!-- Kanban Board Columns -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <!-- Geplant -->
+                        <div class="glass-panel p-4 rounded-2xl flex flex-col h-[650px]">
+                            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+                                <span class="font-orbitron text-xs font-bold text-amber-400 uppercase flex items-center gap-2"><i class="fas fa-clock"></i> Geplant</span>
+                                <span id="count-geplant" class="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-bold">0</span>
                             </div>
-                            <div id="column-geplant" class="flex-1 space-y-3 overflow-y-auto"></div>
+                            <div id="kanban-Geplant" class="flex-1 overflow-y-auto space-y-3 pr-1"></div>
                         </div>
-                        <!-- Kanban Column: In Arbeit -->
-                        <div class="glass-panel p-4 rounded-xl flex flex-col min-h-[500px]">
-                            <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-                                <span class="font-mono text-xs font-bold text-neonCyan uppercase tracking-wider flex items-center space-x-2">
-                                    <span class="w-2 h-2 rounded-full bg-neonCyan"></span>
-                                    <span>In Arbeit</span>
-                                </span>
-                                <span id="count-inarbeit" class="text-xs font-mono px-2 py-0.5 rounded bg-black/50 text-gray-400">0</span>
+                        <!-- In Arbeit -->
+                        <div class="glass-panel p-4 rounded-2xl flex flex-col h-[650px]">
+                            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+                                <span class="font-orbitron text-xs font-bold text-cyan-400 uppercase flex items-center gap-2"><i class="fas fa-spinner fa-spin"></i> In Arbeit</span>
+                                <span id="count-inarbeit" class="px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] font-bold">0</span>
                             </div>
-                            <div id="column-inarbeit" class="flex-1 space-y-3 overflow-y-auto"></div>
+                            <div id="kanban-InArbeit" class="flex-1 overflow-y-auto space-y-3 pr-1"></div>
                         </div>
-                        <!-- Kanban Column: Fertig -->
-                        <div class="glass-panel p-4 rounded-xl flex flex-col min-h-[500px]">
-                            <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-                                <span class="font-mono text-xs font-bold text-neonGreen uppercase tracking-wider flex items-center space-x-2">
-                                    <span class="w-2 h-2 rounded-full bg-neonGreen"></span>
-                                    <span>Fertig</span>
-                                </span>
-                                <span id="count-fertig" class="text-xs font-mono px-2 py-0.5 rounded bg-black/50 text-gray-400">0</span>
+                        <!-- Fertig -->
+                        <div class="glass-panel p-4 rounded-2xl flex flex-col h-[650px]">
+                            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+                                <span class="font-orbitron text-xs font-bold text-emerald-400 uppercase flex items-center gap-2"><i class="fas fa-check-circle"></i> Fertig</span>
+                                <span id="count-fertig" class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold">0</span>
                             </div>
-                            <div id="column-fertig" class="flex-1 space-y-3 overflow-y-auto"></div>
+                            <div id="kanban-Fertig" class="flex-1 overflow-y-auto space-y-3 pr-1"></div>
                         </div>
-                        <!-- Kanban Column: Ideen -->
-                        <div class="glass-panel p-4 rounded-xl flex flex-col min-h-[500px]">
-                            <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-                                <span class="font-mono text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center space-x-2">
-                                    <span class="w-2 h-2 rounded-full bg-purple-400"></span>
-                                    <span>Ideen</span>
-                                </span>
-                                <span id="count-ideen" class="text-xs font-mono px-2 py-0.5 rounded bg-black/50 text-gray-400">0</span>
+                        <!-- Ideen -->
+                        <div class="glass-panel p-4 rounded-2xl flex flex-col h-[650px]">
+                            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+                                <span class="font-orbitron text-xs font-bold text-purple-400 uppercase flex items-center gap-2"><i class="fas fa-lightbulb"></i> Ideen</span>
+                                <span id="count-ideen" class="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-bold">0</span>
                             </div>
-                            <div id="column-ideen" class="flex-1 space-y-3 overflow-y-auto"></div>
+                            <div id="kanban-Ideen" class="flex-1 overflow-y-auto space-y-3 pr-1"></div>
                         </div>
                     </div>
-
-                    <!-- Feed View Container (Hidden by default) -->
-                    <div id="pinboard-feed-container" class="hidden space-y-4 max-w-4xl mx-auto"></div>
                 </div>
 
-                <!-- VIEW 2: CHAT & KANÄLE -->
-                <div id="view-chat" class="hidden h-[calc(100vh-8rem)] flex glass-panel rounded-xl overflow-hidden">
-                    <!-- Rooms / DM Sidebar -->
-                    <div class="w-80 border-r border-red-500/25 flex flex-col bg-black/40">
-                        <div class="p-4 border-b border-red-500/20 flex items-center justify-between">
-                            <span class="font-mono text-xs font-bold uppercase tracking-wider text-gray-300">Kommunikationskanäle</span>
-                            <button onclick="window.openCreateRoomModal()" class="p-1 rounded bg-neonRed/20 text-neonRed hover:bg-neonRed hover:text-white transition-all"><i data-lucide="plus" class="w-4 h-4"></i></button>
-                        </div>
-                        <div id="chat-rooms-sidebar" class="flex-1 overflow-y-auto p-3 space-y-1"></div>
-                    </div>
-                    <!-- Chat Window Area -->
-                    <div class="flex-1 flex flex-col bg-darkBg/60">
-                        <div id="chat-header" class="p-4 border-b border-red-500/20 flex items-center justify-between bg-black/30">
-                            <div class="flex items-center space-x-3">
-                                <div id="active-chat-icon" class="w-10 h-10 rounded-xl bg-neonRed/20 border border-neonRed/40 flex items-center justify-center text-neonRed">
-                                    <i data-lucide="hash" class="w-5 h-5"></i>
+                <!-- 3. CHAT & DMs VIEW -->
+                <div id="view-chat" class="tab-content hidden h-[calc(100vh-8rem)]">
+                    <div class="grid grid-cols-1 md:grid-cols-4 h-full gap-6">
+                        <!-- Rooms & Roster Sidebar -->
+                        <div class="glass-panel p-4 rounded-2xl flex flex-col h-full">
+                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                                <span class="font-orbitron text-xs font-bold text-white uppercase">Kanäle & Roster</span>
+                                <button onclick="window.openCreateRoomModal()" class="w-7 h-7 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 flex items-center justify-center text-xs transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Chat Räume</p>
+                                    <div id="chatRoomsList" class="space-y-1"></div>
                                 </div>
                                 <div>
-                                    <h3 id="active-chat-title" class="font-mono font-bold text-white">#allgemein</h3>
-                                    <p id="active-chat-subtitle" class="text-xs text-gray-400">Öffentlicher Einsatzkanal</p>
+                                    <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Mitspieler Online</p>
+                                    <div id="playerRosterList" class="space-y-1"></div>
                                 </div>
                             </div>
-                            <div id="chat-header-actions" class="flex items-center space-x-3"></div>
                         </div>
-                        <div id="chat-messages-container" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
-                        <form id="chat-input-form" onsubmit="window.sendChatMessage(event)" class="p-4 border-t border-red-500/20 bg-black/40 flex items-center space-x-3">
-                            <input type="text" id="chat-message-input" autocomplete="off" placeholder="Nachricht an Kanal senden..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-neonRed transition-all">
-                            <button type="submit" class="px-5 py-3 bg-neonRed hover:bg-rose-600 text-white font-mono text-sm font-bold rounded-xl shadow-neon-red transition-all flex items-center space-x-2">
-                                <i data-lucide="send" class="w-4 h-4"></i>
-                                <span class="hidden md:inline">Senden</span>
-                            </button>
-                        </form>
+
+                        <!-- Active Chat Window -->
+                        <div class="glass-panel rounded-2xl md:col-span-3 flex flex-col h-full overflow-hidden">
+                            <div id="activeChatHeader" class="p-4 border-b border-slate-800 bg-cyber-900/50 flex items-center justify-between">
+                                <div>
+                                    <h4 id="activeRoomTitle" class="font-orbitron font-bold text-sm text-white">Wähle einen Raum</h4>
+                                    <p id="activeRoomSubtitle" class="text-xs text-slate-400">Kein Kanal ausgewählt</p>
+                                </div>
+                                <div id="activeChatActions" class="flex items-center gap-2"></div>
+                            </div>
+                            
+                            <div id="chatMessagesContainer" class="flex-1 overflow-y-auto p-4 space-y-4">
+                                <div class="text-center py-20 text-slate-500 text-sm font-medium">
+                                    Wähle links einen Chat-Kanal oder starte ein Direktgespräch, Commander.
+                                </div>
+                            </div>
+
+                            <div class="p-4 border-t border-slate-800 bg-cyber-900/50">
+                                <form id="chatMessageForm" onsubmit="window.sendChatMessage(event)" class="flex items-center gap-3">
+                                    <input type="text" id="chatMessageInput" placeholder="Nachricht an das Team senden..." class="flex-1 bg-cyber-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                                    <button type="submit" class="px-5 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl font-orbitron text-xs font-bold shadow-lg shadow-red-600/20 transition">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- VIEW 3: KALENDER -->
-                <div id="view-calendar" class="hidden space-y-6">
-                    <div class="flex items-center justify-between">
+                <!-- 4. CALENDAR VIEW -->
+                <div id="view-calendar" class="tab-content hidden space-y-6 max-w-5xl mx-auto">
+                    <div class="glass-panel p-6 rounded-2xl flex items-center justify-between">
                         <div>
-                            <h3 class="font-mono font-bold text-xl text-white" id="calendar-month-year">November 2026</h3>
-                            <p class="text-xs text-gray-400 font-mono">Einsatzplanung & Operationen</p>
+                            <h3 class="font-orbitron text-xl font-bold text-white">Operation Calendar</h3>
+                            <p class="text-xs text-slate-400 mt-1">Geplante Raids, Events und Server-Meilensteine im Überblick.</p>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <button onclick="window.changeCalendarMonth(-1)" class="p-2 rounded-lg bg-black/40 border border-white/10 text-gray-300 hover:text-white"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                            <button onclick="window.changeCalendarMonth(1)" class="p-2 rounded-lg bg-black/40 border border-white/10 text-gray-300 hover:text-white"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-                            <button onclick="window.openCreateEventModal()" class="px-4 py-2 bg-neonRed hover:bg-rose-600 text-white text-xs font-mono font-bold rounded-lg shadow-neon-red flex items-center space-x-2 transition-all">
-                                <i data-lucide="plus" class="w-4 h-4"></i>
-                                <span>Termin Erstellen</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="glass-panel rounded-xl overflow-hidden p-4">
-                        <div class="grid grid-cols-7 gap-2 mb-2 text-center font-mono text-xs text-neonRed uppercase">
-                            <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
-                        </div>
-                        <div id="calendar-grid" class="grid grid-cols-7 gap-2"></div>
-                    </div>
-                </div>
-
-                <!-- VIEW 4: VAULT & MEDIATHEK -->
-                <div id="view-vault" class="hidden space-y-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="font-mono font-bold text-xl text-white">Sicherer Vault</h3>
-                            <p class="text-xs text-gray-400 font-mono">Beweismaterial, Blueprints und Medien</p>
-                        </div>
-                        <button onclick="window.openVaultUploadModal()" class="px-4 py-2 bg-neonRed hover:bg-rose-600 text-white text-xs font-mono font-bold rounded-lg shadow-neon-red flex items-center space-x-2 transition-all">
-                            <i data-lucide="upload" class="w-4 h-4"></i>
-                            <span>Medien Hochladen</span>
+                        <button onclick="window.openCreateEventModal()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-orbitron font-bold rounded-xl shadow-lg shadow-red-600/20 transition flex items-center gap-2">
+                            <i class="fas fa-plus"></i> Event Anlegen
                         </button>
                     </div>
-                    <div id="vault-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-                </div>
-
-                <!-- VIEW 5: QUPASSI KI ASSISTENT -->
-                <div id="view-qupassi" class="hidden h-[calc(100vh-8rem)] flex flex-col glass-panel-cyan rounded-xl overflow-hidden">
-                    <div class="p-4 border-b border-cyan-500/20 bg-black/40 flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-xl bg-neonCyan/20 border border-neonCyan/40 flex items-center justify-center text-neonCyan shadow-neon-cyan">
-                                <i data-lucide="bot" class="w-5 h-5"></i>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="glass-panel p-6 rounded-2xl md:col-span-2">
+                            <div class="flex items-center justify-between mb-6">
+                                <h4 id="calendarMonthTitle" class="font-orbitron font-bold text-white text-base">November 2026</h4>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="window.changeCalendarMonth(-1)" class="w-8 h-8 rounded-lg bg-cyber-900 border border-slate-800 hover:bg-slate-800 text-slate-300 flex items-center justify-center transition"><i class="fas fa-chevron-left"></i></button>
+                                    <button onclick="window.changeCalendarMonth(1)" class="w-8 h-8 rounded-lg bg-cyber-900 border border-slate-800 hover:bg-slate-800 text-slate-300 flex items-center justify-center transition"><i class="fas fa-chevron-right"></i></button>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-mono font-bold text-white flex items-center space-x-2">
-                                    <span>QupasSI Command AI</span>
-                                    <span class="px-2 py-0.5 rounded bg-neonCyan/20 text-neonCyan text-[10px] font-mono">GEMINI 2.0 FLASH</span>
-                                </h3>
-                                <p class="text-xs text-gray-400">Dein hyper-moderner Taktik-Assistent in deutscher Jugendsprache 💀🚀</p>
+                            <div class="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-slate-500 mb-3">
+                                <span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span>
                             </div>
+                            <div id="calendarGrid" class="grid grid-cols-7 gap-2"></div>
+                        </div>
+                        <div class="glass-panel p-6 rounded-2xl flex flex-col">
+                            <h4 class="font-orbitron font-bold text-white text-sm mb-4">Anstehende Events</h4>
+                            <div id="calendarEventsList" class="flex-1 overflow-y-auto space-y-3 pr-1"></div>
                         </div>
                     </div>
-                    <div id="qupassi-messages-container" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
-                    <form id="qupassi-form" onsubmit="window.sendQupasSIMessage(event)" class="p-4 border-t border-cyan-500/20 bg-black/40 flex items-center space-x-3">
-                        <input type="text" id="qupassi-input" autocomplete="off" placeholder="Frage QupasSI nach Taktiken, Redstone oder einem Bro-Tipp..." class="flex-1 bg-black/50 border border-cyan-500/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-neonCyan transition-all">
-                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-neonCyan to-teal-600 hover:opacity-90 text-white font-mono text-sm font-bold rounded-xl shadow-neon-cyan transition-all flex items-center space-x-2">
-                            <i data-lucide="send" class="w-4 h-4"></i>
-                            <span>Senden</span>
-                        </button>
-                    </form>
                 </div>
 
-                <!-- VIEW 6: ADMIN & MANAGEMENT -->
-                <div id="view-admin" class="hidden space-y-6">
-                    <div class="p-6 glass-panel rounded-xl border-amber-500/30">
-                        <div class="flex items-center space-x-4 mb-6">
-                            <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
-                                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                <!-- 5. VAULT VIEW -->
+                <div id="view-vault" class="tab-content hidden space-y-6 max-w-6xl mx-auto">
+                    <div class="glass-panel p-6 rounded-2xl flex items-center justify-between">
+                        <div>
+                            <h3 class="font-orbitron text-xl font-bold text-white">Secure Vault Mediathek</h3>
+                            <p class="text-xs text-slate-400 mt-1">Sichere Speicherbank für Screenshots, Blueprints und Mediendateien.</p>
+                        </div>
+                        <button onclick="window.openUploadVaultModal()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-orbitron font-bold rounded-xl shadow-lg shadow-red-600/20 transition flex items-center gap-2">
+                            <i class="fas fa-upload"></i> Datei Hochladen
+                        </button>
+                    </div>
+                    <div id="vaultGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+                </div>
+
+                <!-- 6. QUPASSI AI ASSISTANT VIEW -->
+                <div id="view-qupassi" class="tab-content hidden h-[calc(100vh-8rem)] max-w-4xl mx-auto flex flex-col">
+                    <div class="glass-panel p-6 rounded-2xl flex-1 flex flex-col overflow-hidden">
+                        <div class="flex items-center gap-3 pb-4 mb-4 border-b border-slate-800">
+                            <div class="w-10 h-10 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-500 font-bold glow-red">
+                                <i class="fas fa-robot"></i>
                             </div>
                             <div>
-                                <h3 class="font-mono font-bold text-xl text-white">Admin & Management Kontrollzentrum</h3>
-                                <p class="text-xs text-amber-400 font-mono">Globale Berechtigungen, Agenten-Verwaltung & System-Override</p>
+                                <h3 class="font-orbitron font-bold text-base text-white">QupasSI AI Command Assistant</h3>
+                                <p class="text-xs text-slate-400">Verbundener Gemini 2.0 Flash Vibe-Agent mit Server-Datenbankkontext.</p>
                             </div>
                         </div>
-                        <div class="space-y-4">
-                            <h4 class="font-mono text-sm font-bold text-gray-300 uppercase tracking-wider">Agenten Roster & Rollen-Zuweisung</h4>
-                            <div id="admin-users-list" class="space-y-2"></div>
+                        
+                        <div id="aiChatContainer" class="flex-1 overflow-y-auto space-y-4 pr-2">
+                            <div class="flex justify-start">
+                                <div class="bg-slate-900/90 border border-cyan-500/40 rounded-2xl px-4 py-3 max-w-xl text-slate-200 text-sm shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+                                    <p class="font-bold text-cyan-400 mb-1 flex items-center gap-1.5"><i class="fas fa-robot"></i> QupasSI AI</p>
+                                    <p>Moin Diggi! 💀 Ich bin QupasSI, dein persönlicher Command Assistant. Was geht ab auf dem Server? Frag mich zu Basen, Events oder dem aktuellen Vibe! 🚀</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-800 mt-4">
+                            <div class="flex items-center gap-3">
+                                <input type="text" id="aiInput" onkeydown="if(event.key==='Enter') window.sendAiMessage()" placeholder="Frag QupasSI nach dem Vibe, Basen oder Plänen... (Enter)" class="flex-1 bg-cyber-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                                <button onclick="window.sendAiMessage()" class="px-5 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-xl font-orbitron text-xs font-bold shadow-lg shadow-red-600/30 transition">
+                                    Senden 🚀
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -448,126 +373,150 @@
         </main>
     </div>
 
-    <!-- MODALS -->
-
-    <!-- 1. PROFILE & SETTINGS MODAL -->
-    <div id="profile-settings-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-darkBg/90 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-2xl p-6 rounded-2xl shadow-neon-red max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-4 border-b border-red-500/20 mb-6">
-                <h3 class="font-mono font-bold text-lg text-white flex items-center space-x-2">
-                    <i data-lucide="settings" class="w-5 h-5 text-neonRed"></i>
-                    <span>Agenten-Profil & Hardware Einstellungen</span>
-                </h3>
-                <button onclick="window.closeProfileSettings()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <!-- PROFILE & HARDWARE SETTINGS MODAL -->
+    <div id="profileSettingsModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-cyber-950/80 backdrop-blur-md px-4">
+        <div class="glass-panel w-full max-w-2xl p-8 rounded-3xl glow-red relative max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-800">
+                <h3 class="font-orbitron font-bold text-lg text-white">Profil & Hardware Einstellungen</h3>
+                <button onclick="window.closeProfileSettings()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fas fa-xmark"></i>
+                </button>
             </div>
 
             <div class="space-y-6">
                 <!-- Profile Section -->
                 <div class="space-y-4">
-                    <h4 class="font-mono text-xs font-bold text-neonRed uppercase tracking-wider">Profil-Daten</h4>
-                    <div class="flex items-center space-x-4">
-                        <img id="settings-avatar-preview" src="" class="w-16 h-16 rounded-2xl object-cover border-2 border-neonRed shadow-neon-red" alt="Preview">
-                        <div class="flex-1">
-                            <label class="block text-xs font-mono text-gray-400 mb-1">Avatar Hochladen (Supabase Storage)</label>
-                            <input type="file" id="settings-avatar-file" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-mono file:font-bold file:bg-neonRed/20 file:text-neonRed hover:file:bg-neonRed/30 transition-all">
-                        </div>
-                    </div>
+                    <h4 class="font-orbitron text-xs font-bold text-red-500 uppercase tracking-wider">Benutzerprofil</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-mono text-gray-400 mb-1">Codename</label>
-                            <input type="text" id="settings-username" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed">
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Username</label>
+                            <input type="text" id="settingsUsername" class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-mono text-gray-400 mb-1">Online Status</label>
-                            <select id="settings-status" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed">
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Online Status</label>
+                            <select id="settingsStatus" class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
                                 <option value="online">Online</option>
-                                <option value="idle">Abwesend (Idle)</option>
                                 <option value="dnd">Nicht stören (DND)</option>
+                                <option value="idle">Abwesend (Idle)</option>
                                 <option value="offline">Offline</option>
                             </select>
                         </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-mono text-gray-400 mb-1">Custom Status Text</label>
-                        <input type="text" id="settings-status-text" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed" placeholder="z.B. Baue Redstone Farm...">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-mono text-gray-400 mb-1">BOOM Quote (Lebensmotto)</label>
-                        <input type="text" id="settings-quote" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed" placeholder="z.B. Alles entspannt digga 💀">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Custom Status Text</label>
+                            <input type="text" id="settingsStatusText" placeholder="z. B. Baue gerade an der Hauptbasis 💀" class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">BOOM Quote / Personality Quote</label>
+                            <input type="text" id="settingsQuote" placeholder="Dein persönlicher Motto-Spruch..." class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Avatar URL</label>
+                            <input type="text" id="settingsAvatarUrl" placeholder="https://..." class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Hardware & Audio/Video Testing Section -->
-                <div class="space-y-4 pt-4 border-t border-red-500/20">
-                    <h4 class="font-mono text-xs font-bold text-neonCyan uppercase tracking-wider">Hardware & WebRTC Test-Center</h4>
+                <div class="h-[1px] bg-slate-800"></div>
+
+                <!-- Hardware Section -->
+                <div class="space-y-4">
+                    <h4 class="font-orbitron text-xs font-bold text-cyan-400 uppercase tracking-wider">Hardware & Audio / Video</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-mono text-gray-400 mb-1">Mikrofon</label>
-                            <select id="hardware-mic-select" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-neonCyan"></select>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Mikrofon</label>
+                            <select id="micSelect" class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-mono text-gray-400 mb-1">Lautsprecher</label>
-                            <select id="hardware-speaker-select" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-neonCyan"></select>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Lautsprecher</label>
+                            <select id="speakerSelect" class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-mono text-gray-400 mb-1">Webcam</label>
-                            <select id="hardware-cam-select" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-neonCyan"></select>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Webcam</label>
+                            <select id="camSelect" class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"></select>
                         </div>
                     </div>
 
-                    <!-- Webcam Live Preview & Mic Meter -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="relative bg-black/60 rounded-xl overflow-hidden border border-cyan-500/30 h-36 flex items-center justify-center">
-                            <video id="hardware-preview-video" autoplay muted playsinline class="w-full h-full object-cover"></video>
-                            <span class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/60 text-[10px] font-mono text-cyan-400">Webcam Vorschau</span>
+                    <!-- Webcam Preview & Mic Meter -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div class="relative rounded-xl overflow-hidden bg-cyber-900 border border-slate-800 h-36 flex items-center justify-center">
+                            <video id="webcamPreview" autoplay muted playsinline class="w-full h-full object-cover"></video>
+                            <span class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/60 text-[10px] text-slate-300">Live Kamera Preview</span>
                         </div>
-                        <div class="glass-panel-cyan p-4 rounded-xl flex flex-col justify-between">
+                        <div class="bg-cyber-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
                             <div>
-                                <span class="block text-xs font-mono text-gray-400 mb-2">Mikrofon Pegel-Meter (Test)</span>
-                                <div class="w-full bg-black/60 h-4 rounded-lg overflow-hidden border border-cyan-500/30 p-0.5">
-                                    <div id="mic-level-bar" class="h-full bg-gradient-to-r from-neonGreen via-amber-400 to-neonRed rounded transition-all duration-75" style="width: 0%"></div>
-                                </div>
+                                <p class="text-xs font-semibold text-slate-300 mb-1">Mikrofon Pegel Test</p>
+                                <p class="text-[10px] text-slate-500">Sprich ins Mikrofon, um den Ausschlag zu prüfen.</p>
                             </div>
-                            <button type="button" onclick="window.testMicrophoneLevel()" class="w-full py-2 bg-neonCyan/20 border border-neonCyan/50 hover:bg-neonCyan text-neonCyan hover:text-black font-mono text-xs font-bold rounded-lg transition-all">
-                                Mikrofon Test Starten
-                            </button>
+                            <div class="w-full bg-cyber-950 rounded-full h-3 overflow-hidden border border-slate-800">
+                                <div id="micMeterFill" class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full w-0 transition-all duration-75"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" onclick="window.closeProfileSettings()" class="px-4 py-2 rounded-lg bg-black/40 border border-white/10 text-gray-300 font-mono text-xs">Abbrechen</button>
-                    <button type="button" onclick="window.saveProfileAndHardwareSettings()" class="px-6 py-2 rounded-lg bg-neonRed text-white font-mono text-xs font-bold shadow-neon-red hover:bg-rose-600 transition-all">Einstellungen Speichern</button>
+                <div class="pt-4 flex justify-end gap-3">
+                    <button onclick="window.closeProfileSettings()" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition">Abbrechen</button>
+                    <button onclick="window.saveProfileSettings()" class="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-orbitron text-xs font-bold shadow-lg shadow-red-600/30 transition">Einstellungen Speichern</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 2. CREATE POST MODAL -->
-    <div id="create-post-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-darkBg/90 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-lg p-6 rounded-2xl shadow-neon-red">
-            <div class="flex items-center justify-between pb-4 border-b border-red-500/20 mb-4">
-                <h3 class="font-mono font-bold text-lg text-white">Pinnwand Beitrag Erstellen</h3>
-                <button onclick="window.closeCreatePostModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <!-- WEBRTC CALL MODAL -->
+    <div id="callModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-cyber-950/90 backdrop-blur-md px-4">
+        <div class="glass-panel w-full max-w-3xl p-6 rounded-3xl glow-cyan flex flex-col items-center">
+            <div class="flex items-center justify-between w-full pb-4 mb-4 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></div>
+                    <h3 id="callModalTitle" class="font-orbitron font-bold text-white text-base">Direkt-Anruf aktiv</h3>
+                </div>
+                <span id="callStatusTimer" class="text-xs text-cyan-400 font-mono">00:00</span>
             </div>
-            <form onsubmit="window.submitPinboardPost(event)" class="space-y-4">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full h-80 mb-6">
+                <div class="bg-cyber-900 border border-slate-800 rounded-2xl overflow-hidden relative flex items-center justify-center">
+                    <video id="localVideo" autoplay muted playsinline class="w-full h-full object-cover"></video>
+                    <span class="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-black/60 text-xs text-slate-300 font-semibold">Du (Local)</span>
+                </div>
+                <div class="bg-cyber-900 border border-slate-800 rounded-2xl overflow-hidden relative flex items-center justify-center">
+                    <video id="remoteVideo" autoplay playsinline class="w-full h-full object-cover"></video>
+                    <span id="remoteNameLabel" class="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-black/60 text-xs text-slate-300 font-semibold">Teilnehmer</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="window.toggleScreenShare()" id="screenShareBtn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-2 transition">
+                    <i class="fas fa-desktop text-cyan-400"></i> Screenshare
+                </button>
+                <button onclick="window.endCall()" class="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-orbitron text-xs font-bold shadow-lg shadow-red-600/30 flex items-center gap-2 transition">
+                    <i class="fas fa-phone-slash"></i> Auflegen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE PINBOARD POST MODAL -->
+    <div id="createPostModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-cyber-950/80 backdrop-blur-md px-4">
+        <div class="glass-panel w-full max-w-lg p-8 rounded-3xl glow-red relative">
+            <h3 class="font-orbitron font-bold text-lg text-white mb-6">Neuen Pinnwand-Beitrag erstellen</h3>
+            <form onsubmit="window.createPinPost(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1">Titel</label>
-                    <input type="text" id="post-title" required class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed" placeholder="z.B. Hauptbasis Farm-Optimierung">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Titel</label>
+                    <input type="text" id="postTitleInput" required class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-mono text-gray-400 mb-1">Kategorie</label>
-                        <select id="post-category" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed">
-                            <option value="ankündigungen">#ankündigungen</option>
-                            <option value="basen">#basen</option>
-                            <option value="ideen">#ideen</option>
-                            <option value="redstone">#redstone</option>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Kategorie</label>
+                        <select id="postCategoryInput" class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-red-500">
+                            <option value="ankündigungen">Ankündigungen</option>
+                            <option value="basen">Basen</option>
+                            <option value="ideen">Ideen</option>
+                            <option value="redstone">Redstone</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-mono text-gray-400 mb-1">Status (Kanban)</label>
-                        <select id="post-status" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Status Spalte</label>
+                        <select id="postStatusInput" class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-red-500">
                             <option value="Geplant">Geplant</option>
                             <option value="In Arbeit">In Arbeit</option>
                             <option value="Fertig">Fertig</option>
@@ -576,192 +525,694 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1">Minecraft Koordinaten (optional)</label>
-                    <input type="text" id="post-coordinates" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm font-mono text-white focus:outline-none focus:border-neonRed" placeholder="X: 1234, Y: 64, Z: -567">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Minecraft Koordinaten (z.B. X: 124, Y: 64, Z: -350)</label>
+                    <input type="text" id="postCoordsInput" placeholder="X: 0, Y: 64, Z: 0" class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1">Inhalt / Details</label>
-                    <textarea id="post-content" rows="4" required class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed" placeholder="Beschreibe das Vorhaben..."></textarea>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Inhalt / Details</label>
+                    <textarea id="postContentInput" rows="4" required class="w-full bg-cyber-900 border border-slate-800 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-red-500 resize-none"></textarea>
                 </div>
-                <div class="flex justify-end space-x-3 pt-2">
-                    <button type="button" onclick="window.closeCreatePostModal()" class="px-4 py-2 rounded-lg bg-black/40 border border-white/10 text-gray-300 font-mono text-xs">Abbrechen</button>
-                    <button type="submit" class="px-6 py-2 rounded-lg bg-neonRed text-white font-mono text-xs font-bold shadow-neon-red hover:bg-rose-600">Veröffentlichen</button>
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="window.closeCreatePostModal()" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition">Abbrechen</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-orbitron text-xs font-bold shadow-lg shadow-red-600/30 transition">Veröffentlichen</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- 3. CREATE ROOM MODAL -->
-    <div id="create-room-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-darkBg/90 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-md p-6 rounded-2xl shadow-neon-red">
-            <div class="flex items-center justify-between pb-4 border-b border-red-500/20 mb-4">
-                <h3 class="font-mono font-bold text-lg text-white">Neuen Chat-Kanal Erstellen</h3>
-                <button onclick="window.closeCreateRoomModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <form onsubmit="window.submitCreateRoom(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1">Kanalname</label>
-                    <input type="text" id="room-name" required class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed" placeholder="z.B. operation-nether">
-                </div>
-                <div class="flex justify-end space-x-3 pt-2">
-                    <button type="button" onclick="window.closeCreateRoomModal()" class="px-4 py-2 rounded-lg bg-black/40 border border-white/10 text-gray-300 font-mono text-xs">Abbrechen</button>
-                    <button type="submit" class="px-6 py-2 rounded-lg bg-neonRed text-white font-mono text-xs font-bold shadow-neon-red hover:bg-rose-600">Kanal Erstellen</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- 4. CREATE EVENT MODAL -->
-    <div id="create-event-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-darkBg/90 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-md p-6 rounded-2xl shadow-neon-red">
-            <div class="flex items-center justify-between pb-4 border-b border-red-500/20 mb-4">
-                <h3 class="font-mono font-bold text-lg text-white">Einsatz-Termin Erstellen</h3>
-                <button onclick="window.closeCreateEventModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <form onsubmit="window.submitCreateEvent(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1">Titel</label>
-                    <input type="text" id="event-title" required class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed" placeholder="z.B. Enderdrachen Raid">
-                </div>
-                <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1">Datum</label>
-                    <input type="date" id="event-date" required class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed">
-                </div>
-                <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1">Beschreibung</label>
-                    <textarea id="event-desc" rows="3" class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed" placeholder="Details zum Einsatz..."></textarea>
-                </div>
-                <div class="flex justify-end space-x-3 pt-2">
-                    <button type="button" onclick="window.closeCreateEventModal()" class="px-4 py-2 rounded-lg bg-black/40 border border-white/10 text-gray-300 font-mono text-xs">Abbrechen</button>
-                    <button type="submit" class="px-6 py-2 rounded-lg bg-neonRed text-white font-mono text-xs font-bold shadow-neon-red hover:bg-rose-600">Termin Speichern</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- 5. VAULT UPLOAD MODAL -->
-    <div id="vault-upload-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-darkBg/90 backdrop-blur-md p-4">
-        <div class="glass-panel w-full max-w-md p-6 rounded-2xl shadow-neon-red">
-            <div class="flex items-center justify-between pb-4 border-b border-red-500/20 mb-4">
-                <h3 class="font-mono font-bold text-lg text-white">Medien in Vault Hochladen</h3>
-                <button onclick="window.closeVaultUploadModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <form onsubmit="window.submitVaultUpload(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1">Titel / Bezeichnung</label>
-                    <input type="text" id="vault-title" required class="w-full px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-neonRed" placeholder="z.B. Farm Blueprint v2">
-                </div>
-                <div>
-                    <label class="block text-xs font-mono text-gray-400 mb-1">Datei auswählen</label>
-                    <input type="file" id="vault-file" required class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-mono file:font-bold file:bg-neonRed/20 file:text-neonRed hover:file:bg-neonRed/30 transition-all">
-                </div>
-                <div class="flex justify-end space-x-3 pt-2">
-                    <button type="button" onclick="window.closeVaultUploadModal()" class="px-4 py-2 rounded-lg bg-black/40 border border-white/10 text-gray-300 font-mono text-xs">Abbrechen</button>
-                    <button type="submit" class="px-6 py-2 rounded-lg bg-neonRed text-white font-mono text-xs font-bold shadow-neon-red hover:bg-rose-600">Hochladen</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- 6. WEBRTC CALL OVERLAY & MODAL -->
-    <div id="call-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-darkBg/95 backdrop-blur-xl p-4">
-        <div class="glass-panel w-full max-w-4xl p-6 rounded-2xl shadow-neon-red flex flex-col h-[80vh]">
-            <div class="flex items-center justify-between pb-4 border-b border-red-500/20 mb-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-3 h-3 rounded-full bg-neonRed animate-ping"></div>
-                    <h3 id="call-modal-title" class="font-mono font-bold text-lg text-white">Live Direktruf (WebRTC)</h3>
-                </div>
-                <button onclick="window.hangUpCall()" class="px-4 py-2 bg-neonRed hover:bg-rose-600 text-white font-mono text-xs font-bold rounded-lg shadow-neon-red flex items-center space-x-2">
-                    <i data-lucide="phone-off" class="w-4 h-4"></i>
-                    <span>Auflegen</span>
+    <!-- POST REPLIES MODAL -->
+    <div id="postRepliesModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-cyber-950/80 backdrop-blur-md px-4">
+        <div class="glass-panel w-full max-w-xl p-6 rounded-3xl glow-red relative max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+                <h3 class="font-orbitron font-bold text-base text-white">Beitrag & Diskussions-Thread</h3>
+                <button onclick="window.closePostReplies()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fas fa-xmark"></i>
                 </button>
             </div>
-            <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 relative overflow-hidden bg-black/60 rounded-xl p-4">
-                <div class="relative rounded-lg overflow-hidden bg-black border border-white/10 flex items-center justify-center">
-                    <video id="local-video" autoplay muted playsinline class="w-full h-full object-cover"></video>
-                    <span class="absolute bottom-3 left-3 px-2.5 py-1 rounded bg-black/60 text-xs font-mono text-white">Lokaler Agent</span>
-                </div>
-                <div class="relative rounded-lg overflow-hidden bg-black border border-white/10 flex items-center justify-center">
-                    <video id="remote-video" autoplay playsinline class="w-full h-full object-cover"></video>
-                    <span class="absolute bottom-3 left-3 px-2.5 py-1 rounded bg-black/60 text-xs font-mono text-white">Entfernter Agent</span>
-                </div>
-            </div>
-            <div class="flex items-center justify-center space-x-4 pt-4">
-                <button onclick="window.toggleMicMute()" id="call-btn-mic" class="p-3 rounded-xl bg-black/40 border border-white/10 text-white hover:border-neonRed transition-all"><i data-lucide="mic" class="w-5 h-5"></i></button>
-                <button onclick="window.toggleCamMute()" id="call-btn-cam" class="p-3 rounded-xl bg-black/40 border border-white/10 text-white hover:border-neonRed transition-all"><i data-lucide="video" class="w-5 h-5"></i></button>
-                <button onclick="window.toggleScreenShare()" id="call-btn-screen" class="p-3 rounded-xl bg-black/40 border border-white/10 text-white hover:border-neonCyan transition-all"><i data-lucide="monitor-up" class="w-5 h-5"></i></button>
-            </div>
+            <div id="replyModalPostContent" class="mb-4 pb-4 border-b border-slate-800/80 text-sm"></div>
+            <div id="replyModalList" class="flex-1 overflow-y-auto space-y-3 pr-2 mb-4"></div>
+            <form id="replyForm" onsubmit="window.sendReply(event)" class="flex items-center gap-3">
+                <input type="text" id="replyInput" placeholder="Antwort schreiben..." required class="flex-1 bg-cyber-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+                <button type="submit" class="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl font-orbitron text-xs font-bold shadow-lg shadow-red-600/20 transition">Antworten</button>
+            </form>
         </div>
     </div>
 
-    <!-- MAIN APP SCRIPT -->
+    <!-- JAVASCRIPT CORE -->
     <script>
-        // CONFIG & SUPABASE SETUP
+        // Supabase & Gemini Config
         const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
         const GEMINI_API_KEY = 'AQ.Ab8RN6KT-NV_pdl2kGaEaXme_f7gJXqDCsTje_kuSWahTfqGbg';
-        
+
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // GLOBAL STATE
         let currentUser = null;
         let currentProfile = null;
-        let activeView = 'pinboard';
-        let pinboardPosts = [];
-        let pinboardFilter = 'all';
-        let pinboardLayout = 'kanban';
-        let chatRooms = [];
         let activeRoomId = null;
-        let chatMessages = [];
-        let calendarEvents = [];
-        let currentCalendarDate = new Date();
-        let vaultItems = [];
-        let allProfiles = [];
-        
-        // WebRTC State
-        let localStream = null;
-        let remoteStream = null;
-        let peerConnection = null;
-        let currentCallChannel = null;
-        let ringtoneAudioContext = null;
+        let activeReplyPostId = null;
+        let isSignUpMode = false;
         let ringtoneInterval = null;
 
-        // AUDIO NOTIFICATION (Web Audio API)
-        function playBeep(frequency = 440, duration = 150, type = 'sine') {
+        // Init App on Load
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                await fetchOrCreateProfile();
+                showApp();
+            } else {
+                showAuth();
+            }
+        });
+
+        async function fetchOrCreateProfile() {
+            let { data, error } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+            if (!data) {
+                const newProfile = {
+                    id: currentUser.id,
+                    username: currentUser.email.split('@')[0],
+                    custom_status: 'online',
+                    custom_status_text: 'Bereit für den nächsten Raid 💀',
+                    avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${currentUser.email}`,
+                    personality_quote: 'Wer redstone baut, gewinnt das Spiel!',
+                    role: 'mitspieler'
+                };
+                await supabase.from('profiles').insert(newProfile);
+                currentProfile = newProfile;
+            } else {
+                currentProfile = data;
+            }
+            updateSidebarProfileUI();
+        }
+
+        function updateSidebarProfileUI() {
+            if (!currentProfile) return;
+            document.getElementById('userSidebarName').innerText = currentProfile.username;
+            document.getElementById('userSidebarRole').innerText = currentProfile.role.toUpperCase();
+            document.getElementById('userSidebarAvatar').src = currentProfile.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg?seed=Quaps';
+            
+            const dot = document.getElementById('userSidebarStatusDot');
+            dot.className = 'absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-cyber-900 ' + 
+                (currentProfile.custom_status === 'online' ? 'bg-emerald-500' :
+                 currentProfile.custom_status === 'dnd' ? 'bg-red-500' :
+                 currentProfile.custom_status === 'idle' ? 'bg-amber-500' : 'bg-slate-500');
+        }
+
+        function showAuth() {
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('appContainer').classList.add('hidden');
+        }
+
+        function showApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            window.switchTab('feed');
+            initRealtimeSubscriptions();
+        }
+
+        window.toggleAuthMode = function() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('authToggleText').innerText = isSignUpMode ? 'Bereits Account? Login' : 'Kein Account? Registrieren';
+            document.getElementById('authSubmitBtn').innerText = isSignUpMode ? 'ACCOUNT ERSTELLEN' : 'SYSTEM LOGIN';
+        }
+
+        window.handleAuth = async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            const errBox = document.getElementById('authError');
+            const errText = document.getElementById('authErrorText');
+
+            errBox.classList.add('hidden');
+
             try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.value = frequency;
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (duration / 1000));
+                if (isSignUpMode) {
+                    const { data, error } = await supabase.auth.signUp({ email, password });
+                    if (error) throw error;
+                    if (data.user) {
+                        currentUser = data.user;
+                        await fetchOrCreateProfile();
+                        showApp();
+                    }
+                } else {
+                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    if (error) throw error;
+                    if (data.user) {
+                        currentUser = data.user;
+                        await fetchOrCreateProfile();
+                        showApp();
+                    }
+                }
+            } catch (err) {
+                errText.innerText = err.message;
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        window.handleLogout = async function() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            currentProfile = null;
+            showAuth();
+        }
+
+        // Tab Switching
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('bg-slate-800/80', 'text-white'));
+            
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if (activeNav) activeNav.classList.add('bg-slate-800/80', 'text-white');
+
+            const titles = {
+                feed: 'COMMAND FEED',
+                pinboard: 'PINNWAND & KANBAN',
+                chat: 'TACTICAL CHAT & DMs',
+                calendar: 'OPERATION CALENDAR',
+                vault: 'SECURE VAULT',
+                qupassi: 'QUPASSI AI COMMAND ASSISTANT'
+            };
+            document.getElementById('currentSectionTitle').innerText = titles[tabName] || 'COMMAND CENTER';
+
+            if (tabName === 'feed') loadFeed();
+            if (tabName === 'pinboard') loadPinboard();
+            if (tabName === 'chat') loadChatRoomsAndRoster();
+            if (tabName === 'calendar') loadCalendar();
+            if (tabName === 'vault') loadVault();
+        }
+
+        // Profile & Hardware Settings Modal
+        window.openProfileSettings = async function() {
+            if (!currentProfile) return;
+            document.getElementById('settingsUsername').value = currentProfile.username || '';
+            document.getElementById('settingsStatus').value = currentProfile.custom_status || 'online';
+            document.getElementById('settingsStatusText').value = currentProfile.custom_status_text || '';
+            document.getElementById('settingsQuote').value = currentProfile.personality_quote || '';
+            document.getElementById('settingsAvatarUrl').value = currentProfile.avatar_url || '';
+
+            document.getElementById('profileSettingsModal').classList.remove('hidden');
+            document.getElementById('profileSettingsModal').classList.add('flex');
+            await initHardwareTester();
+        }
+
+        window.closeProfileSettings = function() {
+            document.getElementById('profileSettingsModal').classList.add('hidden');
+            document.getElementById('profileSettingsModal').classList.remove('flex');
+            if (micStream) {
+                micStream.getTracks().forEach(t => t.stop());
+                micStream = null;
+            }
+        }
+
+        window.saveProfileSettings = async function() {
+            if (!currentUser) return;
+            const updates = {
+                username: document.getElementById('settingsUsername').value,
+                custom_status: document.getElementById('settingsStatus').value,
+                custom_status_text: document.getElementById('settingsStatusText').value,
+                personality_quote: document.getElementById('settingsQuote').value,
+                avatar_url: document.getElementById('settingsAvatarUrl').value
+            };
+
+            const { error } = await supabase.from('profiles').update(updates).eq('id', currentUser.id);
+            if (!error) {
+                currentProfile = { ...currentProfile, ...updates };
+                updateSidebarProfileUI();
+                closeProfileSettings();
+                playAudioNotification();
+            } else {
+                alert('Fehler beim Speichern: ' + error.message);
+            }
+        }
+
+        // Hardware Tester
+        let micStream = null;
+        let audioContext = null;
+        let analyser = null;
+        let dataArray = null;
+
+        async function initHardwareTester() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const micSelect = document.getElementById('micSelect');
+                const speakerSelect = document.getElementById('speakerSelect');
+                const camSelect = document.getElementById('camSelect');
+                
+                micSelect.innerHTML = '';
+                speakerSelect.innerHTML = '';
+                camSelect.innerHTML = '';
+                
+                devices.forEach(device => {
+                    const opt = document.createElement('option');
+                    opt.value = device.deviceId;
+                    opt.text = device.label || `${device.kind} (${device.deviceId.slice(0,5)}...)`;
+                    if (device.kind === 'audioinput') micSelect.appendChild(opt);
+                    else if (device.kind === 'audiooutput') speakerSelect.appendChild(opt);
+                    else if (device.kind === 'videoinput') camSelect.appendChild(opt);
+                });
+
+                micStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('webcamPreview').srcObject = micStream;
+
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(micStream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                source.connect(analyser);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                updateMicMeter();
+            } catch (err) {
+                console.warn("Hardware media access warning:", err);
+            }
+        }
+
+        function updateMicMeter() {
+            const fill = document.getElementById('micMeterFill');
+            if (!analyser || !fill) return;
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+            let percent = Math.min(100, (sum / dataArray.length / 128) * 100);
+            fill.style.width = percent + '%';
+            requestAnimationFrame(updateMicMeter);
+        }
+
+        // Realtime Toasts & Audio Notifications
+        function playAudioNotification() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
                 osc.connect(gain);
-                gain.connect(audioCtx.destination);
+                gain.connect(ctx.destination);
                 osc.start();
-                osc.stop(audioCtx.currentTime + (duration / 1000));
-            } catch(e) { console.error('Audio play error:', e); }
+                osc.stop(ctx.currentTime + 0.2);
+            } catch(e) {}
+        }
+
+        window.triggerGlobalNotificationTest = function() {
+            playAudioNotification();
+            showToast('System-Test erfolgreich! 🚀 Vibe ist stabil.');
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 right-6 z-50 glass-panel px-5 py-3 rounded-2xl glow-cyan text-xs font-semibold text-white flex items-center gap-3 animate-bounce';
+            toast.innerHTML = `<i class="fas fa-bell text-cyan-400"></i><span>${msg}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        function initRealtimeSubscriptions() {
+            supabase.channel('public-db-changes')
+                .on('postgres_changes', { event: '*', schema: 'public' }, payload => {
+                    playAudioNotification();
+                    if (payload.table === 'pinboard_posts') loadPinboard();
+                    if (payload.table === 'chat_messages' && payload.new.room_id === activeRoomId) loadChatMessages(activeRoomId);
+                    if (payload.table === 'calendar_events') loadCalendar();
+                    if (payload.table === 'vault_items') loadVault();
+                })
+                .subscribe();
+        }
+
+        // 1. Command Feed
+        async function loadFeed() {
+            const { data: posts } = await supabase.from('pinboard_posts').select('*, profiles(username, avatar_url, role)').order('created_at', { ascending: false }).limit(10);
+            const container = document.getElementById('feedActivityList');
+            if (!posts || posts.length === 0) {
+                container.innerHTML = '<div class="glass-panel p-6 rounded-2xl text-center text-slate-500 text-sm">Keine aktuellen Feed-Einträge vorhanden.</div>';
+                return;
+            }
+            container.innerHTML = posts.map(p => `
+                <div class="glass-panel p-5 rounded-2xl space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="${p.profiles?.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg?seed=Quaps'}" class="w-8 h-8 rounded-xl object-cover border border-slate-700">
+                            <div>
+                                <span class="text-xs font-bold text-white">${p.profiles?.username || 'Unbekannt'}</span>
+                                <span class="text-[10px] text-slate-500 ml-2">${new Date(p.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 text-[10px] font-bold uppercase">${p.category}</span>
+                    </div>
+                    <h4 class="font-orbitron font-bold text-sm text-white">${escapeHtml(p.title)}</h4>
+                    <p class="text-xs text-slate-300">${escapeHtml(p.content)}</p>
+                    ${p.coordinates ? `<div class="flex items-center justify-between bg-cyber-900 px-3 py-2 rounded-xl border border-slate-800"><span class="text-xs font-mono text-cyan-400"><i class="fas fa-location-crosshairs mr-1.5"></i> ${escapeHtml(p.coordinates)}</span><button onclick="window.copyCoordinates('${escapeHtml(p.coordinates)}')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold transition">Koordinaten kopieren</button></div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // 2. Pinboard Kanban
+        async function loadPinboard() {
+            const categoryFilter = document.getElementById('pinCategoryFilter').value;
+            let query = supabase.from('pinboard_posts').select('*, profiles(username, avatar_url, role)').order('created_at', { ascending: false });
+            if (categoryFilter !== 'all') query = query.eq('category', categoryFilter);
+
+            const { data: posts } = await query;
+            const columns = { 'Geplant': [], 'In Arbeit': [], 'Fertig': [], 'Ideen': [] };
+            
+            if (posts) {
+                posts.forEach(p => {
+                    if (columns[p.status]) columns[p.status].push(p);
+                });
+            }
+
+            ['Geplant', 'In Arbeit', 'Fertig', 'Ideen'].forEach(colName => {
+                const listEl = document.getElementById(`kanban-${colName.replace(/\s+/g, '')}`);
+                const countEl = document.getElementById(`count-${colName.toLowerCase().replace(/\s+/g, '')}`);
+                const items = columns[colName];
+                countEl.innerText = items.length;
+
+                listEl.innerHTML = items.map(item => {
+                    const isCanDelete = currentProfile && (currentProfile.role === 'management' || currentProfile.role === 'admin' || item.author_id === currentUser.id);
+                    return `
+                        <div class="glass-panel p-4 rounded-xl space-y-3 bg-cyber-900/60 border border-slate-800 hover:border-slate-700 transition">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-bold uppercase">${escapeHtml(item.category)}</span>
+                                ${isCanDelete ? `<button onclick="window.deleteItem('pinboard_posts', '${item.id}')" class="text-slate-500 hover:text-red-400 text-xs transition"><i class="fas fa-trash"></i></button>` : ''}
+                            </div>
+                            <h5 class="font-orbitron font-bold text-xs text-white">${escapeHtml(item.title)}</h5>
+                            <p class="text-xs text-slate-300 line-clamp-3">${escapeHtml(item.content)}</p>
+                            ${item.coordinates ? `<div class="bg-cyber-950 px-2.5 py-1.5 rounded-lg flex items-center justify-between"><span class="text-[10px] font-mono text-cyan-400 truncate">${escapeHtml(item.coordinates)}</span><button onclick="window.copyCoordinates('${escapeHtml(item.coordinates)}')" class="text-slate-400 hover:text-white text-[10px]"><i class="fas fa-copy"></i></button></div>` : ''}
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[10px] text-slate-400">
+                                <span class="flex items-center gap-1.5"><img src="${item.profiles?.avatar_url || ''}" class="w-4 h-4 rounded-full"> ${item.profiles?.username || ''}</span>
+                                <button onclick="window.openPostReplies('${item.id}')" class="hover:text-cyan-400 transition"><i class="fas fa-comments mr-1"></i> ${item.reply_count || 0}</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+
+        window.openCreatePostModal = function() {
+            document.getElementById('createPostModal').classList.remove('hidden');
+            document.getElementById('createPostModal').classList.add('flex');
+        }
+
+        window.closeCreatePostModal = function() {
+            document.getElementById('createPostModal').classList.add('hidden');
+            document.getElementById('createPostModal').classList.remove('flex');
+        }
+
+        window.createPinPost = async function(event) {
+            event.preventDefault();
+            if (!currentUser) return;
+            const newPost = {
+                author_id: currentUser.id,
+                title: document.getElementById('postTitleInput').value,
+                category: document.getElementById('postCategoryInput').value,
+                status: document.getElementById('postStatusInput').value,
+                coordinates: document.getElementById('postCoordsInput').value,
+                content: document.getElementById('postContentInput').value,
+                pinned: false,
+                reactions: {},
+                reply_count: 0
+            };
+
+            const { error } = await supabase.from('pinboard_posts').insert(newPost);
+            if (!error) {
+                closeCreatePostModal();
+                loadPinboard();
+                showToast('Beitrag erfolgreich veröffentlicht! 🚀');
+            } else {
+                alert('Fehler: ' + error.message);
+            }
+        }
+
+        window.copyCoordinates = function(coords) {
+            navigator.clipboard.writeText(coords);
+            showToast('Minecraft Koordinaten kopiert! 📋');
+        }
+
+        // Replies
+        window.openPostReplies = async function(postId) {
+            activeReplyPostId = postId;
+            const { data: post } = await supabase.from('pinboard_posts').select('*, profiles(username, avatar_url)').eq('id', postId).single();
+            const { data: replies } = await supabase.from('pinboard_replies').select('*, profiles(username, avatar_url, role)').eq('post_id', postId).order('created_at', { ascending: true });
+
+            document.getElementById('replyModalPostContent').innerHTML = `
+                <h4 class="font-orbitron font-bold text-sm text-white mb-1">${escapeHtml(post.title)}</h4>
+                <p class="text-xs text-slate-300 mb-2">${escapeHtml(post.content)}</p>
+                <span class="text-[10px] text-slate-500">Von ${post.profiles?.username}</span>
+            `;
+
+            const listEl = document.getElementById('replyModalList');
+            listEl.innerHTML = (replies || []).map(r => {
+                const canDel = currentProfile && (currentProfile.role === 'management' || currentProfile.role === 'admin' || r.author_id === currentUser.id);
+                return `
+                    <div class="bg-cyber-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-cyan-400">${r.profiles?.username || 'Unbekannt'}</span>
+                            ${canDel ? `<button onclick="window.deleteItem('pinboard_replies', '${r.id}')" class="text-slate-500 hover:text-red-400 text-xs"><i class="fas fa-trash"></i></button>` : ''}
+                        </div>
+                        <p class="text-xs text-slate-200">${escapeHtml(r.content)}</p>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('postRepliesModal').classList.remove('hidden');
+            document.getElementById('postRepliesModal').classList.add('flex');
+        }
+
+        window.closePostReplies = function() {
+            document.getElementById('postRepliesModal').classList.add('hidden');
+            document.getElementById('postRepliesModal').classList.remove('flex');
+            activeReplyPostId = null;
+        }
+
+        window.sendReply = async function(event) {
+            event.preventDefault();
+            const inputEl = document.getElementById('replyInput');
+            const content = inputEl.value.trim();
+            if (!content || !activeReplyPostId || !currentUser) return;
+
+            await supabase.from('pinboard_replies').insert({
+                post_id: activeReplyPostId,
+                author_id: currentUser.id,
+                content: content
+            });
+
+            // Increment reply count
+            const { data: postData } = await supabase.from('pinboard_posts').select('reply_count').eq('id', activeReplyPostId).single();
+            await supabase.from('pinboard_posts').update({ reply_count: (postData?.reply_count || 0) + 1 }).eq('id', activeReplyPostId);
+
+            inputEl.value = '';
+            openPostReplies(activeReplyPostId);
+            loadPinboard();
+        }
+
+        // 3. Chat & DMs
+        async function loadChatRoomsAndRoster() {
+            // Rooms
+            const { data: rooms } = await supabase.from('chat_rooms').select('*');
+            const roomsList = document.getElementById('chatRoomsList');
+            roomsList.innerHTML = (rooms || []).map(r => `
+                <button onclick="window.selectChatRoom('${r.id}', '${escapeHtml(r.name)}', ${r.is_group})" class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800 transition flex items-center justify-between ${activeRoomId === r.id ? 'bg-slate-800 text-white' : ''}">
+                    <span class="truncate"><i class="fas fa-hashtag text-red-500 mr-2"></i> ${escapeHtml(r.name)}</span>
+                </button>
+            `).join('');
+
+            // Roster Profiles
+            const { data: profiles } = await supabase.from('profiles').select('*');
+            const rosterList = document.getElementById('playerRosterList');
+            rosterList.innerHTML = (profiles || []).map(p => {
+                const isMe = p.id === currentUser.id;
+                return `
+                    <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-800/60 transition">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="relative">
+                                <img src="${p.avatar_url || ''}" class="w-7 h-7 rounded-lg object-cover">
+                                <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-cyber-900 ${p.custom_status === 'online' ? 'bg-emerald-500' : 'bg-slate-500'}"></span>
+                            </div>
+                            <span class="text-xs font-medium text-slate-200 truncate">${escapeHtml(p.username)}</span>
+                        </div>
+                        ${!isMe ? `<div class="flex items-center gap-1.5"><button onclick="window.startDirectMessage('${p.id}', '${escapeHtml(p.username)}')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-400 text-[10px]" title="Direktnachricht"><i class="fas fa-comment"></i></button><button onclick="window.startCall('${p.id}', '${escapeHtml(p.username)}')" class="px-2 py-1 rounded bg-red-600/20 hover:bg-red-600/30 text-red-400 text-[10px]" title="Anrufen"><i class="fas fa-phone"></i></button></div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.selectChatRoom = async function(roomId, roomName, isGroup) {
+            activeRoomId = roomId;
+            document.getElementById('activeRoomTitle').innerText = roomName;
+            document.getElementById('activeRoomSubtitle').innerText = isGroup ? 'Öffentlicher Gruppenkanal' : 'Direkter Chat (1-to-1)';
+            
+            document.getElementById('activeChatActions').innerHTML = `
+                <button onclick="window.startCallForCurrentRoom()" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+                    <i class="fas fa-phone"></i> Anrufen
+                </button>
+            `;
+
+            loadChatMessages(roomId);
+            loadChatRoomsAndRoster();
+        }
+
+        async function loadChatMessages(roomId) {
+            const { data: messages } = await supabase.from('chat_messages').select('*, profiles(username, avatar_url, role)').eq('room_id', roomId).order('created_at', { ascending: true });
+            const container = document.getElementById('chatMessagesContainer');
+            
+            if (!messages || messages.length === 0) {
+                container.innerHTML = '<div class="text-center py-12 text-slate-500 text-xs">Noch keine Nachrichten in diesem Kanal.</div>';
+                return;
+            }
+
+            container.innerHTML = messages.map(m => {
+                const canDel = currentProfile && (currentProfile.role === 'management' || currentProfile.role === 'admin' || m.sender_id === currentUser.id);
+                return `
+                    <div class="flex items-start gap-3 group">
+                        <img src="${m.profiles?.avatar_url || ''}" class="w-9 h-9 rounded-xl object-cover mt-0.5 border border-slate-700">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs font-bold text-white">${m.profiles?.username || 'Unbekannt'}</span>
+                                <span class="text-[10px] text-slate-500">${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                ${canDel ? `<button onclick="window.deleteItem('chat_messages', '${m.id}')" class="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-red-400 text-xs transition ml-2"><i class="fas fa-trash"></i></button>` : ''}
+                            </div>
+                            <p class="text-xs text-slate-200 bg-cyber-900/60 p-3 rounded-2xl border border-slate-800/80 inline-block max-w-2xl">${escapeHtml(m.content)}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        window.sendChatMessage = async function(event) {
+            event.preventDefault();
+            const inputEl = document.getElementById('chatMessageInput');
+            const content = inputEl.value.trim();
+            if (!content || !activeRoomId || !currentUser) return;
+
+            await supabase.from('chat_messages').insert({
+                room_id: activeRoomId,
+                sender_id: currentUser.id,
+                content: content
+            });
+
+            inputEl.value = '';
+            loadChatMessages(activeRoomId);
+        }
+
+        window.startDirectMessage = async function(targetUserId, targetUsername) {
+            // Check if private room exists between current user and target user
+            const { data: myRooms } = await supabase.from('chat_room_members').select('room_id').eq('user_id', currentUser.id);
+            const myRoomIds = (myRooms || []).map(r => r.room_id);
+
+            let existingRoomId = null;
+            if (myRoomIds.length > 0) {
+                const { data: shared } = await supabase.from('chat_room_members').select('room_id').in('room_id', myRoomIds).eq('user_id', targetUserId);
+                if (shared && shared.length > 0) {
+                    for (let s of shared) {
+                        const { data: roomCheck } = await supabase.from('chat_rooms').select('is_group').eq('id', s.room_id).single();
+                        if (roomCheck && !roomCheck.is_group) {
+                            existingRoomId = s.room_id;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!existingRoomId) {
+                // Create private 1-to-1 room
+                const { data: newRoom, error } = await supabase.from('chat_rooms').insert({
+                    name: `DM: ${currentProfile.username} & ${targetUsername}`,
+                    is_group: false,
+                    creator_id: currentUser.id
+                }).select().single();
+
+                if (!error && newRoom) {
+                    existingRoomId = newRoom.id;
+                    await supabase.from('chat_room_members').insert([
+                        { room_id: existingRoomId, user_id: currentUser.id },
+                        { room_id: existingRoomId, user_id: targetUserId }
+                    ]);
+                }
+            }
+
+            if (existingRoomId) {
+                window.switchTab('chat');
+                window.selectChatRoom(existingRoomId, targetUsername, false);
+            }
+        }
+
+        window.openCreateRoomModal = async function() {
+            const roomName = prompt('Name des neuen Gruppenkanals:');
+            if (!roomName) return;
+            const { data: room, error } = await supabase.from('chat_rooms').insert({
+                name: roomName,
+                is_group: true,
+                creator_id: currentUser.id
+            }).select().single();
+
+            if (!error && room) {
+                await supabase.from('chat_room_members').insert({ room_id: room.id, user_id: currentUser.id });
+                loadChatRoomsAndRoster();
+                showToast('Kanal erstellt! 🚀');
+            }
+        }
+
+        // WebRTC Calls & Ringtone
+        window.startCall = function(targetUserId, targetUsername) {
+            playRingingSound();
+            document.getElementById('callModalTitle').innerText = `Anruf mit ${targetUsername} wird aufgebaut...`;
+            document.getElementById('remoteNameLabel').innerText = targetUsername;
+            document.getElementById('callModal').classList.remove('hidden');
+            document.getElementById('callModal').classList.add('flex');
+            initWebRtcStream();
+        }
+
+        window.startCallForCurrentRoom = function() {
+            playRingingSound();
+            document.getElementById('callModalTitle').innerText = 'Taktischer Gruppenanruf aktiv';
+            document.getElementById('remoteNameLabel').innerText = 'Gruppen-Stream';
+            document.getElementById('callModal').classList.remove('hidden');
+            document.getElementById('callModal').classList.add('flex');
+            initWebRtcStream();
+        }
+
+        async function initWebRtcStream() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('localVideo').srcObject = stream;
+                document.getElementById('remoteVideo').srcObject = stream; // Mirror for local test demo
+                setTimeout(() => stopRingingSound(), 2000);
+            } catch(e) {
+                console.error("WebRTC error:", e);
+            }
+        }
+
+        window.endCall = function() {
+            stopRingingSound();
+            const localVid = document.getElementById('localVideo');
+            if (localVid.srcObject) {
+                localVid.srcObject.getTracks().forEach(t => t.stop());
+            }
+            document.getElementById('callModal').classList.add('hidden');
+            document.getElementById('callModal').classList.remove('flex');
         }
 
         function playRingingSound() {
-            if (ringtoneInterval) return;
             try {
-                ringtoneAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 ringtoneInterval = setInterval(() => {
-                    if (!ringtoneAudioContext) return;
-                    const osc = ringtoneAudioContext.createOscillator();
-                    const gain = ringtoneAudioContext.createGain();
+                    if (audioCtx.state === 'suspended') audioCtx.resume();
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(587.33, ringtoneAudioContext.currentTime); // D5
-                    osc.frequency.setValueAtTime(880, ringtoneAudioContext.currentTime + 0.15); // A5
-                    gain.gain.setValueAtTime(0.1, ringtoneAudioContext.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ringtoneAudioContext.currentTime + 0.3);
+                    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(480, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
                     osc.connect(gain);
-                    gain.connect(ringtoneAudioContext.destination);
+                    gain.connect(audioCtx.destination);
                     osc.start();
-                    osc.stop(ringtoneAudioContext.currentTime + 0.3);
-                }, 1000);
-            } catch(e) { console.error('Ringtone error:', e); }
+                    osc.stop(audioCtx.currentTime + 0.4);
+                }, 1200);
+            } catch (e) {}
         }
 
         function stopRingingSound() {
@@ -769,1047 +1220,223 @@
                 clearInterval(ringtoneInterval);
                 ringtoneInterval = null;
             }
-            if (ringtoneAudioContext) {
-                ringtoneAudioContext.close().catch(() => {});
-                ringtoneAudioContext = null;
-            }
         }
-
-        // TOAST NOTIFICATIONS
-        window.showToast = function(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const borderColor = type === 'error' ? 'border-neonRed text-neonRed bg-red-950/90' : (type === 'success' ? 'border-neonGreen text-neonGreen bg-emerald-950/90' : 'border-neonCyan text-neonCyan bg-cyan-950/90');
-            toast.className = `glass-panel px-4 py-3 rounded-xl border ${borderColor} text-xs font-mono shadow-lg pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-300 flex items-center space-x-2`;
-            toast.innerHTML = `<i data-lucide="${type === 'error' ? 'alert-triangle' : 'info'}" class="w-4 h-4"></i><span>${message}</span>`;
-            container.appendChild(toast);
-            lucide.createIcons();
-            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
-            setTimeout(() => {
-                toast.classList.add('translate-y-2', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-            playBeep(type === 'error' ? 300 : 660, 150);
-        };
-
-        // AUTH TAB SWITCHING
-        let authMode = 'login';
-        window.switchAuthTab = function(mode) {
-            authMode = mode;
-            const loginBtn = document.getElementById('tab-login-btn');
-            const regBtn = document.getElementById('tab-register-btn');
-            const userContainer = document.getElementById('register-username-container');
-            const submitBtn = document.getElementById('auth-submit-btn');
-
-            if (mode === 'login') {
-                loginBtn.className = 'flex-1 py-2 text-xs font-mono font-semibold rounded-md bg-neonRed text-white transition-all shadow-neon-red';
-                regBtn.className = 'flex-1 py-2 text-xs font-mono font-semibold rounded-md text-gray-400 hover:text-white transition-all';
-                userContainer.classList.add('hidden');
-                submitBtn.textContent = 'ZUGRIFF ANFORDERN';
-            } else {
-                regBtn.className = 'flex-1 py-2 text-xs font-mono font-semibold rounded-md bg-neonRed text-white transition-all shadow-neon-red';
-                loginBtn.className = 'flex-1 py-2 text-xs font-mono font-semibold rounded-md text-gray-400 hover:text-white transition-all';
-                userContainer.classList.remove('hidden');
-                submitBtn.textContent = 'REGISTRIEREN & VERIFIZIEREN';
-            }
-        };
-
-        // AUTH SUBMIT
-        window.handleAuthSubmit = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value.trim();
-            const password = document.getElementById('auth-password').value;
-            const username = document.getElementById('auth-username').value.trim();
-            const errDiv = document.getElementById('auth-error');
-            errDiv.classList.add('hidden');
-
-            try {
-                if (authMode === 'login') {
-                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                    if (error) throw error;
-                    window.showToast('Login erfolgreich! Willkommen zurück, Agent.', 'success');
-                } else {
-                    if (!username) throw new Error('Bitte gib einen Agenten-Codenamen ein.');
-                    const { data, error } = await supabase.auth.signUp({ email, password });
-                    if (error) throw error;
-                    if (data.user) {
-                        await supabase.from('profiles').upsert({
-                            id: data.user.id,
-                            username: username,
-                            role: 'mitspieler',
-                            custom_status: 'online',
-                            custom_status_text: 'Bereit für Einsätze',
-                            avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces'
-                        });
-                    }
-                    window.showToast('Registrierung erfolgreich! Verifizierung abgeschlossen.', 'success');
-                }
-                await window.initAppSession();
-            } catch (err) {
-                errDiv.textContent = err.message;
-                errDiv.classList.remove('hidden');
-                window.showToast(err.message, 'error');
-            }
-        };
-
-        window.logout = async function() {
-            await supabase.auth.signOut();
-            window.location.reload();
-        };
-
-        // APP INITIALIZATION & SESSION
-        async function init() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                await window.initAppSession();
-            } else {
-                document.getElementById('auth-screen').classList.remove('hidden');
-            }
-            lucide.createIcons();
-        }
-
-        window.initAppSession = async function() {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
-
-            // Fetch Profile
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
-            if (profile) {
-                currentProfile = profile;
-            } else {
-                currentProfile = {
-                    id: currentUser.id,
-                    username: currentUser.email.split('@')[0],
-                    role: 'mitspieler',
-                    custom_status: 'online',
-                    custom_status_text: 'Online',
-                    avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces'
-                };
-            }
-
-            window.updateUserFooterUI();
-            if (currentProfile.role === 'admin' || currentProfile.role === 'management') {
-                document.getElementById('admin-nav-item').classList.remove('hidden');
-            }
-
-            await window.fetchAllData();
-            window.setupRealtimeSubscriptions();
-            window.switchView('pinboard');
-            window.populateHardwareDevices();
-        };
-
-        window.updateUserFooterUI = function() {
-            document.getElementById('sidebar-user-name').textContent = currentProfile.username;
-            document.getElementById('sidebar-user-role').textContent = currentProfile.role.toUpperCase();
-            document.getElementById('sidebar-user-avatar').src = currentProfile.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces';
-            const dot = document.getElementById('sidebar-user-status-dot');
-            dot.className = `absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-darkBg ${currentProfile.custom_status === 'online' ? 'bg-neonGreen' : (currentProfile.custom_status === 'idle' ? 'bg-amber-400' : (currentProfile.custom_status === 'dnd' ? 'bg-neonRed' : 'bg-gray-500'))}`;
-        };
-
-        // FETCH ALL DATA
-        async function fetchAllData() {
-            // Profiles
-            const { data: profiles } = await supabase.from('profiles').select('*');
-            if (profiles) allProfiles = profiles;
-
-            // Pinboard
-            const { data: posts } = await supabase.from('pinboard_posts').select('*, profiles:author_id(username, avatar_url, role)').order('created_at', { ascending: false });
-            if (posts) pinboardPosts = posts;
-
-            // Chat Rooms
-            const { data: rooms } = await supabase.from('chat_rooms').select('*');
-            if (rooms) chatRooms = rooms;
-
-            // If no rooms exist, create default #allgemein
-            if (!chatRooms || chatRooms.length === 0) {
-                const { data: newRoom } = await supabase.from('chat_rooms').insert({ name: 'allgemein', is_group: true, creator_id: currentUser.id }).select().single();
-                if (newRoom) chatRooms = [newRoom];
-            }
-            if (!activeRoomId && chatRooms.length > 0) activeRoomId = chatRooms[0].id;
-
-            // Calendar
-            const { data: events } = await supabase.from('calendar_events').select('*, profiles:creator_id(username)').order('event_date', { ascending: true });
-            if (events) calendarEvents = events;
-
-            // Vault
-            const { data: vault } = await supabase.from('vault_items').select('*, profiles:uploader_id(username)').order('created_at', { ascending: false });
-            if (vault) vaultItems = vault;
-
-            window.renderAllViews();
-        }
-
-        // REALTIME SUBSCRIPTIONS
-        function setupRealtimeSubscriptions() {
-            supabase.channel('public-db-changes')
-                .on('postgres_changes', { event: '*', schema: 'public' }, async (payload) => {
-                    await fetchAllData();
-                    window.showToast(`Datenbank-Aktualisierung (${payload.table})`, 'info');
-                })
-                .subscribe();
-        }
-
-        // NAVIGATION VIEW SWITCHER
-        window.switchView = function(viewName) {
-            activeView = viewName;
-            ['pinboard', 'chat', 'calendar', 'vault', 'qupassi', 'admin'].forEach(v => {
-                document.getElementById(`view-${v}`).classList.add('hidden');
-                const btn = document.getElementById(`nav-btn-${v}`);
-                if (btn) btn.className = btn.className.replace('bg-neonRed/20 text-white shadow-neon-red', 'text-gray-300 hover:bg-neonRed/10 hover:text-white').replace('bg-neonCyan/20 text-white', 'text-gray-300 hover:bg-neonCyan/10 hover:text-white');
-            });
-
-            document.getElementById(`view-${viewName}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`nav-btn-${viewName}`);
-            if (activeBtn) {
-                if (viewName === 'qupassi') {
-                    activeBtn.className = 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-neonCyan/20 text-white shadow-neon-cyan transition-all group';
-                } else {
-                    activeBtn.className = 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-neonRed/20 text-white shadow-neon-red transition-all group';
-                }
-            }
-
-            const titles = {
-                pinboard: 'Pinnwand & Kanban',
-                chat: 'Chat & Kanäle',
-                calendar: 'Einsatzkalender',
-                vault: 'Vault & Mediathek',
-                qupassi: 'QupasSI KI Assistent',
-                admin: 'Admin & Management Kontrollzentrum'
-            };
-            document.getElementById('view-title').innerHTML = `<i data-lucide="${viewName === 'pinboard' ? 'layout-dashboard' : viewName === 'chat' ? 'message-square' : viewName === 'calendar' ? 'calendar' : viewName === 'vault' ? 'database' : viewName === 'qupassi' ? 'bot' : 'shield-check'}" class="w-5 h-5 text-neonRed"></i><span>${titles[viewName]}</span>`;
-            lucide.createIcons();
-
-            if (viewName === 'chat') window.loadChatRoom(activeRoomId);
-            if (viewName === 'calendar') window.renderCalendar();
-            if (viewName === 'vault') window.renderVault();
-            if (viewName === 'admin') window.renderAdminPanel();
-        };
-
-        window.renderAllViews = function() {
-            window.renderPinboard();
-            window.renderSidebarRoomsAndRoster();
-            if (activeView === 'chat') window.loadChatRoom(activeRoomId);
-            if (activeView === 'calendar') window.renderCalendar();
-            if (activeView === 'vault') window.renderVault();
-            if (activeView === 'admin') window.renderAdminPanel();
-        };
-
-        // --- 1. PINBOARD & KANBAN ---
-        window.filterPinboard = function(cat) {
-            pinboardFilter = cat;
-            document.querySelectorAll('.pinboard-filter-btn').forEach(b => {
-                b.className = 'pinboard-filter-btn px-4 py-2 rounded-lg text-xs font-mono font-semibold bg-black/40 border border-white/10 text-gray-300 hover:border-neonRed transition-all';
-            });
-            event.target.className = 'pinboard-filter-btn px-4 py-2 rounded-lg text-xs font-mono font-semibold bg-neonRed text-white shadow-neon-red transition-all';
-            window.renderPinboard();
-        };
-
-        window.togglePinboardLayout = function(layout) {
-            pinboardLayout = layout;
-            const kBtn = document.getElementById('layout-kanban-btn');
-            const fBtn = document.getElementById('layout-feed-btn');
-            const kCont = document.getElementById('pinboard-kanban-container');
-            const fCont = document.getElementById('pinboard-feed-container');
-
-            if (layout === 'kanban') {
-                kBtn.className = 'p-2 rounded-lg bg-neonRed/20 border border-neonRed text-neonRed';
-                fBtn.className = 'p-2 rounded-lg bg-black/40 border border-white/10 text-gray-400 hover:text-white';
-                kCont.classList.remove('hidden');
-                fCont.classList.add('hidden');
-            } else {
-                fBtn.className = 'p-2 rounded-lg bg-neonRed/20 border border-neonRed text-neonRed';
-                kBtn.className = 'p-2 rounded-lg bg-black/40 border border-white/10 text-gray-400 hover:text-white';
-                fCont.classList.remove('hidden');
-                kCont.classList.add('hidden');
-            }
-            window.renderPinboard();
-        };
-
-        window.renderPinboard = function() {
-            const filtered = pinboardPosts.filter(p => pinboardFilter === 'all' || p.category === pinboardFilter);
-            
-            if (pinboardLayout === 'kanban') {
-                const statuses = ['Geplant', 'In Arbeit', 'Fertig', 'Ideen'];
-                const statusKeys = { 'Geplant': 'geplant', 'In Arbeit': 'inarbeit', 'Fertig': 'fertig', 'Ideen': 'ideen' };
-                
-                statuses.forEach(st => {
-                    const col = document.getElementById(`column-${statusKeys[st]}`);
-                    const cnt = document.getElementById(`count-${statusKeys[st]}`);
-                    const items = filtered.filter(p => p.status === st);
-                    cnt.textContent = items.length;
-                    
-                    col.innerHTML = items.length === 0 ? `<div class="text-center py-8 text-xs font-mono text-gray-500">Keine Beiträge</div>` : items.map(p => {
-                        const canDelete = currentProfile.role === 'admin' || currentProfile.role === 'management' || p.author_id === currentUser.id;
-                        return `
-                            <div class="glass-panel p-3 rounded-xl border border-white/10 hover:border-neonRed/50 transition-all space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-neonRed/20 text-neonRed">#${p.category}</span>
-                                    <div class="flex items-center space-x-1">
-                                        ${p.pinned ? '<i data-lucide="pin" class="w-3.5 h-3.5 text-amber-400"></i>' : ''}
-                                        ${canDelete ? `<button onclick="window.deletePinboardPost('${p.id}')" class="text-gray-400 hover:text-neonRed p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>` : ''}
-                                    </div>
-                                </div>
-                                <h4 class="font-bold text-sm text-white">${escapeHtml(p.title)}</h4>
-                                <p class="text-xs text-gray-300 line-clamp-3">${escapeHtml(p.content)}</p>
-                                ${p.coordinates ? `
-                                    <div onclick="window.copyCoordinates('${escapeHtml(p.coordinates)}')" class="flex items-center justify-between p-2 rounded bg-black/60 border border-cyan-500/30 text-xs font-mono text-cyan-400 cursor-pointer hover:bg-cyan-950/40">
-                                        <span>📍 ${escapeHtml(p.coordinates)}</span>
-                                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                    </div>
-                                ` : ''}
-                                <div class="flex items-center justify-between pt-2 border-t border-white/10 text-[10px] font-mono text-gray-400">
-                                    <span>${p.profiles?.username || 'Agent'}</span>
-                                    <span>${new Date(p.created_at).toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                });
-            } else {
-                const fCont = document.getElementById('pinboard-feed-container');
-                fCont.innerHTML = filtered.length === 0 ? `<div class="text-center py-12 text-sm font-mono text-gray-500">Keine Beiträge im Feed</div>` : filtered.map(p => {
-                    const canDelete = currentProfile.role === 'admin' || currentProfile.role === 'management' || p.author_id === currentUser.id;
-                    return `
-                        <div class="glass-panel p-5 rounded-xl border border-white/10 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <img src="${p.profiles?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces'}" class="w-8 h-8 rounded-lg object-cover border border-neonRed/40" alt="">
-                                    <div>
-                                        <div class="font-bold text-sm text-white">${p.profiles?.username || 'Agent'}</div>
-                                        <div class="text-[10px] text-gray-400 font-mono">${new Date(p.created_at).toLocaleString()}</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-xs font-mono px-2.5 py-1 rounded bg-neonRed/20 text-neonRed">#${p.category}</span>
-                                    <span class="text-xs font-mono px-2.5 py-1 rounded bg-cyan-500/20 text-cyan-400">${p.status}</span>
-                                    ${canDelete ? `<button onclick="window.deletePinboardPost('${p.id}')" class="p-1.5 text-gray-400 hover:text-neonRed"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
-                                </div>
-                            </div>
-                            <h3 class="font-bold text-lg text-white">${escapeHtml(p.title)}</h3>
-                            <p class="text-sm text-gray-300 whitespace-pre-line">${escapeHtml(p.content)}</p>
-                            ${p.coordinates ? `
-                                <div onclick="window.copyCoordinates('${escapeHtml(p.coordinates)}')" class="inline-flex items-center space-x-2 px-3 py-2 rounded-lg bg-black/60 border border-cyan-500/30 text-xs font-mono text-cyan-400 cursor-pointer hover:bg-cyan-950/40">
-                                    <i data-lucide="map-pin" class="w-4 h-4"></i>
-                                    <span>${escapeHtml(p.coordinates)}</span>
-                                    <i data-lucide="copy" class="w-3.5 h-3.5 ml-2"></i>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
-                }).join('');
-            }
-            lucide.createIcons();
-        };
-
-        window.copyCoordinates = function(coords) {
-            navigator.clipboard.writeText(coords);
-            window.showToast(`Koordinaten in Zwischenablage kopiert: ${coords}`, 'success');
-            playBeep(880, 100);
-        };
-
-        window.openCreatePostModal = function() { document.getElementById('create-post-modal').classList.remove('hidden'); document.getElementById('create-post-modal').classList.add('flex'); };
-        window.closeCreatePostModal = function() { document.getElementById('create-post-modal').classList.add('hidden'); document.getElementById('create-post-modal').classList.remove('flex'); };
-
-        window.submitPinboardPost = async function(e) {
-            e.preventDefault();
-            const title = document.getElementById('post-title').value;
-            const category = document.getElementById('post-category').value;
-            const status = document.getElementById('post-status').value;
-            const coordinates = document.getElementById('post-coordinates').value;
-            const content = document.getElementById('post-content').value;
-
-            const { error } = await supabase.from('pinboard_posts').insert({
-                author_id: currentUser.id,
-                title, category, status, coordinates, content,
-                pinned: false
-            });
-
-            if (error) {
-                window.showToast(error.message, 'error');
-            } else {
-                window.showToast('Beitrag erfolgreich veröffentlicht!', 'success');
-                window.closeCreatePostModal();
-                await fetchAllData();
-            }
-        };
-
-        window.deletePinboardPost = async function(id) {
-            if (!confirm('Beitrag wirklich löschen?')) return;
-            const { error } = await supabase.from('pinboard_posts').delete().eq('id', id);
-            if (error) window.showToast(error.message, 'error');
-            else {
-                window.showToast('Beitrag gelöscht.', 'success');
-                await fetchAllData();
-            }
-        };
-
-        // --- 2. CHAT & KANÄLE ---
-        window.renderSidebarRoomsAndRoster = function() {
-            // Rooms list
-            const roomsList = document.getElementById('sidebar-rooms-list');
-            if (roomsList) {
-                roomsList.innerHTML = chatRooms.map(r => `
-                    <button onclick="window.loadChatRoom('${r.id}')" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium ${activeRoomId === r.id ? 'bg-neonRed/20 text-white border border-neonRed/40' : 'text-gray-300 hover:bg-black/40 hover:text-white'} transition-all">
-                        <i data-lucide="${r.is_group ? 'hash' : 'lock'}" class="w-4 h-4 text-neonRed"></i>
-                        <span class="truncate">${escapeHtml(r.name)}</span>
-                    </button>
-                `).join('');
-            }
-
-            // Roster list (Direct Call)
-            const rosterList = document.getElementById('sidebar-roster-list');
-            if (rosterList) {
-                rosterList.innerHTML = allProfiles.filter(u => u.id !== currentUser.id).map(u => `
-                    <div class="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/5 hover:border-cyan-500/30 transition-all">
-                        <div class="flex items-center space-x-2.5 overflow-hidden">
-                            <div class="relative flex-shrink-0">
-                                <img src="${u.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces'}" class="w-7 h-7 rounded-lg object-cover border border-cyan-500/40" alt="">
-                                <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-darkBg ${u.custom_status === 'online' ? 'bg-neonGreen' : 'bg-gray-500'}"></div>
-                            </div>
-                            <span class="text-xs font-medium text-white truncate">${escapeHtml(u.username)}</span>
-                        </div>
-                        <div class="flex items-center space-x-1">
-                            <button onclick="window.startDirectMessage('${u.id}', '${escapeHtml(u.username)}')" class="p-1.5 rounded bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20" title="PM Senden"><i data-lucide="message-square" class="w-3.5 h-3.5"></i></button>
-                            <button onclick="window.startWebRTCCall('${u.id}', '${escapeHtml(u.username)}')" class="p-1.5 rounded bg-neonRed/20 text-neonRed hover:bg-neonRed hover:text-white" title="Anrufen"><i data-lucide="phone" class="w-3.5 h-3.5"></i></button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            lucide.createIcons();
-        };
-
-        window.loadChatRoom = async function(roomId) {
-            activeRoomId = roomId;
-            const room = chatRooms.find(r => r.id === roomId);
-            if (!room) return;
-
-            document.getElementById('active-chat-title').textContent = room.is_group ? `#${room.name}` : room.name;
-            document.getElementById('active-chat-subtitle').textContent = room.is_group ? 'Öffentlicher Einsatzkanal' : 'Privater 1-zu-1 Direktchat';
-            
-            // Fetch messages
-            const { data: msgs } = await supabase.from('chat_messages').select('*, profiles:sender_id(username, avatar_url, role)').eq('room_id', roomId).order('created_at', { ascending: true });
-            chatMessages = msgs || [];
-            
-            window.renderChatMessages();
-            window.renderSidebarRoomsAndRoster();
-        };
-
-        window.renderChatMessages = function() {
-            const container = document.getElementById('chat-messages-container');
-            container.innerHTML = chatMessages.length === 0 ? `<div class="text-center py-12 text-xs font-mono text-gray-500">Noch keine Nachrichten in diesem Kanal. Starte die Konversation.</div>` : chatMessages.map(m => {
-                const canDelete = currentProfile.role === 'admin' || currentProfile.role === 'management' || m.sender_id === currentUser.id;
-                return `
-                    <div class="flex items-start space-x-3 group">
-                        <img src="${m.profiles?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces'}" class="w-9 h-9 rounded-xl object-cover border border-neonRed/30" alt="">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-2">
-                                <span class="font-bold text-sm text-white">${m.profiles?.username || 'Agent'}</span>
-                                <span class="text-[10px] font-mono text-gray-400">${new Date(m.created_at).toLocaleTimeString()}</span>
-                            </div>
-                            <p class="text-sm text-gray-300 mt-1 whitespace-pre-line">${escapeHtml(m.content)}</p>
-                        </div>
-                        ${canDelete ? `<button onclick="window.deleteChatMessage('${m.id}')" class="opacity-0 group-hover:opacity-150 p-1 text-gray-400 hover:text-neonRed transition-opacity"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
-                    </div>
-                `;
-            }).join('');
-            container.scrollTop = container.scrollHeight;
-            lucide.createIcons();
-        };
-
-        window.sendChatMessage = async function(e) {
-            e.preventDefault();
-            const input = document.getElementById('chat-message-input');
-            const content = input.value.trim();
-            if (!content || !activeRoomId) return;
-
-            const { error } = await supabase.from('chat_messages').insert({
-                room_id: activeRoomId,
-                sender_id: currentUser.id,
-                content
-            });
-
-            if (error) window.showToast(error.message, 'error');
-            else {
-                input.value = '';
-                await window.loadChatRoom(activeRoomId);
-            }
-        };
-
-        window.deleteChatMessage = async function(msgId) {
-            const { error } = await supabase.from('chat_messages').delete().eq('id', msgId);
-            if (error) window.showToast(error.message, 'error');
-            else {
-                window.showToast('Nachricht gelöscht.', 'success');
-                await window.loadChatRoom(activeRoomId);
-            }
-        };
-
-        window.openCreateRoomModal = function() { document.getElementById('create-room-modal').classList.remove('hidden'); document.getElementById('create-room-modal').classList.add('flex'); };
-        window.closeCreateRoomModal = function() { document.getElementById('create-room-modal').classList.add('hidden'); document.getElementById('create-room-modal').classList.remove('flex'); };
-
-        window.submitCreateRoom = async function(e) {
-            e.preventDefault();
-            const name = document.getElementById('room-name').value.trim();
-            if (!name) return;
-
-            const { data, error } = await supabase.from('chat_rooms').insert({
-                name, is_group: true, creator_id: currentUser.id
-            }).select().single();
-
-            if (error) window.showToast(error.message, 'error');
-            else {
-                window.showToast(`Kanal #${name} erstellt!`, 'success');
-                window.closeCreateRoomModal();
-                await fetchAllData();
-                window.loadChatRoom(data.id);
-            }
-        };
-
-        window.startDirectMessage = async function(targetUserId, targetUsername) {
-            // Check if DM room already exists with is_group: false containing both users
-            const existingRoom = chatRooms.find(r => !r.is_group && r.name.includes(targetUsername));
-            if (existingRoom) {
-                window.switchView('chat');
-                window.loadChatRoom(existingRoom.id);
-                return;
-            }
-
-            // Create private room
-            const roomName = `PM: ${currentProfile.username} & ${targetUsername}`;
-            const { data: newRoom, error } = await supabase.from('chat_rooms').insert({
-                name: roomName, is_group: false, creator_id: currentUser.id
-            }).select().single();
-
-            if (error) {
-                window.showToast(error.message, 'error');
-                return;
-            }
-
-            // Add members
-            await supabase.from('chat_room_members').insert([
-                { room_id: newRoom.id, user_id: currentUser.id },
-                { room_id: newRoom.id, user_id: targetUserId }
-            ]);
-
-            window.showToast(`Privater Chat mit ${targetUsername} gestartet.`, 'success');
-            await fetchAllData();
-            window.switchView('chat');
-            window.loadChatRoom(newRoom.id);
-        };
-
-        // --- WEBRTC CALLING & RINGING SOUND ---
-        window.startWebRTCCall = async function(targetUserId, targetUsername) {
-            window.showToast(`Rufe Agent ${targetUsername} an...`, 'info');
-            playRingingSound();
-            document.getElementById('call-modal').classList.remove('hidden');
-            document.getElementById('call-modal').classList.add('flex');
-            document.getElementById('call-modal-title').textContent = `Live Direktruf an ${targetUsername}`;
-
-            try {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                document.getElementById('local-video').srcObject = localStream;
-
-                peerConnection = new RTCPeerConnection({
-                    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-                });
-
-                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-                peerConnection.ontrack = (event) => {
-                    stopRingingSound();
-                    document.getElementById('remote-video').srcObject = event.streams[0];
-                    window.showToast('Verbindung erfolgreich aufgebaut!', 'success');
-                };
-
-                // Signaling over Supabase channel
-                currentCallChannel = supabase.channel(`webrtc_${targetUserId}_${currentUser.id}`, {
-                    config: { broadcast: { self: false } }
-                });
-
-                currentCallChannel.on('broadcast', { event: 'signal' }, async ({ payload }) => {
-                    if (payload.sdp) {
-                        await peerConnection.setRemoteDescription(new RTCSessionDescription(payload.sdp));
-                        if (payload.sdp.type === 'offer') {
-                            const answer = await peerConnection.createAnswer();
-                            await peerConnection.setLocalDescription(answer);
-                            currentCallChannel.send({ type: 'broadcast', event: 'signal', payload: { sdp: peerConnection.localDescription } });
-                        }
-                    } else if (payload.candidate) {
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(payload.candidate));
-                    }
-                }).subscribe(async (status) => {
-                    if (status === 'SUBSCRIBED') {
-                        peerConnection.onicecandidate = (event) => {
-                            if (event.candidate) {
-                                currentCallChannel.send({ type: 'broadcast', event: 'signal', payload: { candidate: event.candidate } });
-                            }
-                        };
-                        const offer = await peerConnection.createOffer();
-                        await peerConnection.setLocalDescription(offer);
-                        currentCallChannel.send({ type: 'broadcast', event: 'signal', payload: { sdp: peerConnection.localDescription } });
-                    }
-                });
-
-            } catch (err) {
-                stopRingingSound();
-                window.showToast(`Medienfehler: ${err.message}`, 'error');
-                window.hangUpCall();
-            }
-        };
-
-        window.hangUpCall = function() {
-            stopRingingSound();
-            if (localStream) {
-                localStream.getTracks().forEach(t => t.stop());
-                localStream = null;
-            }
-            if (peerConnection) {
-                peerConnection.close();
-                peerConnection = null;
-            }
-            if (currentCallChannel) {
-                supabase.removeChannel(currentCallChannel);
-                currentCallChannel = null;
-            }
-            document.getElementById('call-modal').classList.add('hidden');
-            document.getElementById('call-modal').classList.remove('flex');
-            window.showToast('Anruf beendet.', 'info');
-        };
-
-        window.toggleMicMute = function() {
-            if (localStream) {
-                const audioTrack = localStream.getAudioTracks()[0];
-                if (audioTrack) {
-                    audioTrack.enabled = !audioTrack.enabled;
-                    window.showToast(audioTrack.enabled ? 'Mikrofon aktiv' : 'Mikrofon stummgeschaltet', 'info');
-                }
-            }
-        };
-
-        window.toggleCamMute = function() {
-            if (localStream) {
-                const videoTrack = localStream.getVideoTracks()[0];
-                if (videoTrack) {
-                    videoTrack.enabled = !videoTrack.enabled;
-                    window.showToast(videoTrack.enabled ? 'Kamera aktiv' : 'Kamera deaktiviert', 'info');
-                }
-            }
-        };
 
         window.toggleScreenShare = async function() {
             try {
                 const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-                const screenTrack = screenStream.getVideoTracks()[0];
-                if (peerConnection) {
-                    const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
-                    if (sender) sender.replaceTrack(screenTrack);
-                }
-                document.getElementById('local-video').srcObject = screenStream;
-                screenTrack.onended = () => {
-                    if (localStream) {
-                        const camTrack = localStream.getVideoTracks()[0];
-                        if (peerConnection && camTrack) {
-                            const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
-                            if (sender) sender.replaceTrack(camTrack);
-                        }
-                        document.getElementById('local-video').srcObject = localStream;
-                    }
-                };
-                window.showToast('Bildschirmübertragung gestartet.', 'success');
-            } catch (err) {
-                window.showToast('Bildschirmübertragung abgebrochen.', 'info');
-            }
-        };
+                document.getElementById('localVideo').srcObject = screenStream;
+                showToast('Bildschirmübertragung aktiv! 🖥️');
+            } catch(e) {}
+        }
 
-        // --- 3. KALENDER ---
-        window.changeCalendarMonth = function(direction) {
-            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
-            window.renderCalendar();
-        };
-
-        window.renderCalendar = function() {
-            const year = currentCalendarDate.getFullYear();
-            const month = currentCalendarDate.getMonth();
-            const monthNames = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-            document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
-
-            const grid = document.getElementById('calendar-grid');
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const startDay = firstDay === 0 ? 6 : firstDay - 1; // Monday start
-
-            let html = '';
-            for (let i = 0; i < startDay; i++) {
-                html += `<div class="glass-panel p-3 rounded-xl opacity-30 min-h-[100px]"></div>`;
+        // 4. Calendar
+        async function loadCalendar() {
+            const { data: events } = await supabase.from('calendar_events').select('*, profiles(username, avatar_url, role)').order('event_date', { ascending: true });
+            const listEl = document.getElementById('calendarEventsList');
+            
+            if (!events || events.length === 0) {
+                listEl.innerHTML = '<div class="text-center py-10 text-slate-500 text-xs">Keine Events geplant.</div>';
+                return;
             }
 
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const dayEvents = calendarEvents.filter(e => e.event_day === dateStr || (e.event_date && e.event_date.startsWith(dateStr)));
-
-                html += `
-                    <div class="glass-panel p-3 rounded-xl min-h-[100px] flex flex-col justify-between border border-white/10 hover:border-neonRed/40 transition-all">
-                        <div class="flex items-center justify-between font-mono text-xs font-bold text-white">
-                            <span>${day}</span>
-                            <span class="text-[10px] text-neonRed">#OP</span>
+            listEl.innerHTML = events.map(e => {
+                const canDel = currentProfile && (currentProfile.role === 'management' || currentProfile.role === 'admin' || e.creator_id === currentUser.id);
+                return `
+                    <div class="bg-cyber-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-400">${escapeHtml(e.title)}</span>
+                            ${canDel ? `<button onclick="window.deleteItem('calendar_events', '${e.id}')" class="text-slate-500 hover:text-red-400 text-xs"><i class="fas fa-trash"></i></button>` : ''}
                         </div>
-                        <div class="flex-1 space-y-1.5 my-2 overflow-y-auto max-h-[80px]">
-                            ${dayEvents.map(ev => {
-                                const canDelete = currentProfile.role === 'admin' || currentProfile.role === 'management' || ev.creator_id === currentUser.id;
-                                return `
-                                    <div class="p-1.5 rounded bg-neonRed/15 border border-neonRed/30 text-[10px] text-white flex items-center justify-between group">
-                                        <span class="truncate font-mono">${escapeHtml(ev.title)}</span>
-                                        ${canDelete ? `<button onclick="window.deleteCalendarEvent('${ev.id}')" class="text-gray-400 hover:text-neonRed"><i data-lucide="trash-2" class="w-3 h-3"></i></button>` : ''}
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
+                        <p class="text-xs text-slate-300">${escapeHtml(e.description || '')}</p>
+                        <p class="text-[10px] text-slate-500 font-mono"><i class="fas fa-clock mr-1"></i> ${new Date(e.event_date).toLocaleString()}</p>
                     </div>
                 `;
+            }).join('');
+
+            // Render simple month grid
+            const grid = document.getElementById('calendarGrid');
+            let gridHtml = '';
+            for (let i = 1; i <= 30; i++) {
+                gridHtml += `<div class="glass-panel p-2 rounded-xl h-20 text-xs text-slate-400 font-semibold flex flex-col justify-between hover:border-slate-700 transition"><span>${i}</span></div>`;
             }
-            grid.innerHTML = html;
-            lucide.createIcons();
-        };
+            grid.innerHTML = gridHtml;
+        }
 
-        window.openCreateEventModal = function() { document.getElementById('create-event-modal').classList.remove('hidden'); document.getElementById('create-event-modal').classList.add('flex'); };
-        window.closeCreateEventModal = function() { document.getElementById('create-event-modal').classList.add('hidden'); document.getElementById('create-event-modal').classList.remove('flex'); };
+        window.openCreateEventModal = async function() {
+            const title = prompt('Event Titel:');
+            if (!title) return;
+            const desc = prompt('Beschreibung:') || '';
+            const dateStr = prompt('Datum & Uhrzeit (YYYY-MM-DDTHH:MM):', new Date().toISOString().slice(0,16));
+            if (!dateStr) return;
 
-        window.submitCreateEvent = async function(e) {
-            e.preventDefault();
-            const title = document.getElementById('event-title').value;
-            const date = document.getElementById('event-date').value;
-            const description = document.getElementById('event-desc').value;
-
-            const { error } = await supabase.from('calendar_events').insert({
+            await supabase.from('calendar_events').insert({
                 creator_id: currentUser.id,
-                title, event_date: new Date(date).toISOString(), event_day: date, description
+                title: title,
+                description: desc,
+                event_date: new Date(dateStr).toISOString(),
+                event_day: dateStr.split('T')[0]
             });
+            loadCalendar();
+            showToast('Event erfolgreich angelegt! 🗓️');
+        }
 
-            if (error) window.showToast(error.message, 'error');
-            else {
-                window.showToast('Einsatz-Termin erstellt!', 'success');
-                window.closeCreateEventModal();
-                await fetchAllData();
+        // 5. Vault
+        async function loadVault() {
+            const { data: items } = await supabase.from('vault_items').select('*, profiles(username, avatar_url, role)').order('created_at', { ascending: false });
+            const grid = document.getElementById('vaultGrid');
+
+            if (!items || items.length === 0) {
+                grid.innerHTML = '<div class="glass-panel p-6 rounded-2xl text-center text-slate-500 text-sm md:col-span-3">Keine Vault Dateien vorhanden.</div>';
+                return;
             }
-        };
 
-        window.deleteCalendarEvent = async function(id) {
-            const { error } = await supabase.from('calendar_events').delete().eq('id', id);
-            if (error) window.showToast(error.message, 'error');
-            else {
-                window.showToast('Termin gelöscht.', 'success');
-                await fetchAllData();
-            }
-        };
-
-        // --- 4. VAULT & MEDIATHEK ---
-        window.renderVault = function() {
-            const grid = document.getElementById('vault-grid');
-            grid.innerHTML = vaultItems.length === 0 ? `<div class="col-span-full text-center py-12 text-sm font-mono text-gray-500">Keine Medien im Vault gespeichert</div>` : vaultItems.map(v => {
-                const canDelete = currentProfile.role === 'admin' || currentProfile.role === 'management' || v.uploader_id === currentUser.id;
-                const isImage = v.media_url && (v.media_url.endsWith('.png') || v.media_url.endsWith('.jpg') || v.media_url.endsWith('.jpeg') || v.media_url.endsWith('.webp'));
+            grid.innerHTML = items.map(v => {
+                const canDel = currentProfile && (currentProfile.role === 'management' || currentProfile.role === 'admin' || v.uploader_id === currentUser.id);
                 return `
-                    <div class="glass-panel p-4 rounded-xl flex flex-col justify-between space-y-3 border border-white/10 hover:border-neonRed/40 transition-all">
-                        <div class="h-40 rounded-lg bg-black/60 overflow-hidden flex items-center justify-center border border-white/5 relative">
-                            ${isImage ? `<img src="${v.media_url}" class="w-full h-full object-cover" alt="">` : `<i data-lucide="file-text" class="w-12 h-12 text-neonRed"></i>`}
-                            ${canDelete ? `<button onclick="window.deleteVaultItem('${v.id}')" class="absolute top-2 right-2 p-1.5 rounded-lg bg-black/80 text-gray-300 hover:text-neonRed"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-white truncate">${escapeHtml(v.title)}</h4>
-                            <div class="flex items-center justify-between text-[10px] font-mono text-gray-400 mt-1">
-                                <span>${v.profiles?.username || 'Agent'}</span>
-                                <a href="${v.media_url}" target="_blank" class="text-neonCyan hover:underline">Öffnen</a>
+                    <div class="glass-panel p-4 rounded-2xl space-y-3 flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="font-orbitron font-bold text-xs text-purple-400 truncate">${escapeHtml(v.title)}</span>
+                                ${canDel ? `<button onclick="window.deleteItem('vault_items', '${v.id}')" class="text-slate-500 hover:text-red-400 text-xs"><i class="fas fa-trash"></i></button>` : ''}
                             </div>
+                            <div class="rounded-xl overflow-hidden bg-cyber-900 border border-slate-800 h-40 flex items-center justify-center">
+                                <img src="${escapeHtml(v.media_url)}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500'">
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-[10px] text-slate-400">
+                            <span>Hochgeladen von ${v.profiles?.username || 'Commander'}</span>
+                            <a href="${escapeHtml(v.media_url)}" target="_blank" class="text-cyan-400 hover:underline">Öffnen <i class="fas fa-external-link-alt ml-1"></i></a>
                         </div>
                     </div>
                 `;
             }).join('');
-            lucide.createIcons();
-        };
+        }
 
-        window.openVaultUploadModal = function() { document.getElementById('vault-upload-modal').classList.remove('hidden'); document.getElementById('vault-upload-modal').classList.add('flex'); };
-        window.closeVaultUploadModal = function() { document.getElementById('vault-upload-modal').classList.add('hidden'); document.getElementById('vault-upload-modal').classList.remove('flex'); };
+        window.openUploadVaultModal = async function() {
+            const title = prompt('Dateititel / Blueprint Name:');
+            if (!title) return;
+            const url = prompt('Medien-URL (Bild / Screenshot / Link):', 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800');
+            if (!url) return;
 
-        window.submitVaultUpload = async function(e) {
-            e.preventDefault();
-            const title = document.getElementById('vault-title').value;
-            const fileInput = document.getElementById('vault-file');
-            const file = fileInput.files[0];
-            if (!file) return;
-
-            const filePath = `vault_${Date.now()}_${file.name}`;
-            const { data: uploadData, error: uploadError } = await supabase.storage.from('vault').upload(filePath, file);
-
-            if (uploadError) {
-                // Fallback simulation URL if bucket not fully public or ready
-                window.showToast('Upload-Hinweis: Speichere Verweis...', 'info');
-            }
-
-            const { data: urlData } = supabase.storage.from('vault').getPublicUrl(filePath);
-            const media_url = urlData?.publicUrl || URL.createObjectURL(file);
-
-            const { error } = await supabase.from('vault_items').insert({
+            await supabase.from('vault_items').insert({
                 uploader_id: currentUser.id,
-                title, media_url
+                title: title,
+                media_url: url
             });
+            loadVault();
+            showToast('Datei im Vault gespeichert! 🛡️');
+        }
 
-            if (error) window.showToast(error.message, 'error');
-            else {
-                window.showToast('Medium erfolgreich im Vault gespeichert!', 'success');
-                window.closeVaultUploadModal();
-                await fetchAllData();
-            }
-        };
+        // 6. QupasSI AI Assistant
+        window.sendAiMessage = async function() {
+            const inputEl = document.getElementById('aiInput');
+            const chatContainer = document.getElementById('aiChatContainer');
+            const promptText = inputEl.value.trim();
+            if (!promptText) return;
 
-        window.deleteVaultItem = async function(id) {
-            const { error } = await supabase.from('vault_items').delete().eq('id', id);
-            if (error) window.showToast(error.message, 'error');
-            else {
-                window.showToast('Medieneintrag gelöscht.', 'success');
-                await fetchAllData();
-            }
-        };
-
-        // --- 5. QUPASSI KI ASSISTENT (GEMINI 2.0 FLASH) ---
-        window.sendQupasSIMessage = async function(e) {
-            e.preventDefault();
-            const input = document.getElementById('qupassi-input');
-            const prompt = input.value.trim();
-            if (!prompt) return;
-
-            const container = document.getElementById('qupassi-messages-container');
-            container.innerHTML += `
-                <div class="flex items-start space-x-3 justify-end">
-                    <div class="bg-neonCyan/10 border border-cyan-500/30 p-4 rounded-2xl max-w-xl text-sm text-white">
-                        <div class="font-mono text-[10px] text-cyan-400 mb-1">Du</div>
-                        <p>${escapeHtml(prompt)}</p>
+            chatContainer.innerHTML += `
+                <div class="flex justify-end mb-4">
+                    <div class="bg-red-600/20 border border-red-500/30 rounded-2xl px-4 py-3 max-w-xl text-slate-100 text-sm">
+                        <p class="font-semibold text-red-400 mb-1">Du (Commander)</p>
+                        <p>${escapeHtml(promptText)}</p>
                     </div>
                 </div>
             `;
-            input.value = '';
-            container.scrollTop = container.scrollHeight;
+            inputEl.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // Loading state
-            const loadingId = 'loading_' + Date.now();
-            container.innerHTML += `
-                <div id="${loadingId}" class="flex items-start space-x-3">
-                    <div class="bg-black/60 border border-cyan-500/30 p-4 rounded-2xl text-sm text-cyan-400 font-mono animate-pulse">
-                        QupasSI berechnet Taktik & Redstone-Logik... 💀🚀
+            const loadingId = 'ai-loading-' + Date.now();
+            chatContainer.innerHTML += `
+                <div id="${loadingId}" class="flex justify-start mb-4">
+                    <div class="bg-slate-900/80 border border-cyan-500/30 rounded-2xl px-4 py-3 max-w-xl text-cyan-300 text-sm flex items-center gap-2">
+                        <i class="fas fa-circle-notch fa-spin text-cyan-400"></i>
+                        <span>QupasSI analysiert die Datenbank & den Vibe... 💀🚀</span>
                     </div>
                 </div>
             `;
-            container.scrollTop = container.scrollHeight;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // Check if user asks for a bro tip based on saved instructions rule
-            let responseText = '';
-            const lowerPrompt = prompt.toLowerCase();
-            if (lowerPrompt.includes('bro-tipp') || lowerPrompt.includes('brotipp') || lowerPrompt.includes('tip')) {
-                responseText = 'sybau 💀';
-            } else {
-                try {
-                    const systemPrompt = "Du bist QupasSI, der ultimative Command Center KI-Assistent für das Minecraft Projekt Quapsattack. Antworte in cooler deutscher Jugendsprache mit Begriffen wie digger, bro, bruder, ich checke, und verwende passende Emojis wie 💀, 🚀, 😉. Am Ende jeder Antwort gibst du exakt 1 Bro-Tipp im Format 'Bro-Tipp: ...'.";
-                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: `${systemPrompt}\n\nUser: ${prompt}` }] }]
-                        })
-                    });
-                    const data = await res.json();
-                    responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Yo digger, hab ich nicht ganz gecheckt, aber läuft bei dir! 💀\n\nBro-Tipp: Immer schön Redstone-Repeater auf Stufe 4 stellen.';
-                } catch (err) {
-                    responseText = 'Yo bruder, Verbindung zum Gemini-Server hängt gerade voll. 💀\n\nBro-Tipp: Nether-Portale niemals ohne Feuerzeug betreten.';
-                }
-            }
-
-            document.getElementById(loadingId).remove();
-            container.innerHTML += `
-                <div class="flex items-start space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-neonCyan/20 border border-neonCyan/40 flex items-center justify-center text-neonCyan shadow-neon-cyan flex-shrink-0">
-                        <i data-lucide="bot" class="w-5 h-5"></i>
-                    </div>
-                    <div class="bg-black/60 border border-cyan-500/30 p-4 rounded-2xl max-w-xl text-sm text-white space-y-2">
-                        <div class="font-mono text-[10px] text-neonCyan font-bold">QupasSI Command AI</div>
-                        <p class="whitespace-pre-line">${escapeHtml(responseText)}</p>
-                    </div>
-                </div>
-            `;
-            container.scrollTop = container.scrollHeight;
-            lucide.createIcons();
-
-            // Save to DB
-            await supabase.from('qupas_si_messages').insert({
-                user_id: currentUser.id,
-                prompt,
-                response: responseText
-            });
-        };
-
-        // --- 6. ADMIN & MANAGEMENT ---
-        window.renderAdminPanel = function() {
-            const list = document.getElementById('admin-users-list');
-            list.innerHTML = allProfiles.map(u => `
-                <div class="glass-panel p-4 rounded-xl flex items-center justify-between border border-white/10">
-                    <div class="flex items-center space-x-3">
-                        <img src="${u.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces'}" class="w-10 h-10 rounded-xl object-cover border border-amber-500/40" alt="">
-                        <div>
-                            <div class="font-bold text-sm text-white">${escapeHtml(u.username)}</div>
-                            <div class="text-[10px] text-amber-400 font-mono uppercase">Rolle: ${u.role}</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <select onchange="window.updateUserRole('${u.id}', this.value)" class="px-3 py-1.5 bg-black/60 border border-white/10 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-amber-500">
-                            <option value="mitspieler" ${u.role === 'mitspieler' ? 'selected' : ''}>Mitspieler</option>
-                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
-                            <option value="management" ${u.role === 'management' ? 'selected' : ''}>Management</option>
-                            <option value="ban" ${u.role === 'ban' ? 'selected' : ''}>Ban</option>
-                        </select>
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        };
-
-        window.updateUserRole = async function(userId, newRole) {
-            const { error } = await supabase.from('profiles').update({ role: newRole }).eq('id', userId);
-            if (error) window.showToast(error.message, 'error');
-            else {
-                window.showToast('Agentenrolle aktualisiert!', 'success');
-                await fetchAllData();
-            }
-        };
-
-        // --- PROFILE & HARDWARE SETTINGS MODAL ---
-        window.openProfileSettings = function() {
-            document.getElementById('settings-username').value = currentProfile.username || '';
-            document.getElementById('settings-status').value = currentProfile.custom_status || 'online';
-            document.getElementById('settings-status-text').value = currentProfile.custom_status_text || '';
-            document.getElementById('settings-quote').value = currentProfile.personality_quote || '';
-            document.getElementById('settings-avatar-preview').src = currentProfile.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces';
-            
-            document.getElementById('profile-settings-modal').classList.remove('hidden');
-            document.getElementById('profile-settings-modal').classList.add('flex');
-            window.populateHardwareDevices();
-        };
-
-        window.closeProfileSettings = function() {
-            document.getElementById('profile-settings-modal').classList.add('hidden');
-            document.getElementById('profile-settings-modal').classList.remove('flex');
-            const previewVid = document.getElementById('hardware-preview-video');
-            if (previewVid.srcObject) {
-                previewVid.srcObject.getTracks().forEach(t => t.stop());
-                previewVid.srcObject = null;
-            }
-        };
-
-        window.populateHardwareDevices = async function() {
             try {
-                await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                
-                const micSelect = document.getElementById('hardware-mic-select');
-                const speakerSelect = document.getElementById('hardware-speaker-select');
-                const camSelect = document.getElementById('hardware-cam-select');
+                const { data: posts } = await supabase.from('pinboard_posts').select('*').limit(5);
+                const contextStr = `Aktuelle Pinnwand-Daten: ${JSON.stringify(posts || [])}`;
 
-                micSelect.innerHTML = '';
-                speakerSelect.innerHTML = '';
-                camSelect.innerHTML = '';
+                const systemPrompt = `Du bist QupasSI, der KI-Command-Assistent für Quapsattack Command Center Pro. 
+Sprich in cooler deutscher Jugendsprache (Slang wie bro, digger, bruder, ich checke etc., mit passenden Emojis wie 💀, 🚀, 😉). 
+Vermeide übertriebene Bindestriche. 
+Am Ende deiner Antwort musst du EXAKT 1 Bro-Tipp im Format "**Bro-Tipp:** ..." einbauen.
+Hier ist der Kontext aus der Datenbank: ${contextStr}`;
 
-                devices.forEach(device => {
-                    const opt = document.createElement('option');
-                    opt.value = device.deviceId;
-                    opt.text = device.label || `${device.kind} (${device.deviceId.slice(0, 5)})`;
-                    if (device.kind === 'audioinput') micSelect.appendChild(opt);
-                    else if (device.kind === 'audiooutput') speakerSelect.appendChild(opt);
-                    else if (device.kind === 'videoinput') camSelect.appendChild(opt);
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [
+                            { role: 'user', parts: [{ text: systemPrompt + "\n\nUser-Frage: " + promptText }] }
+                        ]
+                    })
                 });
 
-                // Start webcam preview
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                document.getElementById('hardware-preview-video').srcObject = stream;
-            } catch(e) {
-                console.error('Hardware enumeration error:', e);
+                const data = await res.json();
+                document.getElementById(loadingId).remove();
+
+                let aiReply = "Diggi, da ist gerade irgendwas schiefgelaufen in der Matrix! 💀 Probiers gleich nochmal.";
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    aiReply = data.candidates[0].content.parts[0].text;
+                }
+
+                chatContainer.innerHTML += `
+                    <div class="flex justify-start mb-4">
+                        <div class="bg-slate-900/90 border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.15)] rounded-2xl px-4 py-3 max-w-xl text-slate-200 text-sm">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-cyan-400 flex items-center gap-1.5"><i class="fas fa-robot"></i> QupasSI AI</span>
+                                <span class="text-xs text-slate-500">Gerade eben</span>
+                            </div>
+                            <div class="space-y-2">${aiReply.replace(/\n/g, '<br>')}</div>
+                        </div>
+                    </div>
+                `;
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                if (currentUser) {
+                    await supabase.from('qupas_si_messages').insert({
+                        user_id: currentUser.id,
+                        prompt: promptText,
+                        response: aiReply
+                    });
+                }
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                chatContainer.innerHTML += `
+                    <div class="flex justify-start mb-4">
+                        <div class="bg-red-950/50 border border-red-500/40 rounded-2xl px-4 py-3 text-red-300 text-sm">
+                            Bro, API-Call hat hart gescheitert! 💀 (${err.message})
+                        </div>
+                    </div>
+                `;
             }
-        };
+        }
 
-        window.testMicrophoneLevel = async function() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const analyser = audioCtx.createAnalyser();
-                const source = audioCtx.createMediaStreamSource(stream);
-                source.connect(analyser);
-                analyser.fftSize = 256;
-                const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-                const bar = document.getElementById('mic-level-bar');
-                const interval = setInterval(() => {
-                    analyser.getByteFrequencyData(dataArray);
-                    let sum = 0;
-                    for(let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-                    let avg = sum / dataArray.length;
-                    let percent = Math.min(100, Math.round((avg / 128) * 100));
-                    bar.style.width = percent + '%';
-                }, 50);
-
-                setTimeout(() => {
-                    clearInterval(interval);
-                    bar.style.width = '0%';
-                    stream.getTracks().forEach(t => t.stop());
-                    window.showToast('Mikrofon-Test erfolgreich abgeschlossen.', 'success');
-                }, 3000);
-            } catch(e) {
-                window.showToast('Mikrofon-Test fehlgeschlagen: ' + e.message, 'error');
+        // Global Universal Delete (Admin/Management + Authors)
+        window.deleteItem = async function(table, id) {
+            if (!confirm('Soll dieses Element wirklich unwiderruflich gelöscht werden?')) return;
+            const { error } = await supabase.from(table).delete().eq('id', id);
+            if (!error) {
+                showToast('Erfolgreich gelöscht! 🗑️');
+                if (table === 'pinboard_posts') loadPinboard();
+                if (table === 'pinboard_replies') openPostReplies(activeReplyPostId);
+                if (table === 'chat_messages') loadChatMessages(activeRoomId);
+                if (table === 'calendar_events') loadCalendar();
+                if (table === 'vault_items') loadVault();
+            } else {
+                alert('Löschen fehlgeschlagen: ' + error.message);
             }
-        };
-
-        window.saveProfileAndHardwareSettings = async function() {
-            const username = document.getElementById('settings-username').value;
-            const custom_status = document.getElementById('settings-status').value;
-            const custom_status_text = document.getElementById('settings-status-text').value;
-            const personality_quote = document.getElementById('settings-quote').value;
-            
-            const fileInput = document.getElementById('settings-avatar-file');
-            let avatar_url = currentProfile.avatar_url;
-
-            if (fileInput.files[0]) {
-                const file = fileInput.files[0];
-                const filePath = `avatar_${currentUser.id}_${Date.now()}`;
-                await supabase.storage.from('vault').upload(filePath, file);
-                const { data: urlData } = supabase.storage.from('vault').getPublicUrl(filePath);
-                if (urlData?.publicUrl) avatar_url = urlData.publicUrl;
-            }
-
-            const { error } = await supabase.from('profiles').update({
-                username, custom_status, custom_status_text, personality_quote, avatar_url
-            }).eq('id', currentUser.id);
-
-            if (error) window.showToast(error.message, 'error');
-            else {
-                window.showToast('Einstellungen erfolgreich gespeichert!', 'success');
-                currentProfile.username = username;
-                currentProfile.custom_status = custom_status;
-                currentProfile.custom_status_text = custom_status_text;
-                currentProfile.personality_quote = personality_quote;
-                currentProfile.avatar_url = avatar_url;
-                window.updateUserFooterUI();
-                window.closeProfileSettings();
-                await fetchAllData();
-            }
-        };
-
-        window.triggerEmergencyAlert = function() {
-            window.showToast('🚨 NOTFALL-ALARM AKTIVIERT! ALLE AGENTEN IN BEREITSCHAFT!', 'error');
-            playBeep(300, 500, 'sawtooth');
-        };
+        }
 
         function escapeHtml(str) {
             if (!str) return '';
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
-
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
