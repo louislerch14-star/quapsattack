@@ -54,7 +54,7 @@
                     <i class="fas fa-shield-halved"></i>
                 </div>
                 <h1 class="font-orbitron text-2xl font-black tracking-wider text-white">QUAPSATTACK</h1>
-                <p class="text-xs text-slate-400 tracking-widest mt-1 uppercase font-semibold">Command Center Pro v3.7</p>
+                <p class="text-xs text-slate-400 tracking-widest mt-1 uppercase font-semibold">Command Center Pro v3.8</p>
             </div>
 
             <div id="authError" class="hidden mb-6 p-4 rounded-xl bg-red-950/50 border border-red-500/50 text-red-300 text-xs flex items-center gap-2">
@@ -747,7 +747,7 @@
                     const { data: publicUrlData } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
                     if (publicUrlData) avatarUrl = publicUrlData.publicUrl;
                 } else {
-                    console.warn("Storage upload note (avatars bucket might need creation in Supabase):", uploadError.message);
+                    console.warn("Storage upload note:", uploadError.message);
                 }
             }
 
@@ -1030,16 +1030,30 @@
             loadPinboard();
         }
 
-        // 3. Chat & DMs
+        // 3. Chat & DMs (SECURELY FILTERED BY MEMBERSHIP)
         async function loadChatRoomsAndRoster() {
-            const { data: rooms } = await supabaseClient.from('chat_rooms').select('*');
-            const roomsList = document.getElementById('chatRoomsList');
-            roomsList.innerHTML = (rooms || []).map(r => `
-                <button onclick="window.selectChatRoom('${r.id}', '${escapeHtml(r.name)}', ${r.is_group})" class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800 transition flex items-center justify-between ${activeRoomId === r.id ? 'bg-slate-800 text-white' : ''}">
-                    <span class="truncate"><i class="fas fa-hashtag text-red-500 mr-2"></i> ${escapeHtml(r.name)}</span>
-                </button>
-            `).join('');
+            // 1. Fetch only rooms where the current user is a member
+            const { data: myMemberships } = await supabaseClient.from('chat_room_members').select('room_id').eq('user_id', currentUser.id);
+            const myRoomIds = (myMemberships || []).map(m => m.room_id);
 
+            let rooms = [];
+            if (myRoomIds.length > 0) {
+                const { data: fetchedRooms } = await supabaseClient.from('chat_rooms').select('*').in('id', myRoomIds);
+                rooms = fetchedRooms;
+            }
+
+            const roomsList = document.getElementById('chatRoomsList');
+            if (!rooms || rooms.length === 0) {
+                roomsList.innerHTML = '<div class="text-slate-500 text-[10px] px-2 py-1">Keine aktiven Chat-Räume.</div>';
+            } else {
+                roomsList.innerHTML = rooms.map(r => `
+                    <button onclick="window.selectChatRoom('${r.id}', '${escapeHtml(r.name)}', ${r.is_group})" class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800 transition flex items-center justify-between ${activeRoomId === r.id ? 'bg-slate-800 text-white' : ''}">
+                        <span class="truncate"><i class="fas fa-hashtag text-red-500 mr-2"></i> ${escapeHtml(r.name)}</span>
+                    </button>
+                `).join('');
+            }
+
+            // Roster Profiles
             const { data: profiles } = await supabaseClient.from('profiles').select('*');
             const rosterList = document.getElementById('playerRosterList');
             rosterList.innerHTML = (profiles || []).map(p => {
@@ -1174,7 +1188,7 @@
             }
         }
 
-        // WebRTC Real Web & Signaling Calls
+        // WebRTC Calls
         window.startCall = function(targetUserId, targetUsername) {
             playRingingSound();
             document.getElementById('callModalTitle').innerText = `Direkt-Anruf mit ${targetUsername}`;
@@ -1307,13 +1321,13 @@
                 }
                 document.getElementById('localVideo').srcObject = screenStream;
                 videoTrack.onended = () => {
-                    initHardwareTester(); // Revert back
+                    initHardwareTester();
                 };
                 showToast('Bildschirmübertragung aktiv! 🖥️');
             } catch(e) {}
         }
 
-        // 4. Calendar & Month Navigation FIX
+        // 4. Calendar & Month Navigation
         window.changeCalendarMonth = function(direction) {
             currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
             loadCalendar();
