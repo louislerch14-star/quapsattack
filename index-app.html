@@ -65,11 +65,11 @@
             <form id="authForm" onsubmit="window.handleAuth(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">E-Mail Adresse</label>
-                    <input type="email" id="authEmail" required class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                    <input type="email" id="authEmail" autocomplete="email" required class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500 transition">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Passwort</label>
-                    <input type="password" id="authPassword" required class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                    <input type="password" id="authPassword" autocomplete="current-password" required class="w-full bg-cyber-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500 transition">
                 </div>
                 <button type="submit" id="authSubmitBtn" class="w-full py-3.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-orbitron text-sm font-bold tracking-wider rounded-xl shadow-lg shadow-red-600/30 transition transform active:scale-[0.98]">
                     SYSTEM LOGIN
@@ -197,7 +197,7 @@
                                 <option value="redstone">Redstone</option>
                             </select>
                             <button onclick="window.openCreatePostModal()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-orbitron font-bold rounded-xl shadow-lg shadow-red-600/20 transition flex items-center gap-2">
-                                <i class="fas fa-plus">}</i> Neuer Eintrag
+                                <i class="fas fa-plus"></i> Neuer Eintrag
                             </button>
                         </div>
                     </div>
@@ -565,7 +565,8 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
         const GEMINI_API_KEY = 'AQ.Ab8RN6KT-NV_pdl2kGaEaXme_f7gJXqDCsTje_kuSWahTfqGbg';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Use global window.supabase instead of redeclaring 'const supabase'
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentUser = null;
         let currentProfile = null;
@@ -576,7 +577,7 @@
 
         // Init App on Load
         window.addEventListener('DOMContentLoaded', async () => {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 currentUser = session.user;
                 await fetchOrCreateProfile();
@@ -587,7 +588,7 @@
         });
 
         async function fetchOrCreateProfile() {
-            let { data, error } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+            let { data, error } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
             if (!data) {
                 const newProfile = {
                     id: currentUser.id,
@@ -598,7 +599,7 @@
                     personality_quote: 'Wer redstone baut, gewinnt das Spiel!',
                     role: 'mitspieler'
                 };
-                await supabase.from('profiles').insert(newProfile);
+                await supabaseClient.from('profiles').insert(newProfile);
                 currentProfile = newProfile;
             } else {
                 currentProfile = data;
@@ -648,7 +649,7 @@
 
             try {
                 if (isSignUpMode) {
-                    const { data, error } = await supabase.auth.signUp({ email, password });
+                    const { data, error } = await supabaseClient.auth.signUp({ email, password });
                     if (error) throw error;
                     if (data.user) {
                         currentUser = data.user;
@@ -656,7 +657,7 @@
                         showApp();
                     }
                 } else {
-                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
                     if (error) throw error;
                     if (data.user) {
                         currentUser = data.user;
@@ -671,7 +672,7 @@
         }
 
         window.handleLogout = async function() {
-            await supabase.auth.signOut();
+            await supabaseClient.auth.signOut();
             currentUser = null;
             currentProfile = null;
             showAuth();
@@ -736,7 +737,7 @@
                 avatar_url: document.getElementById('settingsAvatarUrl').value
             };
 
-            const { error } = await supabase.from('profiles').update(updates).eq('id', currentUser.id);
+            const { error } = await supabaseClient.from('profiles').update(updates).eq('id', currentUser.id);
             if (!error) {
                 currentProfile = { ...currentProfile, ...updates };
                 updateSidebarProfileUI();
@@ -830,7 +831,7 @@
         }
 
         function initRealtimeSubscriptions() {
-            supabase.channel('public-db-changes')
+            supabaseClient.channel('public-db-changes')
                 .on('postgres_changes', { event: '*', schema: 'public' }, payload => {
                     playAudioNotification();
                     if (payload.table === 'pinboard_posts') loadPinboard();
@@ -843,7 +844,7 @@
 
         // 1. Command Feed
         async function loadFeed() {
-            const { data: posts } = await supabase.from('pinboard_posts').select('*, profiles(username, avatar_url, role)').order('created_at', { ascending: false }).limit(10);
+            const { data: posts } = await supabaseClient.from('pinboard_posts').select('*, profiles(username, avatar_url, role)').order('created_at', { ascending: false }).limit(10);
             const container = document.getElementById('feedActivityList');
             if (!posts || posts.length === 0) {
                 container.innerHTML = '<div class="glass-panel p-6 rounded-2xl text-center text-slate-500 text-sm">Keine aktuellen Feed-Einträge vorhanden.</div>';
@@ -871,7 +872,7 @@
         // 2. Pinboard Kanban
         async function loadPinboard() {
             const categoryFilter = document.getElementById('pinCategoryFilter').value;
-            let query = supabase.from('pinboard_posts').select('*, profiles(username, avatar_url, role)').order('created_at', { ascending: false });
+            let query = supabaseClient.from('pinboard_posts').select('*, profiles(username, avatar_url, role)').order('created_at', { ascending: false });
             if (categoryFilter !== 'all') query = query.eq('category', categoryFilter);
 
             const { data: posts } = await query;
@@ -935,7 +936,7 @@
                 reply_count: 0
             };
 
-            const { error } = await supabase.from('pinboard_posts').insert(newPost);
+            const { error } = await supabaseClient.from('pinboard_posts').insert(newPost);
             if (!error) {
                 closeCreatePostModal();
                 loadPinboard();
@@ -953,8 +954,8 @@
         // Replies
         window.openPostReplies = async function(postId) {
             activeReplyPostId = postId;
-            const { data: post } = await supabase.from('pinboard_posts').select('*, profiles(username, avatar_url)').eq('id', postId).single();
-            const { data: replies } = await supabase.from('pinboard_replies').select('*, profiles(username, avatar_url, role)').eq('post_id', postId).order('created_at', { ascending: true });
+            const { data: post } = await supabaseClient.from('pinboard_posts').select('*, profiles(username, avatar_url)').eq('id', postId).single();
+            const { data: replies } = await supabaseClient.from('pinboard_replies').select('*, profiles(username, avatar_url, role)').eq('post_id', postId).order('created_at', { ascending: true });
 
             document.getElementById('replyModalPostContent').innerHTML = `
                 <h4 class="font-orbitron font-bold text-sm text-white mb-1">${escapeHtml(post.title)}</h4>
@@ -992,15 +993,15 @@
             const content = inputEl.value.trim();
             if (!content || !activeReplyPostId || !currentUser) return;
 
-            await supabase.from('pinboard_replies').insert({
+            await supabaseClient.from('pinboard_replies').insert({
                 post_id: activeReplyPostId,
                 author_id: currentUser.id,
                 content: content
             });
 
             // Increment reply count
-            const { data: postData } = await supabase.from('pinboard_posts').select('reply_count').eq('id', activeReplyPostId).single();
-            await supabase.from('pinboard_posts').update({ reply_count: (postData?.reply_count || 0) + 1 }).eq('id', activeReplyPostId);
+            const { data: postData } = await supabaseClient.from('pinboard_posts').select('reply_count').eq('id', activeReplyPostId).single();
+            await supabaseClient.from('pinboard_posts').update({ reply_count: (postData?.reply_count || 0) + 1 }).eq('id', activeReplyPostId);
 
             inputEl.value = '';
             openPostReplies(activeReplyPostId);
@@ -1010,7 +1011,7 @@
         // 3. Chat & DMs
         async function loadChatRoomsAndRoster() {
             // Rooms
-            const { data: rooms } = await supabase.from('chat_rooms').select('*');
+            const { data: rooms } = await supabaseClient.from('chat_rooms').select('*');
             const roomsList = document.getElementById('chatRoomsList');
             roomsList.innerHTML = (rooms || []).map(r => `
                 <button onclick="window.selectChatRoom('${r.id}', '${escapeHtml(r.name)}', ${r.is_group})" class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800 transition flex items-center justify-between ${activeRoomId === r.id ? 'bg-slate-800 text-white' : ''}">
@@ -1019,7 +1020,7 @@
             `).join('');
 
             // Roster Profiles
-            const { data: profiles } = await supabase.from('profiles').select('*');
+            const { data: profiles } = await supabaseClient.from('profiles').select('*');
             const rosterList = document.getElementById('playerRosterList');
             rosterList.innerHTML = (profiles || []).map(p => {
                 const isMe = p.id === currentUser.id;
@@ -1054,7 +1055,7 @@
         }
 
         async function loadChatMessages(roomId) {
-            const { data: messages } = await supabase.from('chat_messages').select('*, profiles(username, avatar_url, role)').eq('room_id', roomId).order('created_at', { ascending: true });
+            const { data: messages } = await supabaseClient.from('chat_messages').select('*, profiles(username, avatar_url, role)').eq('room_id', roomId).order('created_at', { ascending: true });
             const container = document.getElementById('chatMessagesContainer');
             
             if (!messages || messages.length === 0) {
@@ -1087,7 +1088,7 @@
             const content = inputEl.value.trim();
             if (!content || !activeRoomId || !currentUser) return;
 
-            await supabase.from('chat_messages').insert({
+            await supabaseClient.from('chat_messages').insert({
                 room_id: activeRoomId,
                 sender_id: currentUser.id,
                 content: content
@@ -1098,16 +1099,15 @@
         }
 
         window.startDirectMessage = async function(targetUserId, targetUsername) {
-            // Check if private room exists between current user and target user
-            const { data: myRooms } = await supabase.from('chat_room_members').select('room_id').eq('user_id', currentUser.id);
+            const { data: myRooms } = await supabaseClient.from('chat_room_members').select('room_id').eq('user_id', currentUser.id);
             const myRoomIds = (myRooms || []).map(r => r.room_id);
 
             let existingRoomId = null;
             if (myRoomIds.length > 0) {
-                const { data: shared } = await supabase.from('chat_room_members').select('room_id').in('room_id', myRoomIds).eq('user_id', targetUserId);
+                const { data: shared } = await supabaseClient.from('chat_room_members').select('room_id').in('room_id', myRoomIds).eq('user_id', targetUserId);
                 if (shared && shared.length > 0) {
                     for (let s of shared) {
-                        const { data: roomCheck } = await supabase.from('chat_rooms').select('is_group').eq('id', s.room_id).single();
+                        const { data: roomCheck } = await supabaseClient.from('chat_rooms').select('is_group').eq('id', s.room_id).single();
                         if (roomCheck && !roomCheck.is_group) {
                             existingRoomId = s.room_id;
                             break;
@@ -1117,8 +1117,7 @@
             }
 
             if (!existingRoomId) {
-                // Create private 1-to-1 room
-                const { data: newRoom, error } = await supabase.from('chat_rooms').insert({
+                const { data: newRoom, error } = await supabaseClient.from('chat_rooms').insert({
                     name: `DM: ${currentProfile.username} & ${targetUsername}`,
                     is_group: false,
                     creator_id: currentUser.id
@@ -1126,7 +1125,7 @@
 
                 if (!error && newRoom) {
                     existingRoomId = newRoom.id;
-                    await supabase.from('chat_room_members').insert([
+                    await supabaseClient.from('chat_room_members').insert([
                         { room_id: existingRoomId, user_id: currentUser.id },
                         { room_id: existingRoomId, user_id: targetUserId }
                     ]);
@@ -1142,14 +1141,14 @@
         window.openCreateRoomModal = async function() {
             const roomName = prompt('Name des neuen Gruppenkanals:');
             if (!roomName) return;
-            const { data: room, error } = await supabase.from('chat_rooms').insert({
+            const { data: room, error } = await supabaseClient.from('chat_rooms').insert({
                 name: roomName,
                 is_group: true,
                 creator_id: currentUser.id
             }).select().single();
 
             if (!error && room) {
-                await supabase.from('chat_room_members').insert({ room_id: room.id, user_id: currentUser.id });
+                await supabaseClient.from('chat_room_members').insert({ room_id: room.id, user_id: currentUser.id });
                 loadChatRoomsAndRoster();
                 showToast('Kanal erstellt! 🚀');
             }
@@ -1232,7 +1231,7 @@
 
         // 4. Calendar
         async function loadCalendar() {
-            const { data: events } = await supabase.from('calendar_events').select('*, profiles(username, avatar_url, role)').order('event_date', { ascending: true });
+            const { data: events } = await supabaseClient.from('calendar_events').select('*, profiles(username, avatar_url, role)').order('event_date', { ascending: true });
             const listEl = document.getElementById('calendarEventsList');
             
             if (!events || events.length === 0) {
@@ -1254,7 +1253,6 @@
                 `;
             }).join('');
 
-            // Render simple month grid
             const grid = document.getElementById('calendarGrid');
             let gridHtml = '';
             for (let i = 1; i <= 30; i++) {
@@ -1270,7 +1268,7 @@
             const dateStr = prompt('Datum & Uhrzeit (YYYY-MM-DDTHH:MM):', new Date().toISOString().slice(0,16));
             if (!dateStr) return;
 
-            await supabase.from('calendar_events').insert({
+            await supabaseClient.from('calendar_events').insert({
                 creator_id: currentUser.id,
                 title: title,
                 description: desc,
@@ -1283,7 +1281,7 @@
 
         // 5. Vault
         async function loadVault() {
-            const { data: items } = await supabase.from('vault_items').select('*, profiles(username, avatar_url, role)').order('created_at', { ascending: false });
+            const { data: items } = await supabaseClient.from('vault_items').select('*, profiles(username, avatar_url, role)').order('created_at', { ascending: false });
             const grid = document.getElementById('vaultGrid');
 
             if (!items || items.length === 0) {
@@ -1319,7 +1317,7 @@
             const url = prompt('Medien-URL (Bild / Screenshot / Link):', 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800');
             if (!url) return;
 
-            await supabase.from('vault_items').insert({
+            await supabaseClient.from('vault_items').insert({
                 uploader_id: currentUser.id,
                 title: title,
                 media_url: url
@@ -1358,7 +1356,7 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
-                const { data: posts } = await supabase.from('pinboard_posts').select('*').limit(5);
+                const { data: posts } = await supabaseClient.from('pinboard_posts').select('*').limit(5);
                 const contextStr = `Aktuelle Pinnwand-Daten: ${JSON.stringify(posts || [])}`;
 
                 const systemPrompt = `Du bist QupasSI, der KI-Command-Assistent für Quapsattack Command Center Pro. 
@@ -1399,7 +1397,7 @@ Hier ist der Kontext aus der Datenbank: ${contextStr}`;
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
                 if (currentUser) {
-                    await supabase.from('qupas_si_messages').insert({
+                    await supabaseClient.from('qupas_si_messages').insert({
                         user_id: currentUser.id,
                         prompt: promptText,
                         response: aiReply
@@ -1420,7 +1418,7 @@ Hier ist der Kontext aus der Datenbank: ${contextStr}`;
         // Global Universal Delete (Admin/Management + Authors)
         window.deleteItem = async function(table, id) {
             if (!confirm('Soll dieses Element wirklich unwiderruflich gelöscht werden?')) return;
-            const { error } = await supabase.from(table).delete().eq('id', id);
+            const { error } = await supabaseClient.from(table).delete().eq('id', id);
             if (!error) {
                 showToast('Erfolgreich gelöscht! 🗑️');
                 if (table === 'pinboard_posts') loadPinboard();
