@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <link rel="icon" type="image/png" href="unnamed.jpg">
+  <link rel="icon" type="image/png" href="unnamed.jpg">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quapsattack Command Center Pro</title>
@@ -9,14 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="importmap">
-  {
-    "imports": {
-      "@google/genai": "https://esm.run/@google/genai"
-    }
-  }
-</script>
   <script>
     tailwind.config = {
       theme: {
@@ -27,6 +19,10 @@
             accentRed: '#ef4444',
             textSub: 'rgba(255, 255, 255, 0.65)',
             statusGreen: '#10b981'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
           }
         }
       }
@@ -39,29 +35,38 @@
     ::-webkit-scrollbar-thumb:hover { background: rgba(239, 68, 68, 0.6); }
 
     .glass-card {
-      background: rgba(15, 15, 26, 0.75);
+      background: rgba(15, 15, 26, 0.78);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.12);
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
     }
     .modal-backdrop { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(16px); }
-    .pinned-glow { border: 1px solid #ef4444 !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+    .pinned-glow { border: 1px solid #ef4444 !important; box-shadow: 0 0 18px rgba(239, 68, 68, 0.35); }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .toast-enter { animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   </style>
 </head>
 <body class="bg-appBg text-white h-screen flex flex-col overflow-hidden select-none font-sans antialiased">
+
+  <!-- LIVE TOAST CONTAINER -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
 
   <!-- AUTH SCREEN -->
   <div id="auth-screen" class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-6">
     <div class="glass-card max-w-md w-full rounded-2xl p-6 border-white/20 space-y-6">
       <div class="text-center space-y-2">
         <span class="font-black tracking-wider text-xl">QUAPS<span class="text-accentRed">ATTACK</span> HUB</span>
-        <p class="text-xs text-textSub">Login mit deinem Profil</p>
+        <p class="text-xs text-textSub">Login mit deinem Crew-Profil</p>
       </div>
 
       <div class="flex border-b border-white/10 text-xs font-bold text-center">
-        <button id="tab-login-btn" onclick="toggleAuthMode('login')" class="flex-1 py-2 text-accentRed border-b-2 border-accentRed">Anmelden</button>
-        <button id="tab-register-btn" onclick="toggleAuthMode('register')" class="flex-1 py-2 text-textSub hover:text-white">Registrieren</button>
+        <button id="tab-login-btn" onclick="toggleAuthMode('login')" class="flex-1 py-2 text-accentRed border-b-2 border-accentRed transition">Anmelden</button>
+        <button id="tab-register-btn" onclick="toggleAuthMode('register')" class="flex-1 py-2 text-textSub hover:text-white transition">Registrieren</button>
       </div>
 
       <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
@@ -85,20 +90,29 @@
   <!-- MAIN APP -->
   <div id="main-app-container" class="flex flex-col h-screen hidden">
     <!-- HEADER -->
-    <header class="h-13 border-b border-glassBorder bg-black/50 px-5 flex items-center justify-between shrink-0 z-40">
+    <header class="h-14 border-b border-glassBorder bg-black/50 px-5 flex items-center justify-between shrink-0 z-40">
       <div class="flex items-center gap-3">
         <span class="font-black tracking-wider text-base">QUAPS<span class="text-accentRed">ATTACK</span></span>
         <span id="user-role-badge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-accentRed/10 border border-accentRed/30 text-accentRed font-bold uppercase">Rolle</span>
+        <span id="live-status-pill" class="hidden sm:flex items-center gap-1.5 text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-statusGreen/10 border border-statusGreen/30 text-statusGreen">
+          <span class="w-1.5 h-1.5 rounded-full bg-statusGreen animate-ping"></span> REALTIME AKTIV
+        </span>
       </div>
-      <button onclick="handleLogout()" class="px-3 py-1 bg-accentRed/20 hover:bg-accentRed text-accentRed hover:text-white border border-accentRed/40 text-xs font-bold rounded-lg transition">Logout</button>
+      <div class="flex items-center gap-3">
+        <button onclick="openCallModal()" class="px-3 py-1.5 bg-statusGreen/20 hover:bg-statusGreen text-statusGreen hover:text-black border border-statusGreen/40 text-xs font-bold rounded-lg transition flex items-center gap-1.5">
+          📞 Live Call / Screen
+        </button>
+        <button onclick="handleLogout()" class="px-3 py-1.5 bg-accentRed/20 hover:bg-accentRed text-accentRed hover:text-white border border-accentRed/40 text-xs font-bold rounded-lg transition">Logout</button>
+      </div>
     </header>
 
     <div class="flex flex-1 overflow-hidden">
       <!-- SIDEBAR -->
       <aside class="w-64 border-r border-glassBorder bg-black/30 p-4 flex flex-col justify-between shrink-0">
         <nav class="space-y-1.5" id="nav-container">
-          <button onclick="switchTab('pinnwand')" class="nav-btn active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">📌 Pinnwand (Pro)</button>
+          <button onclick="switchTab('pinnwand')" class="nav-btn active bg-white/10 text-white w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold hover:text-white hover:bg-white/5 transition">📌 Pinnwand (Pro)</button>
           <button onclick="switchTab('messenger')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">💬 Messenger</button>
+          <button onclick="switchTab('calls')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">🎥 Voice & Screen-Hub</button>
           <button onclick="switchTab('calendar')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">📅 Interaktiver Kalender</button>
           <button onclick="switchTab('mediathek')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">🖼️ Mediathek (Upload)</button>
           <button onclick="switchTab('roster')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-textSub hover:text-white hover:bg-white/5 transition">💥 Player Roster</button>
@@ -129,7 +143,6 @@
               <p class="text-xs text-textSub">Organisiere Projekte im Kanban-Board, teile Koordinaten und diskutiere in Threads.</p>
             </div>
             
-            <!-- Suchleiste & Ansicht-Umschalter -->
             <div class="flex items-center gap-2">
               <input id="pin-search" oninput="filterAndRenderPosts()" type="text" placeholder="🔍 Suche..." class="bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-accentRed w-48">
               <button onclick="togglePinView('kanban')" id="view-kanban-btn" class="px-3 py-1.5 bg-accentRed text-white rounded-xl text-xs font-bold transition">Kanban</button>
@@ -137,16 +150,14 @@
             </div>
           </div>
 
-          <!-- Kategorie Filter Pills -->
           <div class="flex items-center gap-2 overflow-x-auto pb-1" id="category-filter-pills">
-            <button onclick="setPinCategory('all')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-accentRed text-white">#alle</button>
-            <button onclick="setPinCategory('ankündigungen')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">📢 #ankündigungen</button>
-            <button onclick="setPinCategory('basen')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">🏠 #basen</button>
-            <button onclick="setPinCategory('ideen')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">💡 #ideen</button>
-            <button onclick="setPinCategory('redstone')" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">⚙️ #redstone</button>
+            <button onclick="setPinCategory('all', this)" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-accentRed text-white">#alle</button>
+            <button onclick="setPinCategory('ankündigungen', this)" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">📢 #ankündigungen</button>
+            <button onclick="setPinCategory('basen', this)" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">🏠 #basen</button>
+            <button onclick="setPinCategory('ideen', this)" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">💡 #ideen</button>
+            <button onclick="setPinCategory('redstone', this)" class="cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white">⚙️ #redstone</button>
           </div>
 
-          <!-- Erstellungs-Box -->
           <div id="pinnwand-create-box" class="glass-card p-5 rounded-2xl space-y-4 border-white/15">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-accentRed tracking-wider uppercase">Neuer Beitrag / Task</span>
@@ -177,9 +188,7 @@
             </div>
           </div>
 
-          <!-- KANBAN BOARD VIEW -->
           <div id="kanban-view" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <!-- Spalte 1: Geplant -->
             <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
               <div class="flex items-center justify-between border-b border-white/10 pb-2">
                 <span class="text-xs font-bold text-accentRed">📋 Geplant</span>
@@ -187,7 +196,6 @@
               </div>
               <div id="kanban-Geplant" class="space-y-3 min-h-[300px]"></div>
             </div>
-            <!-- Spalte 2: In Arbeit -->
             <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
               <div class="flex items-center justify-between border-b border-white/10 pb-2">
                 <span class="text-xs font-bold text-yellow-400">🚧 In Arbeit</span>
@@ -195,7 +203,6 @@
               </div>
               <div id="kanban-In Arbeit" class="space-y-3 min-h-[300px]"></div>
             </div>
-            <!-- Spalte 3: Fertig -->
             <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
               <div class="flex items-center justify-between border-b border-white/10 pb-2">
                 <span class="text-xs font-bold text-statusGreen">✅ Fertig</span>
@@ -203,7 +210,6 @@
               </div>
               <div id="kanban-Fertig" class="space-y-3 min-h-[300px]"></div>
             </div>
-            <!-- Spalte 4: Ideen -->
             <div class="glass-card p-4 rounded-2xl space-y-3 bg-black/25">
               <div class="flex items-center justify-between border-b border-white/10 pb-2">
                 <span class="text-xs font-bold text-cyan-400">💡 Ideen</span>
@@ -213,7 +219,6 @@
             </div>
           </div>
 
-          <!-- FEED VIEW (Alternativ) -->
           <div id="feed-view" class="space-y-4 hidden"></div>
         </section>
 
@@ -223,17 +228,72 @@
             <div class="w-64 border-r border-glassBorder bg-black/30 p-3 space-y-4 shrink-0">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-textSub">CHATS</span>
-                <button onclick="openNewGroupModal()" class="px-2 py-0.5 bg-accentRed/20 text-accentRed text-xs font-bold rounded">+ Gruppe</button>
+                <button onclick="openNewGroupModal()" class="px-2 py-0.5 bg-accentRed/20 text-accentRed text-xs font-bold rounded hover:bg-accentRed hover:text-white transition">+ Gruppe</button>
               </div>
               <div class="space-y-1" id="chat-rooms-list"></div>
             </div>
             <div class="flex-1 flex flex-col justify-between bg-black/10">
-              <div class="h-12 border-b border-glassBorder px-5 flex items-center bg-black/20 font-bold text-xs" id="active-chat-title">Chat Raum</div>
+              <div class="h-12 border-b border-glassBorder px-5 flex items-center justify-between bg-black/20">
+                <span class="font-bold text-xs" id="active-chat-title">Chat Raum</span>
+                <button onclick="switchTab('calls')" class="px-3 py-1 bg-statusGreen/20 hover:bg-statusGreen text-statusGreen hover:text-black border border-statusGreen/30 rounded-lg text-[11px] font-bold transition">📞 Raum-Call starten</button>
+              </div>
               <div class="flex-1 overflow-y-auto p-5 space-y-4" id="chat-messages-container"></div>
               <form onsubmit="sendChatMessage(event)" class="p-4 border-t border-glassBorder bg-black/30 flex gap-3">
-                <input id="chat-input" type="text" placeholder="Nachricht schreiben..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none">
-                <button type="submit" class="px-5 py-2.5 bg-accentRed text-white rounded-xl text-xs font-bold">Senden</button>
+                <input id="chat-input" type="text" placeholder="Nachricht schreiben..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
+                <button type="submit" class="px-5 py-2.5 bg-accentRed hover:bg-red-600 text-white rounded-xl text-xs font-bold transition">Senden</button>
               </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: VOICE, VIDEO & SCREENSHARE CALLS (WEBRTC + SUPABASE SIGNALING) -->
+        <section id="tab-calls" class="tab-pane hidden space-y-6 max-w-6xl mx-auto">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-xl font-extrabold">🎥 Quapsattack Live-Call & Screen-Share</h1>
+              <p class="text-xs text-textSub">Starte einen Echtzeit-Call mit Kamera, Mikrofon oder übertrage deinen Minecraft-Screen für die Crew.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input id="call-room-code" type="text" value="quaps-main-voice" placeholder="Raum-Code..." class="bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none focus:border-accentRed w-44">
+              <button id="btn-join-call" onclick="joinWebRTCCall()" class="px-4 py-2 bg-statusGreen hover:bg-emerald-400 text-black font-bold rounded-xl text-xs transition shadow-lg shadow-statusGreen/20">📞 Call Beitreten</button>
+              <button id="btn-leave-call" onclick="leaveWebRTCCall()" class="hidden px-4 py-2 bg-accentRed hover:bg-red-600 text-white font-bold rounded-xl text-xs transition">📴 Auflegen</button>
+            </div>
+          </div>
+
+          <!-- Call Steuerleiste -->
+          <div class="glass-card p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4 border-white/15">
+            <div class="flex items-center gap-2">
+              <span id="call-connection-status" class="text-xs font-mono px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-textSub">Status: Bereit</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <button id="btn-toggle-mic" onclick="toggleMic()" class="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl text-xs font-bold transition">🎙️ Mikro: AN</button>
+              <button id="btn-toggle-cam" onclick="toggleCam()" class="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl text-xs font-bold transition">📷 Kamera: AN</button>
+              <button id="btn-share-screen" onclick="startScreenShare()" class="px-4 py-2 bg-accentRed/20 hover:bg-accentRed text-accentRed hover:text-white border border-accentRed/40 rounded-xl text-xs font-bold transition">🖥️ Bildschirm teilen</button>
+            </div>
+          </div>
+
+          <!-- Video & Screen Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Lokaler Stream -->
+            <div class="glass-card rounded-2xl overflow-hidden border-white/15 relative aspect-video bg-black/60 flex items-center justify-center">
+              <video id="local-video" autoplay muted playsinline class="w-full h-full object-contain"></video>
+              <div class="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10 text-xs font-bold flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-statusGreen"></span>
+                <span id="local-video-label">Du (Lokal / Screen)</span>
+              </div>
+            </div>
+
+            <!-- Remote Stream -->
+            <div class="glass-card rounded-2xl overflow-hidden border-white/15 relative aspect-video bg-black/60 flex items-center justify-center">
+              <video id="remote-video" autoplay playsinline class="w-full h-full object-contain"></video>
+              <div id="remote-placeholder" class="text-center space-y-2 p-6">
+                <div class="text-3xl">📡</div>
+                <p class="text-xs text-textSub">Warte auf Crew-Mitglied im gleichen Raum-Code...</p>
+              </div>
+              <div class="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10 text-xs font-bold flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-accentRed"></span>
+                <span>Crew-Stream (Remote)</span>
+              </div>
             </div>
           </div>
         </section>
@@ -245,7 +305,7 @@
               <h1 class="text-xl font-extrabold">📅 Interaktiver Kalender</h1>
               <p class="text-xs text-textSub">Wechsle die Monate und klicke auf Tage für Termine!</p>
             </div>
-            <button id="calendar-add-btn" onclick="openAddEventModal()" class="px-4 py-2 bg-accentRed text-white rounded-xl text-xs font-bold">+ Termin Hinzufügen</button>
+            <button id="calendar-add-btn" onclick="openAddEventModal()" class="px-4 py-2 bg-accentRed text-white rounded-xl text-xs font-bold hover:bg-red-600 transition">+ Termin Hinzufügen</button>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -277,7 +337,7 @@
               <h1 class="text-xl font-extrabold">🖼️ Vault & Mediathek</h1>
               <p class="text-xs text-textSub">Lade Screenshots & Memes direkt hoch!</p>
             </div>
-            <button id="vault-upload-btn" onclick="openUploadModal()" class="px-4 py-2 bg-accentRed text-white rounded-xl text-xs font-bold">+ Datei Hochladen</button>
+            <button id="vault-upload-btn" onclick="openUploadModal()" class="px-4 py-2 bg-accentRed text-white rounded-xl text-xs font-bold hover:bg-red-600 transition">+ Datei Hochladen</button>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="media-grid"></div>
         </section>
@@ -299,7 +359,6 @@
               <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-accentRed/20 text-accentRed border border-accentRed/30 font-bold">ONLINE</span>
             </div>
 
-            <!-- Chat Verlauf -->
             <div id="qupassi-messages-container" class="flex-1 overflow-y-auto space-y-3 pr-2">
               <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
                 <strong class="text-accentRed">🤖 QupasSI:</strong>
@@ -307,10 +366,9 @@
               </div>
             </div>
 
-            <!-- Eingabeformular -->
             <form onsubmit="sendQupasSIMessage(event)" class="flex gap-2 pt-2 border-t border-white/10">
               <input id="qupassi-input" type="text" placeholder="Frage QupasSI etwas..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
-              <button type="submit" class="px-5 py-2.5 bg-accentRed text-white rounded-xl text-xs font-bold shadow-lg shadow-accentRed/30">Fragen 🧠</button>
+              <button type="submit" class="px-5 py-2.5 bg-accentRed hover:bg-red-600 text-white rounded-xl text-xs font-bold transition shadow-lg shadow-accentRed/30">Fragen 🧠</button>
             </form>
           </div>
         </section>
@@ -381,18 +439,15 @@
     </div>
   </div>
 
-  <!-- MODAL: THREAD ANTWORTEN -->
   <div id="thread-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-6">
     <div class="glass-card max-w-lg w-full rounded-2xl p-5 space-y-4 max-h-[80vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-white/10 pb-3">
         <h4 class="font-bold text-sm text-white">💬 Diskussion & Antworten</h4>
         <button onclick="closeThreadModal()" class="text-textSub hover:text-white text-xs">✕ Schließen</button>
       </div>
-      <!-- Antworten Liste -->
       <div id="thread-messages-list" class="flex-1 overflow-y-auto space-y-3 pr-2 min-h-[200px]">
         <p class="text-xs text-textSub">Lade Antworten...</p>
       </div>
-      <!-- Antwort schreiben Formular -->
       <form onsubmit="sendThreadReply(event)" class="flex gap-2 pt-2 border-t border-white/10">
         <input id="thread-reply-input" type="text" placeholder="Schreibe eine Antwort..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-accentRed">
         <button type="submit" class="px-4 py-2.5 bg-accentRed text-white rounded-xl text-xs font-bold">Senden</button>
@@ -400,19 +455,14 @@
     </div>
   </div>
 
-  <!-- MODAL: NEUE GRUPPE ERSTELLEN -->
   <div id="group-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-6">
     <div class="glass-card max-w-md w-full rounded-2xl p-5 space-y-4">
       <h4 class="font-bold text-sm text-white">💬 Neue Crew-Gruppe erstellen</h4>
       <input id="group-name-input" type="text" placeholder="Gruppenname (z. B. Redstone-Bauer)" class="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-xs text-white outline-none">
-      
       <div>
         <label class="block text-[10px] font-mono text-textSub uppercase mb-2">Mitglieder auswählen:</label>
-        <div id="group-members-checkboxes" class="space-y-2 max-h-40 overflow-y-auto pr-1">
-          <!-- Wird dynamisch gefüllt -->
-        </div>
+        <div id="group-members-checkboxes" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
       </div>
-
       <div class="flex gap-2 pt-2">
         <button onclick="closeNewGroupModal()" class="flex-1 py-2 bg-white/10 text-xs font-bold rounded-xl">Abbrechen</button>
         <button onclick="createChatGroup()" class="flex-1 py-2 bg-accentRed text-white text-xs font-bold rounded-xl">Gruppe Erstellen</button>
@@ -420,6 +470,1160 @@
     </div>
   </div>
 
-  <script type="module" src="app.js"></script>
+  <!-- COMPLETE APPLICATION LOGIC -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    // ==========================================
+    // FESTE API-SCHLÜSSEL & CONFIG
+    // ==========================================
+    const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
+    const GEMINI_API_KEY = 'AQ.Ab8RN6KT-NV_pdl2kGaEaXme_f7gJXqDCsTje_kuSWahTfqGbg';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentUser = null;
+    let currentProfile = null;
+    let activeChatRoomId = null;
+    let selectedDateString = null;
+    let authMode = 'login';
+    let calendarDate = new Date();
+
+    // Pinnwand State
+    let allPosts = [];
+    let currentCategory = 'all';
+    let currentView = 'kanban';
+    let activeThreadPostId = null;
+
+    // WebRTC Call State
+    let localStream = null;
+    let screenStream = null;
+    let peerConnection = null;
+    let callSignalingChannel = null;
+    let isMicOn = true;
+    let isCamOn = true;
+
+    const rtcConfig = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      checkSession();
+    });
+
+    // ==========================================
+    // SOUND & LIVE TOAST NOTIFICATIONS
+    // ==========================================
+    function playNotificationSound(freq = 880) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.18);
+      } catch (e) {}
+    }
+
+    window.showLiveToast = function(title, message, icon = '🔔') {
+      playNotificationSound(660);
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast-enter pointer-events-auto glass-card p-3.5 rounded-2xl border-l-4 border-l-accentRed flex items-start gap-3 shadow-2xl';
+      toast.innerHTML = `
+        <div class="text-lg shrink-0 mt-0.5">${icon}</div>
+        <div class="flex-1 min-w-0">
+          <h5 class="text-xs font-extrabold text-white truncate">${title}</h5>
+          <p class="text-[11px] text-textSub line-clamp-2">${message}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-textSub hover:text-white text-xs">✕</button>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        if (toast.parentElement) toast.remove();
+      }, 5000);
+    };
+
+    // ==========================================
+    // AUTH & PROFIL
+    // ==========================================
+    async function checkSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        currentUser = session.user;
+        await loadUserProfile();
+        showMainApp();
+        setupRealtimeSubscriptions();
+        loadAllData();
+      } else {
+        showAuthScreen();
+      }
+    }
+
+    window.toggleAuthMode = function(mode) {
+      authMode = mode;
+      document.getElementById('username-field-wrapper').classList.toggle('hidden', mode === 'login');
+      document.getElementById('tab-login-btn').className = mode === 'login' ? 'flex-1 py-2 text-accentRed border-b-2 border-accentRed transition' : 'flex-1 py-2 text-textSub hover:text-white transition';
+      document.getElementById('tab-register-btn').className = mode === 'register' ? 'flex-1 py-2 text-accentRed border-b-2 border-accentRed transition' : 'flex-1 py-2 text-textSub hover:text-white transition';
+    };
+
+    window.handleAuthSubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+
+      if (authMode === 'register') {
+        const username = document.getElementById('auth-username').value;
+        const { error } = await supabase.auth.signUp({
+          email, password, options: { data: { username: username || email.split('@')[0] } }
+        });
+        if (error) alert("Fehler: " + error.message);
+        else alert("Account erstellt! Du kannst dich jetzt einloggen.");
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) alert("Login-Fehler: " + error.message);
+        else {
+          currentUser = data.user;
+          await loadUserProfile();
+          showMainApp();
+          setupRealtimeSubscriptions();
+          loadAllData();
+        }
+      }
+    };
+
+    window.handleLogout = async function() {
+      await supabase.auth.signOut();
+      window.location.reload();
+    };
+
+    function showMainApp() {
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('main-app-container').classList.remove('hidden');
+    }
+
+    function showAuthScreen() {
+      document.getElementById('auth-screen').classList.remove('hidden');
+      document.getElementById('main-app-container').classList.add('hidden');
+    }
+
+    async function loadUserProfile() {
+      if (!currentUser) return;
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+
+      if (profile) {
+        currentProfile = profile;
+        document.getElementById('sidebar-username').textContent = profile.username;
+        const role = profile.role || 'mitspieler';
+        document.getElementById('user-role-badge').textContent = role.toUpperCase();
+
+        const statusDisplay = profile.custom_status || 'online';
+        document.getElementById('sidebar-status-text').textContent = profile.custom_status_text || statusDisplay.toUpperCase();
+        
+        if (profile.avatar_url) {
+          document.getElementById('sidebar-avatar-img').src = profile.avatar_url;
+          document.getElementById('edit-avatar-preview').src = profile.avatar_url;
+        }
+
+        document.getElementById('edit-username-input').value = profile.username || '';
+        document.getElementById('edit-discord-status').value = profile.custom_status || 'online';
+        document.getElementById('edit-status-text').value = profile.custom_status_text || '';
+        document.getElementById('edit-quote').value = profile.personality_quote || '';
+
+        updateStatusDot(profile.custom_status);
+        applyRolePermissions(role);
+      }
+    }
+
+    function applyRolePermissions(role) {
+      const pinnwandBox = document.getElementById('pinnwand-create-box');
+      const calendarAddBtn = document.getElementById('calendar-add-btn');
+      const vaultUploadBtn = document.getElementById('vault-upload-btn');
+      const hidden = role === 'ban';
+      if (pinnwandBox) pinnwandBox.classList.toggle('hidden', hidden);
+      if (calendarAddBtn) calendarAddBtn.classList.toggle('hidden', hidden);
+      if (vaultUploadBtn) vaultUploadBtn.classList.toggle('hidden', hidden);
+    }
+
+    function updateStatusDot(status) {
+      const dot = document.getElementById('sidebar-status-dot');
+      if (status === 'dnd') dot.className = "absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-appBg";
+      else if (status === 'idle') dot.className = "absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-amber-400 rounded-full border-2 border-appBg";
+      else if (status === 'offline') dot.className = "absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-gray-500 rounded-full border-2 border-appBg";
+      else dot.className = "absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-statusGreen rounded-full border-2 border-appBg";
+    }
+
+    window.saveFullProfile = async function() {
+      const username = document.getElementById('edit-username-input').value;
+      const discordStatus = document.getElementById('edit-discord-status').value;
+      const statusText = document.getElementById('edit-status-text').value;
+      const quote = document.getElementById('edit-quote').value;
+      const avatarFile = document.getElementById('upload-avatar-file').files[0];
+
+      let avatarUrl = currentProfile?.avatar_url;
+
+      if (avatarFile) {
+        const fileExt = avatarFile.name.split('.').pop();
+        const filePath = `avatar_${currentUser.id}_${Date.now()}.${fileExt}`;
+        const { error: uploadErr } = await supabase.storage.from('avatars').upload(filePath, avatarFile);
+
+        if (!uploadErr) {
+          const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath);
+          avatarUrl = urlData.publicUrl;
+        }
+      }
+
+      const { error } = await supabase.from('profiles').upsert({
+        id: currentUser.id,
+        username: username,
+        custom_status: discordStatus,
+        custom_status_text: statusText,
+        avatar_url: avatarUrl,
+        personality_quote: quote,
+        role: currentProfile.role
+      });
+
+      if (error) alert("Fehler: " + error.message);
+      else {
+        await loadUserProfile();
+        await loadRoster();
+        showLiveToast('Profil gespeichert', 'Deine Einstellungen wurden aktualisiert!', '✅');
+      }
+    };
+
+    window.updateUserRole = async function(targetUserId, newRole) {
+      if (currentProfile.role !== 'management') return alert("Nur das Management darf Rollen verteilen!");
+      await supabase.from('profiles').update({ role: newRole }).eq('id', targetUserId);
+      loadRoster();
+      showLiveToast('Rolle aktualisiert', `Neuer Rang: ${newRole.toUpperCase()}`, '🛡️');
+    };
+
+    window.switchTab = function(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabId}`)?.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-white/10', 'text-white');
+        btn.classList.add('text-textSub');
+      });
+      const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => btn.getAttribute('onclick')?.includes(`'${tabId}'`));
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'bg-white/10', 'text-white');
+        activeBtn.classList.remove('text-textSub');
+      }
+    };
+
+    window.openCallModal = function() {
+      switchTab('calls');
+    };
+
+    // ==========================================
+    // PINNWAND LOGIC
+    // ==========================================
+    window.togglePinView = function(view) {
+      currentView = view;
+      document.getElementById('kanban-view').classList.toggle('hidden', view !== 'kanban');
+      document.getElementById('feed-view').classList.toggle('hidden', view !== 'feed');
+      
+      document.getElementById('view-kanban-btn').className = view === 'kanban' ? "px-3 py-1.5 bg-accentRed text-white rounded-xl text-xs font-bold transition" : "px-3 py-1.5 bg-white/5 border border-white/10 text-textSub rounded-xl text-xs font-bold transition";
+      document.getElementById('view-feed-btn').className = view === 'feed' ? "px-3 py-1.5 bg-accentRed text-white rounded-xl text-xs font-bold transition" : "px-3 py-1.5 bg-white/5 border border-white/10 text-textSub rounded-xl text-xs font-bold transition";
+    };
+
+    window.setPinCategory = function(cat, btnEl) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        btn.className = "cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-white/5 border border-white/10 text-textSub hover:text-white";
+      });
+      if (btnEl) btnEl.className = "cat-pill px-3 py-1 rounded-lg text-xs font-bold bg-accentRed text-white";
+      filterAndRenderPosts();
+    };
+
+    async function loadPinboardPosts() {
+      const { data: posts, error } = await supabase
+        .from('pinboard_posts')
+        .select('*, profiles(username, avatar_url)')
+        .order('created_at', { ascending: false });
+
+      if (!error && posts) {
+        allPosts = posts;
+        filterAndRenderPosts();
+      }
+    }
+
+    window.filterAndRenderPosts = function() {
+      const searchTerm = document.getElementById('pin-search').value.toLowerCase();
+      
+      const filtered = allPosts.filter(p => {
+        const matchesCat = currentCategory === 'all' || p.category === currentCategory;
+        const matchesSearch = !searchTerm || p.content.toLowerCase().includes(searchTerm) || (p.title && p.title.toLowerCase().includes(searchTerm));
+        return matchesCat && matchesSearch;
+      });
+
+      const columns = ['Geplant', 'In Arbeit', 'Fertig', 'Ideen'];
+      columns.forEach(col => {
+        const container = document.getElementById(`kanban-${col}`);
+        const countEl = document.getElementById(`count-${col}`);
+        if (container) container.innerHTML = '';
+        
+        const colPosts = filtered.filter(p => (p.status || 'Ideen') === col);
+        if (countEl) countEl.textContent = colPosts.length;
+
+        colPosts.forEach(post => {
+          if (container) container.innerHTML += createPostCardHTML(post);
+        });
+      });
+
+      const feedContainer = document.getElementById('feed-view');
+      if (feedContainer) {
+        feedContainer.innerHTML = '';
+        filtered.forEach(post => {
+          feedContainer.innerHTML += createPostCardHTML(post);
+        });
+      }
+    };
+
+    function createPostCardHTML(post) {
+      const role = currentProfile?.role || 'mitspieler';
+      const isOwner = currentUser && post.author_id === currentUser.id;
+      const canDelete = role === 'management' || role === 'admin' || (role === 'mitspieler' && isOwner);
+      const canPin = role === 'management' || role === 'admin';
+      const isPinned = post.pinned;
+
+      let reactions = post.reactions || { '👍': 0, '❤️': 0, '🔥': 0, '💀': 0 };
+      const safeCoords = (post.coordinates || '').replace(/'/g, "");
+      
+      return `
+        <div class="glass-card p-4 rounded-2xl space-y-3 ${isPinned ? 'pinned-glow' : 'border-white/10'} relative">
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <img src="${post.profiles?.avatar_url || 'https://i.imgur.com/6VBx3io.png'}" class="w-6 h-6 rounded-full object-cover">
+              <span class="font-bold text-white">${post.profiles?.username || 'Member'}</span>
+              <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-accentRed/10 border border-accentRed/30 text-accentRed">#${post.category || 'allgemein'}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              ${isPinned ? '<span class="text-[10px] text-accentRed font-bold">📌 Fixiert</span>' : ''}
+              ${canPin ? `<button onclick="togglePinPost('${post.id}', ${!isPinned})" class="text-xs text-yellow-400 hover:text-white" title="Anpinnen">📌</button>` : ''}
+              ${canDelete ? `<button onclick="deletePost('${post.id}')" class="text-xs text-red-400 hover:text-red-600" title="Löschen">🗑️</button>` : ''}
+            </div>
+          </div>
+
+          ${post.title ? `<h3 class="font-bold text-sm text-white">${post.title}</h3>` : ''}
+          <p class="text-xs text-textSub leading-relaxed">${post.content}</p>
+
+          ${safeCoords ? `
+            <button onclick="copyCoords('${safeCoords}')" class="w-full text-left bg-black/40 hover:bg-black/60 border border-white/10 p-2 rounded-xl font-mono text-[11px] text-accentRed flex items-center justify-between transition">
+              <span>📍 Koord: ${safeCoords}</span>
+              <span class="text-[9px] text-textSub bg-white/5 px-2 py-0.5 rounded">Kopieren 📋</span>
+            </button>
+          ` : ''}
+
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+            <div class="flex items-center gap-1.5">
+              <button onclick="reactToPost('${post.id}', '👍')" class="px-2 py-1 bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 text-[11px]">👍 ${reactions['👍'] || 0}</button>
+              <button onclick="reactToPost('${post.id}', '❤️')" class="px-2 py-1 bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 text-[11px]">❤️ ${reactions['❤️'] || 0}</button>
+              <button onclick="reactToPost('${post.id}', '🔥')" class="px-2 py-1 bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 text-[11px]">🔥 ${reactions['🔥'] || 0}</button>
+              <button onclick="reactToPost('${post.id}', '💀')" class="px-2 py-1 bg-white/5 hover:bg-white/10 rounded-lg border border-white/5 text-[11px]">💀 ${reactions['💀'] || 0}</button>
+            </div>
+            
+            <button onclick="openThreadModal('${post.id}')" class="text-[11px] text-textSub hover:text-white transition">💬 Antworten (${post.reply_count || 0})</button>
+          </div>
+        </div>
+      `;
+    }
+
+    window.copyCoords = function(coords) {
+      navigator.clipboard.writeText(coords);
+      playNotificationSound(950);
+      showLiveToast('Koordinaten kopiert', `${coords} liegt in deiner Zwischenablage!`, '📍');
+    };
+
+    window.createNewPost = async function() {
+      if (currentProfile?.role === 'ban') return alert("Gebannte User können keine Beiträge erstellen!");
+      const title = document.getElementById('post-title').value;
+      const content = document.getElementById('post-content').value;
+      const coords = document.getElementById('post-coords').value;
+      const category = document.getElementById('post-category-select').value;
+      const status = document.getElementById('post-status-select').value;
+
+      if (!content) return alert("Bitte verfasse einen Text!");
+
+      const { error } = await supabase.from('pinboard_posts').insert([{
+        author_id: currentUser.id,
+        title: title || '',
+        content: content,
+        coordinates: coords || '',
+        category: category || 'allgemein',
+        status: status || 'Ideen',
+        pinned: false,
+        reactions: { '👍': 0, '❤️': 0, '🔥': 0, '💀': 0 },
+        reply_count: 0
+      }]);
+
+      if (error) {
+        alert("Fehler beim Erstellen: " + error.message);
+      } else {
+        document.getElementById('post-title').value = '';
+        document.getElementById('post-content').value = '';
+        document.getElementById('post-coords').value = '';
+        loadPinboardPosts();
+      }
+    };
+
+    window.deletePost = async function(postId) {
+      if (confirm("Beitrag wirklich löschen?")) {
+        await supabase.from('pinboard_posts').delete().eq('id', postId);
+        loadPinboardPosts();
+      }
+    };
+
+    window.togglePinPost = async function(postId, pinState) {
+      await supabase.from('pinboard_posts').update({ pinned: pinState }).eq('id', postId);
+      loadPinboardPosts();
+    };
+
+    window.reactToPost = async function(postId, emoji) {
+      const post = allPosts.find(p => p.id === postId);
+      if (!post) return;
+      
+      let reactions = post.reactions ? { ...post.reactions } : { '👍': 0, '❤️': 0, '🔥': 0, '💀': 0 };
+      reactions[emoji] = (reactions[emoji] || 0) + 1;
+
+      const { error } = await supabase.from('pinboard_posts').update({ reactions }).eq('id', postId);
+      if (!error) loadPinboardPosts();
+    };
+
+    // THREADS
+    window.openThreadModal = async function(postId) {
+      activeThreadPostId = postId;
+      document.getElementById('thread-modal').classList.remove('hidden');
+      await loadThreadReplies(postId);
+    };
+
+    window.closeThreadModal = function() {
+      document.getElementById('thread-modal').classList.add('hidden');
+      activeThreadPostId = null;
+    };
+
+    async function loadThreadReplies(postId) {
+      const container = document.getElementById('thread-messages-list');
+      container.innerHTML = '<p class="text-xs text-textSub">Lade Antworten...</p>';
+
+      const { data: replies } = await supabase
+        .from('pinboard_replies')
+        .select('*, profiles(username, avatar_url)')
+        .eq('post_id', postId)
+        .order('created_at', { ascending: true });
+
+      container.innerHTML = '';
+      if (replies && replies.length > 0) {
+        replies.forEach(r => {
+          container.innerHTML += `
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 space-y-1">
+              <div class="flex items-center gap-2">
+                <img src="${r.profiles?.avatar_url || 'https://i.imgur.com/6VBx3io.png'}" class="w-5 h-5 rounded-full object-cover">
+                <span class="font-bold text-xs text-white">${r.profiles?.username || 'Member'}</span>
+                <span class="text-[9px] text-textSub">${new Date(r.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+              </div>
+              <p class="text-xs text-textSub pl-7">${r.content}</p>
+            </div>
+          `;
+        });
+      } else {
+        container.innerHTML = '<p class="text-xs text-textSub">Noch keine Antworten. Schreib die erste!</p>';
+      }
+    }
+
+    window.sendThreadReply = async function(e) {
+      e.preventDefault();
+      const input = document.getElementById('thread-reply-input');
+      const text = input.value.trim();
+      if (!text || !activeThreadPostId) return;
+
+      const { error } = await supabase.from('pinboard_replies').insert([{
+        post_id: activeThreadPostId,
+        author_id: currentUser.id,
+        content: text
+      }]);
+
+      if (!error) {
+        input.value = '';
+        const post = allPosts.find(p => p.id === activeThreadPostId);
+        if (post) {
+          const newCount = (post.reply_count || 0) + 1;
+          await supabase.from('pinboard_posts').update({ reply_count: newCount }).eq('id', activeThreadPostId);
+        }
+        await loadThreadReplies(activeThreadPostId);
+        loadPinboardPosts();
+      } else {
+        alert("Fehler beim Senden: " + error.message);
+      }
+    };
+
+    // ==========================================
+    // WEBRTC CALLS & SCREENSHARE (VIA SUPABASE REALTIME)
+    // ==========================================
+    window.joinWebRTCCall = async function() {
+      const roomCode = document.getElementById('call-room-code').value.trim() || 'quaps-main-voice';
+      const statusEl = document.getElementById('call-connection-status');
+
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        document.getElementById('local-video').srcObject = localStream;
+        document.getElementById('btn-join-call').classList.add('hidden');
+        document.getElementById('btn-leave-call').classList.remove('hidden');
+        statusEl.textContent = `Status: Verbunden in #${roomCode}`;
+        statusEl.className = 'text-xs font-mono px-3 py-1 rounded-lg bg-statusGreen/20 border border-statusGreen/40 text-statusGreen';
+
+        peerConnection = new RTCPeerConnection(rtcConfig);
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+        peerConnection.ontrack = (event) => {
+          document.getElementById('remote-video').srcObject = event.streams[0];
+          document.getElementById('remote-placeholder').classList.add('hidden');
+        };
+
+        callSignalingChannel = supabase.channel(`webrtc:${roomCode}`, {
+          config: { broadcast: { self: false } }
+        });
+
+        peerConnection.onicecandidate = (event) => {
+          if (event.candidate) {
+            callSignalingChannel.send({
+              type: 'broadcast',
+              event: 'ice-candidate',
+              payload: { candidate: event.candidate }
+            });
+          }
+        };
+
+        callSignalingChannel
+          .on('broadcast', { event: 'ready' }, async () => {
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            callSignalingChannel.send({
+              type: 'broadcast',
+              event: 'offer',
+              payload: { offer }
+            });
+          })
+          .on('broadcast', { event: 'offer' }, async ({ payload }) => {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(payload.offer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            callSignalingChannel.send({
+              type: 'broadcast',
+              event: 'answer',
+              payload: { answer }
+            });
+          })
+          .on('broadcast', { event: 'answer' }, async ({ payload }) => {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(payload.answer));
+          })
+          .on('broadcast', { event: 'ice-candidate' }, async ({ payload }) => {
+            if (payload.candidate) {
+              await peerConnection.addIceCandidate(new RTCIceCandidate(payload.candidate));
+            }
+          })
+          .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+              callSignalingChannel.send({ type: 'broadcast', event: 'ready', payload: {} });
+              showLiveToast('Call aktiv', `Du bist im Raum "${roomCode}"!`, '📞');
+            }
+          });
+
+      } catch (err) {
+        alert("Kamera/Mikrofon Zugriff fehlgeschlagen: " + err.message);
+      }
+    };
+
+    window.startScreenShare = async function() {
+      if (!peerConnection) {
+        await joinWebRTCCall();
+      }
+      try {
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        const screenTrack = screenStream.getVideoTracks()[0];
+        document.getElementById('local-video').srcObject = screenStream;
+        document.getElementById('local-video-label').textContent = 'Du (Bildschirmübertragung 🖥️)';
+
+        const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+        if (sender) {
+          sender.replaceTrack(screenTrack);
+        }
+
+        screenTrack.onended = () => {
+          stopScreenShare();
+        };
+
+        showLiveToast('Screen-Share gestartet', 'Dein Bildschirm wird jetzt live übertragen!', '🖥️');
+      } catch (err) {
+        alert("Bildschirmübertragung abgebrochen: " + err.message);
+      }
+    };
+
+    function stopScreenShare() {
+      if (screenStream) {
+        screenStream.getTracks().forEach(t => t.stop());
+        screenStream = null;
+      }
+      if (localStream && peerConnection) {
+        const camTrack = localStream.getVideoTracks()[0];
+        document.getElementById('local-video').srcObject = localStream;
+        document.getElementById('local-video-label').textContent = 'Du (Kamera)';
+        const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+        if (sender && camTrack) sender.replaceTrack(camTrack);
+      }
+    }
+
+    window.toggleMic = function() {
+      if (!localStream) return;
+      isMicOn = !isMicOn;
+      localStream.getAudioTracks().forEach(t => t.enabled = isMicOn);
+      document.getElementById('btn-toggle-mic').textContent = isMicOn ? '🎙️ Mikro: AN' : '🔇 Mikro: AUS';
+    };
+
+    window.toggleCam = function() {
+      if (!localStream) return;
+      isCamOn = !isCamOn;
+      localStream.getVideoTracks().forEach(t => t.enabled = isCamOn);
+      document.getElementById('btn-toggle-cam').textContent = isCamOn ? '📷 Kamera: AN' : '🚫 Kamera: AUS';
+    };
+
+    window.leaveWebRTCCall = function() {
+      if (localStream) localStream.getTracks().forEach(t => t.stop());
+      if (screenStream) screenStream.getTracks().forEach(t => t.stop());
+      if (peerConnection) peerConnection.close();
+      if (callSignalingChannel) supabase.removeChannel(callSignalingChannel);
+
+      localStream = null;
+      screenStream = null;
+      peerConnection = null;
+
+      document.getElementById('local-video').srcObject = null;
+      document.getElementById('remote-video').srcObject = null;
+      document.getElementById('remote-placeholder').classList.remove('hidden');
+      document.getElementById('btn-join-call').classList.remove('hidden');
+      document.getElementById('btn-leave-call').classList.add('hidden');
+      const statusEl = document.getElementById('call-connection-status');
+      statusEl.textContent = 'Status: Beendet';
+      statusEl.className = 'text-xs font-mono px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-textSub';
+    };
+
+    // ==========================================
+    // KALENDER
+    // ==========================================
+    window.changeMonth = function(direction) {
+      calendarDate.setMonth(calendarDate.getMonth() + direction);
+      renderCalendar();
+    };
+
+    async function renderCalendar() {
+      const grid = document.getElementById('calendar-days-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const year = calendarDate.getFullYear();
+      const month = calendarDate.getMonth();
+      document.getElementById('calendar-month-year').textContent = calendarDate.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
+
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 1; i <= daysInMonth; i++) {
+        const mm = String(month + 1).padStart(2, '0');
+        const dd = String(i).padStart(2, '0');
+        const dayStr = `${year}-${mm}-${dd}`;
+
+        grid.innerHTML += `
+          <div onclick="selectCalendarDate('${dayStr}', ${i})" class="p-3 rounded-xl border border-white/5 bg-white/5 text-center cursor-pointer hover:border-accentRed hover:bg-accentRed/10 transition">
+            <span class="font-bold text-sm">${i}</span>
+          </div>
+        `;
+      }
+    }
+
+    window.selectCalendarDate = async function(dateStr, dayNum) {
+      selectedDateString = dateStr;
+      document.getElementById('selected-date-title').textContent = `Termine am ${dayNum}. ${calendarDate.toLocaleDateString('de-DE', { month: 'long' })}`;
+
+      const { data: events } = await supabase.from('calendar_events').select('*').eq('event_day', dateStr);
+      const container = document.getElementById('day-events-container');
+      container.innerHTML = '';
+
+      const role = currentProfile?.role || 'mitspieler';
+
+      if (events && events.length > 0) {
+        events.forEach(e => {
+          const isOwner = currentUser && e.creator_id === currentUser.id;
+          const canDelete = role === 'management' || role === 'admin' || (role === 'mitspieler' && isOwner);
+
+          container.innerHTML += `
+            <div class="bg-white/5 p-3 rounded-xl border border-white/10 flex items-center justify-between">
+              <div>
+                <h5 class="font-bold text-xs text-white">${e.title}</h5>
+                <p class="text-[10px] text-textSub">${e.description || 'Keine Beschreibung'}</p>
+              </div>
+              ${canDelete ? `<button onclick="deleteCalendarEvent('${e.id}')" class="text-xs text-red-400 hover:text-red-600 transition" title="Löschen">🗑️</button>` : ''}
+            </div>
+          `;
+        });
+      } else {
+        container.innerHTML = `<p class="text-xs text-textSub">Keine Termine an diesem Tag.</p>`;
+        if (role !== 'ban') {
+          container.innerHTML += `<button onclick="openAddEventModal('${dateStr}')" class="px-3 py-1.5 bg-accentRed/20 text-accentRed border border-accentRed/40 rounded-xl text-xs font-bold w-full mt-2">+ Termin eintragen</button>`;
+        }
+      }
+    };
+
+    window.openAddEventModal = function(dateStr) {
+      if (currentProfile?.role === 'ban') return;
+      if (dateStr) document.getElementById('event-date-input').value = dateStr;
+      document.getElementById('event-modal').classList.remove('hidden');
+    };
+    window.closeAddEventModal = () => document.getElementById('event-modal').classList.add('hidden');
+
+    window.saveNewCalendarEvent = async function() {
+      const title = document.getElementById('event-title').value;
+      const dateVal = document.getElementById('event-date-input').value;
+      const desc = document.getElementById('event-desc').value;
+
+      if (!title || !dateVal) return alert("Bitte Titel & Datum angeben!");
+
+      await supabase.from('calendar_events').insert([{
+        creator_id: currentUser.id,
+        title,
+        event_date: new Date(dateVal).toISOString(),
+        event_day: dateVal,
+        description: desc
+      }]);
+
+      closeAddEventModal();
+      if (selectedDateString) selectCalendarDate(selectedDateString, parseInt(dateVal.split('-')[2]));
+    };
+
+    window.deleteCalendarEvent = async function(eventId) {
+      if (confirm("Termin löschen?")) {
+        await supabase.from('calendar_events').delete().eq('id', eventId);
+        if (selectedDateString) selectCalendarDate(selectedDateString, parseInt(selectedDateString.split('-')[2]));
+      }
+    };
+
+    // ==========================================
+    // MEDIATHEK / VAULT
+    // ==========================================
+    async function loadMediaVault() {
+      const { data: vault } = await supabase.from('vault_items').select('*, profiles(username)');
+      const grid = document.getElementById('media-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const role = currentProfile?.role || 'mitspieler';
+
+      if (vault) {
+        vault.forEach(m => {
+          const isOwner = currentUser && m.uploader_id === currentUser.id;
+          const canDelete = role === 'management' || role === 'admin' || (role === 'mitspieler' && isOwner);
+
+          grid.innerHTML += `
+            <div class="glass-card rounded-2xl overflow-hidden border-white/10 p-3 space-y-2 relative">
+              <img src="${m.media_url}" class="h-40 w-full object-cover rounded-xl">
+              <div class="flex items-center justify-between">
+                <div class="truncate">
+                  <h5 class="font-bold text-xs text-white truncate">${m.title}</h5>
+                  <p class="text-[10px] text-textSub">Von ${m.profiles?.username || 'Member'}</p>
+                </div>
+                ${canDelete ? `<button onclick="deleteVaultItem('${m.id}')" class="text-xs text-red-400 hover:text-red-600 transition" title="Löschen">🗑️</button>` : ''}
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    window.openUploadModal = () => document.getElementById('upload-modal').classList.remove('hidden');
+    window.closeUploadModal = () => document.getElementById('upload-modal').classList.add('hidden');
+
+    window.uploadMediaToVault = async function() {
+      const title = document.getElementById('upload-media-title').value;
+      const file = document.getElementById('upload-media-file').files[0];
+      if (!title || !file) return alert("Titel und Datei wählen!");
+
+      const filePath = `vault_${Date.now()}.${file.name.split('.').pop()}`;
+      const { error } = await supabase.storage.from('vault').upload(filePath, file);
+
+      if (!error) {
+        const { data: urlData } = supabase.storage.from('vault').getPublicUrl(filePath);
+        await supabase.from('vault_items').insert([{ uploader_id: currentUser.id, title, media_url: urlData.publicUrl }]);
+        closeUploadModal();
+        loadMediaVault();
+        showLiveToast('Upload erfolgreich', `"${title}" ist jetzt in der Mediathek!`, '🖼️');
+      } else {
+        alert("Fehler: " + error.message);
+      }
+    };
+
+    window.deleteVaultItem = async function(itemId) {
+      if (confirm("Datei löschen?")) {
+        await supabase.from('vault_items').delete().eq('id', itemId);
+        loadMediaVault();
+      }
+    };
+
+    // ==========================================
+    // MESSENGER & GRUPPEN
+    // ==========================================
+    async function loadChatRooms() {
+      if (!currentUser) return;
+      const { data: rooms } = await supabase.from('chat_rooms').select('*');
+      const list = document.getElementById('chat-rooms-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (rooms && rooms.length > 0) {
+        if (!activeChatRoomId) {
+          activeChatRoomId = rooms[0].id;
+          document.getElementById('active-chat-title').textContent = rooms[0].name;
+          loadChatMessages(rooms[0].id);
+        }
+
+        rooms.forEach(r => {
+          const isActive = r.id === activeChatRoomId;
+          const safeName = (r.name || '').replace(/'/g, "");
+          list.innerHTML += `
+            <button onclick="selectRoom('${r.id}', '${safeName}')" class="w-full text-left p-2.5 rounded-xl text-xs font-bold transition flex items-center justify-between ${isActive ? 'bg-accentRed text-white shadow-lg shadow-accentRed/20' : 'text-textSub hover:bg-white/5 hover:text-white'}">
+              <span>💬 ${safeName}</span>
+            </button>
+          `;
+        });
+      } else {
+        await supabase.from('chat_rooms').insert([{ name: 'Quapsattack Main Crew', is_group: true, creator_id: currentUser.id }]);
+        loadChatRooms();
+      }
+    }
+
+    window.selectRoom = (id, name) => { 
+      activeChatRoomId = id; 
+      document.getElementById('active-chat-title').textContent = name; 
+      loadChatMessages(id);
+      loadChatRooms(); 
+    };
+
+    async function loadChatMessages(roomId) {
+      const { data: msgs } = await supabase.from('chat_messages').select('*, profiles(username)').eq('room_id', roomId).order('created_at', { ascending: true });
+      const container = document.getElementById('chat-messages-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const role = currentProfile?.role || 'mitspieler';
+
+      if (msgs) {
+        msgs.forEach(m => {
+          const isOwner = currentUser && m.sender_id === currentUser.id;
+          const canDelete = role === 'management' || role === 'admin' || (role === 'mitspieler' && isOwner);
+
+          container.innerHTML += `
+            <div class="text-xs flex items-center justify-between group bg-white/5 hover:bg-white/10 p-2.5 rounded-xl border border-white/5 transition">
+              <div>
+                <strong class="text-accentRed">${m.profiles?.username || 'User'}:</strong> 
+                <span class="text-white ml-2">${m.content}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[9px] text-textSub">${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                ${canDelete ? `<button onclick="deleteChatMessage('${m.id}')" class="text-red-400 hover:text-red-600 transition opacity-0 group-hover:opacity-100" title="Nachricht löschen">🗑️</button>` : ''}
+              </div>
+            </div>
+          `;
+        });
+      }
+      container.scrollTop = container.scrollHeight;
+    }
+
+    window.sendChatMessage = async function(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      if (!input.value.trim() || !activeChatRoomId) return;
+      await supabase.from('chat_messages').insert([{ room_id: activeChatRoomId, sender_id: currentUser.id, content: input.value.trim() }]);
+      input.value = '';
+    };
+
+    window.deleteChatMessage = async function(msgId) {
+      if (confirm("Möchtest du diese Nachricht wirklich löschen?")) {
+        const { error } = await supabase.from('chat_messages').delete().eq('id', msgId);
+        if (!error && activeChatRoomId) loadChatMessages(activeChatRoomId);
+      }
+    };
+
+    window.openNewGroupModal = async function() {
+      document.getElementById('group-modal').classList.remove('hidden');
+      const container = document.getElementById('group-members-checkboxes');
+      container.innerHTML = '<p class="text-xs text-textSub">Lade Mitglieder...</p>';
+
+      const { data: profiles } = await supabase.from('profiles').select('*').neq('id', currentUser.id);
+      container.innerHTML = '';
+
+      if (profiles && profiles.length > 0) {
+        profiles.forEach(p => {
+          container.innerHTML += `
+            <label class="flex items-center gap-2 p-2 rounded-xl bg-black/40 border border-white/5 cursor-pointer hover:border-white/20 transition">
+              <input type="checkbox" value="${p.id}" class="group-member-checkbox accent-accentRed">
+              <img src="${p.avatar_url || 'https://i.imgur.com/6VBx3io.png'}" class="w-6 h-6 rounded-full object-cover">
+              <span class="text-xs font-bold text-white">${p.username}</span>
+            </label>
+          `;
+        });
+      } else {
+        container.innerHTML = '<p class="text-xs text-textSub">Keine anderen Spieler gefunden.</p>';
+      }
+    };
+
+    window.closeNewGroupModal = function() {
+      document.getElementById('group-modal').classList.add('hidden');
+    };
+
+    window.createChatGroup = async function() {
+      const groupName = document.getElementById('group-name-input').value.trim();
+      if (!groupName) return alert("Bitte einen Gruppennamen eingeben!");
+
+      const checkboxes = document.querySelectorAll('.group-member-checkbox:checked');
+      const memberIds = Array.from(checkboxes).map(cb => cb.value);
+      memberIds.push(currentUser.id);
+
+      const { data: roomData, error: roomErr } = await supabase.from('chat_rooms').insert([{
+        name: groupName,
+        is_group: true,
+        creator_id: currentUser.id
+      }]).select().single();
+
+      if (roomErr) {
+        alert("Fehler beim Erstellen: " + roomErr.message);
+        return;
+      }
+
+      const memberInserts = memberIds.map(uid => ({ room_id: roomData.id, user_id: uid }));
+      await supabase.from('chat_room_members').insert(memberInserts);
+
+      closeNewGroupModal();
+      document.getElementById('group-name-input').value = '';
+      loadChatRooms();
+      selectRoom(roomData.id, groupName);
+      showLiveToast('Gruppe erstellt', `Raum "${groupName}" ist ready!`, '💬');
+    };
+
+    window.startDirectMessage = async function(targetUserId, targetUsername) {
+      const dmName = `💬 PM: ${targetUsername}`;
+      const { data: existingRoom } = await supabase.from('chat_rooms').select('*').eq('name', dmName).maybeSingle();
+
+      if (existingRoom) {
+        switchTab('messenger');
+        selectRoom(existingRoom.id, existingRoom.name);
+      } else {
+        const { data: newRoom, error } = await supabase.from('chat_rooms').insert([{
+          name: dmName,
+          is_group: false,
+          creator_id: currentUser.id
+        }]).select().single();
+
+        if (!error && newRoom) {
+          switchTab('messenger');
+          loadChatRooms();
+          selectRoom(newRoom.id, newRoom.name);
+        }
+      }
+    };
+
+    // ==========================================
+    // ROSTER
+    // ==========================================
+    async function loadRoster() {
+      const { data: profiles } = await supabase.from('profiles').select('*');
+      const grid = document.getElementById('roster-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const isManagement = currentProfile?.role === 'management';
+
+      if (profiles) {
+        profiles.forEach(p => {
+          const userRole = p.role || 'mitspieler';
+          const safeUsername = (p.username || 'Member').replace(/'/g, "");
+          const safeQuote = (p.personality_quote || 'Profi Coder').replace(/'/g, "");
+
+          let roleHtml = `<span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 uppercase">${userRole}</span>`;
+          
+          if (isManagement) {
+            roleHtml = `
+              <select onchange="updateUserRole('${p.id}', this.value)" class="bg-black/55 border border-white/15 rounded-lg px-2 py-1 text-[10px] font-mono text-white outline-none">
+                <option value="management" ${userRole === 'management' ? 'selected' : ''}>Management</option>
+                <option value="admin" ${userRole === 'admin' ? 'selected' : ''}>Admin</option>
+                <option value="mitspieler" ${userRole === 'mitspieler' ? 'selected' : ''}>Mitspieler</option>
+                <option value="ban" ${userRole === 'ban' ? 'selected' : ''}>Ban</option>
+              </select>
+            `;
+          }
+
+          grid.innerHTML += `
+            <div class="glass-card p-4 rounded-2xl border-white/10 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <img src="${p.avatar_url || 'https://i.imgur.com/6VBx3io.png'}" class="w-10 h-10 rounded-xl object-cover">
+                  <div>
+                    <h4 class="font-bold text-sm text-white">${safeUsername}</h4>
+                    <p class="text-[10px] text-textSub">${p.custom_status_text || p.custom_status || 'Online'}</p>
+                  </div>
+                </div>
+                <div>${roleHtml}</div>
+              </div>
+              <div class="flex gap-2">
+                ${p.id !== currentUser?.id ? `<button onclick="startDirectMessage('${p.id}', '${safeUsername}')" class="flex-1 py-1.5 bg-accentRed/20 hover:bg-accentRed text-accentRed hover:text-white border border-accentRed/40 text-xs font-bold rounded-lg transition">💬 PM</button>` : ''}
+                <button onclick="alert('BOOM! 💥\\n\\n${safeUsername}: ${safeQuote}')" class="flex-1 py-1.5 bg-white/5 border border-white/10 text-xs font-bold text-white rounded-lg hover:bg-accentRed/20 transition">💥 BOOM Check</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    // ==========================================
+    // QUPASSI KI COMMAND ASSISTANT
+    // ==========================================
+    window.sendQupasSIMessage = async function(e) {
+      e.preventDefault();
+      const input = document.getElementById('qupassi-input');
+      const prompt = input.value.trim();
+      if (!prompt) return;
+
+      const container = document.getElementById('qupassi-messages-container');
+      container.innerHTML += `
+        <div class="bg-white/10 p-3 rounded-xl border border-white/10 text-xs space-y-1 text-right">
+          <strong class="text-white">Du:</strong>
+          <p class="text-textSub">${prompt}</p>
+        </div>
+      `;
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      const loadingId = 'ai-loading-' + Date.now();
+      container.innerHTML += `
+        <div id="${loadingId}" class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
+          <strong class="text-accentRed">🤖 QupasSI:</strong>
+          <p class="text-textSub animate-pulse">Analysiert Datenbank & denkt nach...</p>
+        </div>
+      `;
+      container.scrollTop = container.scrollHeight;
+
+      try {
+        let dbContext = "";
+        const lower = prompt.toLowerCase();
+        
+        if (lower.includes('pinnwand') || lower.includes('beitrag') || lower.includes('task') || lower.includes('projekt')) {
+          const { data: posts } = await supabase.from('pinboard_posts').select('title, content, status, category, coordinates');
+          dbContext = "Aktuelle Pinnwand-Einträge in der Datenbank: " + JSON.stringify(posts);
+        } else if (lower.includes('wer') || lower.includes('spieler') || lower.includes('roster') || lower.includes('rolle')) {
+          const { data: profiles } = await supabase.from('profiles').select('username, role, custom_status_text');
+          dbContext = "Registrierte Crew-Mitglieder: " + JSON.stringify(profiles);
+        }
+
+        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `Du bist QupasSI, die smarte Crew-Assistenz für das Minecraft-Hub Quapsattack. Antworte extrem kurz, direkt und locker in cooler Jugendsprache mit Slang wie digger, bro, emojis wie 💀 oder 🚀. WICHTIG: Nutze KEINE übertriebenen Bindestriche. Gib am Ende GENAU EINEN kurzen Bro-Tipp. Datenbank-Kontext: ${dbContext}\n\nFrage: ${prompt}`
+              }]
+            }]
+          })
+        });
+
+        const geminiData = await geminiRes.json();
+        const aiReply = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "Yo Bro, da kam leider keine Antwort zurück! 💀";
+
+        document.getElementById(loadingId).remove();
+        container.innerHTML += `
+          <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
+            <strong class="text-accentRed">🤖 QupasSI:</strong>
+            <p class="text-white">${aiReply}</p>
+          </div>
+        `;
+        container.scrollTop = container.scrollHeight;
+
+        if (currentUser) {
+          await supabase.from('qupas_si_messages').insert([{
+            user_id: currentUser.id,
+            prompt: prompt,
+            response: aiReply
+          }]);
+        }
+
+      } catch (err) {
+        document.getElementById(loadingId).remove();
+        container.innerHTML += `
+          <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-xs space-y-1">
+            <strong class="text-accentRed">🤖 QupasSI:</strong>
+            <p class="text-red-400">Fehler bei der API-Verbindung: ${err.message}</p>
+          </div>
+        `;
+      }
+    };
+
+    // ==========================================
+    // SUPABASE REALTIME SUBSCRIPTIONS & LIVE ALERTS
+    // ==========================================
+    function setupRealtimeSubscriptions() {
+      // 1. Pinnwand Realtime + Live Toast
+      supabase.channel('public:pinboard_posts')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pinboard_posts' }, payload => {
+          loadPinboardPosts();
+          if (payload.new.author_id !== currentUser?.id) {
+            showLiveToast('Neuer Pinnwand-Eintrag!', payload.new.title || payload.new.content, '📌');
+          }
+        })
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pinboard_posts' }, () => loadPinboardPosts())
+        .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'pinboard_posts' }, () => loadPinboardPosts())
+        .subscribe();
+
+      // 2. Chat Realtime + Live Toast
+      supabase.channel('public:chat_messages')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
+          if (payload.new.room_id === activeChatRoomId) {
+            loadChatMessages(activeChatRoomId);
+          }
+          if (payload.new.sender_id !== currentUser?.id) {
+            showLiveToast('Neue Chat-Nachricht', payload.new.content, '💬');
+          }
+        })
+        .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'chat_messages' }, () => {
+          if (activeChatRoomId) loadChatMessages(activeChatRoomId);
+        })
+        .subscribe();
+
+      // 3. Kalender Realtime + Live Toast
+      supabase.channel('public:calendar_events')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'calendar_events' }, payload => {
+          if (selectedDateString === payload.new.event_day) {
+            selectCalendarDate(selectedDateString, parseInt(selectedDateString.split('-')[2]));
+          }
+          if (payload.new.creator_id !== currentUser?.id) {
+            showLiveToast('Neuer Crew-Termin!', `${payload.new.title} am ${payload.new.event_day}`, '📅');
+          }
+        })
+        .subscribe();
+    }
+
+    function loadAllData() {
+      loadPinboardPosts();
+      loadChatRooms();
+      renderCalendar();
+      loadMediaVault();
+      loadRoster();
+    }
+  </script>
 </body>
 </html>
