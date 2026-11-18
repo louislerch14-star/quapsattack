@@ -328,10 +328,9 @@
   <script>
     // === SUPABASE & API KEYS ===
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6InF1ZXN0IiwiYXAiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Trage hier deine Keys direkt ein, da wir keine Edge Function nutzen:
     const GEMINI_KEY = "fb3a7552ca1e3124282d3f827d94c4d726e070f25d7cd4ddcbcd3d315662afd8"; 
     const OPENROUTER_KEY = "558dc8ee7df0b2310f490a4ae75214e9773cf173986566dce45af545ad51f8ee";
 
@@ -540,7 +539,7 @@
       if (data) data.forEach(msg => renderMessage(msg));
     }
 
-    // DIREKTER API-AUFRUF AUS DEM FRONTEND (OHNE EDGE FUNCTION!)
+    // DIREKTER API-AUFRUF AUS DEM FRONTEND
     async function sendMessage(e) {
       e.preventDefault();
       const input = document.getElementById("prompt-input");
@@ -582,16 +581,19 @@
         let replyText = "";
 
         if (model === "gemini-2.5-flash") {
-          // Direkter Google Gemini API Call
+          // Korrigierter Endpoint auf gemini-1.5-flash (oder gemini-pro)
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ contents: [{ parts: [{ text: text }] }] })
           });
           const json = await res.json();
+          if (json.error) {
+            throw new Error(json.error.message || "Gemini API Fehler");
+          }
           replyText = json.candidates?.[0]?.content?.parts?.[0]?.text || "Keine Antwort von Gemini.";
         } else {
-          // Direkter OpenRouter API Call für Llama, DeepSeek, Qwen
+          // OpenRouter Call für Llama, DeepSeek, Qwen
           const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -606,6 +608,9 @@
             })
           });
           const json = await res.json();
+          if (json.error) {
+            throw new Error(json.error.message || "OpenRouter API Fehler");
+          }
           replyText = json.choices?.[0]?.message?.content || "Keine Antwort vom OpenRouter Modell.";
         }
 
