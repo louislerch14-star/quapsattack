@@ -1,87 +1,77 @@
 <!DOCTYPE html>
-<html lang="de" class="light">
+<html lang="de" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quapspedia – Wissensdatenbank & Wiki</title>
     
-    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <!-- Google Fonts: Inter, Orbitron & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
 
     <!-- Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        body {
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #020205; color: #f8fafc; overflow-x: hidden; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0b10; }
+        ::-webkit-scrollbar-thumb { background: #1e2235; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ef4444; }
+        .glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.25); }
+        .glow-cyan { box-shadow: 0 0 20px rgba(6, 182, 212, 0.25); }
+        .glass-panel { background: rgba(10, 11, 16, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.07); }
+        
         .skin-render {
             image-rendering: auto;
-            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.15));
+            filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.7));
             transition: transform 0.25s ease;
         }
         .player-card:hover .skin-render {
-            transform: translateY(-4px) scale(1.03);
+            transform: translateY(-5px) scale(1.04);
         }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 9999px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #334155;
+        .bg-grid-pattern {
+            background-image: linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 36px 36px;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+<body class="min-h-screen flex flex-col antialiased selection:bg-red-500 selection:text-white bg-grid-pattern relative">
+
+    <!-- Dezente Ambient Hintergrund-Glows -->
+    <div class="fixed top-0 left-1/4 w-96 h-96 bg-red-600/10 rounded-full blur-[130px] pointer-events-none -z-10"></div>
+    <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none -z-10"></div>
 
     <!-- Top Navigation -->
-    <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200 dark:border-slate-800">
+    <header class="sticky top-0 z-40 w-full glass-panel border-b border-white/10">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-            <!-- Brand -->
+            <!-- Brand & Logo -->
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
-                    Q
-                </div>
-                <div>
-                    <span class="font-bold text-lg tracking-tight">Quapspedia</span>
-                    <span class="hidden sm:inline-block ml-2 text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                        Wiki & Docs
-                    </span>
-                </div>
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="relative w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/40 text-red-400 flex items-center justify-center font-orbitron font-bold text-xl glow-red group-hover:scale-105 transition-transform overflow-hidden">
+                        <!-- Logo Bild / Fallback Icon (unnamed.html Referenz) -->
+                        <img src="./unnamed.html" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Logo" class="w-full h-full object-cover">
+                        <span class="absolute inset-0 items-center justify-center hidden font-orbitron">Q</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-orbitron font-bold text-lg tracking-wider text-white group-hover:text-cyan-400 transition-colors">QUAPSPEDIA</span>
+                        <span class="text-[10px] font-mono tracking-widest text-cyan-400/80">DATABASE</span>
+                    </div>
+                </a>
             </div>
 
             <!-- Navigation Tabs -->
-            <nav class="hidden md:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
-                <button onclick="switchTab('worlds')" id="tab-worlds" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm">
+            <nav class="hidden md:flex items-center gap-1.5 bg-[#0a0b10] border border-white/10 p-1 rounded-xl">
+                <button onclick="switchTab('worlds')" id="tab-worlds" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-red-500/20 border border-red-500/40 text-white glow-red">
                     Quapswelten
                 </button>
-                <button onclick="switchTab('players')" id="tab-players" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                <button onclick="switchTab('players')" id="tab-players" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all border border-transparent text-slate-400 hover:text-white">
                     Spieler & Skins
                 </button>
             </nav>
@@ -89,31 +79,19 @@
             <!-- Actions -->
             <div class="flex items-center gap-2">
                 <!-- Admin Status Badge / Login Trigger -->
-                <button onclick="openAdminModal()" id="admin-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                    <span id="admin-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
-                    <span id="admin-label">Admin</span>
-                </button>
-
-                <!-- Theme Toggle -->
-                <button onclick="toggleTheme()" aria-label="Theme wechseln" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-600 dark:text-slate-300">
-                    <!-- Sun Icon (Dark Mode) -->
-                    <svg id="icon-sun" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    <!-- Moon Icon (Light Mode) -->
-                    <svg id="icon-moon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                    </svg>
+                <button onclick="openAdminModal()" id="admin-btn" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-medium glass-panel hover:border-red-500/40 transition-all text-slate-300">
+                    <span id="admin-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+                    <span id="admin-label" class="font-orbitron tracking-wider text-[11px]">ADMIN</span>
                 </button>
             </div>
         </div>
 
         <!-- Mobile Tabs -->
-        <div class="flex md:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-2 gap-2 bg-slate-50/90 dark:bg-slate-900/90">
-            <button onclick="switchTab('worlds')" id="tab-worlds-mobile" class="flex-1 py-1.5 rounded-lg text-sm font-medium bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm">
+        <div class="flex md:hidden border-t border-white/10 px-4 py-2 gap-2 bg-[#0a0b10]/90">
+            <button onclick="switchTab('worlds')" id="tab-worlds-mobile" class="flex-1 py-1.5 rounded-lg text-sm font-medium bg-red-500/20 border border-red-500/40 text-white">
                 Quapswelten
             </button>
-            <button onclick="switchTab('players')" id="tab-players-mobile" class="flex-1 py-1.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400">
+            <button onclick="switchTab('players')" id="tab-players-mobile" class="flex-1 py-1.5 rounded-lg text-sm font-medium border border-transparent text-slate-400">
                 Spieler & Skins
             </button>
         </div>
@@ -123,10 +101,14 @@
     <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
         
         <!-- Hero & Toolbar -->
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-8 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-8 border-b border-white/10">
             <div>
-                <h1 id="page-title" class="text-2xl sm:text-3xl font-bold tracking-tight">Quapswelten Dokumentation</h1>
-                <p id="page-subtitle" class="mt-1 text-sm sm:text-base text-slate-600 dark:text-slate-400">
+                <div class="inline-flex items-center gap-2 text-xs font-mono text-cyan-400 mb-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>QUAPSATTACK ARCHIVE SYSTEM</span>
+                </div>
+                <h1 id="page-title" class="font-orbitron text-2xl sm:text-3xl font-bold tracking-wide text-white">QUAPSWELTEN DOKU</h1>
+                <p id="page-subtitle" class="mt-1.5 text-sm text-slate-400">
                     Alle Server-Projekte, Welten-Architekturen und technische Dokumentationen im Überblick.
                 </p>
             </div>
@@ -134,45 +116,50 @@
             <div class="flex flex-wrap items-center gap-3">
                 <!-- Search Input -->
                 <div class="relative flex-1 sm:flex-initial">
-                    <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    <input type="text" id="search-input" oninput="handleSearch()" placeholder="Suchen..." class="w-full sm:w-56 pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="search-input" oninput="handleSearch()" placeholder="Einträge durchsuchen..." class="w-full sm:w-60 pl-10 pr-3.5 py-2 text-sm rounded-xl bg-[#0a0b10] border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/40 transition-all">
                 </div>
 
                 <!-- Create Button -->
-                <button onclick="openCreateModal()" id="create-btn" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-colors">
+                <button onclick="openCreateModal()" id="create-btn" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-500 text-white glow-red transition-all">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    <span id="create-btn-text">Neue Doku</span>
+                    <span id="create-btn-text">Neue Welt-Doku</span>
                 </button>
             </div>
         </div>
 
         <!-- Admin Banner (Visible only when Admin is unlocked) -->
-        <div id="admin-banner" class="hidden mt-6 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-2.5 text-sm text-amber-900 dark:text-amber-200">
-                <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                </svg>
-                <span><strong>Admin-Modus aktiv:</strong> Du kannst jetzt alle bestehenden Welten-Dokumentationen und Spieler-Profile bearbeiten oder löschen.</span>
+        <div id="admin-banner" class="hidden mt-6 p-4 rounded-xl glass-panel border-red-500/40 glow-red flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3 text-sm text-slate-200">
+                <div class="w-8 h-8 rounded-lg bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <span class="font-orbitron text-xs font-bold text-red-400 tracking-wider uppercase block">Admin-Zugriff entsperrt</span>
+                    <span class="text-xs text-slate-400">Alle bestehenden Welten-Dokumentationen und Spieler-Profile können jetzt bearbeitet oder gelöscht werden.</span>
+                </div>
             </div>
-            <button onclick="logoutAdmin()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-200/70 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 hover:bg-amber-300/70 transition-colors shrink-0">
-                Abmelden
+            <button onclick="logoutAdmin()" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 hover:bg-red-500/30 transition-colors shrink-0">
+                Admin sperren
             </button>
         </div>
 
         <!-- Loading State -->
         <div id="loading-state" class="py-20 text-center">
-            <div class="inline-block w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Daten werden aus Supabase geladen...</p>
+            <div class="inline-block w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-3 text-xs font-mono text-slate-400 tracking-wider uppercase">Verbinde mit Supabase...</p>
         </div>
 
         <!-- Error State -->
-        <div id="error-state" class="hidden my-8 p-6 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 text-center">
-            <p class="font-semibold text-red-700 dark:text-red-400">Verbindung zur Datenbank fehlgeschlagen</p>
-            <p id="error-message" class="mt-1 text-sm text-red-600 dark:text-red-300"></p>
+        <div id="error-state" class="hidden my-8 p-6 rounded-2xl glass-panel border-red-500/40 text-center">
+            <p class="font-orbitron font-semibold text-red-400">Datenbank-Verbindungsfehler</p>
+            <p id="error-message" class="mt-1 text-sm text-slate-400"></p>
         </div>
 
         <!-- SECTION 1: QUAPSWELTEN -->
@@ -180,8 +167,8 @@
             <div id="worlds-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- World Cards injected here -->
             </div>
-            <div id="worlds-empty" class="hidden py-16 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                <p class="text-slate-500 dark:text-slate-400 text-sm">Keine Quapswelten gefunden. Erstelle jetzt die erste Dokumentation!</p>
+            <div id="worlds-empty" class="hidden py-16 text-center glass-panel rounded-2xl">
+                <p class="text-slate-400 text-sm">Keine Quapswelten gefunden. Erstelle jetzt die erste Dokumentation!</p>
             </div>
         </section>
 
@@ -190,20 +177,20 @@
             <div id="players-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Player Cards injected here -->
             </div>
-            <div id="players-empty" class="hidden py-16 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                <p class="text-slate-500 dark:text-slate-400 text-sm">Keine Spieler-Profile gefunden. Füge jetzt den ersten Spieler hinzu!</p>
+            <div id="players-empty" class="hidden py-16 text-center glass-panel rounded-2xl">
+                <p class="text-slate-400 text-sm">Keine Spieler-Profile gefunden. Füge jetzt den ersten Spieler hinzu!</p>
             </div>
         </section>
 
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-200 dark:border-slate-800 py-6 mt-12">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
-            <p>Quapspedia &copy; 2026 – Offizielle Projektdokumentation</p>
+    <footer class="border-t border-white/10 py-6 mt-12 bg-[#0a0b10]/50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <p class="font-mono">QUAPSPEDIA &copy; 2026 // OFFIZIELLE PROJEKTDOKUMENTATION</p>
             <div class="flex items-center gap-4">
-                <span>Powered by Supabase</span>
-                <button onclick="openAdminModal()" class="hover:text-slate-800 dark:hover:text-slate-200 underline">Admin-Zugang</button>
+                <span class="text-cyan-500/80 font-mono">SUPABASE CONNECTED</span>
+                <button onclick="openAdminModal()" class="hover:text-red-400 transition-colors underline">Admin-Zugang</button>
             </div>
         </div>
     </footer>
@@ -213,31 +200,31 @@
     <!-- ===================================================================== -->
 
     <!-- 1. Read World Documentation Modal -->
-    <div id="read-world-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-3xl w-full max-h-[88vh] flex flex-col shadow-2xl">
-            <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-start justify-between gap-4">
+    <div id="read-world-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-panel border-white/15 rounded-2xl max-w-3xl w-full max-h-[88vh] flex flex-col shadow-2xl">
+            <div class="p-6 border-b border-white/10 flex items-start justify-between gap-4">
                 <div>
-                    <div class="flex items-center gap-2 mb-2">
-                        <span id="read-world-status" class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Aktiv</span>
-                        <span id="read-world-version" class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">1.20.1</span>
+                    <div class="flex items-center gap-2 mb-2.5">
+                        <span id="read-world-status" class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300">Aktiv</span>
+                        <span id="read-world-version" class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300">1.20.1</span>
                     </div>
-                    <h2 id="read-world-title" class="text-2xl font-bold">Titel</h2>
-                    <p id="read-world-subtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Untertitel</p>
+                    <h2 id="read-world-title" class="font-orbitron text-xl sm:text-2xl font-bold text-white">Titel</h2>
+                    <p id="read-world-subtitle" class="text-sm text-slate-400 mt-1">Untertitel</p>
                 </div>
-                <button onclick="closeModal('read-world-modal')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <button onclick="closeModal('read-world-modal')" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <div class="p-6 overflow-y-auto flex-1">
-                <div id="read-world-content" class="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed text-sm sm:text-base"></div>
+                <div id="read-world-content" class="text-slate-300 whitespace-pre-line leading-relaxed text-sm sm:text-base"></div>
             </div>
-            <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50 rounded-b-2xl">
-                <span id="read-world-date" class="text-xs text-slate-400"></span>
+            <div class="p-4 border-t border-white/10 flex items-center justify-between bg-[#0a0b10]/90 rounded-b-2xl">
+                <span id="read-world-date" class="text-xs font-mono text-slate-500"></span>
                 <div class="flex items-center gap-2">
-                    <button id="read-world-edit-btn" class="hidden px-4 py-2 rounded-xl text-sm font-medium bg-amber-500 hover:bg-amber-600 text-white transition-colors">
+                    <button id="read-world-edit-btn" class="hidden px-4 py-2 rounded-xl text-sm font-medium bg-red-500/20 border border-red-500/40 text-red-300 hover:bg-red-500/30 transition-colors">
                         Bearbeiten
                     </button>
-                    <button onclick="closeModal('read-world-modal')" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
+                    <button onclick="closeModal('read-world-modal')" class="px-4 py-2 rounded-xl text-sm font-medium bg-white/10 hover:bg-white/15 text-white transition-colors">
                         Schließen
                     </button>
                 </div>
@@ -246,60 +233,60 @@
     </div>
 
     <!-- 2. Skin Viewer Detail Modal -->
-    <div id="skin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
-            <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+    <div id="skin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-panel border-white/15 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
+            <div class="p-5 border-b border-white/10 flex items-center justify-between">
                 <div>
-                    <h3 id="skin-modal-name" class="font-bold text-lg">Spielername</h3>
-                    <p id="skin-modal-mc" class="text-xs font-mono text-slate-500">MC: Username</p>
+                    <h3 id="skin-modal-name" class="font-orbitron font-bold text-lg text-white">Spielername</h3>
+                    <p id="skin-modal-mc" class="text-xs font-mono text-cyan-400">MC: Username</p>
                 </div>
-                <button onclick="closeModal('skin-modal')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <button onclick="closeModal('skin-modal')" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="p-6 bg-slate-100/70 dark:bg-slate-950/60 flex flex-col items-center justify-center">
-                <!-- View Switcher (Ganzkörper vs Kopf/Büste) -->
-                <div class="flex gap-2 mb-4 bg-white dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <button onclick="setSkinView('body')" id="skin-btn-body" class="px-3 py-1 rounded-md text-xs font-medium bg-blue-600 text-white">Ganzkörper</button>
-                    <button onclick="setSkinView('bust')" id="skin-btn-bust" class="px-3 py-1 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300">Büste</button>
-                    <button onclick="setSkinView('head')" id="skin-btn-head" class="px-3 py-1 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300">Kopf</button>
+            <div class="p-6 bg-[#020205]/80 flex flex-col items-center justify-center relative border-b border-white/10">
+                <!-- View Switcher (Ganzkörper vs Büste vs Kopf) -->
+                <div class="flex gap-1.5 mb-5 bg-[#0a0b10] p-1 rounded-xl border border-white/10">
+                    <button onclick="setSkinView('body')" id="skin-btn-body" class="px-3 py-1 rounded-lg text-xs font-medium bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">Ganzkörper</button>
+                    <button onclick="setSkinView('bust')" id="skin-btn-bust" class="px-3 py-1 rounded-lg text-xs font-medium border border-transparent text-slate-400 hover:text-white">Büste</button>
+                    <button onclick="setSkinView('head')" id="skin-btn-head" class="px-3 py-1 rounded-lg text-xs font-medium border border-transparent text-slate-400 hover:text-white">Kopf</button>
                 </div>
                 <img id="skin-modal-img" src="" alt="Minecraft Skin" class="h-64 object-contain skin-render">
             </div>
-            <div class="p-5">
-                <span id="skin-modal-role" class="inline-block text-xs font-medium px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 mb-2">Rolle</span>
-                <p id="skin-modal-bio" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed"></p>
+            <div class="p-5 bg-[#0a0b10]/60">
+                <span id="skin-modal-role" class="inline-block text-xs font-mono px-2.5 py-0.5 rounded bg-red-500/15 border border-red-500/30 text-red-300 mb-2.5">Rolle</span>
+                <p id="skin-modal-bio" class="text-sm text-slate-300 leading-relaxed"></p>
             </div>
         </div>
     </div>
 
     <!-- 3. Create / Edit World Modal -->
-    <div id="world-form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
-            <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <h3 id="world-form-title" class="font-bold text-lg">Neue Quapswelt dokumentieren</h3>
-                <button onclick="closeModal('world-form-modal')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+    <div id="world-form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-panel border-white/15 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="p-5 border-b border-white/10 flex items-center justify-between">
+                <h3 id="world-form-title" class="font-orbitron font-bold text-lg text-white">Neue Quapswelt dokumentieren</h3>
+                <button onclick="closeModal('world-form-modal')" class="p-2 rounded-lg text-slate-400 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <form id="world-form" onsubmit="saveWorld(event)" class="p-6 overflow-y-auto space-y-4">
                 <input type="hidden" id="world-id">
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Name der Quapswelt *</label>
-                    <input type="text" id="world-input-title" required placeholder="z.B. Quapsattack Season 3" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Name der Quapswelt *</label>
+                    <input type="text" id="world-input-title" required placeholder="z.B. Quapsattack Season 3" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Kurzbeschreibung</label>
-                    <input type="text" id="world-input-subtitle" placeholder="Kurzer Teaser über das Projekt..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Kurzbeschreibung</label>
+                    <input type="text" id="world-input-subtitle" placeholder="Kurzer Teaser über das Projekt..." class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Minecraft / Modpack Version</label>
-                        <input type="text" id="world-input-version" value="Forge 1.20.1" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Minecraft / Modpack Version</label>
+                        <input type="text" id="world-input-version" value="Forge 1.20.1" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Status</label>
-                        <select id="world-input-status" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Status</label>
+                        <select id="world-input-status" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
                             <option value="Aktiv">Aktiv</option>
                             <option value="In Planung">In Planung</option>
                             <option value="Archiviert">Archiviert</option>
@@ -307,23 +294,23 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Projektdokumentation (Text) *</label>
-                    <textarea id="world-input-content" required rows="8" placeholder="Beschreibe hier ausführlich, worum es in dieser Quapswelt geht, welche Bauwerke es gibt, Besonderheiten, Regeln oder Geschichte..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 leading-relaxed"></textarea>
+                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Projektdokumentation (Text) *</label>
+                    <textarea id="world-input-content" required rows="8" placeholder="Beschreibe hier ausführlich, worum es in dieser Quapswelt geht, welche Bauwerke es gibt, Besonderheiten, Regeln oder Geschichte..." class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500 leading-relaxed"></textarea>
                 </div>
                 <div class="pt-2 flex justify-end gap-2">
-                    <button type="button" onclick="closeModal('world-form-modal')" class="px-4 py-2 rounded-xl text-sm font-medium border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Abbrechen</button>
-                    <button type="submit" id="world-submit-btn" class="px-5 py-2 rounded-xl text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm">Speichern</button>
+                    <button type="button" onclick="closeModal('world-form-modal')" class="px-4 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5">Abbrechen</button>
+                    <button type="submit" id="world-submit-btn" class="px-5 py-2 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-500 text-white glow-red transition-all">Speichern</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- 4. Create / Edit Player Modal -->
-    <div id="player-form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl">
-            <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <h3 id="player-form-title" class="font-bold text-lg">Neuen Spieler hinzufügen</h3>
-                <button onclick="closeModal('player-form-modal')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+    <div id="player-form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-panel border-white/15 rounded-2xl max-w-lg w-full shadow-2xl">
+            <div class="p-5 border-b border-white/10 flex items-center justify-between">
+                <h3 id="player-form-title" class="font-orbitron font-bold text-lg text-white">Neuen Spieler hinzufügen</h3>
+                <button onclick="closeModal('player-form-modal')" class="p-2 rounded-lg text-slate-400 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -331,59 +318,59 @@
                 <input type="hidden" id="player-id">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Anzeigename *</label>
-                        <input type="text" id="player-input-username" required placeholder="z.B. Louis" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Anzeigename *</label>
+                        <input type="text" id="player-input-username" required placeholder="z.B. Louis" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Minecraft Name (für Skin) *</label>
-                        <input type="text" id="player-input-mcname" required oninput="updateSkinPreview()" placeholder="z.B. AirbusFan" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Minecraft Name *</label>
+                        <input type="text" id="player-input-mcname" required oninput="updateSkinPreview()" placeholder="z.B. AirbusFan" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-cyan-300 text-sm font-mono focus:outline-none focus:border-cyan-500">
                     </div>
                 </div>
                 
                 <!-- Live Skin Preview -->
-                <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center gap-4 p-3.5 rounded-xl bg-[#020205]/80 border border-white/10">
                     <img id="player-skin-preview" src="https://minotar.net/armor/bust/MHF_Steve/64.png" alt="Skin Vorschau" class="w-14 h-14 object-contain">
-                    <div class="text-xs text-slate-500 dark:text-slate-400">
-                        <p class="font-semibold text-slate-700 dark:text-slate-300">Automatische Skin-Vorschau</p>
-                        <p>Der Minecraft-Skin wird automatisch anhand des exakten Ingame-Namens geladen.</p>
+                    <div class="text-xs text-slate-400">
+                        <p class="font-semibold text-cyan-400">Automatische Skin-Vorschau</p>
+                        <p class="mt-0.5">Der Skin wird automatisch anhand des exakten Minecraft-Namens gerendert.</p>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Rolle / Spezialgebiet</label>
-                    <input type="text" id="player-input-role" placeholder="z.B. Architekt, Redstone-Techniker, Admin" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Rolle / Spezialgebiet</label>
+                    <input type="text" id="player-input-role" placeholder="z.B. Architekt, Redstone-Techniker, Admin" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Über den Spieler *</label>
-                    <textarea id="player-input-bio" required rows="4" placeholder="Was macht diesen Spieler aus? Bekannte Bauwerke, Projekte oder Fun-Facts..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Über den Spieler *</label>
+                    <textarea id="player-input-bio" required rows="4" placeholder="Was macht diesen Spieler aus? Bekannte Bauwerke, Projekte oder Fun-Facts..." class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
                 <div class="pt-2 flex justify-end gap-2">
-                    <button type="button" onclick="closeModal('player-form-modal')" class="px-4 py-2 rounded-xl text-sm font-medium border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Abbrechen</button>
-                    <button type="submit" id="player-submit-btn" class="px-5 py-2 rounded-xl text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm">Speichern</button>
+                    <button type="button" onclick="closeModal('player-form-modal')" class="px-4 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5">Abbrechen</button>
+                    <button type="submit" id="player-submit-btn" class="px-5 py-2 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-500 text-white glow-red transition-all">Speichern</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- 5. Admin Password Modal -->
-    <div id="admin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
+    <div id="admin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-panel border-red-500/30 rounded-2xl max-w-sm w-full p-6 shadow-2xl glow-red">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="font-bold text-lg">Admin-Bereich</h3>
-                <button onclick="closeModal('admin-modal')" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <h3 class="font-orbitron font-bold text-lg text-white">ADMIN-ZUGANG</h3>
+                <button onclick="closeModal('admin-modal')" class="p-1.5 rounded-lg text-slate-400 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+            <p class="text-xs text-slate-400 mb-4">
                 Gib das Admin-Passwort ein, um bestehende Beiträge, Quapswelten und Spieler-Profile zu bearbeiten oder zu löschen.
             </p>
             <form onsubmit="verifyAdmin(event)" class="space-y-4">
                 <div>
-                    <input type="password" id="admin-password-input" placeholder="Admin-Passwort eingeben..." required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <p id="admin-error-msg" class="hidden mt-1.5 text-xs text-red-500 font-medium">Falsches Passwort! Bitte erneut versuchen.</p>
+                    <input type="password" id="admin-password-input" placeholder="Passwort eingeben..." required class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/15 text-white text-sm focus:outline-none focus:border-red-500">
+                    <p id="admin-error-msg" class="hidden mt-1.5 text-xs text-red-400 font-medium">Zugriff verweigert: Falsches Passwort!</p>
                 </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors">
-                    Freischalten
+                <button type="submit" class="w-full py-2.5 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-500 text-white glow-red transition-all">
+                    System entsperren
                 </button>
             </form>
         </div>
@@ -391,8 +378,8 @@
 
     <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-        <div class="px-4 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-medium shadow-lg flex items-center gap-2.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 dark:bg-emerald-600"></span>
+        <div class="px-4 py-3 rounded-xl glass-panel border-cyan-500/40 glow-cyan text-white text-sm font-medium flex items-center gap-2.5">
+            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
             <span id="toast-message">Gespeichert!</span>
         </div>
     </div>
@@ -417,28 +404,9 @@
 
         // Initialisierung beim Laden
         document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
             updateAdminUI();
             fetchAllData();
         });
-
-        // ---------------------------------------------------------------------
-        // THEME (Light / Dark Mode)
-        // ---------------------------------------------------------------------
-        function initTheme() {
-            const savedTheme = localStorage.getItem('quapspedia_theme');
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            html.classList.toggle('dark');
-            localStorage.setItem('quapspedia_theme', html.classList.contains('dark') ? 'dark' : 'light');
-        }
 
         // ---------------------------------------------------------------------
         // NAVIGATION & TABS
@@ -447,46 +415,41 @@
             currentTab = tab;
             document.getElementById('search-input').value = '';
 
-            // Desktop Tab Styles
             const btnWorlds = document.getElementById('tab-worlds');
             const btnPlayers = document.getElementById('tab-players');
             const btnWorldsMob = document.getElementById('tab-worlds-mobile');
             const btnPlayersMob = document.getElementById('tab-players-mobile');
 
-            const activeClasses = ['bg-white', 'dark:bg-slate-900', 'text-slate-900', 'dark:text-white', 'shadow-sm'];
-            const inactiveClasses = ['text-slate-600', 'dark:text-slate-400'];
+            const activeDesktop = ['bg-red-500/20', 'border-red-500/40', 'text-white', 'glow-red'];
+            const inactiveDesktop = ['border-transparent', 'text-slate-400', 'hover:text-white'];
 
             if (tab === 'worlds') {
-                btnWorlds.classList.add(...activeClasses);
-                btnWorlds.classList.remove(...inactiveClasses);
-                btnPlayers.classList.remove(...activeClasses);
-                btnPlayers.classList.add(...inactiveClasses);
+                btnWorlds.classList.add(...activeDesktop);
+                btnWorlds.classList.remove(...inactiveDesktop);
+                btnPlayers.classList.remove(...activeDesktop);
+                btnPlayers.classList.add(...inactiveDesktop);
 
-                btnWorldsMob.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm');
-                btnWorldsMob.classList.remove('text-slate-600', 'dark:text-slate-400');
-                btnPlayersMob.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm');
-                btnPlayersMob.classList.add('text-slate-600', 'dark:text-slate-400');
+                btnWorldsMob.className = 'flex-1 py-1.5 rounded-lg text-sm font-medium bg-red-500/20 border border-red-500/40 text-white';
+                btnPlayersMob.className = 'flex-1 py-1.5 rounded-lg text-sm font-medium border border-transparent text-slate-400';
 
                 document.getElementById('section-worlds').classList.remove('hidden');
                 document.getElementById('section-players').classList.add('hidden');
-                document.getElementById('page-title').textContent = 'Quapswelten Dokumentation';
+                document.getElementById('page-title').textContent = 'QUAPSWELTEN DOKU';
                 document.getElementById('page-subtitle').textContent = 'Alle Server-Projekte, Welten-Architekturen und technische Dokumentationen im Überblick.';
                 document.getElementById('create-btn-text').textContent = 'Neue Welt-Doku';
                 renderWorlds(worldsData);
             } else {
-                btnPlayers.classList.add(...activeClasses);
-                btnPlayers.classList.remove(...inactiveClasses);
-                btnWorlds.classList.remove(...activeClasses);
-                btnWorlds.classList.add(...inactiveClasses);
+                btnPlayers.classList.add(...activeDesktop);
+                btnPlayers.classList.remove(...inactiveDesktop);
+                btnWorlds.classList.remove(...activeDesktop);
+                btnWorlds.classList.add(...inactiveDesktop);
 
-                btnPlayersMob.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm');
-                btnPlayersMob.classList.remove('text-slate-600', 'dark:text-slate-400');
-                btnWorldsMob.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm');
-                btnWorldsMob.classList.add('text-slate-600', 'dark:text-slate-400');
+                btnPlayersMob.className = 'flex-1 py-1.5 rounded-lg text-sm font-medium bg-red-500/20 border border-red-500/40 text-white';
+                btnWorldsMob.className = 'flex-1 py-1.5 rounded-lg text-sm font-medium border border-transparent text-slate-400';
 
                 document.getElementById('section-players').classList.remove('hidden');
                 document.getElementById('section-worlds').classList.add('hidden');
-                document.getElementById('page-title').textContent = 'Spieler & Skins';
+                document.getElementById('page-title').textContent = 'SPIELER & SKINS';
                 document.getElementById('page-subtitle').textContent = 'Alle Mitglieder der Quapswelten mit Profilbeschreibung und 3D-Skin-Ansicht.';
                 document.getElementById('create-btn-text').textContent = 'Neuer Spieler';
                 renderPlayers(playersData);
@@ -539,38 +502,38 @@
 
             list.forEach(world => {
                 const statusColors = {
-                    'Aktiv': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
-                    'In Planung': 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300',
-                    'Archiviert': 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                    'Aktiv': 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300',
+                    'In Planung': 'bg-red-500/15 border-red-500/30 text-red-300',
+                    'Archiviert': 'bg-white/5 border-white/10 text-slate-400'
                 };
                 const badgeClass = statusColors[world.status] || statusColors['Aktiv'];
 
                 const card = document.createElement('article');
-                card.className = 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-blue-400 dark:hover:border-blue-600 transition-all shadow-sm';
+                card.className = 'glass-panel rounded-2xl p-6 flex flex-col justify-between hover:border-cyan-500/40 hover:shadow-[0_0_25px_rgba(6,182,212,0.12)] transition-all';
 
                 card.innerHTML = `
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="text-xs font-medium px-2.5 py-0.5 rounded-full ${badgeClass}">${escapeHtml(world.status || 'Aktiv')}</span>
-                            <span class="text-xs font-mono text-slate-500 dark:text-slate-400">${escapeHtml(world.version || '')}</span>
+                            <span class="text-xs font-medium px-2.5 py-0.5 rounded-full border ${badgeClass}">${escapeHtml(world.status || 'Aktiv')}</span>
+                            <span class="text-xs font-mono text-slate-400">${escapeHtml(world.version || '')}</span>
                         </div>
-                        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-1">${escapeHtml(world.title)}</h2>
-                        ${world.subtitle ? `<p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-3">${escapeHtml(world.subtitle)}</p>` : ''}
-                        <p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-3 leading-relaxed">${escapeHtml(world.content)}</p>
+                        <h2 class="font-orbitron text-lg font-bold text-white mb-1.5 tracking-wide">${escapeHtml(world.title)}</h2>
+                        ${world.subtitle ? `<p class="text-sm font-medium text-cyan-400/90 mb-3">${escapeHtml(world.subtitle)}</p>` : ''}
+                        <p class="text-sm text-slate-400 line-clamp-3 leading-relaxed">${escapeHtml(world.content)}</p>
                     </div>
 
-                    <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-                        <button onclick="openReadWorldModal('${world.id}')" class="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                    <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between gap-2">
+                        <button onclick="openReadWorldModal('${world.id}')" class="inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors">
                             Dokumentation lesen
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </button>
 
                         ${isAdmin ? `
                             <div class="flex items-center gap-1.5">
-                                <button onclick="openEditWorldModal('${world.id}')" title="Bearbeiten" class="p-1.5 rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/50 transition-colors">
+                                <button onclick="openEditWorldModal('${world.id}')" title="Bearbeiten" class="p-1.5 rounded-lg text-amber-400 hover:bg-amber-500/15 transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </button>
-                                <button onclick="deleteWorld('${world.id}')" title="Löschen" class="p-1.5 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors">
+                                <button onclick="deleteWorld('${world.id}')" title="Löschen" class="p-1.5 rounded-lg text-red-400 hover:bg-red-500/15 transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
                             </div>
@@ -600,40 +563,40 @@
                 const skinUrl = `https://minotar.net/armor/body/${safeMc}/140.png`;
 
                 const card = document.createElement('article');
-                card.className = 'player-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-blue-400 dark:hover:border-blue-600 transition-all shadow-sm';
+                card.className = 'player-card glass-panel rounded-2xl overflow-hidden flex flex-col justify-between hover:border-red-500/40 hover:shadow-[0_0_25px_rgba(239,68,68,0.12)] transition-all';
 
                 card.innerHTML = `
                     <div>
                         <!-- Skin Header Area -->
-                        <div onclick="openSkinModal('${player.id}')" class="cursor-pointer bg-slate-100/80 dark:bg-slate-800/50 pt-6 pb-4 px-4 flex flex-col items-center justify-center relative group border-b border-slate-100 dark:border-slate-800">
-                            <span class="absolute top-3 right-3 text-[11px] font-medium px-2 py-0.5 rounded-md bg-white/80 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                                Skin vergrößern
+                        <div onclick="openSkinModal('${player.id}')" class="cursor-pointer bg-[#020205]/70 pt-6 pb-4 px-4 flex flex-col items-center justify-center relative group border-b border-white/10">
+                            <span class="absolute top-3 right-3 text-[11px] font-mono px-2 py-0.5 rounded bg-black/70 border border-white/10 text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                3D INSPECT
                             </span>
                             <img src="${skinUrl}" onerror="this.src='https://minotar.net/armor/body/MHF_Steve/140.png'" alt="${escapeHtml(player.username)} Skin" class="h-36 object-contain skin-render">
                         </div>
 
                         <!-- Player Info -->
                         <div class="p-5">
-                            <div class="flex items-center justify-between gap-2 mb-1">
-                                <h3 class="text-lg font-bold text-slate-900 dark:text-white">${escapeHtml(player.username)}</h3>
+                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                <h3 class="font-orbitron text-base font-bold text-white tracking-wide">${escapeHtml(player.username)}</h3>
                                 <span class="text-xs font-mono text-slate-400">@${escapeHtml(player.mc_name)}</span>
                             </div>
-                            ${player.role ? `<span class="inline-block text-xs font-medium px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 mb-3">${escapeHtml(player.role)}</span>` : ''}
-                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">${escapeHtml(player.bio)}</p>
+                            ${player.role ? `<span class="inline-block text-xs font-mono px-2.5 py-0.5 rounded bg-red-500/15 border border-red-500/30 text-red-300 mb-3">${escapeHtml(player.role)}</span>` : ''}
+                            <p class="text-sm text-slate-400 leading-relaxed">${escapeHtml(player.bio)}</p>
                         </div>
                     </div>
 
-                    <div class="px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                        <button onclick="openSkinModal('${player.id}')" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                    <div class="px-5 py-3.5 border-t border-white/10 flex items-center justify-between bg-[#0a0b10]/50">
+                        <button onclick="openSkinModal('${player.id}')" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors">
                             Skin-Ansicht öffnen
                         </button>
 
                         ${isAdmin ? `
                             <div class="flex items-center gap-1.5">
-                                <button onclick="openEditPlayerModal('${player.id}')" title="Spieler bearbeiten" class="p-1.5 rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/50 transition-colors">
+                                <button onclick="openEditPlayerModal('${player.id}')" title="Spieler bearbeiten" class="p-1.5 rounded-lg text-amber-400 hover:bg-amber-500/15 transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </button>
-                                <button onclick="deletePlayer('${player.id}')" title="Spieler löschen" class="p-1.5 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors">
+                                <button onclick="deletePlayer('${player.id}')" title="Spieler löschen" class="p-1.5 rounded-lg text-red-400 hover:bg-red-500/15 transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
                             </div>
@@ -679,7 +642,7 @@
             document.getElementById('read-world-status').textContent = world.status || 'Aktiv';
             document.getElementById('read-world-version').textContent = world.version || '';
             document.getElementById('read-world-content').textContent = world.content;
-            document.getElementById('read-world-date').textContent = 'Erstellt am ' + new Date(world.created_at).toLocaleDateString('de-DE');
+            document.getElementById('read-world-date').textContent = 'ERSTELLT // ' + new Date(world.created_at).toLocaleDateString('de-DE');
 
             const editBtn = document.getElementById('read-world-edit-btn');
             if (isAdmin) {
@@ -701,7 +664,7 @@
 
             activeSkinMcName = player.mc_name || 'MHF_Steve';
             document.getElementById('skin-modal-name').textContent = player.username;
-            document.getElementById('skin-modal-mc').textContent = 'Minecraft Name: ' + activeSkinMcName;
+            document.getElementById('skin-modal-mc').textContent = 'MINECRAFT ID // ' + activeSkinMcName;
             document.getElementById('skin-modal-role').textContent = player.role || 'Mitglied';
             document.getElementById('skin-modal-bio').textContent = player.bio;
 
@@ -717,9 +680,9 @@
             btns.forEach(b => {
                 const el = document.getElementById('skin-btn-' + b);
                 if (b === type) {
-                    el.className = 'px-3 py-1 rounded-md text-xs font-medium bg-blue-600 text-white';
+                    el.className = 'px-3 py-1 rounded-lg text-xs font-medium bg-cyan-500/20 border border-cyan-500/40 text-cyan-300';
                 } else {
-                    el.className = 'px-3 py-1 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300';
+                    el.className = 'px-3 py-1 rounded-lg text-xs font-medium border border-transparent text-slate-400 hover:text-white';
                 }
             });
 
@@ -930,16 +893,17 @@
             const dot = document.getElementById('admin-dot');
             const label = document.getElementById('admin-label');
             const banner = document.getElementById('admin-banner');
+            const btn = document.getElementById('admin-btn');
 
             if (isAdmin) {
-                dot.classList.remove('bg-slate-400');
-                dot.classList.add('bg-emerald-500');
-                label.textContent = 'Admin aktiv';
+                dot.className = 'w-2 h-2 rounded-full bg-red-500 animate-pulse';
+                label.textContent = 'ADMIN AKTIV';
+                btn.classList.add('border-red-500/40', 'glow-red');
                 banner.classList.remove('hidden');
             } else {
-                dot.classList.remove('bg-emerald-500');
-                dot.classList.add('bg-slate-400');
-                label.textContent = 'Admin';
+                dot.className = 'w-2 h-2 rounded-full bg-slate-500';
+                label.textContent = 'ADMIN';
+                btn.classList.remove('border-red-500/40', 'glow-red');
                 banner.classList.add('hidden');
             }
         }
