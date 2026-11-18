@@ -104,6 +104,69 @@
         transform: translateY(-2px);
     }
 
+    /* Custom Dropdown Styling */
+    .custom-dropdown {
+        position: relative;
+        user-select: none;
+    }
+
+    .dropdown-btn {
+        background: var(--demo-box-bg);
+        border: 1px solid var(--demo-box-border);
+        border-radius: 12px;
+        padding: 8px 14px;
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 260px;
+    }
+    .dropdown-btn:hover {
+        border-color: var(--accent);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        width: 100%;
+        min-width: 280px;
+        background: #141423;
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        backdrop-filter: blur(16px);
+        z-index: 50;
+        display: none;
+        overflow: hidden;
+    }
+    .dropdown-menu.show {
+        display: block;
+    }
+
+    .dropdown-item {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        color: var(--text-sub);
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .dropdown-item:hover {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fff;
+    }
+    .dropdown-item.active {
+        background: rgba(239, 68, 68, 0.25);
+        color: #fff;
+        font-weight: 600;
+    }
+
     /* Gemini Layout Sidebar & Main */
     #sidebar {
         position: fixed;
@@ -227,13 +290,23 @@
         <button onclick="toggleSidebar()" class="p-2 rounded-xl hover:bg-white/10 text-[var(--text-sub)] hover:text-white transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
-        <select id="model-select" onchange="checkSelectedModelStatus()" class="glass-input py-1.5 px-3 text-xs w-auto">
-          <option value="gemini-2.5-flash">Gemini 2.5 Flash (Text, Code, PDF)</option>
-          <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B Free (OpenRouter)</option>
-          <option value="deepseek/deepseek-r1:free">DeepSeek R1 Free (OpenRouter)</option>
-          <option value="qwen/qwen-2.5-coder-32b-instruct:free">Qwen 2.5 Coder 32B Free</option>
-          <option value="image-flux">Bild-Generator (FLUX Free)</option>
-        </select>
+
+        <!-- CUSTOM DROPDOWN -->
+        <div class="custom-dropdown" id="model-dropdown">
+          <div class="dropdown-btn" onclick="toggleDropdown()">
+            <span id="selected-model-text">Gemini 2.5 Flash (Text, Code, PDF)</span>
+            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu-box">
+            <div class="dropdown-item active" onclick="selectModel('gemini-2.5-flash', 'Gemini 2.5 Flash (Text, Code, PDF)')">Gemini 2.5 Flash (Text, Code, PDF)</div>
+            <div class="dropdown-item" onclick="selectModel('meta-llama/llama-3.3-70b-instruct:free', 'Llama 3.3 70B Free (OpenRouter)')">Llama 3.3 70B Free (OpenRouter)</div>
+            <div class="dropdown-item" onclick="selectModel('deepseek/deepseek-r1:free', 'DeepSeek R1 Free (OpenRouter)')">DeepSeek R1 Free (OpenRouter)</div>
+            <div class="dropdown-item" onclick="selectModel('qwen/qwen-2.5-coder-32b-instruct:free', 'Qwen 2.5 Coder 32B Free')">Qwen 2.5 Coder 32B Free</div>
+            <div class="dropdown-item" onclick="selectModel('image-flux', 'Bild-Generator (FLUX Free)')">Bild-Generator (FLUX Free)</div>
+          </div>
+        </div>
+        <!-- END CUSTOM DROPDOWN -->
+
       </div>
       <div id="cooldown-banner" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-xl font-medium"></div>
     </header>
@@ -257,19 +330,60 @@
 
   <script>
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6InF1ZXN0IiwiYXAiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentUser = null;
     let currentChatId = null;
     let cooldowns = {};
+    let selectedModelValue = "gemini-2.5-flash";
 
     window.addEventListener("DOMContentLoaded", () => {
       const savedEmail = localStorage.getItem("quapssi_user");
       if (savedEmail) {
         initApp({ id: savedEmail, email: savedEmail });
       }
+
+      // Klick außerhalb schließt das Custom Dropdown
+      window.addEventListener("click", (e) => {
+        const dropdown = document.getElementById("model-dropdown");
+        if (dropdown && !dropdown.contains(e.target)) {
+          closeDropdown();
+        }
+      });
     });
+
+    function toggleDropdown() {
+      const menu = document.getElementById("dropdown-menu-box");
+      const arrow = document.getElementById("dropdown-arrow");
+      menu.classList.toggle("show");
+      arrow.style.transform = menu.classList.contains("show") ? "rotate(180deg)" : "rotate(0deg)";
+    }
+
+    function closeDropdown() {
+      const menu = document.getElementById("dropdown-menu-box");
+      const arrow = document.getElementById("dropdown-arrow");
+      if (menu) menu.classList.remove("show");
+      if (arrow) arrow.style.transform = "rotate(0deg)";
+    }
+
+    function selectModel(value, label) {
+      selectedModelValue = value;
+      document.getElementById("selected-model-text").textContent = label;
+      
+      // Aktive Klasse in der Liste setzen
+      const items = document.querySelectorAll(".dropdown-item");
+      items.forEach(item => {
+        if (item.textContent === label) {
+          item.classList.add("active");
+        } else {
+          item.classList.remove("active");
+        }
+      });
+
+      closeDropdown();
+      checkSelectedModelStatus();
+    }
 
     function toggleSidebar() {
       const sidebar = document.getElementById("sidebar");
@@ -341,7 +455,7 @@
     }
 
     function checkSelectedModelStatus() {
-      const model = document.getElementById("model-select").value;
+      const model = selectedModelValue;
       const banner = document.getElementById("cooldown-banner");
       const sendBtn = document.getElementById("send-btn");
       const input = document.getElementById("prompt-input");
@@ -408,7 +522,7 @@
     }
 
     async function createNewChat() {
-      const model = document.getElementById("model-select").value;
+      const model = selectedModelValue;
       const { data, error } = await sb.from("chats").insert({
         user_id: currentUser.id,
         title: "Neuer Chat",
@@ -425,7 +539,16 @@
 
     async function selectChat(chatId, model) {
       currentChatId = chatId;
-      if (model) document.getElementById("model-select").value = model;
+      if (model) {
+        selectedModelValue = model;
+        // Label im Custom Dropdown aktualisieren
+        const items = document.querySelectorAll(".dropdown-item");
+        items.forEach(item => {
+          if (item.getAttribute("onclick").includes(model)) {
+            selectModel(model, item.textContent);
+          }
+        });
+      }
       checkSelectedModelStatus();
       await loadChats();
 
@@ -441,7 +564,7 @@
       const text = input.value.trim();
       if (!text) return;
 
-      const model = document.getElementById("model-select").value;
+      const model = selectedModelValue;
       input.value = "";
 
       if (!currentChatId) {
@@ -558,7 +681,7 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       doc.setFontSize(16);
-      doc.text(pdfData.title || "QuapsSI Dokument", 15, 20);
+      doc.text(doc.splitTextToSize(pdfData.title || "QuapsSI Dokument", 180), 15, 20);
       doc.setFontSize(11);
       const lines = doc.splitTextToSize(pdfData.body || "", 180);
       doc.text(lines, 15, 32);
