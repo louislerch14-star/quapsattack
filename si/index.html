@@ -331,7 +331,7 @@
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const GROQ_KEY = "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";
-    const GEMINI_KEY = "DEIN_GEMINI_KEY_HIER_FALLS_BENÖTIGT"; // Optional, falls du Gemini nutzen willst
+    const GEMINI_KEY = ""; // Optional
 
     let currentUser = null;
     let currentChatId = null;
@@ -447,7 +447,10 @@
     async function loadChats() {
       if (!currentUser) return;
       const { data, error } = await sb.from("chats").select("*").eq("user_id", currentUser.id).order("created_at", { ascending: false });
-      if (error) return;
+      if (error) {
+        console.error("Ladefehler Chats:", error);
+        return;
+      }
       const list = document.getElementById("chat-list");
       if (!list) return;
       list.innerHTML = "";
@@ -556,7 +559,10 @@
           model: model
         }).select().single();
         
-        if (chatErr) return;
+        if (chatErr) {
+          console.error("Chat erstellen fehlgeschlagen:", chatErr);
+          return;
+        }
         if (newChat) currentChatId = newChat.id;
         await loadChats();
       }
