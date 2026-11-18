@@ -149,20 +149,16 @@
         <h1 class="text-3xl font-black tracking-tight text-white mb-2">Quaps<span>SI</span></h1>
         <p class="text-sm text-[var(--text-sub)]">Dein privates AI-Workspace für dich & deine Jungs.</p>
       </div>
-      <form onsubmit="handleLogin(event)" class="space-y-4">
+      <div class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">E-Mail (Quapsattack Account)</label>
-          <input id="auth-email" type="email" placeholder="name@example.com" class="glass-input" required />
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Passwort / Code</label>
-          <input id="auth-password" type="password" placeholder="••••••••" class="glass-input" required />
+          <input id="auth-email" type="email" placeholder="louis@quapsattack.airbusfan.de" class="glass-input" />
         </div>
         <p id="auth-error" class="text-xs text-red-400 hidden"></p>
         <div class="pt-2">
-          <button type="submit" class="btn-primary">Direkt reingehen</button>
+          <button type="button" onclick="manualLogin()" class="btn-primary">Direkt reingehen</button>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 
@@ -237,16 +233,19 @@
       }
     });
 
-    // Login (100% verlässlich ohne Passwort-Hashes)
-    function handleLogin(e) {
-      if (e) e.preventDefault();
-      const email = document.getElementById("auth-email").value.trim();
+    // Manueller Login direkt per Button-Klick
+    function manualLogin() {
+      const emailInput = document.getElementById("auth-email");
+      if (!emailInput) return;
+      
+      const email = emailInput.value.trim();
+      console.log("Login geklickt mit E-Mail:", email);
       
       if (!email) {
-        return showAuthError("Bitte gib deine E-Mail ein, Bruder!");
+        showAuthError("Bitte gib deine E-Mail ein, Bruder!");
+        return;
       }
 
-      // Session im Browser speichern für Multi-Device / Page Reloads
       localStorage.setItem("quapssi_user", email);
       initApp({ id: email, email: email });
     }
