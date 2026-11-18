@@ -151,12 +151,16 @@
       </div>
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">E-Mail (Quapsattack Account)</label>
-          <input id="auth-email" type="email" placeholder="louis@quapsattack.airbusfan.de" class="glass-input" />
+          <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">E-Mail</label>
+          <input id="auth-email" type="email" placeholder="name@quapsattack.airbusfan.de" class="glass-input" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Passwort</label>
+          <input id="auth-password" type="password" placeholder="••••••••" class="glass-input" />
         </div>
         <p id="auth-error" class="text-xs text-red-400 hidden"></p>
         <div class="pt-2">
-          <button type="button" onclick="manualLogin()" class="btn-primary">Direkt reingehen</button>
+          <button type="button" onclick="autoRegisterLogin()" class="btn-primary">Anmelden / Registrieren</button>
         </div>
       </div>
     </div>
@@ -225,7 +229,7 @@
     let currentChatId = null;
     let cooldowns = {};
 
-    // Beim Laden prüfen, ob im localStorage schon eine E-Mail hinterlegt ist
+    // Beim Laden prüfen, ob im localStorage schon eine eingeloggte E-Mail steht
     window.addEventListener("DOMContentLoaded", () => {
       const savedEmail = localStorage.getItem("quapssi_user");
       if (savedEmail) {
@@ -233,19 +237,45 @@
       }
     });
 
-    // Manueller Login direkt per Button-Klick
-    function manualLogin() {
+    // Automatischer Login: Wenn User existiert, Passwort prüfen. Wenn nicht, direkt in DB anlegen!
+    async function autoRegisterLogin() {
       const emailInput = document.getElementById("auth-email");
-      if (!emailInput) return;
+      const passwordInput = document.getElementById("auth-password");
       
-      const email = emailInput.value.trim();
-      console.log("Login geklickt mit E-Mail:", email);
+      if (!emailInput || !passwordInput) return;
       
-      if (!email) {
-        showAuthError("Bitte gib deine E-Mail ein, Bruder!");
-        return;
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+      
+      if (!email || !password) {
+        return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
       }
 
+      // Prüfen, ob der User bereits in der Tabelle ist
+      const { data: existingUser, error: fetchError } = await sb
+        .from("allowed_users")
+        .select("*")
+        .eq("email", email)
+        .single();
+
+      if (!existingUser) {
+        // User ist noch nicht drin -> Direkt automatisch registrieren!
+        const { error: insertError } = await sb
+          .from("allowed_users")
+          .insert({ email: email, password: password });
+
+        if (insertError) {
+          return showAuthError("Fehler beim Registrieren, Bruder: " + insertError.message);
+        }
+        console.log("Neuer User automatisch registriert:", email);
+      } else {
+        // User existiert -> Passwort abgleichen
+        if (existingUser.password !== password) {
+          return showAuthError("❌ Falsches Passwort, Bruder!");
+        }
+      }
+
+      // Login erfolgreich!
       localStorage.setItem("quapssi_user", email);
       initApp({ id: email, email: email });
     }
@@ -264,7 +294,6 @@
     async function initApp(user) {
       currentUser = user;
       
-      // Overlay garantiert ausblenden
       const authScreen = document.getElementById("auth-screen");
       if (authScreen) {
         authScreen.style.display = "none";
