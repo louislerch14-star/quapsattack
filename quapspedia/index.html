@@ -1,541 +1,724 @@
 <!DOCTYPE html>
-<html lang="de" class="dark">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quapspedia – Wissensdatenbank & Wiki</title>
     
-    <!-- Google Fonts: Inter, Orbitron & JetBrains Mono -->
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="./unnamed.jpg">
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
     <!-- Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #020205; color: #f8fafc; overflow-x: hidden; }
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        :root {
+            --bg-main: #0a0a12;
+            --glass-bg: rgba(20, 20, 35, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --demo-box-bg: rgba(255, 255, 255, 0.03);
+            --demo-box-border: rgba(255, 255, 255, 0.08);
+            --demo-btn-bg: rgba(255, 255, 255, 0.08);
+            --demo-btn-border: rgba(255, 255, 255, 0.2);
+            --accent: #ef4444;
+            --accent-glow: rgba(239, 68, 68, 0.35);
+            --cyan-accent: #06b6d4;
+            --text-main: #ffffff;
+            --text-sub: rgba(255, 255, 255, 0.65);
+            --success: #10b981;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 10% 15%, rgba(239, 68, 68, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 85%, rgba(6, 182, 212, 0.12) 0%, transparent 40%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0b10; }
-        ::-webkit-scrollbar-thumb { background: #1e2235; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ef4444; }
-        .glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.25); }
-        .glow-cyan { box-shadow: 0 0 20px rgba(6, 182, 212, 0.25); }
-        .glass-panel { background: rgba(10, 11, 16, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.07); }
-        
-        .skin-render {
-            image-rendering: auto;
-            filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.7));
-            transition: transform 0.25s ease;
+        ::-webkit-scrollbar-track { background: #0a0a12; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* Header Navigation */
+        header {
+            width: 100%;
+            max-width: 1200px;
+            padding: 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .player-card:hover .skin-render {
-            transform: translateY(-5px) scale(1.04);
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .bg-grid-pattern {
-            background-image: linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
-            background-size: 36px 36px;
+
+        .brand img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
         }
+
+        .brand span { color: var(--accent); }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: var(--demo-btn-bg);
+            border: 1px solid var(--demo-btn-border);
+            color: #fff;
+            padding: 9px 18px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin: 30px 20px 30px;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+            line-height: 1.2;
+        }
+
+        .hero h1 span { 
+            background: linear-gradient(135deg, #ef4444, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        /* Toolbar & Search */
+        .toolbar {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 260px;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--demo-box-bg);
+            border: 1px solid var(--glass-border);
+            padding: 12px 16px 12px 42px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--cyan-accent);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--text-sub);
+        }
+
+        /* Main Container Grid */
+        .main-grid {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Glassmorphism Card Style */
+        .preview-glass {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: var(--text-main);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: between;
+            position: relative;
+        }
+
+        .preview-glass:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 25px rgba(239, 68, 68, 0.15);
+        }
+
+        .preview-glass h2, .preview-glass h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .demo-box {
+            background: var(--demo-box-bg);
+            border: 1px solid var(--demo-box-border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+        }
+
+        .demo-box:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .demo-box .title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; color: #fff; }
+        .demo-box .desc { font-size: 0.85rem; color: var(--text-sub); line-height: 1.5; }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #dc2626;
+            box-shadow: 0 6px 30px rgba(239, 68, 68, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--demo-btn-bg);
+            border: 1px solid var(--demo-btn-border);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Skin Render Styling */
+        .skin-card-img {
+            height: 130px;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6));
+            transition: transform 0.3s ease;
+        }
+        .preview-glass:hover .skin-card-img {
+            transform: scale(1.05) translateY(-3px);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 10, 0.85);
+            backdrop-blur: blur(12px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        form label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            margin-top: 14px;
+        }
+
+        form input, form select, form textarea {
+            width: 100%;
+            background: var(--demo-box-bg);
+            border: 1px solid var(--glass-border);
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        form input:focus, form select:focus, form textarea:focus {
+            border-color: var(--cyan-accent);
+        }
+
+        /* Admin Banner */
+        .admin-banner {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 20px 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 14px;
+            padding: 15px 20px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            text-align: center;
+            width: 100%;
+            max-width: 1200px;
+            border-top: 1px solid var(--demo-box-border);
+            padding-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        @media (max-width: 600px) {
+            footer { flex-direction: column; gap: 10px; }
+        }
+
+        /* Toast notification */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(16, 185, 129, 0.9);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-red-500 selection:text-white bg-grid-pattern relative">
+<body>
 
-    <!-- Dezente Ambient Hintergrund-Glows -->
-    <div class="fixed top-0 left-1/4 w-96 h-96 bg-red-600/10 rounded-full blur-[130px] pointer-events-none -z-10"></div>
-    <div class="fixed bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none -z-10"></div>
-
-    <!-- Top Navigation -->
-    <header class="sticky top-0 z-40 w-full glass-panel border-b border-white/10">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-            <!-- Brand & Logo -->
-            <div class="flex items-center gap-3">
-                <a href="#" class="flex items-center gap-3 group">
-                    <div class="relative w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/40 text-red-400 flex items-center justify-center font-orbitron font-bold text-xl glow-red group-hover:scale-105 transition-transform overflow-hidden">
-                        <!-- Logo Bild / Fallback Icon (unnamed.html Referenz) -->
-                        <img src="./unnamed.html" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Logo" class="w-full h-full object-cover">
-                        <span class="absolute inset-0 items-center justify-center hidden font-orbitron">Q</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-orbitron font-bold text-lg tracking-wider text-white group-hover:text-cyan-400 transition-colors">QUAPSPEDIA</span>
-                        <span class="text-[10px] font-mono tracking-widest text-cyan-400/80">DATABASE</span>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Navigation Tabs -->
-            <nav class="hidden md:flex items-center gap-1.5 bg-[#0a0b10] border border-white/10 p-1 rounded-xl">
-                <button onclick="switchTab('worlds')" id="tab-worlds" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-red-500/20 border border-red-500/40 text-white glow-red">
-                    Quapswelten
-                </button>
-                <button onclick="switchTab('players')" id="tab-players" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all border border-transparent text-slate-400 hover:text-white">
-                    Spieler & Skins
-                </button>
-            </nav>
-
-            <!-- Actions -->
-            <div class="flex items-center gap-2">
-                <!-- Admin Status Badge / Login Trigger -->
-                <button onclick="openAdminModal()" id="admin-btn" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-medium glass-panel hover:border-red-500/40 transition-all text-slate-300">
-                    <span id="admin-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-                    <span id="admin-label" class="font-orbitron tracking-wider text-[11px]">ADMIN</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Tabs -->
-        <div class="flex md:hidden border-t border-white/10 px-4 py-2 gap-2 bg-[#0a0b10]/90">
-            <button onclick="switchTab('worlds')" id="tab-worlds-mobile" class="flex-1 py-1.5 rounded-lg text-sm font-medium bg-red-500/20 border border-red-500/40 text-white">
-                Quapswelten
-            </button>
-            <button onclick="switchTab('players')" id="tab-players-mobile" class="flex-1 py-1.5 rounded-lg text-sm font-medium border border-transparent text-slate-400">
-                Spieler & Skins
-            </button>
+    <!-- Header Navigation -->
+    <header>
+        <a href="#" class="brand">
+            <img src="./unnamed.jpg" alt="Quapspedia Logo">
+            QUAPS<span>PEDIA</span>
+        </a>
+        <div class="nav-links">
+            <button onclick="switchTab('worlds')" id="tab-worlds-btn" class="nav-btn active">Quapswelten</button>
+            <button onclick="switchTab('players')" id="tab-players-btn" class="nav-btn">Spieler & Skins</button>
+            <button onclick="openAdminModal()" id="admin-toggle-btn" class="nav-btn" style="border-color: rgba(239, 68, 68, 0.4);">Admin</button>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
-        
-        <!-- Hero & Toolbar -->
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-8 border-b border-white/10">
-            <div>
-                <div class="inline-flex items-center gap-2 text-xs font-mono text-cyan-400 mb-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <span>QUAPSATTACK ARCHIVE SYSTEM</span>
-                </div>
-                <h1 id="page-title" class="font-orbitron text-2xl sm:text-3xl font-bold tracking-wide text-white">QUAPSWELTEN DOKU</h1>
-                <p id="page-subtitle" class="mt-1.5 text-sm text-slate-400">
-                    Alle Server-Projekte, Welten-Architekturen und technische Dokumentationen im Überblick.
-                </p>
-            </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 id="hero-title">Wissensdatenbank & <span>Projektdokumentation</span></h1>
+        <p id="hero-subtitle">Erforsche alle Quapswelten, versteckte Server-Geheimnisse und detaillierte Spieler-Profile an einem Ort.</p>
+    </section>
 
-            <div class="flex flex-wrap items-center gap-3">
-                <!-- Search Input -->
-                <div class="relative flex-1 sm:flex-initial">
-                    <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    <input type="text" id="search-input" oninput="handleSearch()" placeholder="Einträge durchsuchen..." class="w-full sm:w-60 pl-10 pr-3.5 py-2 text-sm rounded-xl bg-[#0a0b10] border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/40 transition-all">
-                </div>
-
-                <!-- Create Button -->
-                <button onclick="openCreateModal()" id="create-btn" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-500 text-white glow-red transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    <span id="create-btn-text">Neue Welt-Doku</span>
-                </button>
-            </div>
+    <!-- Admin Status Banner -->
+    <div id="admin-banner" class="admin-banner">
+        <div style="font-size: 0.9rem; font-weight: 600; color: #fca5a5;">
+            ⚡ Admin-Modus aktiv: Du kannst Beiträge bearbeiten und löschen.
         </div>
+        <button onclick="logoutAdmin()" class="btn-secondary" style="padding: 6px 12px; font-size: 0.75rem;">Sperren</button>
+    </div>
 
-        <!-- Admin Banner (Visible only when Admin is unlocked) -->
-        <div id="admin-banner" class="hidden mt-6 p-4 rounded-xl glass-panel border-red-500/40 glow-red flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="flex items-center gap-3 text-sm text-slate-200">
-                <div class="w-8 h-8 rounded-lg bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <span class="font-orbitron text-xs font-bold text-red-400 tracking-wider uppercase block">Admin-Zugriff entsperrt</span>
-                    <span class="text-xs text-slate-400">Alle bestehenden Welten-Dokumentationen und Spieler-Profile können jetzt bearbeitet oder gelöscht werden.</span>
-                </div>
-            </div>
-            <button onclick="logoutAdmin()" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 hover:bg-red-500/30 transition-colors shrink-0">
-                Admin sperren
-            </button>
+    <!-- Toolbar & Actions -->
+    <div class="toolbar">
+        <div class="search-box">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="search-input" oninput="handleSearch()" placeholder="Suchen...">
         </div>
+        <button onclick="openCreateModal()" id="create-action-btn" class="btn-primary">
+            + Neue Welt-Doku
+        </button>
+    </div>
 
-        <!-- Loading State -->
-        <div id="loading-state" class="py-20 text-center">
-            <div class="inline-block w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-            <p class="mt-3 text-xs font-mono text-slate-400 tracking-wider uppercase">Verbinde mit Supabase...</p>
-        </div>
+    <!-- Loading State -->
+    <div id="loading-state" style="padding: 60px 0; text-align: center; color: var(--text-sub);">
+        Lade Daten aus Supabase...
+    </div>
 
-        <!-- Error State -->
-        <div id="error-state" class="hidden my-8 p-6 rounded-2xl glass-panel border-red-500/40 text-center">
-            <p class="font-orbitron font-semibold text-red-400">Datenbank-Verbindungsfehler</p>
-            <p id="error-message" class="mt-1 text-sm text-slate-400"></p>
-        </div>
-
-        <!-- SECTION 1: QUAPSWELTEN -->
-        <section id="section-worlds" class="mt-8">
-            <div id="worlds-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- World Cards injected here -->
-            </div>
-            <div id="worlds-empty" class="hidden py-16 text-center glass-panel rounded-2xl">
-                <p class="text-slate-400 text-sm">Keine Quapswelten gefunden. Erstelle jetzt die erste Dokumentation!</p>
-            </div>
-        </section>
-
-        <!-- SECTION 2: SPIELER & SKINS -->
-        <section id="section-players" class="hidden mt-8">
-            <div id="players-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Player Cards injected here -->
-            </div>
-            <div id="players-empty" class="hidden py-16 text-center glass-panel rounded-2xl">
-                <p class="text-slate-400 text-sm">Keine Spieler-Profile gefunden. Füge jetzt den ersten Spieler hinzu!</p>
-            </div>
-        </section>
-
+    <!-- Main Container Grid -->
+    <main id="main-grid" class="main-grid">
+        <!-- Content gets dynamically injected here -->
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-white/10 py-6 mt-12 bg-[#0a0b10]/50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-            <p class="font-mono">QUAPSPEDIA &copy; 2026 // OFFIZIELLE PROJEKTDOKUMENTATION</p>
-            <div class="flex items-center gap-4">
-                <span class="text-cyan-500/80 font-mono">SUPABASE CONNECTED</span>
-                <button onclick="openAdminModal()" class="hover:text-red-400 transition-colors underline">Admin-Zugang</button>
-            </div>
-        </div>
+    <footer>
+        <div>Quapspedia &copy; 2026 – Offizielle Projektdokumentation</div>
+        <div style="color: var(--cyan-accent); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">SUPABASE SECURE LINK</div>
     </footer>
 
-    <!-- ===================================================================== -->
-    <!-- MODALS -->
-    <!-- ===================================================================== -->
+    <!-- Toast Notification -->
+    <div id="toast">Gespeichert!</div>
 
-    <!-- 1. Read World Documentation Modal -->
-    <div id="read-world-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <div class="glass-panel border-white/15 rounded-2xl max-w-3xl w-full max-h-[88vh] flex flex-col shadow-2xl">
-            <div class="p-6 border-b border-white/10 flex items-start justify-between gap-4">
+    <!-- ========================================== -->
+    <!-- MODALS                                     -->
+    <!-- ========================================== -->
+
+    <!-- Read World Modal -->
+    <div id="read-world-modal" class="modal-overlay" onclick="if(event.target === this) closeModal('read-world-modal')">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px; border-bottom: 1px solid var(--demo-box-border); padding-bottom: 15px;">
                 <div>
-                    <div class="flex items-center gap-2 mb-2.5">
-                        <span id="read-world-status" class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300">Aktiv</span>
-                        <span id="read-world-version" class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300">1.20.1</span>
-                    </div>
-                    <h2 id="read-world-title" class="font-orbitron text-xl sm:text-2xl font-bold text-white">Titel</h2>
-                    <p id="read-world-subtitle" class="text-sm text-slate-400 mt-1">Untertitel</p>
+                    <span id="read-world-badge" style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; padding: 3px 10px; background: rgba(6,182,212,0.15); color: var(--cyan-accent); border-radius: 6px; border: 1px solid rgba(6,182,212,0.3);">Aktiv</span>
+                    <h2 id="read-world-title" style="font-size: 1.5rem; font-weight: 800; margin-top: 8px;">Titel</h2>
                 </div>
-                <button onclick="closeModal('read-world-modal')" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+                <button onclick="closeModal('read-world-modal')" class="btn-secondary" style="padding: 6px 12px;">✕</button>
             </div>
-            <div class="p-6 overflow-y-auto flex-1">
-                <div id="read-world-content" class="text-slate-300 whitespace-pre-line leading-relaxed text-sm sm:text-base"></div>
-            </div>
-            <div class="p-4 border-t border-white/10 flex items-center justify-between bg-[#0a0b10]/90 rounded-b-2xl">
-                <span id="read-world-date" class="text-xs font-mono text-slate-500"></span>
-                <div class="flex items-center gap-2">
-                    <button id="read-world-edit-btn" class="hidden px-4 py-2 rounded-xl text-sm font-medium bg-red-500/20 border border-red-500/40 text-red-300 hover:bg-red-500/30 transition-colors">
-                        Bearbeiten
-                    </button>
-                    <button onclick="closeModal('read-world-modal')" class="px-4 py-2 rounded-xl text-sm font-medium bg-white/10 hover:bg-white/15 text-white transition-colors">
-                        Schließen
-                    </button>
-                </div>
+            <div id="read-world-subtitle" style="color: var(--cyan-accent); font-weight: 600; font-size: 0.95rem; margin-bottom: 15px;"></div>
+            <div id="read-world-content" style="color: var(--text-sub); line-height: 1.7; white-space: pre-line; font-size: 0.95rem; margin-bottom: 25px;"></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--demo-box-border); pt-15px; padding-top: 15px;">
+                <span id="read-world-date" style="font-size: 0.75rem; color: var(--text-sub); font-family: 'JetBrains Mono', monospace;"></span>
+                <button id="read-world-edit-trigger" class="btn-secondary" style="display: none;">Bearbeiten</button>
             </div>
         </div>
     </div>
 
-    <!-- 2. Skin Viewer Detail Modal -->
-    <div id="skin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <div class="glass-panel border-white/15 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
-            <div class="p-5 border-b border-white/10 flex items-center justify-between">
-                <div>
-                    <h3 id="skin-modal-name" class="font-orbitron font-bold text-lg text-white">Spielername</h3>
-                    <p id="skin-modal-mc" class="text-xs font-mono text-cyan-400">MC: Username</p>
+    <!-- Skin View Modal -->
+    <div id="skin-modal" class="modal-overlay" onclick="if(event.target === this) closeModal('skin-modal')">
+        <div class="modal-content" style="max-width: 480px; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 id="skin-modal-name" style="font-size: 1.2rem; font-weight: 700;">Spieler</h3>
+                <button onclick="closeModal('skin-modal')" class="btn-secondary" style="padding: 6px 12px;">✕</button>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); border-radius: 16px; padding: 25px; border: 1px solid var(--glass-border); margin-bottom: 20px;">
+                <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;">
+                    <button onclick="setSkinView('body')" id="s-btn-body" class="btn-secondary" style="font-size: 0.75rem; padding: 5px 12px; background: rgba(255,255,255,0.2);">Ganzkörper</button>
+                    <button onclick="setSkinView('bust')" id="s-btn-bust" class="btn-secondary" style="font-size: 0.75rem; padding: 5px 12px;">Büste</button>
+                    <button onclick="setSkinView('head')" id="s-btn-head" class="btn-secondary" style="font-size: 0.75rem; padding: 5px 12px;">Kopf</button>
                 </div>
-                <button onclick="closeModal('skin-modal')" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+                <img id="skin-modal-img" src="" alt="Minecraft Skin" style="height: 220px; object-fit: contain; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.8));">
             </div>
-            <div class="p-6 bg-[#020205]/80 flex flex-col items-center justify-center relative border-b border-white/10">
-                <!-- View Switcher (Ganzkörper vs Büste vs Kopf) -->
-                <div class="flex gap-1.5 mb-5 bg-[#0a0b10] p-1 rounded-xl border border-white/10">
-                    <button onclick="setSkinView('body')" id="skin-btn-body" class="px-3 py-1 rounded-lg text-xs font-medium bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">Ganzkörper</button>
-                    <button onclick="setSkinView('bust')" id="skin-btn-bust" class="px-3 py-1 rounded-lg text-xs font-medium border border-transparent text-slate-400 hover:text-white">Büste</button>
-                    <button onclick="setSkinView('head')" id="skin-btn-head" class="px-3 py-1 rounded-lg text-xs font-medium border border-transparent text-slate-400 hover:text-white">Kopf</button>
-                </div>
-                <img id="skin-modal-img" src="" alt="Minecraft Skin" class="h-64 object-contain skin-render">
-            </div>
-            <div class="p-5 bg-[#0a0b10]/60">
-                <span id="skin-modal-role" class="inline-block text-xs font-mono px-2.5 py-0.5 rounded bg-red-500/15 border border-red-500/30 text-red-300 mb-2.5">Rolle</span>
-                <p id="skin-modal-bio" class="text-sm text-slate-300 leading-relaxed"></p>
-            </div>
+            <div id="skin-modal-role" style="display: inline-block; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; padding: 3px 10px; background: rgba(239,68,68,0.15); color: #fca5a5; border-radius: 6px; border: 1px solid rgba(239,68,68,0.3); margin-bottom: 12px;">Rolle</div>
+            <p id="skin-modal-bio" style="color: var(--text-sub); font-size: 0.9rem; line-height: 1.6;"></p>
         </div>
     </div>
 
-    <!-- 3. Create / Edit World Modal -->
-    <div id="world-form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <div class="glass-panel border-white/15 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
-            <div class="p-5 border-b border-white/10 flex items-center justify-between">
-                <h3 id="world-form-title" class="font-orbitron font-bold text-lg text-white">Neue Quapswelt dokumentieren</h3>
-                <button onclick="closeModal('world-form-modal')" class="p-2 rounded-lg text-slate-400 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+    <!-- Create / Edit World Form Modal -->
+    <div id="world-form-modal" class="modal-overlay" onclick="if(event.target === this) closeModal('world-form-modal')">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 id="world-form-modal-title" style="font-size: 1.3rem; font-weight: 700;">Neue Quapswelt</h3>
+                <button onclick="closeModal('world-form-modal')" class="btn-secondary" style="padding: 6px 12px;">✕</button>
             </div>
-            <form id="world-form" onsubmit="saveWorld(event)" class="p-6 overflow-y-auto space-y-4">
+            <form id="world-form" onsubmit="saveWorld(event)">
                 <input type="hidden" id="world-id">
-                <div>
-                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Name der Quapswelt *</label>
-                    <input type="text" id="world-input-title" required placeholder="z.B. Quapsattack Season 3" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Kurzbeschreibung</label>
-                    <input type="text" id="world-input-subtitle" placeholder="Kurzer Teaser über das Projekt..." class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label>Titel der Welt *</label>
+                <input type="text" id="world-title" required placeholder="z.B. Quapsattack Hauptwelt">
+                
+                <label>Untertitel / Teaser</label>
+                <input type="text" id="world-subtitle" placeholder="Kurze Beschreibung für die Übersicht...">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
-                        <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Minecraft / Modpack Version</label>
-                        <input type="text" id="world-input-version" value="Forge 1.20.1" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
+                        <label>Version</label>
+                        <input type="text" id="world-version" value="Forge 1.20.1">
                     </div>
                     <div>
-                        <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Status</label>
-                        <select id="world-input-status" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
+                        <label>Status</label>
+                        <select id="world-status">
                             <option value="Aktiv">Aktiv</option>
                             <option value="In Planung">In Planung</option>
                             <option value="Archiviert">Archiviert</option>
                         </select>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Projektdokumentation (Text) *</label>
-                    <textarea id="world-input-content" required rows="8" placeholder="Beschreibe hier ausführlich, worum es in dieser Quapswelt geht, welche Bauwerke es gibt, Besonderheiten, Regeln oder Geschichte..." class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500 leading-relaxed"></textarea>
-                </div>
-                <div class="pt-2 flex justify-end gap-2">
-                    <button type="button" onclick="closeModal('world-form-modal')" class="px-4 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5">Abbrechen</button>
-                    <button type="submit" id="world-submit-btn" class="px-5 py-2 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-500 text-white glow-red transition-all">Speichern</button>
+
+                <label>Detaillierte Dokumentation (Text) *</label>
+                <textarea id="world-content" rows="7" required placeholder="Beschreibe das Projekt, Bauwerke, Regeln..."></textarea>
+
+                <div style="margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="closeModal('world-form-modal')" class="btn-secondary">Abbrechen</button>
+                    <button type="submit" id="world-submit-btn" class="btn-primary">Speichern</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- 4. Create / Edit Player Modal -->
-    <div id="player-form-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <div class="glass-panel border-white/15 rounded-2xl max-w-lg w-full shadow-2xl">
-            <div class="p-5 border-b border-white/10 flex items-center justify-between">
-                <h3 id="player-form-title" class="font-orbitron font-bold text-lg text-white">Neuen Spieler hinzufügen</h3>
-                <button onclick="closeModal('player-form-modal')" class="p-2 rounded-lg text-slate-400 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+    <!-- Create / Edit Player Form Modal -->
+    <div id="player-form-modal" class="modal-overlay" onclick="if(event.target === this) closeModal('player-form-modal')">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 id="player-form-modal-title" style="font-size: 1.3rem; font-weight: 700;">Neuen Spieler hinzufügen</h3>
+                <button onclick="closeModal('player-form-modal')" class="btn-secondary" style="padding: 6px 12px;">✕</button>
             </div>
-            <form id="player-form" onsubmit="savePlayer(event)" class="p-6 space-y-4">
+            <form id="player-form" onsubmit="savePlayer(event)">
                 <input type="hidden" id="player-id">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
-                        <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Anzeigename *</label>
-                        <input type="text" id="player-input-username" required placeholder="z.B. Louis" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
+                        <label>Anzeigename *</label>
+                        <input type="text" id="player-username" required placeholder="z.B. Louis">
                     </div>
                     <div>
-                        <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Minecraft Name *</label>
-                        <input type="text" id="player-input-mcname" required oninput="updateSkinPreview()" placeholder="z.B. AirbusFan" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-cyan-300 text-sm font-mono focus:outline-none focus:border-cyan-500">
-                    </div>
-                </div>
-                
-                <!-- Live Skin Preview -->
-                <div class="flex items-center gap-4 p-3.5 rounded-xl bg-[#020205]/80 border border-white/10">
-                    <img id="player-skin-preview" src="https://minotar.net/armor/bust/MHF_Steve/64.png" alt="Skin Vorschau" class="w-14 h-14 object-contain">
-                    <div class="text-xs text-slate-400">
-                        <p class="font-semibold text-cyan-400">Automatische Skin-Vorschau</p>
-                        <p class="mt-0.5">Der Skin wird automatisch anhand des exakten Minecraft-Namens gerendert.</p>
+                        <label>Minecraft Name (Skin) *</label>
+                        <input type="text" id="player-mcname" required oninput="updateSkinPreview()" placeholder="z.B. AirbusFan">
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Rolle / Spezialgebiet</label>
-                    <input type="text" id="player-input-role" placeholder="z.B. Architekt, Redstone-Techniker, Admin" class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500">
+                <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <img id="player-skin-preview" src="https://minotar.net/armor/bust/MHF_Steve/64.png" alt="Skin" style="width: 50px; height: 50px; object-fit: contain;">
+                    <div style="font-size: 0.8rem; color: var(--text-sub);">Skin wird automatisch über den Minecraft-Namen von Minotar geladen.</div>
                 </div>
-                <div>
-                    <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Über den Spieler *</label>
-                    <textarea id="player-input-bio" required rows="4" placeholder="Was macht diesen Spieler aus? Bekannte Bauwerke, Projekte oder Fun-Facts..." class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-cyan-500"></textarea>
-                </div>
-                <div class="pt-2 flex justify-end gap-2">
-                    <button type="button" onclick="closeModal('player-form-modal')" class="px-4 py-2 rounded-xl text-sm font-medium border border-white/10 text-slate-300 hover:bg-white/5">Abbrechen</button>
-                    <button type="submit" id="player-submit-btn" class="px-5 py-2 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-500 text-white glow-red transition-all">Speichern</button>
+
+                <label>Rolle / Spezialisierung</label>
+                <input type="text" id="player-role" placeholder="z.B. Projektleitung & Technik">
+
+                <label>Über den Spieler (Bio) *</label>
+                <textarea id="player-bio" rows="4" required placeholder="Bekannte Bauwerke, Aufgabenbereich..."></textarea>
+
+                <div style="margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="closeModal('player-form-modal')" class="btn-secondary">Abbrechen</button>
+                    <button type="submit" id="player-submit-btn" class="btn-primary">Speichern</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- 5. Admin Password Modal -->
-    <div id="admin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <div class="glass-panel border-red-500/30 rounded-2xl max-w-sm w-full p-6 shadow-2xl glow-red">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-orbitron font-bold text-lg text-white">ADMIN-ZUGANG</h3>
-                <button onclick="closeModal('admin-modal')" class="p-1.5 rounded-lg text-slate-400 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+    <!-- Admin Password Modal -->
+    <div id="admin-modal" class="modal-overlay" onclick="if(event.target === this) closeModal('admin-modal')">
+        <div class="modal-content" style="max-width: 400px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="font-size: 1.2rem; font-weight: 700;">Admin-Bereich</h3>
+                <button onclick="closeModal('admin-modal')" class="btn-secondary" style="padding: 6px 12px;">✕</button>
             </div>
-            <p class="text-xs text-slate-400 mb-4">
-                Gib das Admin-Passwort ein, um bestehende Beiträge, Quapswelten und Spieler-Profile zu bearbeiten oder zu löschen.
-            </p>
-            <form onsubmit="verifyAdmin(event)" class="space-y-4">
-                <div>
-                    <input type="password" id="admin-password-input" placeholder="Passwort eingeben..." required class="w-full px-3.5 py-2.5 rounded-xl bg-[#020205] border border-white/15 text-white text-sm focus:outline-none focus:border-red-500">
-                    <p id="admin-error-msg" class="hidden mt-1.5 text-xs text-red-400 font-medium">Zugriff verweigert: Falsches Passwort!</p>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 15px;">Gib das Passwort ein, um Admin-Rechte freizuschalten.</p>
+            <form onsubmit="verifyAdmin(event)">
+                <input type="password" id="admin-password-input" placeholder="Passwort eingeben..." required>
+                <div id="admin-error" style="color: var(--accent); font-size: 0.75rem; margin-top: 8px; display: none;">Falsches Passwort!</div>
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn-primary" style="width: 100%;">Entsperren</button>
                 </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl text-sm font-semibold bg-red-600 hover:bg-red-500 text-white glow-red transition-all">
-                    System entsperren
-                </button>
             </form>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-        <div class="px-4 py-3 rounded-xl glass-panel border-cyan-500/40 glow-cyan text-white text-sm font-medium flex items-center gap-2.5">
-            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
-            <span id="toast-message">Gespeichert!</span>
-        </div>
-    </div>
-
-    <!-- ===================================================================== -->
-    <!-- JAVASCRIPT & SUPABASE LOGIK -->
-    <!-- ===================================================================== -->
+    <!-- ========================================== -->
+    <!-- SCRIPT & SUPABASE LOGIC                    -->
+    <!-- ========================================== -->
     <script>
-        // 1. Supabase Konfiguration
         const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
         const ADMIN_PASSWORD = 'qa10';
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // App State
         let currentTab = 'worlds';
         let isAdmin = sessionStorage.getItem('quapspedia_admin') === 'true';
         let worldsData = [];
         let playersData = [];
         let activeSkinMcName = 'Steve';
+        let activeSkinViewMode = 'body';
 
-        // Initialisierung beim Laden
         document.addEventListener('DOMContentLoaded', () => {
             updateAdminUI();
             fetchAllData();
         });
 
-        // ---------------------------------------------------------------------
-        // NAVIGATION & TABS
-        // ---------------------------------------------------------------------
         function switchTab(tab) {
             currentTab = tab;
             document.getElementById('search-input').value = '';
-
-            const btnWorlds = document.getElementById('tab-worlds');
-            const btnPlayers = document.getElementById('tab-players');
-            const btnWorldsMob = document.getElementById('tab-worlds-mobile');
-            const btnPlayersMob = document.getElementById('tab-players-mobile');
-
-            const activeDesktop = ['bg-red-500/20', 'border-red-500/40', 'text-white', 'glow-red'];
-            const inactiveDesktop = ['border-transparent', 'text-slate-400', 'hover:text-white'];
+            
+            const btnW = document.getElementById('tab-worlds-btn');
+            const btnP = document.getElementById('tab-players-btn');
+            const createBtn = document.getElementById('create-action-btn');
+            const heroTitle = document.getElementById('hero-title');
+            const heroSub = document.getElementById('hero-subtitle');
 
             if (tab === 'worlds') {
-                btnWorlds.classList.add(...activeDesktop);
-                btnWorlds.classList.remove(...inactiveDesktop);
-                btnPlayers.classList.remove(...activeDesktop);
-                btnPlayers.classList.add(...inactiveDesktop);
-
-                btnWorldsMob.className = 'flex-1 py-1.5 rounded-lg text-sm font-medium bg-red-500/20 border border-red-500/40 text-white';
-                btnPlayersMob.className = 'flex-1 py-1.5 rounded-lg text-sm font-medium border border-transparent text-slate-400';
-
-                document.getElementById('section-worlds').classList.remove('hidden');
-                document.getElementById('section-players').classList.add('hidden');
-                document.getElementById('page-title').textContent = 'QUAPSWELTEN DOKU';
-                document.getElementById('page-subtitle').textContent = 'Alle Server-Projekte, Welten-Architekturen und technische Dokumentationen im Überblick.';
-                document.getElementById('create-btn-text').textContent = 'Neue Welt-Doku';
+                btnW.classList.add('active');
+                btnP.classList.remove('active');
+                createBtn.textContent = '+ Neue Welt-Doku';
+                heroTitle.innerHTML = 'Wissensdatenbank & <span>Projektdokumentation</span>';
+                heroSub.textContent = 'Erforsche alle Quapswelten, versteckte Server-Geheimnisse und detaillierte Dokumentationen.';
                 renderWorlds(worldsData);
             } else {
-                btnPlayers.classList.add(...activeDesktop);
-                btnPlayers.classList.remove(...inactiveDesktop);
-                btnWorlds.classList.remove(...activeDesktop);
-                btnWorlds.classList.add(...inactiveDesktop);
-
-                btnPlayersMob.className = 'flex-1 py-1.5 rounded-lg text-sm font-medium bg-red-500/20 border border-red-500/40 text-white';
-                btnWorldsMob.className = 'flex-1 py-1.5 rounded-lg text-sm font-medium border border-transparent text-slate-400';
-
-                document.getElementById('section-players').classList.remove('hidden');
-                document.getElementById('section-worlds').classList.add('hidden');
-                document.getElementById('page-title').textContent = 'SPIELER & SKINS';
-                document.getElementById('page-subtitle').textContent = 'Alle Mitglieder der Quapswelten mit Profilbeschreibung und 3D-Skin-Ansicht.';
-                document.getElementById('create-btn-text').textContent = 'Neuer Spieler';
+                btnP.classList.add('active');
+                btnW.classList.remove('active');
+                createBtn.textContent = '+ Neuer Spieler';
+                heroTitle.innerHTML = 'Aktive Mitglieder & <span>Minecraft Skins</span>';
+                heroSub.textContent = 'Alle Spieler der Quapswelten mit Profilbeschreibung und interaktivem 3D-Skin Viewer.';
                 renderPlayers(playersData);
             }
         }
 
-        // ---------------------------------------------------------------------
-        // SUPABASE DATEN LADEN
-        // ---------------------------------------------------------------------
         async function fetchAllData() {
-            document.getElementById('loading-state').classList.remove('hidden');
-            document.getElementById('error-state').classList.add('hidden');
+            document.getElementById('loading-state').style.display = 'block';
+            document.getElementById('main-grid').innerHTML = '';
 
             try {
-                const [worldsRes, playersRes] = await Promise.all([
+                const [wRes, pRes] = await Promise.all([
                     supabaseClient.from('quaps_worlds').select('*').order('created_at', { ascending: false }),
                     supabaseClient.from('quaps_players').select('*').order('created_at', { ascending: true })
                 ]);
 
-                if (worldsRes.error) throw worldsRes.error;
-                if (playersRes.error) throw playersRes.error;
+                if (wRes.error) throw wRes.error;
+                if (pRes.error) throw pRes.error;
 
-                worldsData = worldsRes.data || [];
-                playersData = playersRes.data || [];
+                worldsData = wRes.data || [];
+                playersData = pRes.data || [];
 
-                renderWorlds(worldsData);
-                renderPlayers(playersData);
+                if (currentTab === 'worlds') renderWorlds(worldsData);
+                else renderPlayers(playersData);
             } catch (err) {
-                console.error('Supabase Fehler:', err);
-                document.getElementById('error-state').classList.remove('hidden');
-                document.getElementById('error-message').textContent = err.message || 'Bitte prüfe, ob die SQL-Tabellen in Supabase angelegt wurden.';
+                console.error(err);
+                document.getElementById('main-grid').innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--accent); padding: 40px;">Fehler beim Laden der Supabase-Daten: ${err.message}</div>`;
             } finally {
-                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('loading-state').style.display = 'none';
             }
         }
 
-        // ---------------------------------------------------------------------
-        // RENDERING: QUAPSWELTEN
-        // ---------------------------------------------------------------------
         function renderWorlds(list) {
-            const grid = document.getElementById('worlds-grid');
-            const empty = document.getElementById('worlds-empty');
+            const grid = document.getElementById('main-grid');
             grid.innerHTML = '';
 
-            if (!list || list.length === 0) {
-                empty.classList.remove('hidden');
+            if (list.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 40px;">Keine Quapswelten gefunden.</div>`;
                 return;
             }
-            empty.classList.add('hidden');
 
-            list.forEach(world => {
-                const statusColors = {
-                    'Aktiv': 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300',
-                    'In Planung': 'bg-red-500/15 border-red-500/30 text-red-300',
-                    'Archiviert': 'bg-white/5 border-white/10 text-slate-400'
-                };
-                const badgeClass = statusColors[world.status] || statusColors['Aktiv'];
-
-                const card = document.createElement('article');
-                card.className = 'glass-panel rounded-2xl p-6 flex flex-col justify-between hover:border-cyan-500/40 hover:shadow-[0_0_25px_rgba(6,182,212,0.12)] transition-all';
-
+            list.forEach(w => {
+                const card = document.createElement('div');
+                card.className = 'preview-glass';
                 card.innerHTML = `
                     <div>
-                        <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="text-xs font-medium px-2.5 py-0.5 rounded-full border ${badgeClass}">${escapeHtml(world.status || 'Aktiv')}</span>
-                            <span class="text-xs font-mono text-slate-400">${escapeHtml(world.version || '')}</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; padding: 3px 10px; background: rgba(6,182,212,0.15); color: var(--cyan-accent); border-radius: 6px; border: 1px solid rgba(6,182,212,0.3);">${escapeHtml(w.status || 'Aktiv')}</span>
+                            <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text-sub);">${escapeHtml(w.version || '')}</span>
                         </div>
-                        <h2 class="font-orbitron text-lg font-bold text-white mb-1.5 tracking-wide">${escapeHtml(world.title)}</h2>
-                        ${world.subtitle ? `<p class="text-sm font-medium text-cyan-400/90 mb-3">${escapeHtml(world.subtitle)}</p>` : ''}
-                        <p class="text-sm text-slate-400 line-clamp-3 leading-relaxed">${escapeHtml(world.content)}</p>
+                        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px;">${escapeHtml(w.title)}</h3>
+                        ${w.subtitle ? `<div style="font-size: 0.85rem; color: var(--cyan-accent); margin-bottom: 10px; font-weight: 600;">${escapeHtml(w.subtitle)}</div>` : ''}
+                        <p style="font-size: 0.9rem; color: var(--text-sub); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 20px;">${escapeHtml(w.content)}</p>
                     </div>
-
-                    <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between gap-2">
-                        <button onclick="openReadWorldModal('${world.id}')" class="inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors">
-                            Dokumentation lesen
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </button>
-
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--demo-box-border); padding-top: 15px;">
+                        <button onclick="openReadWorldModal('${w.id}')" class="btn-secondary" style="font-size: 0.8rem; padding: 8px 14px;">Dokumentation lesen</button>
                         ${isAdmin ? `
-                            <div class="flex items-center gap-1.5">
-                                <button onclick="openEditWorldModal('${world.id}')" title="Bearbeiten" class="p-1.5 rounded-lg text-amber-400 hover:bg-amber-500/15 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                </button>
-                                <button onclick="deleteWorld('${world.id}')" title="Löschen" class="p-1.5 rounded-lg text-red-400 hover:bg-red-500/15 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
+                            <div style="display: flex; gap: 6px;">
+                                <button onclick="openEditWorldModal('${w.id}')" class="btn-secondary" style="padding: 6px 10px; color: #f59e0b;">✎</button>
+                                <button onclick="deleteWorld('${w.id}')" class="btn-secondary" style="padding: 6px 10px; color: var(--accent);">✕</button>
                             </div>
                         ` : ''}
                     </div>
@@ -544,61 +727,38 @@
             });
         }
 
-        // ---------------------------------------------------------------------
-        // RENDERING: SPIELER & SKINS
-        // ---------------------------------------------------------------------
         function renderPlayers(list) {
-            const grid = document.getElementById('players-grid');
-            const empty = document.getElementById('players-empty');
+            const grid = document.getElementById('main-grid');
             grid.innerHTML = '';
 
-            if (!list || list.length === 0) {
-                empty.classList.remove('hidden');
+            if (list.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 40px;">Keine Spieler gefunden.</div>`;
                 return;
             }
-            empty.classList.add('hidden');
 
-            list.forEach(player => {
-                const safeMc = encodeURIComponent(player.mc_name || 'MHF_Steve');
-                const skinUrl = `https://minotar.net/armor/body/${safeMc}/140.png`;
-
-                const card = document.createElement('article');
-                card.className = 'player-card glass-panel rounded-2xl overflow-hidden flex flex-col justify-between hover:border-red-500/40 hover:shadow-[0_0_25px_rgba(239,68,68,0.12)] transition-all';
-
+            list.forEach(p => {
+                const skinUrl = `https://minotar.net/armor/body/${encodeURIComponent(p.mc_name || 'Steve')}/140.png`;
+                const card = document.createElement('div');
+                card.className = 'preview-glass';
                 card.innerHTML = `
                     <div>
-                        <!-- Skin Header Area -->
-                        <div onclick="openSkinModal('${player.id}')" class="cursor-pointer bg-[#020205]/70 pt-6 pb-4 px-4 flex flex-col items-center justify-center relative group border-b border-white/10">
-                            <span class="absolute top-3 right-3 text-[11px] font-mono px-2 py-0.5 rounded bg-black/70 border border-white/10 text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                                3D INSPECT
-                            </span>
-                            <img src="${skinUrl}" onerror="this.src='https://minotar.net/armor/body/MHF_Steve/140.png'" alt="${escapeHtml(player.username)} Skin" class="h-36 object-contain skin-render">
+                        <div onclick="openSkinModal('${p.id}')" style="cursor: pointer; background: rgba(0,0,0,0.2); border-radius: 14px; padding: 15px; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; border: 1px solid var(--demo-box-border); position: relative;" title="Skin in 3D ansehen">
+                            <span style="position: absolute; top: 10px; right: 10px; font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; background: rgba(6,182,212,0.2); color: var(--cyan-accent); padding: 2px 6px; border-radius: 4px;">3D VIEW</span>
+                            <img src="${skinUrl}" onerror="this.src='https://minotar.net/armor/body/Steve/140.png'" alt="${escapeHtml(p.username)}" class="skin-card-img">
                         </div>
-
-                        <!-- Player Info -->
-                        <div class="p-5">
-                            <div class="flex items-center justify-between gap-2 mb-1.5">
-                                <h3 class="font-orbitron text-base font-bold text-white tracking-wide">${escapeHtml(player.username)}</h3>
-                                <span class="text-xs font-mono text-slate-400">@${escapeHtml(player.mc_name)}</span>
-                            </div>
-                            ${player.role ? `<span class="inline-block text-xs font-mono px-2.5 py-0.5 rounded bg-red-500/15 border border-red-500/30 text-red-300 mb-3">${escapeHtml(player.role)}</span>` : ''}
-                            <p class="text-sm text-slate-400 leading-relaxed">${escapeHtml(player.bio)}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <h3 style="font-size: 1.15rem; font-weight: 700;">${escapeHtml(p.username)}</h3>
+                            <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text-sub);">@${escapeHtml(p.mc_name)}</span>
                         </div>
+                        ${p.role ? `<div style="display: inline-block; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; padding: 2px 8px; background: rgba(239,68,68,0.15); color: #fca5a5; border-radius: 6px; border: 1px solid rgba(239,68,68,0.3); margin-bottom: 10px;">${escapeHtml(p.role)}</div>` : ''}
+                        <p style="font-size: 0.9rem; color: var(--text-sub); line-height: 1.6; margin-bottom: 20px;">${escapeHtml(p.bio)}</p>
                     </div>
-
-                    <div class="px-5 py-3.5 border-t border-white/10 flex items-center justify-between bg-[#0a0b10]/50">
-                        <button onclick="openSkinModal('${player.id}')" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors">
-                            Skin-Ansicht öffnen
-                        </button>
-
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--demo-box-border); padding-top: 15px;">
+                        <button onclick="openSkinModal('${p.id}')" class="btn-secondary" style="font-size: 0.8rem; padding: 8px 14px;">Skin Viewer</button>
                         ${isAdmin ? `
-                            <div class="flex items-center gap-1.5">
-                                <button onclick="openEditPlayerModal('${player.id}')" title="Spieler bearbeiten" class="p-1.5 rounded-lg text-amber-400 hover:bg-amber-500/15 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                </button>
-                                <button onclick="deletePlayer('${player.id}')" title="Spieler löschen" class="p-1.5 rounded-lg text-red-400 hover:bg-red-500/15 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
+                            <div style="display: flex; gap: 6px;">
+                                <button onclick="openEditPlayerModal('${p.id}')" class="btn-secondary" style="padding: 6px 10px; color: #f59e0b;">✎</button>
+                                <button onclick="deletePlayer('${p.id}')" class="btn-secondary" style="padding: 6px 10px; color: var(--accent);">✕</button>
                             </div>
                         ` : ''}
                     </div>
@@ -607,217 +767,135 @@
             });
         }
 
-        // ---------------------------------------------------------------------
-        // SUCHE
-        // ---------------------------------------------------------------------
         function handleSearch() {
-            const q = document.getElementById('search-input').value.toLowerCase().trim();
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
             if (currentTab === 'worlds') {
-                const filtered = worldsData.filter(w =>
-                    (w.title && w.title.toLowerCase().includes(q)) ||
-                    (w.subtitle && w.subtitle.toLowerCase().includes(q)) ||
-                    (w.content && w.content.toLowerCase().includes(q))
+                const filtered = worldsData.filter(w => 
+                    (w.title && w.title.toLowerCase().includes(query)) ||
+                    (w.subtitle && w.subtitle.toLowerCase().includes(query)) ||
+                    (w.content && w.content.toLowerCase().includes(query))
                 );
                 renderWorlds(filtered);
             } else {
                 const filtered = playersData.filter(p =>
-                    (p.username && p.username.toLowerCase().includes(q)) ||
-                    (p.mc_name && p.mc_name.toLowerCase().includes(q)) ||
-                    (p.role && p.role.toLowerCase().includes(q)) ||
-                    (p.bio && p.bio.toLowerCase().includes(q))
+                    (p.username && p.username.toLowerCase().includes(query)) ||
+                    (p.mc_name && p.mc_name.toLowerCase().includes(query)) ||
+                    (p.role && p.role.toLowerCase().includes(query)) ||
+                    (p.bio && p.bio.toLowerCase().includes(query))
                 );
                 renderPlayers(filtered);
             }
         }
 
-        // ---------------------------------------------------------------------
-        // MODALS & DETAILS
-        // ---------------------------------------------------------------------
-        function openReadWorldModal(id) {
-            const world = worldsData.find(w => w.id === id);
-            if (!world) return;
-
-            document.getElementById('read-world-title').textContent = world.title;
-            document.getElementById('read-world-subtitle').textContent = world.subtitle || '';
-            document.getElementById('read-world-status').textContent = world.status || 'Aktiv';
-            document.getElementById('read-world-version').textContent = world.version || '';
-            document.getElementById('read-world-content').textContent = world.content;
-            document.getElementById('read-world-date').textContent = 'ERSTELLT // ' + new Date(world.created_at).toLocaleDateString('de-DE');
-
-            const editBtn = document.getElementById('read-world-edit-btn');
-            if (isAdmin) {
-                editBtn.classList.remove('hidden');
-                editBtn.onclick = () => {
-                    closeModal('read-world-modal');
-                    openEditWorldModal(id);
-                };
-            } else {
-                editBtn.classList.add('hidden');
-            }
-
-            openModal('read-world-modal');
-        }
-
-        function openSkinModal(id) {
-            const player = playersData.find(p => p.id === id);
-            if (!player) return;
-
-            activeSkinMcName = player.mc_name || 'MHF_Steve';
-            document.getElementById('skin-modal-name').textContent = player.username;
-            document.getElementById('skin-modal-mc').textContent = 'MINECRAFT ID // ' + activeSkinMcName;
-            document.getElementById('skin-modal-role').textContent = player.role || 'Mitglied';
-            document.getElementById('skin-modal-bio').textContent = player.bio;
-
-            setSkinView('body');
-            openModal('skin-modal');
-        }
-
-        function setSkinView(type) {
-            const safeMc = encodeURIComponent(activeSkinMcName);
-            const img = document.getElementById('skin-modal-img');
-            const btns = ['body', 'bust', 'head'];
-
-            btns.forEach(b => {
-                const el = document.getElementById('skin-btn-' + b);
-                if (b === type) {
-                    el.className = 'px-3 py-1 rounded-lg text-xs font-medium bg-cyan-500/20 border border-cyan-500/40 text-cyan-300';
-                } else {
-                    el.className = 'px-3 py-1 rounded-lg text-xs font-medium border border-transparent text-slate-400 hover:text-white';
-                }
-            });
-
-            if (type === 'body') {
-                img.src = `https://minotar.net/armor/body/${safeMc}/220.png`;
-            } else if (type === 'bust') {
-                img.src = `https://minotar.net/armor/bust/${safeMc}/220.png`;
-            } else {
-                img.src = `https://minotar.net/helm/${safeMc}/200.png`;
-            }
-        }
-
-        // ---------------------------------------------------------------------
-        // ERSTELLEN & BEARBEITEN (WORLDS)
-        // ---------------------------------------------------------------------
+        // Modals & Actions
         function openCreateModal() {
             if (currentTab === 'worlds') {
                 document.getElementById('world-form').reset();
                 document.getElementById('world-id').value = '';
-                document.getElementById('world-form-title').textContent = 'Neue Quapswelt dokumentieren';
+                document.getElementById('world-form-modal-title').textContent = 'Neue Quapswelt dokumentieren';
                 openModal('world-form-modal');
             } else {
                 document.getElementById('player-form').reset();
                 document.getElementById('player-id').value = '';
-                document.getElementById('player-form-title').textContent = 'Neuen Spieler hinzufügen';
-                document.getElementById('player-skin-preview').src = 'https://minotar.net/armor/bust/MHF_Steve/64.png';
+                document.getElementById('player-form-modal-title').textContent = 'Neuen Spieler hinzufügen';
+                document.getElementById('player-skin-preview').src = 'https://minotar.net/armor/bust/Steve/64.png';
                 openModal('player-form-modal');
             }
         }
 
-        function openEditWorldModal(id) {
-            if (!isAdmin) return;
-            const world = worldsData.find(w => w.id === id);
-            if (!world) return;
+        function openReadWorldModal(id) {
+            const w = worldsData.find(item => item.id === id);
+            if (!w) return;
+            document.getElementById('read-world-title').textContent = w.title;
+            document.getElementById('read-world-subtitle').textContent = w.subtitle || '';
+            document.getElementById('read-world-badge').textContent = w.status || 'Aktiv';
+            document.getElementById('read-world-content').textContent = w.content;
+            document.getElementById('read-world-date').textContent = 'ERSTELLT AM ' + new Date(w.created_at).toLocaleDateString('de-DE');
+            
+            const editBtn = document.getElementById('read-world-edit-trigger');
+            if (isAdmin) {
+                editBtn.style.display = 'block';
+                editBtn.onclick = () => { closeModal('read-world-modal'); openEditWorldModal(id); };
+            } else {
+                editBtn.style.display = 'none';
+            }
+            openModal('read-world-modal');
+        }
 
-            document.getElementById('world-id').value = world.id;
-            document.getElementById('world-input-title').value = world.title;
-            document.getElementById('world-input-subtitle').value = world.subtitle || '';
-            document.getElementById('world-input-version').value = world.version || '';
-            document.getElementById('world-input-status').value = world.status || 'Aktiv';
-            document.getElementById('world-input-content').value = world.content;
-            document.getElementById('world-form-title').textContent = 'Quapswelt bearbeiten';
-            openModal('world-form-modal');
+        function openSkinModal(id) {
+            const p = playersData.find(item => item.id === id);
+            if (!p) return;
+            activeSkinMcName = p.mc_name || 'Steve';
+            document.getElementById('skin-modal-name').textContent = p.username + ' (' + p.mc_name + ')';
+            document.getElementById('skin-modal-role').textContent = p.role || 'Mitglied';
+            document.getElementById('skin-modal-bio').textContent = p.bio;
+            setSkinView('body');
+            openModal('skin-modal');
+        }
+
+        function setSkinView(mode) {
+            activeSkinViewMode = mode;
+            const mc = encodeURIComponent(activeSkinMcName);
+            const img = document.getElementById('skin-modal-img');
+            
+            ['body', 'bust', 'head'].forEach(m => {
+                const btn = document.getElementById('s-btn-' + m);
+                if (m === mode) btn.style.background = 'rgba(255,255,255,0.2)';
+                else btn.style.background = 'rgba(255,255,255,0.08)';
+            });
+
+            if (mode === 'body') img.src = `https://minotar.net/armor/body/${mc}/220.png`;
+            else if (mode === 'bust') img.src = `https://minotar.net/armor/bust/${mc}/220.png`;
+            else img.src = `https://minotar.net/helm/${mc}/180.png`;
+        }
+
+        function updateSkinPreview() {
+            const mc = document.getElementById('player-mcname').value.trim() || 'Steve';
+            document.getElementById('player-skin-preview').src = `https://minotar.net/armor/bust/${encodeURIComponent(mc)}/64.png`;
         }
 
         async function saveWorld(e) {
             e.preventDefault();
-            const btn = document.getElementById('world-submit-btn');
-            btn.disabled = true;
-            btn.textContent = 'Speichert...';
-
             const id = document.getElementById('world-id').value;
             const payload = {
-                title: document.getElementById('world-input-title').value.trim(),
-                subtitle: document.getElementById('world-input-subtitle').value.trim(),
-                version: document.getElementById('world-input-version').value.trim(),
-                status: document.getElementById('world-input-status').value,
-                content: document.getElementById('world-input-content').value.trim()
+                title: document.getElementById('world-title').value.trim(),
+                subtitle: document.getElementById('world-subtitle').value.trim(),
+                version: document.getElementById('world-version').value.trim(),
+                status: document.getElementById('world-status').value,
+                content: document.getElementById('world-content').value.trim()
             };
 
             try {
                 if (id) {
-                    if (!isAdmin) throw new Error('Keine Admin-Berechtigung');
+                    if (!isAdmin) throw new Error('Admin-Rechte erforderlich');
                     const { error } = await supabaseClient.from('quaps_worlds').update(payload).eq('id', id);
                     if (error) throw error;
-                    showToast('Welt-Dokumentation aktualisiert!');
+                    showToast('Welt-Doku aktualisiert!');
                 } else {
                     const { error } = await supabaseClient.from('quaps_worlds').insert([payload]);
                     if (error) throw error;
-                    showToast('Neue Quapswelt veröffentlicht!');
+                    showToast('Neue Welt dokumentiert!');
                 }
                 closeModal('world-form-modal');
-                await fetchAllData();
+                fetchAllData();
             } catch (err) {
-                alert('Fehler beim Speichern: ' + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Speichern';
+                alert('Fehler: ' + err.message);
             }
-        }
-
-        async function deleteWorld(id) {
-            if (!isAdmin) return;
-            if (!confirm('Möchtest du diese Quapswelt-Dokumentation wirklich unwiderruflich löschen?')) return;
-
-            try {
-                const { error } = await supabaseClient.from('quaps_worlds').delete().eq('id', id);
-                if (error) throw error;
-                showToast('Dokumentation gelöscht.');
-                await fetchAllData();
-            } catch (err) {
-                alert('Fehler beim Löschen: ' + err.message);
-            }
-        }
-
-        // ---------------------------------------------------------------------
-        // ERSTELLEN & BEARBEITEN (PLAYERS)
-        // ---------------------------------------------------------------------
-        function updateSkinPreview() {
-            const mcName = document.getElementById('player-input-mcname').value.trim() || 'MHF_Steve';
-            document.getElementById('player-skin-preview').src = `https://minotar.net/armor/bust/${encodeURIComponent(mcName)}/64.png`;
-        }
-
-        function openEditPlayerModal(id) {
-            if (!isAdmin) return;
-            const player = playersData.find(p => p.id === id);
-            if (!player) return;
-
-            document.getElementById('player-id').value = player.id;
-            document.getElementById('player-input-username').value = player.username;
-            document.getElementById('player-input-mcname').value = player.mc_name;
-            document.getElementById('player-input-role').value = player.role || '';
-            document.getElementById('player-input-bio').value = player.bio;
-            document.getElementById('player-form-title').textContent = 'Spieler-Profil bearbeiten';
-            updateSkinPreview();
-            openModal('player-form-modal');
         }
 
         async function savePlayer(e) {
             e.preventDefault();
-            const btn = document.getElementById('player-submit-btn');
-            btn.disabled = true;
-            btn.textContent = 'Speichert...';
-
             const id = document.getElementById('player-id').value;
             const payload = {
-                username: document.getElementById('player-input-username').value.trim(),
-                mc_name: document.getElementById('player-input-mcname').value.trim(),
-                role: document.getElementById('player-input-role').value.trim(),
-                bio: document.getElementById('player-input-bio').value.trim()
+                username: document.getElementById('player-username').value.trim(),
+                mc_name: document.getElementById('player-mcname').value.trim(),
+                role: document.getElementById('player-role').value.trim(),
+                bio: document.getElementById('player-bio').value.trim()
             };
 
             try {
                 if (id) {
-                    if (!isAdmin) throw new Error('Keine Admin-Berechtigung');
+                    if (!isAdmin) throw new Error('Admin-Rechte erforderlich');
                     const { error } = await supabaseClient.from('quaps_players').update(payload).eq('id', id);
                     if (error) throw error;
                     showToast('Spieler-Profil aktualisiert!');
@@ -827,39 +905,74 @@
                     showToast('Neuer Spieler hinzugefügt!');
                 }
                 closeModal('player-form-modal');
-                await fetchAllData();
+                fetchAllData();
             } catch (err) {
-                alert('Fehler beim Speichern: ' + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Speichern';
+                alert('Fehler: ' + err.message);
+            }
+        }
+
+        function openEditWorldModal(id) {
+            if (!isAdmin) return;
+            const w = worldsData.find(item => item.id === id);
+            if (!w) return;
+            document.getElementById('world-id').value = w.id;
+            document.getElementById('world-title').value = w.title;
+            document.getElementById('world-subtitle').value = w.subtitle || '';
+            document.getElementById('world-version').value = w.version || 'Forge 1.20.1';
+            document.getElementById('world-status').value = w.status || 'Aktiv';
+            document.getElementById('world-content').value = w.content;
+            document.getElementById('world-form-modal-title').textContent = 'Quapswelt bearbeiten';
+            openModal('world-form-modal');
+        }
+
+        function openEditPlayerModal(id) {
+            if (!isAdmin) return;
+            const p = playersData.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('player-id').value = p.id;
+            document.getElementById('player-username').value = p.username;
+            document.getElementById('player-mcname').value = p.mc_name;
+            document.getElementById('player-role').value = p.role || '';
+            document.getElementById('player-bio').value = p.bio;
+            document.getElementById('player-form-modal-title').textContent = 'Spieler-Profil bearbeiten';
+            updateSkinPreview();
+            openModal('player-form-modal');
+        }
+
+        async function deleteWorld(id) {
+            if (!isAdmin) return;
+            if (!confirm('Doku wirklich unwiderruflich löschen?')) return;
+            try {
+                const { error } = await supabaseClient.from('quaps_worlds').delete().eq('id', id);
+                if (error) throw error;
+                showToast('Eintrag gelöscht.');
+                fetchAllData();
+            } catch (err) {
+                alert('Fehler: ' + err.message);
             }
         }
 
         async function deletePlayer(id) {
             if (!isAdmin) return;
-            if (!confirm('Möchtest du dieses Spieler-Profil wirklich löschen?')) return;
-
+            if (!confirm('Spieler wirklich löschen?')) return;
             try {
                 const { error } = await supabaseClient.from('quaps_players').delete().eq('id', id);
                 if (error) throw error;
-                showToast('Spieler-Profil gelöscht.');
-                await fetchAllData();
+                showToast('Spieler gelöscht.');
+                fetchAllData();
             } catch (err) {
-                alert('Fehler beim Löschen: ' + err.message);
+                alert('Fehler: ' + err.message);
             }
         }
 
-        // ---------------------------------------------------------------------
-        // ADMIN MODUS (Passwort: qa10)
-        // ---------------------------------------------------------------------
+        // Admin Auth
         function openAdminModal() {
             if (isAdmin) {
-                showToast('Admin-Modus ist bereits aktiv.');
+                if (confirm('Admin-Modus beenden?')) logoutAdmin();
                 return;
             }
             document.getElementById('admin-password-input').value = '';
-            document.getElementById('admin-error-msg').classList.add('hidden');
+            document.getElementById('admin-error').style.display = 'none';
             openModal('admin-modal');
             setTimeout(() => document.getElementById('admin-password-input').focus(), 100);
         }
@@ -872,11 +985,11 @@
                 sessionStorage.setItem('quapspedia_admin', 'true');
                 closeModal('admin-modal');
                 updateAdminUI();
-                renderWorlds(worldsData);
-                renderPlayers(playersData);
-                showToast('Admin-Modus freigeschaltet!');
+                if (currentTab === 'worlds') renderWorlds(worldsData);
+                else renderPlayers(playersData);
+                showToast('Admin-Modus aktiviert!');
             } else {
-                document.getElementById('admin-error-msg').classList.remove('hidden');
+                document.getElementById('admin-error').style.display = 'block';
             }
         }
 
@@ -884,52 +997,36 @@
             isAdmin = false;
             sessionStorage.removeItem('quapspedia_admin');
             updateAdminUI();
-            renderWorlds(worldsData);
-            renderPlayers(playersData);
+            if (currentTab === 'worlds') renderWorlds(worldsData);
+            else renderPlayers(playersData);
             showToast('Admin-Modus beendet.');
         }
 
         function updateAdminUI() {
-            const dot = document.getElementById('admin-dot');
-            const label = document.getElementById('admin-label');
             const banner = document.getElementById('admin-banner');
-            const btn = document.getElementById('admin-btn');
-
+            const btn = document.getElementById('admin-toggle-btn');
             if (isAdmin) {
-                dot.className = 'w-2 h-2 rounded-full bg-red-500 animate-pulse';
-                label.textContent = 'ADMIN AKTIV';
-                btn.classList.add('border-red-500/40', 'glow-red');
-                banner.classList.remove('hidden');
+                banner.style.display = 'flex';
+                btn.style.borderColor = 'var(--accent)';
+                btn.style.background = 'rgba(239, 68, 68, 0.2)';
+                btn.textContent = 'Admin (Aktiv)';
             } else {
-                dot.className = 'w-2 h-2 rounded-full bg-slate-500';
-                label.textContent = 'ADMIN';
-                btn.classList.remove('border-red-500/40', 'glow-red');
-                banner.classList.add('hidden');
+                banner.style.display = 'none';
+                btn.style.borderColor = 'var(--demo-btn-border)';
+                btn.style.background = 'var(--demo-btn-bg)';
+                btn.textContent = 'Admin';
             }
         }
 
-        // ---------------------------------------------------------------------
-        // HELPER FUNKTIONEN
-        // ---------------------------------------------------------------------
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
+        // Helpers
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        
         function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-message').textContent = msg;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
         }
 
         function escapeHtml(str) {
