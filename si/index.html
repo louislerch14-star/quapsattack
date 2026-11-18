@@ -356,8 +356,9 @@
     function toggleDropdown() {
       const menu = document.getElementById("dropdown-menu-box");
       const arrow = document.getElementById("dropdown-arrow");
+      if (!menu) return;
       menu.classList.toggle("show");
-      arrow.style.transform = menu.classList.contains("show") ? "rotate(180deg)" : "rotate(0deg)";
+      if (arrow) arrow.style.transform = menu.classList.contains("show") ? "rotate(180deg)" : "rotate(0deg)";
     }
 
     function closeDropdown() {
@@ -369,7 +370,8 @@
 
     function selectModel(value, label) {
       selectedModelValue = value;
-      document.getElementById("selected-model-text").textContent = label;
+      const modelText = document.getElementById("selected-model-text");
+      if (modelText) modelText.textContent = label;
       
       const items = document.querySelectorAll(".dropdown-item");
       items.forEach(item => {
@@ -387,6 +389,7 @@
     function toggleSidebar() {
       const sidebar = document.getElementById("sidebar");
       const main = document.getElementById("main-content");
+      if (!sidebar || !main) return;
       if (window.innerWidth <= 768) {
         sidebar.classList.toggle("open");
       } else {
@@ -426,14 +429,17 @@
 
     function showAuthError(msg) {
       const el = document.getElementById("auth-error");
+      if (!el) return;
       el.textContent = msg;
       el.classList.remove("hidden");
     }
 
     async function initApp(user) {
       currentUser = user;
-      document.getElementById("auth-screen").style.display = "none";
-      document.getElementById("user-email-display").textContent = user.email;
+      const authScreen = document.getElementById("auth-screen");
+      if (authScreen) authScreen.style.display = "none";
+      const emailDisplay = document.getElementById("user-email-display");
+      if (emailDisplay) emailDisplay.textContent = user.email;
       try {
         await loadChats();
       } catch (err) {
@@ -455,12 +461,14 @@
     }
 
     async function loadChats() {
+      if (!currentUser) return;
       const { data, error } = await sb.from("chats").select("*").eq("user_id", currentUser.id).order("created_at", { ascending: false });
       if (error) {
         console.error("Ladefehler Chats:", error.message);
         return;
       }
       const list = document.getElementById("chat-list");
+      if (!list) return;
       list.innerHTML = "";
       if (!data || data.length === 0) return;
 
@@ -473,7 +481,10 @@
         titleSpan.textContent = chat.title;
         titleSpan.onclick = () => {
           selectChat(chat.id, chat.model);
-          if (window.innerWidth <= 768) document.getElementById("sidebar").classList.remove("open");
+          if (window.innerWidth <= 768) {
+            const sbElem = document.getElementById("sidebar");
+            if (sbElem) sbElem.classList.remove("open");
+          }
         };
 
         const delBtn = document.createElement("button");
@@ -501,7 +512,10 @@
       await sb.from("chats").delete().eq("id", chatId);
       if (currentChatId === chatId) {
         currentChatId = null;
-        document.getElementById("messages-container").innerHTML = `<div class="text-center text-[var(--text-sub)] text-sm mt-32">Chat gelöscht, wähle einen neuen aus!</div>`;
+        const msgContainer = document.getElementById("messages-container");
+        if (msgContainer) {
+          msgContainer.innerHTML = `<div class="text-center text-[var(--text-sub)] text-sm mt-32">Chat gelöscht, wähle einen neuen aus!</div>`;
+        }
       }
       await loadChats();
     }
@@ -517,8 +531,12 @@
       if (!error && data) {
         currentChatId = data.id;
         await loadChats();
-        document.getElementById("messages-container").innerHTML = "";
-        if (window.innerWidth <= 768) document.getElementById("sidebar").classList.remove("open");
+        const msgContainer = document.getElementById("messages-container");
+        if (msgContainer) msgContainer.innerHTML = "";
+        if (window.innerWidth <= 768) {
+          const sbElem = document.getElementById("sidebar");
+          if (sbElem) sbElem.classList.remove("open");
+        }
       }
     }
 
@@ -528,7 +546,7 @@
         selectedModelValue = model;
         const items = document.querySelectorAll(".dropdown-item");
         items.forEach(item => {
-          if (item.getAttribute("onclick").includes(model)) {
+          if (item.getAttribute("onclick") && item.getAttribute("onclick").includes(model)) {
             selectModel(model, item.textContent);
           }
         });
@@ -538,6 +556,7 @@
 
       const { data } = await sb.from("messages").select("*").eq("chat_id", chatId).order("created_at", { ascending: true });
       const container = document.getElementById("messages-container");
+      if (!container) return;
       container.innerHTML = "";
       if (data) data.forEach(msg => renderMessage(msg));
     }
@@ -545,13 +564,13 @@
     async function sendMessage(e) {
       e.preventDefault();
       const input = document.getElementById("prompt-input");
+      if (!input) return;
       const text = input.value.trim();
       if (!text) return;
 
       const model = selectedModelValue;
       input.value = "";
 
-      // 1. Chat erstellen, falls noch keiner aktiv ist
       if (!currentChatId) {
         const { data: newChat, error: chatErr } = await sb.from("chats").insert({
           user_id: currentUser.id,
@@ -567,7 +586,6 @@
         await loadChats();
       }
 
-      // 2. User-Nachricht in DB speichern
       const userMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "user", content: text };
       const { error: userMsgErr } = await sb.from("messages").insert(userMsg);
       if (userMsgErr) {
@@ -575,7 +593,6 @@
       }
       renderMessage(userMsg);
 
-      // 3. Bild-Generator Sonderfall
       if (model === "image-flux") {
         const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(text)}?width=1024&height=1024&nologo=true&seed=${Date.now()}`;
         const aiMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "assistant", content: `Hier ist dein Bild zu: **${text}**`, image_url: imageUrl };
@@ -585,7 +602,6 @@
         return;
       }
 
-      // 4. KI-Antwort über Edge Function holen
       const loadingId = "loading-" + Date.now();
       renderLoading(loadingId);
 
@@ -594,7 +610,8 @@
           body: { prompt: text, model: model }
         });
 
-        document.getElementById(loadingId)?.remove();
+        const loadingElem = document.getElementById(loadingId);
+        if (loadingElem) loadingElem.remove();
 
         if (error) {
           console.error("Edge Function Fehler:", error);
@@ -613,7 +630,6 @@
           } catch (err) {}
         }
 
-        // 5. WICHTIG: Die fertige AI-Antwort sauber in der Datenbank abspeichern!
         const aiMsg = {
           chat_id: currentChatId,
           user_id: currentUser.id,
@@ -630,8 +646,9 @@
 
         renderMessage(aiMsg);
 
-      }schreiben / catch (err) {
-        document.getElementById(loadingId)?.remove();
+      } catch (err) {
+        const loadingElem = document.getElementById(loadingId);
+        if (loadingElem) loadingElem.remove();
         console.error(err);
         renderMessage({ role: "assistant", content: "Verbindungsfehler zum Backend, Bruder." });
       }
@@ -639,6 +656,7 @@
 
     function renderLoading(id) {
       const container = document.getElementById("messages-container");
+      if (!container) return;
       const div = document.createElement("div");
       div.id = id;
       div.className = "text-xs text-[var(--text-sub)] animate-pulse pl-2";
@@ -649,6 +667,7 @@
 
     function renderMessage(msg) {
       const container = document.getElementById("messages-container");
+      if (!container) return;
       const wrapper = document.createElement("div");
       wrapper.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"}`;
 
