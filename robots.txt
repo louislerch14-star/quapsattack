@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /management.html
 
 Sitemap: https://quapsattack.airbusfan.de/sitemap.xml
