@@ -225,7 +225,7 @@
     let currentChatId = null;
     let cooldowns = {};
 
-    // Beim Laden prüfen, ob im localStorage schon eine User-E-Mail hinterlegt ist
+    // Beim Laden prüfen, ob im localStorage schon eine E-Mail hinterlegt ist
     window.addEventListener("DOMContentLoaded", () => {
       const savedEmail = localStorage.getItem("quapssi_user");
       if (savedEmail) {
@@ -263,10 +263,24 @@
 
     async function initApp(user) {
       currentUser = user;
-      document.getElementById("auth-screen").classList.add("hidden");
-      document.getElementById("user-email-display").textContent = user.email;
-      await loadCooldowns();
-      await loadChats();
+      
+      // Overlay garantiert ausblenden
+      const authScreen = document.getElementById("auth-screen");
+      if (authScreen) {
+        authScreen.style.display = "none";
+      }
+      
+      const emailDisplay = document.getElementById("user-email-display");
+      if (emailDisplay) {
+        emailDisplay.textContent = user.email;
+      }
+
+      try {
+        await loadCooldowns();
+        await loadChats();
+      } catch (err) {
+        console.log("Fehler beim Laden der Cloud-Daten:", err);
+      }
     }
 
     async function loadCooldowns() {
