@@ -329,7 +329,7 @@
   </main>
 
 <script>
-    // === SUPABASE DATEN (Korrektes Token) ===
+    // === SUPABASE DATEN ===
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -441,7 +441,6 @@
     }
 
     function checkSelectedModelStatus() {
-      // Cooldown-Check komplett entfernt, damit alle Modelle immer frei sind!
       const banner = document.getElementById("cooldown-banner");
       const sendBtn = document.getElementById("send-btn");
       const input = document.getElementById("prompt-input");
@@ -551,28 +550,41 @@
       const model = selectedModelValue;
       input.value = "";
 
+      // 1. Chat erstellen, falls noch keiner aktiv ist
       if (!currentChatId) {
-        const { data } = await sb.from("chats").insert({
+        const { data: newChat, error: chatErr } = await sb.from("chats").insert({
           user_id: currentUser.id,
           title: text.slice(0, 30),
           model: model
         }).select().single();
-        if (data) currentChatId = data.id;
+        
+        if (chatErr) {
+          console.error("Fehler beim Erstellen des Chats:", chatErr.message);
+          return;
+        }
+        if (newChat) currentChatId = newChat.id;
         await loadChats();
       }
 
+      // 2. User-Nachricht in DB speichern
       const userMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "user", content: text };
-      await sb.from("messages").insert(userMsg);
+      const { error: userMsgErr } = await sb.from("messages").insert(userMsg);
+      if (userMsgErr) {
+        console.error("Fehler beim Speichern der User-Nachricht:", userMsgErr.message);
+      }
       renderMessage(userMsg);
 
+      // 3. Bild-Generator Sonderfall
       if (model === "image-flux") {
         const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(text)}?width=1024&height=1024&nologo=true&seed=${Date.now()}`;
         const aiMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "assistant", content: `Hier ist dein Bild zu: **${text}**`, image_url: imageUrl };
+        
         await sb.from("messages").insert(aiMsg);
         renderMessage(aiMsg);
         return;
       }
 
+      // 4. KI-Antwort über Edge Function holen
       const loadingId = "loading-" + Date.now();
       renderLoading(loadingId);
 
@@ -583,12 +595,13 @@
 
         document.getElementById(loadingId)?.remove();
 
-        if (error || data?.rate_limited) {
-          renderMessage({ role: "assistant", content: `⚠️ Fehler oder Rate-Limit vom Modell, Bruder. Probier's gleich noch mal!` });
+        if (error) {
+          console.error("Edge Function Fehler:", error);
+          renderMessage({ role: "assistant", content: `⚠️ Fehler bei der Verbindung zur KI, Bruder.` });
           return;
         }
 
-        let replyText = data.reply || "Keine Antwort.";
+        let replyText = data?.reply || "Keine Antwort erhalten.";
         let pdfPayload = null;
 
         const pdfMatch = replyText.match(/```pdf-json\s*([\s\S]*?)```/);
@@ -599,18 +612,26 @@
           } catch (err) {}
         }
 
+        // 5. WICHTIG: Die fertige AI-Antwort sauber in der Datenbank abspeichern!
         const aiMsg = {
           chat_id: currentChatId,
           user_id: currentUser.id,
           role: "assistant",
           content: replyText,
+          image_url: null,
           pdf_data: pdfPayload
         };
-        await sb.from("messages").insert(aiMsg);
+
+        const { error: aiMsgErr } = await sb.from("messages").insert(aiMsg);
+        if (aiMsgErr) {
+          console.error("Fehler beim Speichern der AI-Antwort in DB:", aiMsgErr.message);
+        }
+
         renderMessage(aiMsg);
 
-      } catch (err) {
+      }schreiben / catch (err) {
         document.getElementById(loadingId)?.remove();
+        console.error(err);
         renderMessage({ role: "assistant", content: "Verbindungsfehler zum Backend, Bruder." });
       }
     }
