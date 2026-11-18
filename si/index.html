@@ -332,7 +332,7 @@
 <script>
     // === SUPABASE DATEN ===
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6InF1ZXN0IiwiYXAiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentUser = null;
@@ -587,10 +587,7 @@
       }
 
       const userMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "user", content: text };
-      const { error: userMsgErr } = await sb.from("messages").insert(userMsg);
-      if (userMsgErr) {
-        console.error("Fehler beim Speichern der User-Nachricht:", userMsgErr.message);
-      }
+      await sb.from("messages").insert(userMsg);
       renderMessage(userMsg);
 
       if (model === "image-flux") {
@@ -614,8 +611,8 @@
         if (loadingElem) loadingElem.remove();
 
         if (error) {
-          console.error("Edge Function Fehler:", error);
-          renderMessage({ role: "assistant", content: `⚠️ Fehler bei der Verbindung zur KI, Bruder.` });
+          console.error("Edge Function Invoke Error:", error);
+          renderMessage({ role: "assistant", content: `⚠️ Edge Function Fehler: ${error.message || JSON.stringify(error)}` });
           return;
         }
 
@@ -649,8 +646,8 @@
       } catch (err) {
         const loadingElem = document.getElementById(loadingId);
         if (loadingElem) loadingElem.remove();
-        console.error(err);
-        renderMessage({ role: "assistant", content: "Verbindungsfehler zum Backend, Bruder." });
+        console.error("Catch Exception:", err);
+        renderMessage({ role: "assistant", content: `⚠️ Verbindungsfehler: ${err.message}` });
       }
     }
 
