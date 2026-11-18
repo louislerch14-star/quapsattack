@@ -328,7 +328,7 @@
     </div>
   </main>
 
-  <script>
+<script>
     // === SUPABASE DATEN (Korrektes Token) ===
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
@@ -336,7 +336,6 @@
 
     let currentUser = null;
     let currentChatId = null;
-    let cooldowns = {};
     let selectedModelValue = "gemini-2.5-flash";
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -435,42 +434,23 @@
       document.getElementById("auth-screen").style.display = "none";
       document.getElementById("user-email-display").textContent = user.email;
       try {
-        await loadCooldowns();
         await loadChats();
       } catch (err) {
         console.log("Fehler beim Init:", err);
       }
     }
 
-    async function loadCooldowns() {
-      const { data } = await sb.from("model_cooldowns").select("*");
-      cooldowns = {};
-      if (data) {
-        data.forEach(row => {
-          if (row.locked_until && new Date(row.locked_until) > new Date()) {
-            cooldowns[row.model_id] = row.locked_until;
-          }
-        });
-      }
-      checkSelectedModelStatus();
-    }
-
     function checkSelectedModelStatus() {
-      const model = selectedModelValue;
+      // Cooldown-Check komplett entfernt, damit alle Modelle immer frei sind!
       const banner = document.getElementById("cooldown-banner");
       const sendBtn = document.getElementById("send-btn");
       const input = document.getElementById("prompt-input");
 
-      if (cooldowns[model] && new Date(cooldowns[model]) > new Date()) {
-        const timeStr = new Date(cooldowns[model]).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
-        banner.textContent = `Tokens leer! Ab ${timeStr} Uhr wieder da.`;
-        banner.classList.remove("hidden");
-        sendBtn.disabled = true;
-        input.disabled = true;
-      } else {
-        banner.classList.add("hidden");
-        sendBtn.disabled = false;
+      if (banner) banner.classList.add("hidden");
+      if (sendBtn) sendBtn.disabled = false;
+      if (input) {
         input.disabled = false;
+        input.placeholder = "Nachricht an QuapsSI schreiben...";
       }
     }
 
@@ -604,11 +584,7 @@
         document.getElementById(loadingId)?.remove();
 
         if (error || data?.rate_limited) {
-          const resetTime = data?.locked_until || new Date(Date.now() + 60 * 60 * 1000).toISOString();
-          cooldowns[model] = resetTime;
-          checkSelectedModelStatus();
-          const timeStr = new Date(resetTime).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
-          renderMessage({ role: "assistant", content: `⚠️ Bruder, Tokens für **${model}** leer! Erst ab **${timeStr} Uhr** wieder da.` });
+          renderMessage({ role: "assistant", content: `⚠️ Fehler oder Rate-Limit vom Modell, Bruder. Probier's gleich noch mal!` });
           return;
         }
 
