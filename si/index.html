@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QuapsSI — AI Workspace</title>
-  <!-- Favicon Integration -->
+  <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/unnamed.jpg" />
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -255,7 +255,7 @@
     </div>
   </div>
 
-  <!-- SIDEBAR (GEMINI STYLE) -->
+  <!-- SIDEBAR -->
   <aside id="sidebar">
     <div class="p-4 flex items-center justify-between border-b border-[var(--glass-border)]">
       <div class="flex items-center gap-3">
@@ -275,9 +275,7 @@
 
     <div class="px-4 pb-2 text-[10px] font-semibold text-[var(--text-sub)] tracking-wider uppercase">Deine Chats</div>
     
-    <div id="chat-list" class="flex-1 overflow-y-auto px-3 space-y-1 pb-4">
-      <!-- Chats werden hier geladen -->
-    </div>
+    <div id="chat-list" class="flex-1 overflow-y-auto px-3 space-y-1 pb-4"></div>
 
     <div class="p-4 border-t border-[var(--glass-border)] flex items-center justify-between text-xs text-[var(--text-sub)]">
       <span id="user-email-display" class="truncate max-w-[140px]"></span>
@@ -287,7 +285,6 @@
 
   <!-- MAIN CHAT AREA -->
   <main id="main-content">
-    <!-- TOP BAR -->
     <header class="h-16 glass-header px-4 md:px-6 flex items-center justify-between z-30">
       <div class="flex items-center gap-3">
         <button onclick="toggleSidebar()" class="p-2 rounded-xl hover:bg-white/10 text-[var(--text-sub)] hover:text-white transition">
@@ -308,10 +305,7 @@
             <div class="dropdown-item" onclick="selectModel('image-flux', 'Bild-Generator (FLUX Free)')">Bild-Generator (FLUX Free)</div>
           </div>
         </div>
-        <!-- END CUSTOM DROPDOWN -->
-
       </div>
-      <div id="cooldown-banner" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-xl font-medium"></div>
     </header>
 
     <!-- MESSAGES -->
@@ -332,10 +326,14 @@
   </main>
 
   <script>
-    // === SUPABASE DATEN ===
+    // === SUPABASE & API KEYS ===
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Trage hier deine Keys direkt ein, da wir keine Edge Function nutzen:
+    const GEMINI_KEY = "fb3a7552ca1e3124282d3f827d94c4d726e070f25d7cd4ddcbcd3d315662afd8"; 
+    const OPENROUTER_KEY = "558dc8ee7df0b2310f490a4ae75214e9773cf173986566dce45af545ad51f8ee";
 
     let currentUser = null;
     let currentChatId = null;
@@ -385,7 +383,6 @@
       });
 
       closeDropdown();
-      checkSelectedModelStatus();
     }
 
     function toggleSidebar() {
@@ -449,26 +446,10 @@
       }
     }
 
-    function checkSelectedModelStatus() {
-      const banner = document.getElementById("cooldown-banner");
-      const sendBtn = document.getElementById("send-btn");
-      const input = document.getElementById("prompt-input");
-
-      if (banner) banner.classList.add("hidden");
-      if (sendBtn) sendBtn.disabled = false;
-      if (input) {
-        input.disabled = false;
-        input.placeholder = "Nachricht an QuapsSI schreiben...";
-      }
-    }
-
     async function loadChats() {
       if (!currentUser) return;
       const { data, error } = await sb.from("chats").select("*").eq("user_id", currentUser.id).order("created_at", { ascending: false });
-      if (error) {
-        console.error("Ladefehler Chats:", error.message);
-        return;
-      }
+      if (error) return;
       const list = document.getElementById("chat-list");
       if (!list) return;
       list.innerHTML = "";
@@ -492,7 +473,6 @@
         const delBtn = document.createElement("button");
         delBtn.className = "opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 p-1 transition";
         delBtn.innerHTML = "🗑️";
-        delBtn.title = "Chat löschen";
         delBtn.onclick = (e) => {
           e.stopPropagation();
           deleteChat(chat.id);
@@ -515,9 +495,7 @@
       if (currentChatId === chatId) {
         currentChatId = null;
         const msgContainer = document.getElementById("messages-container");
-        if (msgContainer) {
-          msgContainer.innerHTML = `<div class="text-center text-[var(--text-sub)] text-sm mt-32">Chat gelöscht, wähle einen neuen aus!</div>`;
-        }
+        if (msgContainer) msgContainer.innerHTML = `<div class="text-center text-[var(--text-sub)] text-sm mt-32">Chat gelöscht!</div>`;
       }
       await loadChats();
     }
@@ -553,7 +531,6 @@
           }
         });
       }
-      checkSelectedModelStatus();
       await loadChats();
 
       const { data } = await sb.from("messages").select("*").eq("chat_id", chatId).order("created_at", { ascending: true });
@@ -563,6 +540,7 @@
       if (data) data.forEach(msg => renderMessage(msg));
     }
 
+    // DIREKTER API-AUFRUF AUS DEM FRONTEND (OHNE EDGE FUNCTION!)
     async function sendMessage(e) {
       e.preventDefault();
       const input = document.getElementById("prompt-input");
@@ -580,10 +558,7 @@
           model: model
         }).select().single();
         
-        if (chatErr) {
-          console.error("Fehler beim Erstellen des Chats:", chatErr.message);
-          return;
-        }
+        if (chatErr) return;
         if (newChat) currentChatId = newChat.id;
         await loadChats();
       }
@@ -595,7 +570,6 @@
       if (model === "image-flux") {
         const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(text)}?width=1024&height=1024&nologo=true&seed=${Date.now()}`;
         const aiMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "assistant", content: `Hier ist dein Bild zu: **${text}**`, image_url: imageUrl };
-        
         await sb.from("messages").insert(aiMsg);
         renderMessage(aiMsg);
         return;
@@ -605,22 +579,39 @@
       renderLoading(loadingId);
 
       try {
-        const { data, error } = await sb.functions.invoke("quapssi-chat", {
-          body: { prompt: text, model: model }
-        });
+        let replyText = "";
 
-        const loadingElem = document.getElementById(loadingId);
-        if (loadingElem) loadingElem.remove();
-
-        if (error) {
-          console.error("Edge Function Invoke Error:", error);
-          renderMessage({ role: "assistant", content: `⚠️ Edge Function Fehler: ${error.message || JSON.stringify(error)}` });
-          return;
+        if (model === "gemini-2.5-flash") {
+          // Direkter Google Gemini API Call
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents: [{ parts: [{ text: text }] }] })
+          });
+          const json = await res.json();
+          replyText = json.candidates?.[0]?.content?.parts?.[0]?.text || "Keine Antwort von Gemini.";
+        } else {
+          // Direkter OpenRouter API Call für Llama, DeepSeek, Qwen
+          const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${OPENROUTER_KEY}`,
+              "Content-Type": "application/json",
+              "HTTP-Referer": "https://quapsattack.airbusfan.de",
+              "X-Title": "QuapsSI"
+            },
+            body: JSON.stringify({
+              model: model,
+              messages: [{ role: "user", content: text }]
+            })
+          });
+          const json = await res.json();
+          replyText = json.choices?.[0]?.message?.content || "Keine Antwort vom OpenRouter Modell.";
         }
 
-        let replyText = data?.reply || "Keine Antwort erhalten.";
-        let pdfPayload = null;
+        document.getElementById(loadingId)?.remove();
 
+        let pdfPayload = null;
         const pdfMatch = replyText.match(/```pdf-json\s*([\s\S]*?)```/);
         if (pdfMatch) {
           try {
@@ -638,18 +629,12 @@
           pdf_data: pdfPayload
         };
 
-        const { error: aiMsgErr } = await sb.from("messages").insert(aiMsg);
-        if (aiMsgErr) {
-          console.error("Fehler beim Speichern der AI-Antwort in DB:", aiMsgErr.message);
-        }
-
+        await sb.from("messages").insert(aiMsg);
         renderMessage(aiMsg);
 
       } catch (err) {
-        const loadingElem = document.getElementById(loadingId);
-        if (loadingElem) loadingElem.remove();
-        console.error("Catch Exception:", err);
-        renderMessage({ role: "assistant", content: `⚠️ Verbindungsfehler: ${err.message}` });
+        document.getElementById(loadingId)?.remove();
+        renderMessage({ role: "assistant", content: `⚠️ Fehler beim API-Call: ${err.message}` });
       }
     }
 
