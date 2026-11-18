@@ -220,7 +220,7 @@
     </div>
   </main>
 
-  <script>
+<script>
     // === HIER DEINE ECHTEN SUPABASE DATEN EINTRAGEN ===
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
@@ -236,19 +236,27 @@
     });
 
     async function handleLogin() {
-      const email = document.getElementById("auth-email").value;
+      const email = document.getElementById("auth-email").value.trim();
       const password = document.getElementById("auth-password").value;
+      if (!email || !password) return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
+
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) return showAuthError(error.message);
+      if (error) return showAuthError("Login fehlgeschlagen: " + error.message);
       initApp(data.user);
     }
 
     async function handleSignup() {
-      const email = document.getElementById("auth-email").value;
+      const email = document.getElementById("auth-email").value.trim();
       const password = document.getElementById("auth-password").value;
+      if (!email || !password) return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
+
       const { data, error } = await sb.auth.signUp({ email, password });
-      if (error) return showAuthError(error.message);
-      showAuthError("Account erstellt! Du kannst dich jetzt einloggen.");
+      if (error) return showAuthError("Registrierung fehlgeschlagen: " + error.message);
+      if (data && data.session) {
+        initApp(data.user);
+      } else {
+        showAuthError("Account erstellt! Du kannst dich jetzt einloggen.");
+      }
     }
 
     async function handleLogout() {
