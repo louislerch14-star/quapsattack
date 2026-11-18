@@ -2,9 +2,11 @@
 <html lang="de" class="dark">
 <head>
   <meta charset="UTF-8" />
-   <link rel="icon" type="image/png" href="unnamed.jpg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QuapsSI — AI Workspace</title>
+  <!-- Favicon Integration -->
+  <link rel="icon" type="image/jpeg" href="/unnamed.jpg" />
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -329,10 +331,10 @@
     </div>
   </main>
 
-<script>
+  <script>
     // === SUPABASE DATEN ===
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6InF1ZXN0IiwiYXAiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentUser = null;
