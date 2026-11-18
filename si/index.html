@@ -230,32 +230,51 @@
     let currentChatId = null;
     let cooldowns = {};
 
+    // Prüfen, ob der Nutzer schon eingeloggt ist (egal von welchem Gerät)
     window.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await sb.auth.getSession();
-      if (session) initApp(session.user);
+      if (session) {
+        initApp(session.user);
+      }
     });
 
     async function handleLogin() {
       const email = document.getElementById("auth-email").value.trim();
       const password = document.getElementById("auth-password").value;
-      if (!email || !password) return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
+      
+      if (!email || !password) {
+        return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
+      }
 
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) return showAuthError("Login fehlgeschlagen: " + error.message);
-      initApp(data.user);
+      
+      if (error) {
+        return showAuthError("Login fehlgeschlagen: " + error.message);
+      }
+      
+      if (data && data.user) {
+        initApp(data.user);
+      }
     }
 
     async function handleSignup() {
       const email = document.getElementById("auth-email").value.trim();
       const password = document.getElementById("auth-password").value;
-      if (!email || !password) return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
+      
+      if (!email || !password) {
+        return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
+      }
 
       const { data, error } = await sb.auth.signUp({ email, password });
-      if (error) return showAuthError("Registrierung fehlgeschlagen: " + error.message);
+      
+      if (error) {
+        return showAuthError("Registrierung fehlgeschlagen: " + error.message);
+      }
+      
       if (data && data.session) {
         initApp(data.user);
       } else {
-        showAuthError("Account erstellt! Du kannst dich jetzt einloggen.");
+        showAuthError("Account da! Logg dich jetzt ein.");
       }
     }
 
@@ -312,6 +331,7 @@
       }
     }
 
+    // Chats aus der Cloud laden (global von überall abrufbar)
     async function loadChats() {
       const { data } = await sb.from("chats").select("*").order("created_at", { ascending: false });
       const list = document.getElementById("chat-list");
@@ -435,7 +455,7 @@
       }
     }
 
-    function renderLoading(id) {
+    async function renderLoading(id) {
       const container = document.getElementById("messages-container");
       const div = document.createElement("div");
       div.id = id;
@@ -445,7 +465,7 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    function renderMessage(msg) {
+    async function renderMessage(msg) {
       const container = document.getElementById("messages-container");
       const wrapper = document.createElement("div");
       wrapper.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"}`;
