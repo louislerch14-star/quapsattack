@@ -9,63 +9,188 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
+    :root {
+        --bg-main: #0a0a12;
+        --glass-bg: rgba(20, 20, 35, 0.85);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --demo-box-bg: rgba(255, 255, 255, 0.05);
+        --demo-box-border: rgba(255, 255, 255, 0.1);
+        --demo-btn-bg: rgba(255, 255, 255, 0.2);
+        --demo-btn-border: rgba(255, 255, 255, 0.4);
+        --accent: #ef4444;
+        --accent-glow: rgba(239, 68, 68, 0.4);
+        --text-main: #ffffff;
+        --text-sub: rgba(255, 255, 255, 0.7);
+        --success: #10b981;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-main);
+        background-image: 
+            radial-gradient(circle at 15% 20%, rgba(239, 68, 68, 0.15) 0%, transparent 45%),
+            radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 45%);
+        background-attachment: fixed;
+        color: var(--text-main);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
     pre { background: #0f172a; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0; border: 1px solid #1e293b; }
     code { font-family: monospace; font-size: 0.9em; }
+
+    /* Auth Overlay */
+    #auth-screen {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-main);
+        background-image: inherit;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .auth-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 20px;
+        padding: 35px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    .glass-input {
+        width: 100%;
+        background: var(--demo-box-bg);
+        border: 1px solid var(--demo-box-border);
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: #fff;
+        font-size: 0.9rem;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+    .glass-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .nav-btn {
+        background: var(--demo-btn-bg);
+        border: 1px solid var(--demo-btn-border);
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        backdrop-filter: blur(8px);
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.35);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        box-shadow: 0 4px 25px var(--accent-glow);
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+    }
+    .btn-primary:hover {
+        background: #dc2626;
+        box-shadow: 0 4px 35px rgba(239, 68, 68, 0.6);
+        transform: translateY(-2px);
+    }
+
+    .glass-sidebar {
+        background: var(--glass-bg);
+        border-right: 1px solid var(--glass-border);
+        backdrop-filter: blur(16px);
+    }
+
+    .glass-header {
+        background: var(--glass-bg);
+        border-bottom: 1px solid var(--glass-border);
+        backdrop-filter: blur(16px);
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 h-screen flex overflow-hidden font-sans">
+<body class="flex">
 
   <!-- AUTH OVERLAY -->
-  <div id="auth-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 w-full max-w-md shadow-2xl">
-      <div class="mb-6">
-        <h1 class="text-2xl font-bold tracking-tight text-white">QuapsSI</h1>
-        <p class="text-sm text-slate-400 mt-1">Melde dich an, um deine Chats & KI-Modelle zu nutzen.</p>
+  <div id="auth-screen">
+    <div class="auth-card">
+      <div class="mb-6 text-center">
+        <h1 class="text-3xl font-black tracking-tight text-white mb-2">Quaps<span>SI</span></h1>
+        <p class="text-sm text-[var(--text-sub)]">Dein privates AI-Workspace für dich & deine Jungs.</p>
       </div>
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">E-Mail</label>
-          <input id="auth-email" type="email" placeholder="name@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+          <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">E-Mail</label>
+          <input id="auth-email" type="email" placeholder="name@example.com" class="glass-input" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Passwort</label>
-          <input id="auth-password" type="password" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+          <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Passwort</label>
+          <input id="auth-password" type="password" placeholder="••••••••" class="glass-input" />
         </div>
         <p id="auth-error" class="text-xs text-red-400 hidden"></p>
         <div class="flex gap-3 pt-2">
-          <button onclick="handleLogin()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-lg text-sm transition">Anmelden</button>
-          <button onclick="handleSignup()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium py-2 rounded-lg text-sm transition">Registrieren</button>
+          <button onclick="handleLogin()" class="btn-primary">Anmelden</button>
+          <button onclick="handleSignup()" class="nav-btn flex-1 text-center py-3">Registrieren</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- SIDEBAR -->
-  <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0">
-    <div class="p-4 flex flex-col h-full overflow-hidden">
-      <div class="flex items-center justify-between mb-4">
-        <span class="font-bold text-lg tracking-tight">QuapsSI</span>
-        <button onclick="createNewChat()" class="bg-blue-600 hover:bg-blue-500 text-xs font-medium px-3 py-1.5 rounded-lg transition">+ Neuer Chat</button>
+  <aside class="w-72 glass-sidebar flex flex-col justify-between shrink-0 z-10">
+    <div class="p-5 flex flex-col h-full overflow-hidden">
+      <div class="flex items-center justify-between mb-6">
+        <span class="font-black text-xl tracking-tight">Quaps<span style="color:var(--accent);">SI</span></span>
+        <button onclick="createNewChat()" class="nav-btn text-xs py-2">+ Neuer Chat</button>
       </div>
-      <div id="chat-list" class="flex-1 overflow-y-auto space-y-1 pr-1">
-        <!-- Chats werden hier geladen -->
+      <div id="chat-list" class="flex-1 overflow-y-auto space-y-2 pr-1">
+        <!-- Chats werden hier dynamisch geladen -->
       </div>
-      <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+      <div class="pt-4 border-t border-[var(--demo-box-border)] flex items-center justify-between text-xs text-[var(--text-sub)]">
         <span id="user-email-display" class="truncate max-w-[150px]"></span>
-        <button onclick="handleLogout()" class="text-red-400 hover:text-red-300">Logout</button>
+        <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 font-semibold">Logout</button>
       </div>
     </div>
   </aside>
 
   <!-- MAIN CHAT AREA -->
-  <main class="flex-1 flex flex-col h-full bg-slate-950">
+  <main class="flex-1 flex flex-col h-full bg-transparent">
     <!-- TOP BAR -->
-    <header class="h-14 border-b border-slate-800 px-6 flex items-center justify-between bg-slate-900/50">
+    <header class="h-16 glass-header px-6 flex items-center justify-between z-10">
       <div class="flex items-center gap-3">
-        <label class="text-xs text-slate-400">Modell:</label>
-        <select id="model-select" onchange="checkSelectedModelStatus()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+        <label class="text-xs text-[var(--text-sub)] font-semibold">Modell:</label>
+        <select id="model-select" onchange="checkSelectedModelStatus()" class="glass-input py-1.5 px-3 text-xs w-auto">
           <option value="gemini-2.5-flash">Gemini 2.5 Flash (Text, Code, PDF)</option>
           <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B Free (OpenRouter)</option>
           <option value="deepseek/deepseek-r1:free">DeepSeek R1 Free (OpenRouter)</option>
@@ -73,38 +198,38 @@
           <option value="image-flux">Bild-Generator (FLUX Free)</option>
         </select>
       </div>
-      <div id="cooldown-banner" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1 rounded-full">
+      <div id="cooldown-banner" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-xl font-medium">
         <!-- Cooldown Info -->
       </div>
     </header>
 
     <!-- MESSAGES -->
     <div id="messages-container" class="flex-1 overflow-y-auto p-6 space-y-4">
-      <div class="text-center text-slate-500 text-sm mt-20">
-        Wähle ein Modell und schreib los. Tipp: Schreib <b>"Erstell ein PDF über..."</b> oder wähle den <b>Bild-Generator</b>!
+      <div class="text-center text-[var(--text-sub)] text-sm mt-32">
+        Wähle dein Modell und schreib los, Bruder! 💀<br>
+        Tipp: Schreib <b>"Erstell ein PDF über..."</b> oder wähle den <b>Bild-Generator</b>!
       </div>
     </div>
 
     <!-- INPUT -->
-    <div class="p-4 border-t border-slate-800 bg-slate-900/40">
+    <div class="p-5 glass-header">
       <form onsubmit="sendMessage(event)" class="max-w-4xl mx-auto flex gap-3">
-        <input id="prompt-input" type="text" placeholder="Nachricht an QuapsSI schreiben..." autocomplete="off" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
-        <button id="send-btn" type="submit" class="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium px-6 py-3 rounded-xl text-sm transition">Senden</button>
+        <input id="prompt-input" type="text" placeholder="Nachricht an QuapsSI schreiben..." autocomplete="off" class="glass-input flex-1 py-3 px-4" />
+        <button id="send-btn" type="submit" class="btn-primary w-auto px-6 py-3">Senden</button>
       </form>
     </div>
   </main>
 
   <script>
-    // === HIER DEINE SUPABASE DATEN EINTRAGEN ===
-    const SUPABASE_URL = "https://DEIN-PROJEKT.supabase.co";
-    const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY";
+    // === HIER DEINE ECHTEN SUPABASE DATEN EINTRAGEN ===
+    const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentUser = null;
     let currentChatId = null;
     let cooldowns = {};
 
-    // INIT
     window.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await sb.auth.getSession();
       if (session) initApp(session.user);
@@ -123,7 +248,7 @@
       const password = document.getElementById("auth-password").value;
       const { data, error } = await sb.auth.signUp({ email, password });
       if (error) return showAuthError(error.message);
-      showAuthError("Account erstellt! Falls nötig E-Mail bestätigen oder direkt einloggen.");
+      showAuthError("Account erstellt! Du kannst dich jetzt einloggen.");
     }
 
     async function handleLogout() {
@@ -145,7 +270,6 @@
       await loadChats();
     }
 
-    // COOLDOWN CHECK (ABGELAUFENE TOKENS)
     async function loadCooldowns() {
       const { data } = await sb.from("model_cooldowns").select("*");
       cooldowns = {};
@@ -167,7 +291,7 @@
 
       if (cooldowns[model] && new Date(cooldowns[model]) > new Date()) {
         const timeStr = new Date(cooldowns[model]).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
-        banner.textContent = `Tokens abgelaufen! Erst ab ${timeStr} Uhr wieder nutzbar.`;
+        banner.textContent = `Tokens leer! Erst ab ${timeStr} Uhr wieder da.`;
         banner.classList.remove("hidden");
         sendBtn.disabled = true;
         input.disabled = true;
@@ -180,7 +304,6 @@
       }
     }
 
-    // CHATS LADEN & ERSTELLEN
     async function loadChats() {
       const { data } = await sb.from("chats").select("*").order("created_at", { ascending: false });
       const list = document.getElementById("chat-list");
@@ -189,7 +312,7 @@
 
       data.forEach(chat => {
         const btn = document.createElement("button");
-        btn.className = `w-full text-left px-3 py-2 rounded-lg text-sm truncate transition ${chat.id === currentChatId ? "bg-slate-800 text-white" : "text-slate-400 hover:bg-slate-800/50"}`;
+        btn.className = `w-full text-left px-3 py-2.5 rounded-xl text-sm truncate transition font-medium ${chat.id === currentChatId ? "bg-white/10 text-white border border-white/20" : "text-[var(--text-sub)] hover:bg-white/5 hover:text-white"}`;
         btn.textContent = chat.title;
         btn.onclick = () => selectChat(chat.id, chat.model);
         list.appendChild(btn);
@@ -227,7 +350,6 @@
       if (data) data.forEach(msg => renderMessage(msg));
     }
 
-    // NACHRICHT SENDEN
     async function sendMessage(e) {
       e.preventDefault();
       const input = document.getElementById("prompt-input");
@@ -247,21 +369,18 @@
         await loadChats();
       }
 
-      // User Nachricht speichern & anzeigen
       const userMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "user", content: text };
       await sb.from("messages").insert(userMsg);
       renderMessage(userMsg);
 
-      // BILD-GENERIERUNG (FLUX FREE)
       if (model === "image-flux") {
         const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(text)}?width=1024&height=1024&nologo=true&seed=${Date.now()}`;
-        const aiMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "assistant", content: `Hier ist dein generiertes Bild zu: **${text}**`, image_url: imageUrl };
+        const aiMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "assistant", content: `Hier ist dein Bild zu: **${text}**`, image_url: imageUrl };
         await sb.from("messages").insert(aiMsg);
         renderMessage(aiMsg);
         return;
       }
 
-      // TEXT / CODE / PDF ÜBER SUPABASE EDGE FUNCTION
       const loadingId = "loading-" + Date.now();
       renderLoading(loadingId);
 
@@ -277,14 +396,13 @@
           cooldowns[model] = resetTime;
           checkSelectedModelStatus();
           const timeStr = new Date(resetTime).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
-          renderMessage({ role: "assistant", content: `⚠️ Bruder, die Tokens für **${model}** sind abgelaufen! Erst ab **${timeStr} Uhr** wieder nutzbar.` });
+          renderMessage({ role: "assistant", content: `⚠️ Bruder, Tokens für **${model}** leer! Erst ab **${timeStr} Uhr** wieder da.` });
           return;
         }
 
-        let replyText = data.reply || "Keine Antwort erhalten.";
+        let replyText = data.reply || "Keine Antwort.";
         let pdfPayload = null;
 
-        // Prüfen, ob KI ein PDF-Objekt mitgeschickt hat
         const pdfMatch = replyText.match(/```pdf-json\s*([\s\S]*?)```/);
         if (pdfMatch) {
           try {
@@ -305,7 +423,7 @@
 
       } catch (err) {
         document.getElementById(loadingId)?.remove();
-        renderMessage({ role: "assistant", content: "Fehler bei der Verbindung zum Backend." });
+        renderMessage({ role: "assistant", content: "Verbindungsfehler zum Backend, Bruder." });
       }
     }
 
@@ -313,7 +431,7 @@
       const container = document.getElementById("messages-container");
       const div = document.createElement("div");
       div.id = id;
-      div.className = "text-xs text-slate-400 animate-pulse";
+      div.className = "text-xs text-[var(--text-sub)] animate-pulse pl-2";
       div.textContent = "QuapsSI denkt nach...";
       container.appendChild(div);
       container.scrollTop = container.scrollHeight;
@@ -326,7 +444,7 @@
 
       const bubble = document.createElement("div");
       bubble.className = `max-w-2xl rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-        msg.role === "user" ? "bg-blue-600 text-white" : "bg-slate-900 border border-slate-800 text-slate-100"
+        msg.role === "user" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "bg-[var(--glass-bg)] border border-[var(--glass-border)] text-slate-100 backdrop-blur-md"
       }`;
 
       bubble.innerHTML = marked.parse(msg.content || "");
@@ -334,13 +452,13 @@
       if (msg.image_url) {
         const img = document.createElement("img");
         img.src = msg.image_url;
-        img.className = "mt-3 rounded-xl max-h-80 border border-slate-700";
+        img.className = "mt-3 rounded-xl max-h-80 border border-white/10";
         bubble.appendChild(img);
       }
 
       if (msg.pdf_data) {
         const pdfBtn = document.createElement("button");
-        pdfBtn.className = "mt-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-2 transition";
+        pdfBtn.className = "mt-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium px-4 py-2 rounded-xl flex items-center gap-2 transition shadow-lg shadow-emerald-600/20 cursor-pointer";
         pdfBtn.textContent = `📄 PDF herunterladen: ${msg.pdf_data.filename || "Dokument.pdf"}`;
         pdfBtn.onclick = () => downloadGeneratedPDF(msg.pdf_data);
         bubble.appendChild(pdfBtn);
