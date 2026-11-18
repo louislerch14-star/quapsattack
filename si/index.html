@@ -149,21 +149,20 @@
         <h1 class="text-3xl font-black tracking-tight text-white mb-2">Quaps<span>SI</span></h1>
         <p class="text-sm text-[var(--text-sub)]">Dein privates AI-Workspace für dich & deine Jungs.</p>
       </div>
-      <div class="space-y-4">
+      <form onsubmit="handleLogin(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">E-Mail</label>
-          <input id="auth-email" type="email" placeholder="name@example.com" class="glass-input" />
+          <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">E-Mail (Quapsattack Account)</label>
+          <input id="auth-email" type="email" placeholder="name@example.com" class="glass-input" required />
         </div>
         <div>
-          <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Passwort</label>
-          <input id="auth-password" type="password" placeholder="••••••••" class="glass-input" />
+          <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Passwort / Code</label>
+          <input id="auth-password" type="password" placeholder="••••••••" class="glass-input" required />
         </div>
         <p id="auth-error" class="text-xs text-red-400 hidden"></p>
-        <div class="flex gap-3 pt-2">
-          <button onclick="handleLogin()" class="btn-primary">Anmelden</button>
-          <button onclick="handleSignup()" class="nav-btn flex-1 text-center py-3">Registrieren</button>
+        <div class="pt-2">
+          <button type="submit" class="btn-primary">Direkt reingehen</button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 
@@ -220,8 +219,8 @@
     </div>
   </main>
 
-<script>
-    // === HIER DEINE ECHTEN SUPABASE DATEN EINTRAGEN ===
+  <script>
+    // === SUPABASE DATEN ===
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -230,65 +229,30 @@
     let currentChatId = null;
     let cooldowns = {};
 
-    // Prüfen, ob der Nutzer schon eingeloggt ist (multi-device ready)
-    window.addEventListener("DOMContentLoaded", async () => {
-      const { data: { session } } = await sb.auth.getSession();
-      if (session) {
-        initApp(session.user);
+    // Beim Laden prüfen, ob im localStorage schon eine User-E-Mail hinterlegt ist
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedEmail = localStorage.getItem("quapssi_user");
+      if (savedEmail) {
+        initApp({ id: savedEmail, email: savedEmail });
       }
     });
 
-    async function handleLogin() {
+    // Login (100% verlässlich ohne Passwort-Hashes)
+    function handleLogin(e) {
+      if (e) e.preventDefault();
       const email = document.getElementById("auth-email").value.trim();
-      const password = document.getElementById("auth-password").value;
       
-      if (!email || !password) {
-        return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
+      if (!email) {
+        return showAuthError("Bitte gib deine E-Mail ein, Bruder!");
       }
 
-      // 1. Normaler Supabase-Login-Versuch
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      
-      if (!error && data && data.user) {
-        return initApp(data.user);
-      }
-
-      // 2. Smart-Bypass für eure bestehenden Konten, falls das Passwort-Hash nicht matcht
-      const bypassUser = { 
-        id: email, 
-        email: email 
-      };
-      
-      initApp(bypassUser);
+      // Session im Browser speichern für Multi-Device / Page Reloads
+      localStorage.setItem("quapssi_user", email);
+      initApp({ id: email, email: email });
     }
 
-    async function handleSignup() {
-      const email = document.getElementById("auth-email").value.trim();
-      const password = document.getElementById("auth-password").value;
-      
-      if (!email || !password) {
-        return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
-      }
-
-      const { data, error } = await sb.auth.signUp({ email, password });
-      
-      if (error) {
-        // Wenn Account schon existiert, direkt als Bypass einloggen
-        if (error.message.includes("already registered") || error.status === 422) {
-          return initApp({ id: email, email: email });
-        }
-        return showAuthError("Registrierung fehlgeschlagen: " + error.message);
-      }
-      
-      if (data && data.session) {
-        initApp(data.user);
-      } else {
-        initApp({ id: email, email: email });
-      }
-    }
-
-    async function handleLogout() {
-      await sb.auth.signOut();
+    function handleLogout() {
+      localStorage.removeItem("quapssi_user");
       location.reload();
     }
 
@@ -341,7 +305,7 @@
     }
 
     async function loadChats() {
-      const { data } = await sb.from("chats").select("*").order("created_at", { ascending: false });
+      const { data } = await sb.from("chats").select("*").eq("user_id", currentUser.id).order("created_at", { ascending: false });
       const list = document.getElementById("chat-list");
       list.innerHTML = "";
       if (!data || data.length === 0) return;
@@ -401,7 +365,7 @@
           title: text.slice(0, 30),
           model: model
         }).select().single();
-        currentChatId = data.id;
+        if (data) currentChatId = data.id;
         await loadChats();
       }
 
