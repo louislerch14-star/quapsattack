@@ -11,17 +11,14 @@
   <style>
     :root {
         --bg-main: #0a0a12;
-        --glass-bg: rgba(20, 20, 35, 0.85);
-        --glass-border: rgba(255, 255, 255, 0.2);
+        --glass-bg: rgba(20, 20, 35, 0.9);
+        --glass-border: rgba(255, 255, 255, 0.15);
         --demo-box-bg: rgba(255, 255, 255, 0.05);
         --demo-box-border: rgba(255, 255, 255, 0.1);
-        --demo-btn-bg: rgba(255, 255, 255, 0.2);
-        --demo-btn-border: rgba(255, 255, 255, 0.4);
         --accent: #ef4444;
         --accent-glow: rgba(239, 68, 68, 0.4);
         --text-main: #ffffff;
         --text-sub: rgba(255, 255, 255, 0.7);
-        --success: #10b981;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,7 +34,6 @@
         color: var(--text-main);
         height: 100vh;
         display: flex;
-        flex-direction: column;
         overflow: hidden;
     }
 
@@ -52,7 +48,7 @@
         inset: 0;
         background: var(--bg-main);
         background-image: inherit;
-        z-index: 50;
+        z-index: 100;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -63,7 +59,6 @@
         background: var(--glass-bg);
         border: 1px solid var(--glass-border);
         backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
         border-radius: 20px;
         padding: 35px;
         width: 100%;
@@ -85,24 +80,6 @@
     .glass-input:focus {
         border-color: var(--accent);
         box-shadow: 0 0 15px var(--accent-glow);
-    }
-
-    .nav-btn {
-        background: var(--demo-btn-bg);
-        border: 1px solid var(--demo-btn-border);
-        color: #fff;
-        padding: 8px 16px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 600;
-        backdrop-filter: blur(8px);
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
-    .nav-btn:hover {
-        background: rgba(255, 255, 255, 0.35);
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
     }
 
     .btn-primary {
@@ -127,10 +104,55 @@
         transform: translateY(-2px);
     }
 
-    .glass-sidebar {
+    /* Gemini Layout Sidebar & Main */
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 280px;
         background: var(--glass-bg);
         border-right: 1px solid var(--glass-border);
         backdrop-filter: blur(16px);
+        z-index: 40;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        #sidebar {
+            transform: translateX(-100%);
+        }
+        #sidebar.open {
+            transform: translateX(0);
+        }
+    }
+
+    #sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+
+    #main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        margin-left: 280px;
+        transition: margin-left 0.3s ease;
+        width: calc(100% - 280px);
+    }
+
+    @media (max-width: 768px) {
+        #main-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+    }
+
+    #main-content.expanded {
+        margin-left: 0;
+        width: 100%;
     }
 
     .glass-header {
@@ -140,14 +162,15 @@
     }
   </style>
 </head>
-<body class="flex">
+<body>
 
   <!-- AUTH OVERLAY -->
   <div id="auth-screen">
     <div class="auth-card">
-      <div class="mb-6 text-center">
-        <h1 class="text-3xl font-black tracking-tight text-white mb-2">Quaps<span>SI</span></h1>
-        <p class="text-sm text-[var(--text-sub)]">Dein privates AI-Workspace für dich & deine Jungs.</p>
+      <div class="mb-6 text-center flex flex-col items-center">
+        <img src="/unnamed.jpg" alt="Logo" class="w-14 h-14 rounded-2xl object-cover mb-3 border border-white/20 shadow-lg" onerror="this.style.display='none'" />
+        <h1 class="text-3xl font-black tracking-tight text-white mb-1">Quaps<span>SI</span></h1>
+        <p class="text-xs text-[var(--text-sub)]">Dein privates AI-Workspace</p>
       </div>
       <div class="space-y-4">
         <div>
@@ -166,29 +189,44 @@
     </div>
   </div>
 
-  <!-- SIDEBAR -->
-  <aside class="w-72 glass-sidebar flex flex-col justify-between shrink-0 z-10">
-    <div class="p-5 flex flex-col h-full overflow-hidden">
-      <div class="flex items-center justify-between mb-6">
-        <span class="font-black text-xl tracking-tight">Quaps<span style="color:var(--accent);">SI</span></span>
-        <button onclick="createNewChat()" class="nav-btn text-xs py-2">+ Neuer Chat</button>
+  <!-- SIDEBAR (GEMINI STYLE) -->
+  <aside id="sidebar">
+    <div class="p-4 flex items-center justify-between border-b border-[var(--glass-border)]">
+      <div class="flex items-center gap-3">
+        <img src="/unnamed.jpg" alt="Logo" class="w-9 h-9 rounded-xl object-cover border border-white/20" onerror="this.style.display='none'" />
+        <span class="font-black text-lg tracking-tight">Quaps<span style="color:var(--accent);">SI</span></span>
       </div>
-      <div id="chat-list" class="flex-1 overflow-y-auto space-y-2 pr-1">
-        <!-- Chats werden hier dynamisch geladen -->
-      </div>
-      <div class="pt-4 border-t border-[var(--demo-box-border)] flex items-center justify-between text-xs text-[var(--text-sub)]">
-        <span id="user-email-display" class="truncate max-w-[150px]"></span>
-        <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 font-semibold">Logout</button>
-      </div>
+      <button onclick="toggleSidebar()" class="p-2 rounded-xl hover:bg-white/10 text-[var(--text-sub)] hover:text-white transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+    </div>
+
+    <div class="p-4">
+      <button onclick="createNewChat()" class="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs py-3 px-4 rounded-xl flex items-center gap-2 transition shadow-md">
+        <span class="text-base font-bold">+</span> Neuer Chat
+      </button>
+    </div>
+
+    <div class="px-4 pb-2 text-[10px] font-semibold text-[var(--text-sub)] tracking-wider uppercase">Deine Chats</div>
+    
+    <div id="chat-list" class="flex-1 overflow-y-auto px-3 space-y-1 pb-4">
+      <!-- Chats werden hier geladen -->
+    </div>
+
+    <div class="p-4 border-t border-[var(--glass-border)] flex items-center justify-between text-xs text-[var(--text-sub)]">
+      <span id="user-email-display" class="truncate max-w-[140px]"></span>
+      <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 font-semibold">Logout</button>
     </div>
   </aside>
 
   <!-- MAIN CHAT AREA -->
-  <main class="flex-1 flex flex-col h-full bg-transparent">
+  <main id="main-content">
     <!-- TOP BAR -->
-    <header class="h-16 glass-header px-6 flex items-center justify-between z-10">
+    <header class="h-16 glass-header px-4 md:px-6 flex items-center justify-between z-30">
       <div class="flex items-center gap-3">
-        <label class="text-xs text-[var(--text-sub)] font-semibold">Modell:</label>
+        <button onclick="toggleSidebar()" class="p-2 rounded-xl hover:bg-white/10 text-[var(--text-sub)] hover:text-white transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
         <select id="model-select" onchange="checkSelectedModelStatus()" class="glass-input py-1.5 px-3 text-xs w-auto">
           <option value="gemini-2.5-flash">Gemini 2.5 Flash (Text, Code, PDF)</option>
           <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B Free (OpenRouter)</option>
@@ -197,13 +235,11 @@
           <option value="image-flux">Bild-Generator (FLUX Free)</option>
         </select>
       </div>
-      <div id="cooldown-banner" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-xl font-medium">
-        <!-- Cooldown Info -->
-      </div>
+      <div id="cooldown-banner" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-xl font-medium"></div>
     </header>
 
     <!-- MESSAGES -->
-    <div id="messages-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+    <div id="messages-container" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
       <div class="text-center text-[var(--text-sub)] text-sm mt-32">
         Wähle dein Modell und schreib los, Bruder! 💀<br>
         Tipp: Schreib <b>"Erstell ein PDF über..."</b> oder wähle den <b>Bild-Generator</b>!
@@ -211,7 +247,7 @@
     </div>
 
     <!-- INPUT -->
-    <div class="p-5 glass-header">
+    <div class="p-4 md:p-6 glass-header">
       <form onsubmit="sendMessage(event)" class="max-w-4xl mx-auto flex gap-3">
         <input id="prompt-input" type="text" placeholder="Nachricht an QuapsSI schreiben..." autocomplete="off" class="glass-input flex-1 py-3 px-4" />
         <button id="send-btn" type="submit" class="btn-primary w-auto px-6 py-3">Senden</button>
@@ -220,7 +256,6 @@
   </main>
 
   <script>
-    // === SUPABASE DATEN ===
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -236,46 +271,37 @@
       }
     });
 
-    // Strikter Whitelist- & Passwort-Login
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const main = document.getElementById("main-content");
+      if (window.innerWidth <= 768) {
+        sidebar.classList.toggle("open");
+      } else {
+        sidebar.classList.toggle("collapsed");
+        main.classList.toggle("expanded");
+      }
+    }
+
     async function secureLogin() {
       const emailInput = document.getElementById("auth-email");
       const passwordInput = document.getElementById("auth-password");
-      
       if (!emailInput || !passwordInput) return;
       
       const email = emailInput.value.trim().toLowerCase();
       const password = passwordInput.value;
       
-      if (!email || !password) {
-        return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
-      }
+      if (!email || !password) return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
 
-      // 1. Prüfen ob die E-Mail überhaupt in der Whitelist steht
-      const { data: userRecord, error: fetchError } = await sb
-        .from("allowed_users")
-        .select("*")
-        .eq("email", email)
-        .single();
+      const { data: userRecord, error: fetchError } = await sb.from("allowed_users").select("*").eq("email", email).single();
 
-      if (fetchError || !userRecord) {
-        return showAuthError("❌ Diese E-Mail ist nicht freigeschaltet, Bruder!");
-      }
+      if (fetchError || !userRecord) return showAuthError("❌ E-Mail nicht freigeschaltet, Bruder!");
 
-      // 2. Wenn noch kein Passwort hinterlegt ist (beim ersten Mal), setzen wir es
       if (!userRecord.password) {
-        await sb
-          .from("allowed_users")
-          .update({ password: password })
-          .eq("email", email);
-        console.log("Erstes Passwort für", email, "gespeichert.");
+        await sb.from("allowed_users").update({ password: password }).eq("email", email);
       } else {
-        // 3. Wenn eins da ist, muss es exakt übereinstimmen!
-        if (userRecord.password !== password) {
-          return showAuthError("❌ Falsches Passwort, Bruder!");
-        }
+        if (userRecord.password !== password) return showAuthError("❌ Falsches Passwort, Bruder!");
       }
 
-      // Login erfolgreich
       localStorage.setItem("quapssi_user", email);
       initApp({ id: email, email: email });
     }
@@ -293,18 +319,12 @@
 
     async function initApp(user) {
       currentUser = user;
-      const authScreen = document.getElementById("auth-screen");
-      if (authScreen) authScreen.style.display = "none";
-      
-      const emailDisplay = document.getElementById("user-email-display");
-      if (emailDisplay) emailDisplay.textContent = user.email;
-
+      document.getElementById("auth-screen").style.display = "none";
+      document.getElementById("user-email-display").textContent = user.email;
       try {
         await loadCooldowns();
         await loadChats();
-      } catch (err) {
-        console.log("Fehler beim Laden:", err);
-      }
+      } catch (err) {}
     }
 
     async function loadCooldowns() {
@@ -328,16 +348,14 @@
 
       if (cooldowns[model] && new Date(cooldowns[model]) > new Date()) {
         const timeStr = new Date(cooldowns[model]).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
-        banner.textContent = `Tokens leer! Erst ab ${timeStr} Uhr wieder da.`;
+        banner.textContent = `Tokens leer! Ab ${timeStr} Uhr wieder da.`;
         banner.classList.remove("hidden");
         sendBtn.disabled = true;
         input.disabled = true;
-        input.placeholder = `Modell gesperrt bis ${timeStr} Uhr...`;
       } else {
         banner.classList.add("hidden");
         sendBtn.disabled = false;
         input.disabled = false;
-        input.placeholder = "Nachricht an QuapsSI schreiben...";
       }
     }
 
@@ -348,16 +366,45 @@
       if (!data || data.length === 0) return;
 
       data.forEach(chat => {
-        const btn = document.createElement("button");
-        btn.className = `w-full text-left px-3 py-2.5 rounded-xl text-sm truncate transition font-medium ${chat.id === currentChatId ? "bg-white/10 text-white border border-white/20" : "text-[var(--text-sub)] hover:bg-white/5 hover:text-white"}`;
-        btn.textContent = chat.title;
-        btn.onclick = () => selectChat(chat.id, chat.model);
-        list.appendChild(btn);
+        const wrapper = document.createElement("div");
+        wrapper.className = `flex items-center justify-between px-3 py-2 rounded-xl text-sm transition group ${chat.id === currentChatId ? "bg-white/15 text-white border border-white/20" : "text-[var(--text-sub)] hover:bg-white/5 hover:text-white"}`;
+        
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "truncate flex-1 cursor-pointer font-medium";
+        titleSpan.textContent = chat.title;
+        titleSpan.onclick = () => {
+          selectChat(chat.id, chat.model);
+          if (window.innerWidth <= 768) document.getElementById("sidebar").classList.remove("open");
+        };
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 p-1 transition";
+        delBtn.innerHTML = "🗑️";
+        delBtn.title = "Chat löschen";
+        delBtn.onclick = (e) => {
+          e.stopPropagation();
+          deleteChat(chat.id);
+        };
+
+        wrapper.appendChild(titleSpan);
+        wrapper.appendChild(delBtn);
+        list.appendChild(wrapper);
       });
 
       if (!currentChatId && data.length > 0) {
         selectChat(data[0].id, data[0].model);
       }
+    }
+
+    async function deleteChat(chatId) {
+      if (!confirm("Chat wirklich löschen, Bruder?")) return;
+      await sb.from("messages").delete().eq("chat_id", chatId);
+      await sb.from("chats").delete().eq("id", chatId);
+      if (currentChatId === chatId) {
+        currentChatId = null;
+        document.getElementById("messages-container").innerHTML = `<div class="text-center text-[var(--text-sub)] text-sm mt-32">Chat gelöscht, wähle einen neuen aus!</div>`;
+      }
+      await loadChats();
     }
 
     async function createNewChat() {
@@ -372,6 +419,7 @@
         currentChatId = data.id;
         await loadChats();
         document.getElementById("messages-container").innerHTML = "";
+        if (window.innerWidth <= 768) document.getElementById("sidebar").classList.remove("open");
       }
     }
 
