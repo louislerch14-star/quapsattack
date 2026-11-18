@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuapsSI — AI Workspace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    pre { background: #0f172a; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0; border: 1px solid #1e293b; }
+    code { font-family: monospace; font-size: 0.9em; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-screen flex overflow-hidden font-sans">
+
+  <!-- AUTH OVERLAY -->
+  <div id="auth-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold tracking-tight text-white">QuapsSI</h1>
+        <p class="text-sm text-slate-400 mt-1">Melde dich an, um deine Chats & KI-Modelle zu nutzen.</p>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">E-Mail</label>
+          <input id="auth-email" type="email" placeholder="name@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Passwort</label>
+          <input id="auth-password" type="password" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+        <p id="auth-error" class="text-xs text-red-400 hidden"></p>
+        <div class="flex gap-3 pt-2">
+          <button onclick="handleLogin()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-lg text-sm transition">Anmelden</button>
+          <button onclick="handleSignup()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium py-2 rounded-lg text-sm transition">Registrieren</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0">
+    <div class="p-4 flex flex-col h-full overflow-hidden">
+      <div class="flex items-center justify-between mb-4">
+        <span class="font-bold text-lg tracking-tight">QuapsSI</span>
+        <button onclick="createNewChat()" class="bg-blue-600 hover:bg-blue-500 text-xs font-medium px-3 py-1.5 rounded-lg transition">+ Neuer Chat</button>
+      </div>
+      <div id="chat-list" class="flex-1 overflow-y-auto space-y-1 pr-1">
+        <!-- Chats werden hier geladen -->
+      </div>
+      <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+        <span id="user-email-display" class="truncate max-w-[150px]"></span>
+        <button onclick="handleLogout()" class="text-red-400 hover:text-red-300">Logout</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CHAT AREA -->
+  <main class="flex-1 flex flex-col h-full bg-slate-950">
+    <!-- TOP BAR -->
+    <header class="h-14 border-b border-slate-800 px-6 flex items-center justify-between bg-slate-900/50">
+      <div class="flex items-center gap-3">
+        <label class="text-xs text-slate-400">Modell:</label>
+        <select id="model-select" onchange="checkSelectedModelStatus()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+          <option value="gemini-2.5-flash">Gemini 2.5 Flash (Text, Code, PDF)</option>
+          <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B Free (OpenRouter)</option>
+          <option value="deepseek/deepseek-r1:free">DeepSeek R1 Free (OpenRouter)</option>
+          <option value="qwen/qwen-2.5-coder-32b-instruct:free">Qwen 2.5 Coder 32B Free</option>
+          <option value="image-flux">Bild-Generator (FLUX Free)</option>
+        </select>
+      </div>
+      <div id="cooldown-banner" class="hidden text-xs bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1 rounded-full">
+        <!-- Cooldown Info -->
+      </div>
+    </header>
+
+    <!-- MESSAGES -->
+    <div id="messages-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+      <div class="text-center text-slate-500 text-sm mt-20">
+        Wähle ein Modell und schreib los. Tipp: Schreib <b>"Erstell ein PDF über..."</b> oder wähle den <b>Bild-Generator</b>!
+      </div>
+    </div>
+
+    <!-- INPUT -->
+    <div class="p-4 border-t border-slate-800 bg-slate-900/40">
+      <form onsubmit="sendMessage(event)" class="max-w-4xl mx-auto flex gap-3">
+        <input id="prompt-input" type="text" placeholder="Nachricht an QuapsSI schreiben..." autocomplete="off" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
+        <button id="send-btn" type="submit" class="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium px-6 py-3 rounded-xl text-sm transition">Senden</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // === HIER DEINE SUPABASE DATEN EINTRAGEN ===
+    const SUPABASE_URL = "https://DEIN-PROJEKT.supabase.co";
+    const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentUser = null;
+    let currentChatId = null;
+    let cooldowns = {};
+
+    // INIT
+    window.addEventListener("DOMContentLoaded", async () => {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) initApp(session.user);
+    });
+
+    async function handleLogin() {
+      const email = document.getElementById("auth-email").value;
+      const password = document.getElementById("auth-password").value;
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) return showAuthError(error.message);
+      initApp(data.user);
+    }
+
+    async function handleSignup() {
+      const email = document.getElementById("auth-email").value;
+      const password = document.getElementById("auth-password").value;
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) return showAuthError(error.message);
+      showAuthError("Account erstellt! Falls nötig E-Mail bestätigen oder direkt einloggen.");
+    }
+
+    async function handleLogout() {
+      await sb.auth.signOut();
+      location.reload();
+    }
+
+    function showAuthError(msg) {
+      const el = document.getElementById("auth-error");
+      el.textContent = msg;
+      el.classList.remove("hidden");
+    }
+
+    async function initApp(user) {
+      currentUser = user;
+      document.getElementById("auth-screen").classList.add("hidden");
+      document.getElementById("user-email-display").textContent = user.email;
+      await loadCooldowns();
+      await loadChats();
+    }
+
+    // COOLDOWN CHECK (ABGELAUFENE TOKENS)
+    async function loadCooldowns() {
+      const { data } = await sb.from("model_cooldowns").select("*");
+      cooldowns = {};
+      if (data) {
+        data.forEach(row => {
+          if (row.locked_until && new Date(row.locked_until) > new Date()) {
+            cooldowns[row.model_id] = row.locked_until;
+          }
+        });
+      }
+      checkSelectedModelStatus();
+    }
+
+    function checkSelectedModelStatus() {
+      const model = document.getElementById("model-select").value;
+      const banner = document.getElementById("cooldown-banner");
+      const sendBtn = document.getElementById("send-btn");
+      const input = document.getElementById("prompt-input");
+
+      if (cooldowns[model] && new Date(cooldowns[model]) > new Date()) {
+        const timeStr = new Date(cooldowns[model]).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+        banner.textContent = `Tokens abgelaufen! Erst ab ${timeStr} Uhr wieder nutzbar.`;
+        banner.classList.remove("hidden");
+        sendBtn.disabled = true;
+        input.disabled = true;
+        input.placeholder = `Modell gesperrt bis ${timeStr} Uhr...`;
+      } else {
+        banner.classList.add("hidden");
+        sendBtn.disabled = false;
+        input.disabled = false;
+        input.placeholder = "Nachricht an QuapsSI schreiben...";
+      }
+    }
+
+    // CHATS LADEN & ERSTELLEN
+    async function loadChats() {
+      const { data } = await sb.from("chats").select("*").order("created_at", { ascending: false });
+      const list = document.getElementById("chat-list");
+      list.innerHTML = "";
+      if (!data || data.length === 0) return;
+
+      data.forEach(chat => {
+        const btn = document.createElement("button");
+        btn.className = `w-full text-left px-3 py-2 rounded-lg text-sm truncate transition ${chat.id === currentChatId ? "bg-slate-800 text-white" : "text-slate-400 hover:bg-slate-800/50"}`;
+        btn.textContent = chat.title;
+        btn.onclick = () => selectChat(chat.id, chat.model);
+        list.appendChild(btn);
+      });
+
+      if (!currentChatId && data.length > 0) {
+        selectChat(data[0].id, data[0].model);
+      }
+    }
+
+    async function createNewChat() {
+      const model = document.getElementById("model-select").value;
+      const { data, error } = await sb.from("chats").insert({
+        user_id: currentUser.id,
+        title: "Neuer Chat",
+        model: model
+      }).select().single();
+
+      if (!error && data) {
+        currentChatId = data.id;
+        await loadChats();
+        document.getElementById("messages-container").innerHTML = "";
+      }
+    }
+
+    async function selectChat(chatId, model) {
+      currentChatId = chatId;
+      if (model) document.getElementById("model-select").value = model;
+      checkSelectedModelStatus();
+      await loadChats();
+
+      const { data } = await sb.from("messages").select("*").eq("chat_id", chatId).order("created_at", { ascending: true });
+      const container = document.getElementById("messages-container");
+      container.innerHTML = "";
+      if (data) data.forEach(msg => renderMessage(msg));
+    }
+
+    // NACHRICHT SENDEN
+    async function sendMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById("prompt-input");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const model = document.getElementById("model-select").value;
+      input.value = "";
+
+      if (!currentChatId) {
+        const { data } = await sb.from("chats").insert({
+          user_id: currentUser.id,
+          title: text.slice(0, 30),
+          model: model
+        }).select().single();
+        currentChatId = data.id;
+        await loadChats();
+      }
+
+      // User Nachricht speichern & anzeigen
+      const userMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "user", content: text };
+      await sb.from("messages").insert(userMsg);
+      renderMessage(userMsg);
+
+      // BILD-GENERIERUNG (FLUX FREE)
+      if (model === "image-flux") {
+        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(text)}?width=1024&height=1024&nologo=true&seed=${Date.now()}`;
+        const aiMsg = { chat_id: currentChatId, user_id: currentUser.id, role: "assistant", content: `Hier ist dein generiertes Bild zu: **${text}**`, image_url: imageUrl };
+        await sb.from("messages").insert(aiMsg);
+        renderMessage(aiMsg);
+        return;
+      }
+
+      // TEXT / CODE / PDF ÜBER SUPABASE EDGE FUNCTION
+      const loadingId = "loading-" + Date.now();
+      renderLoading(loadingId);
+
+      try {
+        const { data, error } = await sb.functions.invoke("quapssi-chat", {
+          body: { prompt: text, model: model }
+        });
+
+        document.getElementById(loadingId)?.remove();
+
+        if (error || data?.rate_limited) {
+          const resetTime = data?.locked_until || new Date(Date.now() + 60 * 60 * 1000).toISOString();
+          cooldowns[model] = resetTime;
+          checkSelectedModelStatus();
+          const timeStr = new Date(resetTime).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+          renderMessage({ role: "assistant", content: `⚠️ Bruder, die Tokens für **${model}** sind abgelaufen! Erst ab **${timeStr} Uhr** wieder nutzbar.` });
+          return;
+        }
+
+        let replyText = data.reply || "Keine Antwort erhalten.";
+        let pdfPayload = null;
+
+        // Prüfen, ob KI ein PDF-Objekt mitgeschickt hat
+        const pdfMatch = replyText.match(/```pdf-json\s*([\s\S]*?)```/);
+        if (pdfMatch) {
+          try {
+            pdfPayload = JSON.parse(pdfMatch[1]);
+            replyText = replyText.replace(pdfMatch[0], "").trim();
+          } catch (err) {}
+        }
+
+        const aiMsg = {
+          chat_id: currentChatId,
+          user_id: currentUser.id,
+          role: "assistant",
+          content: replyText,
+          pdf_data: pdfPayload
+        };
+        await sb.from("messages").insert(aiMsg);
+        renderMessage(aiMsg);
+
+      } catch (err) {
+        document.getElementById(loadingId)?.remove();
+        renderMessage({ role: "assistant", content: "Fehler bei der Verbindung zum Backend." });
+      }
+    }
+
+    function renderLoading(id) {
+      const container = document.getElementById("messages-container");
+      const div = document.createElement("div");
+      div.id = id;
+      div.className = "text-xs text-slate-400 animate-pulse";
+      div.textContent = "QuapsSI denkt nach...";
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function renderMessage(msg) {
+      const container = document.getElementById("messages-container");
+      const wrapper = document.createElement("div");
+      wrapper.className = `flex ${msg.role === "user" ? "justify-end" : "justify-start"}`;
+
+      const bubble = document.createElement("div");
+      bubble.className = `max-w-2xl rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+        msg.role === "user" ? "bg-blue-600 text-white" : "bg-slate-900 border border-slate-800 text-slate-100"
+      }`;
+
+      bubble.innerHTML = marked.parse(msg.content || "");
+
+      if (msg.image_url) {
+        const img = document.createElement("img");
+        img.src = msg.image_url;
+        img.className = "mt-3 rounded-xl max-h-80 border border-slate-700";
+        bubble.appendChild(img);
+      }
+
+      if (msg.pdf_data) {
+        const pdfBtn = document.createElement("button");
+        pdfBtn.className = "mt-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium px-4 py-2 rounded-lg flex items-center gap-2 transition";
+        pdfBtn.textContent = `📄 PDF herunterladen: ${msg.pdf_data.filename || "Dokument.pdf"}`;
+        pdfBtn.onclick = () => downloadGeneratedPDF(msg.pdf_data);
+        bubble.appendChild(pdfBtn);
+      }
+
+      wrapper.appendChild(bubble);
+      container.appendChild(wrapper);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function downloadGeneratedPDF(pdfData) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text(pdfData.title || "QuapsSI Dokument", 15, 20);
+      doc.setFontSize(11);
+      const lines = doc.splitTextToSize(pdfData.body || "", 180);
+      doc.text(lines, 15, 32);
+      doc.save(pdfData.filename || "QuapsSI_Dokument.pdf");
+    }
+  </script>
+</body>
+</html>
