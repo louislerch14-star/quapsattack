@@ -160,7 +160,7 @@
         </div>
         <p id="auth-error" class="text-xs text-red-400 hidden"></p>
         <div class="pt-2">
-          <button type="button" onclick="autoRegisterLogin()" class="btn-primary">Anmelden / Registrieren</button>
+          <button type="button" onclick="secureLogin()" class="btn-primary">Anmelden</button>
         </div>
       </div>
     </div>
@@ -229,7 +229,6 @@
     let currentChatId = null;
     let cooldowns = {};
 
-    // Beim Laden prüfen, ob im localStorage schon eine eingeloggte E-Mail steht
     window.addEventListener("DOMContentLoaded", () => {
       const savedEmail = localStorage.getItem("quapssi_user");
       if (savedEmail) {
@@ -237,8 +236,8 @@
       }
     });
 
-    // Automatischer Login: Wenn User existiert, Passwort prüfen. Wenn nicht, direkt in DB anlegen!
-    async function autoRegisterLogin() {
+    // Strikter Whitelist- & Passwort-Login
+    async function secureLogin() {
       const emailInput = document.getElementById("auth-email");
       const passwordInput = document.getElementById("auth-password");
       
@@ -251,31 +250,32 @@
         return showAuthError("Bitte E-Mail und Passwort eingeben, Bruder!");
       }
 
-      // Prüfen, ob der User bereits in der Tabelle ist
-      const { data: existingUser, error: fetchError } = await sb
+      // 1. Prüfen ob die E-Mail überhaupt in der Whitelist steht
+      const { data: userRecord, error: fetchError } = await sb
         .from("allowed_users")
         .select("*")
         .eq("email", email)
         .single();
 
-      if (!existingUser) {
-        // User ist noch nicht drin -> Direkt automatisch registrieren!
-        const { error: insertError } = await sb
-          .from("allowed_users")
-          .insert({ email: email, password: password });
+      if (fetchError || !userRecord) {
+        return showAuthError("❌ Diese E-Mail ist nicht freigeschaltet, Bruder!");
+      }
 
-        if (insertError) {
-          return showAuthError("Fehler beim Registrieren, Bruder: " + insertError.message);
-        }
-        console.log("Neuer User automatisch registriert:", email);
+      // 2. Wenn noch kein Passwort hinterlegt ist (beim ersten Mal), setzen wir es
+      if (!userRecord.password) {
+        await sb
+          .from("allowed_users")
+          .update({ password: password })
+          .eq("email", email);
+        console.log("Erstes Passwort für", email, "gespeichert.");
       } else {
-        // User existiert -> Passwort abgleichen
-        if (existingUser.password !== password) {
+        // 3. Wenn eins da ist, muss es exakt übereinstimmen!
+        if (userRecord.password !== password) {
           return showAuthError("❌ Falsches Passwort, Bruder!");
         }
       }
 
-      // Login erfolgreich!
+      // Login erfolgreich
       localStorage.setItem("quapssi_user", email);
       initApp({ id: email, email: email });
     }
@@ -293,22 +293,17 @@
 
     async function initApp(user) {
       currentUser = user;
-      
       const authScreen = document.getElementById("auth-screen");
-      if (authScreen) {
-        authScreen.style.display = "none";
-      }
+      if (authScreen) authScreen.style.display = "none";
       
       const emailDisplay = document.getElementById("user-email-display");
-      if (emailDisplay) {
-        emailDisplay.textContent = user.email;
-      }
+      if (emailDisplay) emailDisplay.textContent = user.email;
 
       try {
         await loadCooldowns();
         await loadChats();
       } catch (err) {
-        console.log("Fehler beim Laden der Cloud-Daten:", err);
+        console.log("Fehler beim Laden:", err);
       }
     }
 
