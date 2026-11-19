@@ -78,7 +78,7 @@
         border-radius: 12px;
         padding: 12px 16px;
         color: #fff;
-        font-size: 16px; /* Verhindert Auto-Zoom auf iPad/iPhone */
+        font-size: 16px;
         outline: none;
         transition: all 0.2s ease;
     }
@@ -143,7 +143,7 @@
         top: calc(100% + 6px);
         left: 0;
         width: 100%;
-        min-width: 280px;
+        min-width: 290px;
         background: #141423;
         border: 1px solid var(--glass-border);
         border-radius: 14px;
@@ -226,7 +226,6 @@
         }
     }
 
-    /* iPad / Tablet Feinschliff (Portrait & Landscape) */
     @media (min-width: 769px) and (max-width: 1180px) {
         #sidebar {
             width: 235px;
@@ -240,7 +239,7 @@
             width: 100%;
         }
         .dropdown-btn {
-            min-width: 225px;
+            min-width: 235px;
             font-size: 0.82rem;
         }
     }
@@ -332,13 +331,14 @@
         <!-- CUSTOM DROPDOWN -->
         <div class="custom-dropdown" id="model-dropdown">
           <div class="dropdown-btn" onclick="toggleDropdown()">
-            <span id="selected-model-text">Groq: Llama 3.3 70B (Schnell & Stark)</span>
+            <span id="selected-model-text">Lyceum: Kimi-K3.1-Pro (EU-Hosted)</span>
             <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </div>
           <div class="dropdown-menu" id="dropdown-menu-box">
-            <div class="dropdown-item active" onclick="selectModel('llama-3.3-70b-versatile', 'Groq: Llama 3.3 70B (Schnell & Stark)')">Groq: Llama 3.3 70B (Schnell & Stark)</div>
-            <div class="dropdown-item" onclick="selectModel('gemma2-9b-it', 'Groq: Gemma 2 9B (Flott)')">Groq: Gemma 2 9B (Flott)</div>
-            <div class="dropdown-item" onclick="selectModel('gemini-2.5-flash', 'Gemini 2.5 Flash')">Gemini 2.5 Flash</div>
+            <div class="dropdown-item active" onclick="selectModel('lyceum:Kimi-K3.1-Pro', 'Lyceum: Kimi-K3.1-Pro (EU-Hosted)')">Lyceum: Kimi-K3.1-Pro (EU-Hosted)</div>
+            <div class="dropdown-item" onclick="selectModel('lyceum:DeepSeek-V4.1-Flash', 'Lyceum: DeepSeek-V4.1-Flash (Schnell)')">Lyceum: DeepSeek-V4.1-Flash (Schnell)</div>
+            <div class="dropdown-item" onclick="selectModel('gemini:gemini-2.5-flash', 'Gemini 2.5 Flash')">Gemini 2.5 Flash</div>
+            <div class="dropdown-item" onclick="selectModel('groq:auto', 'Groq: Auto-Modell')">Groq: Auto-Modell</div>
             <div class="dropdown-item" onclick="selectModel('image-flux', 'Bild-Generator (FLUX Free)')">Bild-Generator (FLUX Free)</div>
           </div>
         </div>
@@ -348,7 +348,7 @@
     <!-- MESSAGES -->
     <div id="messages-container" class="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 space-y-5">
       <div class="text-center text-[var(--text-sub)] text-sm mt-20 md:mt-32">
-        QuapsSI ist am Start, digger! 💀<br>
+        QuapsSI ist am Start, bro! 💀<br>
         Wähle oben dein Modell und schreib los! (Tipp: Für PDFs einfach <i>"Erstell ein PDF über..."</i> schreiben).
       </div>
     </div>
@@ -368,12 +368,13 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    const LYCEUM_KEY = "lk_40c4f876e59a32e7cca0af6af8c6033a52bed35d624b1e8eae2aeb823c96eaa7";
+    const GEMINI_KEY = "AQ.Ab8RN6K2I-hsLsO513OcUYYYn4hknAn97DE7w8hdCRcSPnjTNQ";
     const GROQ_KEY = "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";
-    const GEMINI_KEY = "";
 
     let currentUser = null;
     let currentChatId = null;
-    let selectedModelValue = "llama-3.3-70b-versatile";
+    let selectedModelValue = "lyceum:Kimi-K3.1-Pro";
 
     window.addEventListener("DOMContentLoaded", () => {
       const savedEmail = localStorage.getItem("quapssi_user");
@@ -441,16 +442,16 @@
       const email = emailInput.value.trim().toLowerCase();
       const password = passwordInput.value;
       
-      if (!email || !password) return showAuthError("Bitte E-Mail und Passwort eingeben, bro!");
+      if (!email || !password) return showAuthError("Bitte E-Mail und Passwort eingeben, digger!");
 
       const { data: userRecord, error: fetchError } = await sb.from("allowed_users").select("*").eq("email", email).single();
 
-      if (fetchError || !userRecord) return showAuthError("❌ E-Mail nicht freigeschaltet, bro!");
+      if (fetchError || !userRecord) return showAuthError("❌ E-Mail nicht freigeschaltet, digger!");
 
       if (!userRecord.password) {
         await sb.from("allowed_users").update({ password: password }).eq("email", email);
       } else {
-        if (userRecord.password !== password) return showAuthError("❌ Falsches Passwort, bro!");
+        if (userRecord.password !== password) return showAuthError("❌ Falsches Passwort, digger!");
       }
 
       localStorage.setItem("quapssi_user", email);
@@ -528,7 +529,7 @@
     }
 
     async function deleteChat(chatId) {
-      if (!confirm("Chat wirklich löschen, bro?")) return;
+      if (!confirm("Chat wirklich löschen, digger?")) return;
       await sb.from("messages").delete().eq("chat_id", chatId);
       await sb.from("chats").delete().eq("id", chatId);
       if (currentChatId === chatId) {
@@ -579,6 +580,67 @@
       if (data) data.forEach(msg => renderMessage(msg));
     }
 
+    async function callOpenAICompatible(baseUrl, apiKey, preferredModel, promptText) {
+      const candidates = [];
+      if (preferredModel && preferredModel !== "auto") {
+        candidates.push(preferredModel);
+      }
+
+      try {
+        const modelsRes = await fetch(`${baseUrl}/models`, {
+          headers: { "Authorization": `Bearer ${apiKey}` }
+        });
+        const modelsJson = await modelsRes.json();
+        if (modelsJson && Array.isArray(modelsJson.data)) {
+          for (const m of modelsJson.data) {
+            if (m.id && !candidates.includes(m.id) && !m.id.includes("whisper") && !m.id.includes("guard")) {
+              candidates.push(m.id);
+            }
+          }
+        }
+      } catch (e) {}
+
+      let lastError = "Kein passendes Modell gefunden.";
+      for (const modelId of candidates) {
+        const res = await fetch(`${baseUrl}/chat/completions`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: modelId,
+            messages: [{ role: "user", content: promptText }]
+          })
+        });
+        const json = await res.json();
+        if (!json.error && json.choices?.[0]?.message?.content) {
+          return json.choices[0].message.content;
+        }
+        lastError = json.error?.message || json.detail || "API Fehler";
+      }
+      throw new Error(lastError);
+    }
+
+    async function callGemini(modelId, promptText) {
+      const candidates = [modelId, "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
+      let lastError = "Gemini API Fehler";
+
+      for (const m of candidates) {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${GEMINI_KEY}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+        });
+        const json = await res.json();
+        if (!json.error && json.candidates?.[0]?.content?.parts?.[0]?.text) {
+          return json.candidates[0].content.parts[0].text;
+        }
+        lastError = json.error?.message || "Gemini API Fehler";
+      }
+      throw new Error(lastError);
+    }
+
     async function sendMessage(e) {
       e.preventDefault();
       const input = document.getElementById("prompt-input");
@@ -622,31 +684,17 @@
       try {
         let replyText = "";
 
-        if (model.startsWith("gemini")) {
-          if (!GEMINI_KEY) throw new Error("Kein Gemini API-Key hinterlegt.");
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: [{ parts: [{ text: text }] }] })
-          });
-          const json = await res.json();
-          if (json.error) throw new Error(json.error.message || "Gemini API Fehler");
-          replyText = json.candidates?.[0]?.content?.parts?.[0]?.text || "Keine Antwort von Gemini.";
+        if (model.startsWith("lyceum:")) {
+          const lyceumModel = model.replace("lyceum:", "");
+          replyText = await callOpenAICompatible("https://api.lyceum.technology/openai/v1", LYCEUM_KEY, lyceumModel, text);
+        } else if (model.startsWith("gemini:")) {
+          const geminiModel = model.replace("gemini:", "");
+          replyText = await callGemini(geminiModel, text);
+        } else if (model.startsWith("groq:")) {
+          const groqModel = model.replace("groq:", "");
+          replyText = await callOpenAICompatible("https://api.groq.com/openai/v1", GROQ_KEY, groqModel, text);
         } else {
-          const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${GROQ_KEY}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              model: model,
-              messages: [{ role: "user", content: text }]
-            })
-          });
-          const json = await res.json();
-          if (json.error) throw new Error(json.error.message || "Groq API Fehler");
-          replyText = json.choices?.[0]?.message?.content || "Keine Antwort von Groq.";
+          replyText = await callOpenAICompatible("https://api.lyceum.technology/openai/v1", LYCEUM_KEY, "Kimi-K3.1-Pro", text);
         }
 
         document.getElementById(loadingId)?.remove();
