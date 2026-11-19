@@ -370,8 +370,13 @@
     const GEMINI_KEY = "AQ.Ab8RN6K2I-hsLsO513OcUYYYn4hknAn97DE7w8hdCRcSPnjTNQ";
     const GROQ_KEY = "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";
 
-    // Feste KI-Vorgaben für alle Text-KIs
-    const SYSTEM_PROMPT = "Antworte immer kurz, knackig und informativ auf Deutsch. Nutze lockere Jugendsprache wie digger, bro, bruder oder ich checke und bau passende Emojis wie 💀, 😢 oder 😉 ein. Laber nicht unnötig rum.";
+    // Basis-Systemprompt für QuapsSI / QuapsAttack
+    const BASE_SYSTEM_PROMPT = `Du bist QuapsSI, die KI im privaten Workspace "QuapsAttack" (quapsattack.airbusfan.de).
+Regeln:
+1. Antworte IMMER auf Deutsch, es sei denn, der Nutzer fordert ausdrücklich eine andere Sprache.
+2. Halte dich kurz, knackig und informativ – kein unnötiges Gelaber.
+3. Nutze lockere Jugendsprache wie digger, bro, bruder oder ich checke und bau passende Emojis wie 💀, 😢 oder 😉 ein.
+4. Du kennst das QuapsAttack-Projekt (Supabase-Datenbank mit allowed_users, chats, messages, PDF-Export per \`\`\`pdf-json und Bild-Generator) und nutzt die bereitgestellten Datenbank-Infos gezielt für Fragen zum Projekt oder bisherigen Chats.`;
 
     let currentUser = null;
     let currentChatId = null;
@@ -581,7 +586,42 @@
       if (data) data.forEach(msg => renderMessage(msg));
     }
 
-    async function callGroq(preferredModel, promptText) {
+    async function buildDatabaseContext() {
+      if (!currentUser) return "";
+      try {
+        const { data: userChats } = await sb
+          .from("chats")
+          .select("id, title, model, created_at")
+          .eq("user_id", currentUser.id)
+          .order("created_at", { ascending: false })
+          .limit(15);
+
+        let recentMessages = [];
+        if (currentChatId) {
+          const { data: msgs } = await sb
+            .from("messages")
+            .select("role, content, created_at")
+            .eq("chat_id", currentChatId)
+            .order("created_at", { ascending: false })
+            .limit(12);
+          if (msgs) recentMessages = msgs.reverse();
+        }
+
+        const chatsSummary = (userChats || [])
+          .map(c => `- Chat "${c.title}" (Modell: ${c.model})`)
+          .join("\n") || "- Keine Chats vorhanden";
+
+        const msgsSummary = recentMessages
+          .map(m => `[${m.role}]: ${String(m.content || "").slice(0, 240)}`)
+          .join("\n") || "- Keine Nachrichten im aktuellen Chat";
+
+        return `\n\n[Datenbank-Kontext für ${currentUser.email}]\nTabellen: allowed_users, chats, messages.\nDeine Chats:\n${chatsSummary}\nLetzte Nachrichten im aktuellem Chat:\n${msgsSummary}`;
+      } catch (e) {
+        return "";
+      }
+    }
+
+    async function callGroq(preferredModel, promptText, systemPrompt) {
       const candidates = [];
       if (preferredModel && preferredModel !== "auto") {
         candidates.push(preferredModel);
@@ -612,7 +652,7 @@
           body: JSON.stringify({
             model: modelId,
             messages: [
-              { role: "system", content: SYSTEM_PROMPT },
+              { role: "system", content: systemPrompt },
               { role: "user", content: promptText }
             ]
           })
@@ -626,7 +666,7 @@
       throw new Error(lastError);
     }
 
-    async function callGemini(modelId, promptText) {
+    async function callGemini(modelId, promptText, systemPrompt) {
       const candidates = ["gemini-2.5-flash", "gemini-2.0-flash", modelId];
       let lastError = "Gemini API Fehler";
 
@@ -636,7 +676,7 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            systemInstruction: { parts: [{ text: systemPrompt }] },
             contents: [{ parts: [{ text: promptText }] }]
           })
         });
@@ -702,14 +742,16 @@
       renderLoading(loadingId);
 
       try {
+        const dbContext = await buildDatabaseContext();
+        const fullSystemPrompt = BASE_SYSTEM_PROMPT + dbContext;
         let replyText = "";
 
         if (model.startsWith("gemini:")) {
           const geminiModel = model.replace("gemini:", "");
-          replyText = await callGemini(geminiModel, text);
+          replyText = await callGemini(geminiModel, text, fullSystemPrompt);
         } else {
           const groqModel = model.replace("groq:", "");
-          replyText = await callGroq(groqModel, text);
+          replyText = await callGroq(groqModel, text, fullSystemPrompt);
         }
 
         document.getElementById(loadingId)?.remove();
