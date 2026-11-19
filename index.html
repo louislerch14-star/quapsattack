@@ -59,6 +59,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .brand {
@@ -83,8 +85,9 @@
 
         .nav-links {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .nav-btn {
@@ -130,6 +133,14 @@
             color: var(--text-sub);
             font-size: 1.1rem;
             line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
         }
 
         /* Main Container Grid */
@@ -183,6 +194,9 @@
             margin-bottom: 12px;
             backdrop-filter: blur(8px);
             transition: all 0.2s ease;
+            display: block;
+            text-decoration: none;
+            color: inherit;
         }
 
         .demo-box:hover {
@@ -206,12 +220,31 @@
             transition: all 0.2s ease;
             text-decoration: none;
             display: inline-block;
-            margin-top: 20px;
         }
 
         .btn-primary:hover {
             background: #dc2626;
             box-shadow: 0 4px 35px rgba(239, 68, 68, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--demo-btn-bg);
+            color: #fff;
+            border: 1px solid var(--demo-btn-border);
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.35);
             transform: translateY(-2px);
         }
 
@@ -244,6 +277,8 @@
             QUAPS<span>ATTACK</span>
         </a>
         <div class="nav-links">
+            <a href="/quapspedia/index.html" class="nav-btn" data-i18n="nav-quapspedia">📚 Quapspedia</a>
+            <a href="/si/index.html" class="nav-btn" data-i18n="nav-si">🤖 QuapsSI</a>
             <a href="/downloads" class="nav-btn" data-i18n="nav-download">🔗 Downloads</a>
             <a href="/management" class="nav-btn" data-i18n="nav-management">💼 Management</a>
             <button class="nav-btn" id="langToggle">🌐 EN / DE</button>
@@ -254,8 +289,10 @@
     <section class="hero" data-reveal>
         <h1 data-i18n="hero-title">Willkommen bei <br><span>Quaps Attack</span></h1>
         <p data-i18n="hero-sub">Echte Vanilla-Events, monatliche Server-Projekte und maximale Performance. Seit über 1 Jahr verbinden wir reines Teamplay mit eigenen Welten & Custom Modpacks.</p>
-        <div>
+        <div class="hero-actions">
             <a href="/downloads" class="btn-primary" data-i18n="hero-cta">🚀 Zu den Downloads & Modpack</a>
+            <a href="/quapspedia/index.html" class="btn-secondary" data-i18n="hero-quapspedia">📚 Quapspedia öffnen</a>
+            <a href="/si/index.html" class="btn-secondary" data-i18n="hero-si">🤖 QuapsSI starten</a>
         </div>
     </section>
 
@@ -273,23 +310,23 @@
             </p>
         </div>
 
-        <!-- Column 2: Highlights -->
+        <!-- Column 2: Highlights & Quick Links -->
         <div class="preview-glass" data-reveal>
             <h2>⚡ <span data-i18n="features-title">Projekt Highlights</span></h2>
             
-            <div class="demo-box">
-                <div class="title" data-i18n="feat1-title">🔄 Monatliche Welten</div>
-                <div class="desc" data-i18n="feat1-desc">Jeden Monat starten wir frische Projekte und Welten für ununterbrochenen Spielspaß.</div>
-            </div>
+            <a href="/quapspedia/index.html" class="demo-box">
+                <div class="title" data-i18n="feat1-title">📚 Quapspedia & Welten-Doku</div>
+                <div class="desc" data-i18n="feat1-desc">Alle Dokumentationen zu unseren Welten sowie Spieler-Profile und Skins auf einen Blick.</div>
+            </a>
+
+            <a href="/si/index.html" class="demo-box">
+                <div class="title" data-i18n="feat2-title">🤖 QuapsSI Assistent</div>
+                <div class="desc" data-i18n="feat2-desc">Direkter Zugang zu QuapsSI für schnelle Tipps und Unterstützung rund ums Projekt.</div>
+            </a>
 
             <div class="demo-box">
-                <div class="title" data-i18n="feat2-title">⚙️ Performance Client</div>
-                <div class="desc" data-i18n="feat2-desc">Unser Modpack läuft zu 100% Client-side. Zocke überall mit max FPS & geiler Optik.</div>
-            </div>
-
-            <div class="demo-box">
-                <div class="title" data-i18n="feat3-title">🌐 Aktive Community & Support</div>
-                <div class="desc" data-i18n="feat3-desc">Ein starkes Team und direkte Ansprechpartner über unser zentrales Management-Hub.</div>
+                <div class="title" data-i18n="feat3-title">⚙️ Performance Client</div>
+                <div class="desc" data-i18n="feat3-desc">Unser Modpack läuft zu 100% Client-side. Zocke überall mit max FPS & geiler Optik.</div>
             </div>
         </div>
 
@@ -303,38 +340,46 @@
     <script>
         const translations = {
             de: {
+                "nav-quapspedia": "📚 Quapspedia",
+                "nav-si": "🤖 QuapsSI",
                 "nav-download": "🔗 Downloads",
                 "nav-management": "💼 Management",
                 "hero-title": "Willkommen bei <br><span>Quaps Attack</span>",
                 "hero-sub": "Echte Vanilla-Events, monatliche Server-Projekte und maximale Performance. Seit über 1 Jahr verbinden wir reines Teamplay mit eigenen Welten & Custom Modpacks.",
                 "hero-cta": "🚀 Zu den Downloads & Modpack",
+                "hero-quapspedia": "📚 Quapspedia öffnen",
+                "hero-si": "🤖 QuapsSI starten",
                 "about-title": "Über das Projekt",
                 "about-text1": "Quaps Attack ist ein etabliertes Minecraft-Projekt. Bei uns steht das gemeinsame Zocken, Bauen und Entdecken im Vordergrund. Wir veranstalten regelmäßig monatliche Vanilla-Projekte und stellen der Community eigene Client-Modpacks und Welt-Downloads bereit.",
                 "about-text2": "Egal ob du mit unserem Client-Modpack auf jedem Vanilla-Server mit maximalen FPS durchstarten oder unsere vergangenen Projekt-Welten erkunden willst – hier bist du genau richtig!",
                 "features-title": "Projekt Highlights",
-                "feat1-title": "🔄 Monatliche Welten",
-                "feat1-desc": "Jeden Monat starten wir frische Projekte und Welten für ununterbrochenen Spielspaß.",
-                "feat2-title": "⚙️ Performance Client",
-                "feat2-desc": "Unser Modpack läuft zu 100% Client-side. Zocke überall mit max FPS & geiler Optik.",
-                "feat3-title": "🌐 Aktive Community & Support",
-                "feat3-desc": "Ein starkes Team und direkte Ansprechpartner über unser zentrales Management-Hub."
+                "feat1-title": "📚 Quapspedia & Welten-Doku",
+                "feat1-desc": "Alle Dokumentationen zu unseren Welten sowie Spieler-Profile und Skins auf einen Blick.",
+                "feat2-title": "🤖 QuapsSI Assistent",
+                "feat2-desc": "Direkter Zugang zu QuapsSI für schnelle Tipps und Unterstützung rund ums Projekt.",
+                "feat3-title": "⚙️ Performance Client",
+                "feat3-desc": "Unser Modpack läuft zu 100% Client-side. Zocke überall mit max FPS & geiler Optik."
             },
             en: {
+                "nav-quapspedia": "📚 Quapspedia",
+                "nav-si": "🤖 QuapsSI",
                 "nav-download": "🔗 Downloads",
                 "nav-management": "💼 Management",
                 "hero-title": "Welcome to <br><span>Quaps Attack</span>",
                 "hero-sub": "Pure vanilla events, monthly server projects, and maximum performance. For over a year, we've combined teamwork with custom worlds & modpacks.",
                 "hero-cta": "🚀 Go to Downloads & Modpack",
+                "hero-quapspedia": "📚 Open Quapspedia",
+                "hero-si": "🤖 Launch QuapsSI",
                 "about-title": "About the Project",
                 "about-text1": "Quaps Attack is an established Minecraft project focused on multiplayer gaming, building, and exploring. We host monthly vanilla projects and provide our community with client modpacks and world downloads.",
                 "about-text2": "Whether you want to play on any vanilla server with maximum FPS or explore our past project worlds – you'll find it all here!",
                 "features-title": "Project Highlights",
-                "feat1-title": "🔄 Monthly Worlds",
-                "feat1-desc": "Every month we launch fresh projects and worlds for non-stop gaming fun.",
-                "feat2-title": "⚙️ Performance Client",
-                "feat2-desc": "Our modpack is 100% client-side. Play anywhere with max FPS & stunning visuals.",
-                "feat3-title": "🌐 Active Community & Support",
-                "feat3-desc": "A strong team and direct contacts via our central management hub."
+                "feat1-title": "📚 Quapspedia & World Docs",
+                "feat1-desc": "All documentation for our worlds as well as player profiles and skins at a glance.",
+                "feat2-title": "🤖 QuapsSI Assistant",
+                "feat2-desc": "Direct access to QuapsSI for quick tips and support around the project.",
+                "feat3-title": "⚙️ Performance Client",
+                "feat3-desc": "Our modpack is 100% client-side. Play anywhere with max FPS & stunning visuals."
             }
         };
 
