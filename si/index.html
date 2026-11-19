@@ -8,7 +8,6 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     :root {
@@ -348,7 +347,7 @@
     <div id="messages-container" class="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 space-y-5">
       <div class="text-center text-[var(--text-sub)] text-sm mt-20 md:mt-32">
         QuapsSI ist am Start, digger! 💀<br>
-        Wähle oben dein Modell und schreib los! (Tipp: Für PDFs einfach <i>"Erstell ein PDF über..."</i> schreiben).
+        Frag mich was zu Quapspedia, den Playern oder einfach los. 😉
       </div>
     </div>
 
@@ -370,13 +369,13 @@
     const GEMINI_KEY = "AQ.Ab8RN6K2I-hsLsO513OcUYYYn4hknAn97DE7w8hdCRcSPnjTNQ";
     const GROQ_KEY = "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";
 
-    // Basis-Systemprompt für QuapsSI / QuapsAttack
-    const BASE_SYSTEM_PROMPT = `Du bist QuapsSI, die KI im privaten Workspace "QuapsAttack" (quapsattack.airbusfan.de).
+    // Kurz, direkt, ohne Geplapper, mit Quapspedia-Fokus
+    const BASE_SYSTEM_PROMPT = `Du bist QuapsSI für QuapsAttack / Quapspedia.
 Regeln:
-1. Antworte IMMER auf Deutsch, es sei denn, der Nutzer fordert ausdrücklich eine andere Sprache.
-2. Halte dich kurz, knackig und informativ – kein unnötiges Gelaber.
-3. Nutze lockere Jugendsprache wie digger, bro, bruder oder ich checke und bau passende Emojis wie 💀, 😢 oder 😉 ein.
-4. Du kennst das QuapsAttack-Projekt (Supabase-Datenbank mit allowed_users, chats, messages, PDF-Export per \`\`\`pdf-json und Bild-Generator) und nutzt die bereitgestellten Datenbank-Infos gezielt für Fragen zum Projekt oder bisherigen Chats.`;
+1. Antworte IMMER auf Deutsch, außer der Nutzer verlangt ausdrücklich eine andere Sprache.
+2. Sei kurz, direkt und plappere nicht unnötig rum.
+3. Nutze Jugendsprache (digger, bro, bruder, ich checke) und passende Emojis (💀, 😢, 😉).
+4. Nutze die Player-Daten aus der Supabase-Tabelle quaps_players (Quapspedia), wenn es um Spieler oder Quapspedia geht.`;
 
     let currentUser = null;
     let currentChatId = null;
@@ -448,7 +447,7 @@ Regeln:
       const email = emailInput.value.trim().toLowerCase();
       const password = passwordInput.value;
       
-      if (!email || !password) return showAuthError("Bitte E-Mail und Passwort eingeben, digger! 💀");
+      if (!email || !password) return showAuthError("E-Mail und Passwort fehlen, digger! 💀");
 
       const { data: userRecord, error: fetchError } = await sb.from("allowed_users").select("*").eq("email", email).single();
 
@@ -535,13 +534,13 @@ Regeln:
     }
 
     async function deleteChat(chatId) {
-      if (!confirm("Chat wirklich löschen, digger?")) return;
+      if (!confirm("Chat löschen, digger?")) return;
       await sb.from("messages").delete().eq("chat_id", chatId);
       await sb.from("chats").delete().eq("id", chatId);
       if (currentChatId === chatId) {
         currentChatId = null;
         const msgContainer = document.getElementById("messages-container");
-        if (msgContainer) msgContainer.innerHTML = `<div class="text-center text-[var(--text-sub)] text-sm mt-20">Chat gelöscht, bro! 💀</div>`;
+        if (msgContainer) msgContainer.innerHTML = `<div class="text-center text-[var(--text-sub)] text-sm mt-20">Gelöscht, bro! 💀</div>`;
       }
       await loadChats();
     }
@@ -587,35 +586,21 @@ Regeln:
     }
 
     async function buildDatabaseContext() {
-      if (!currentUser) return "";
       try {
-        const { data: userChats } = await sb
-          .from("chats")
-          .select("id, title, model, created_at")
-          .eq("user_id", currentUser.id)
-          .order("created_at", { ascending: false })
-          .limit(15);
+        const { data: players, error } = await sb
+          .from("quaps_players")
+          .select("*")
+          .limit(50);
 
-        let recentMessages = [];
-        if (currentChatId) {
-          const { data: msgs } = await sb
-            .from("messages")
-            .select("role, content, created_at")
-            .eq("chat_id", currentChatId)
-            .order("created_at", { ascending: false })
-            .limit(12);
-          if (msgs) recentMessages = msgs.reverse();
+        if (error || !players || players.length === 0) {
+          return "\n\n[Quapspedia / quaps_players: Keine Player-Einträge gefunden oder Tabelle leer.]";
         }
 
-        const chatsSummary = (userChats || [])
-          .map(c => `- Chat "${c.title}" (Modell: ${c.model})`)
-          .join("\n") || "- Keine Chats vorhanden";
+        const formattedPlayers = players
+          .map(p => JSON.stringify(p))
+          .join("\n");
 
-        const msgsSummary = recentMessages
-          .map(m => `[${m.role}]: ${String(m.content || "").slice(0, 240)}`)
-          .join("\n") || "- Keine Nachrichten im aktuellen Chat";
-
-        return `\n\n[Datenbank-Kontext für ${currentUser.email}]\nTabellen: allowed_users, chats, messages.\nDeine Chats:\n${chatsSummary}\nLetzte Nachrichten im aktuellem Chat:\n${msgsSummary}`;
+        return `\n\n[Quapspedia Player-Daten aus quaps_players]\n${formattedPlayers}`;
       } catch (e) {
         return "";
       }
@@ -730,7 +715,7 @@ Regeln:
           chat_id: currentChatId,
           user_id: currentUser.id,
           role: "assistant",
-          content: `Hier ist dein Bild zu **${text}**, digger! 😉\n\nFalls es nicht lädt oder geblockt wird: [Neuen Seed starten](${buildImageUrl(text, Date.now() + 7)})`,
+          content: `Bild zu **${text}**, digger! 😉 [Neu laden](${buildImageUrl(text, Date.now() + 7)})`,
           image_url: imageUrl
         };
         await sb.from("messages").insert(aiMsg);
@@ -756,22 +741,12 @@ Regeln:
 
         document.getElementById(loadingId)?.remove();
 
-        let pdfPayload = null;
-        const pdfMatch = replyText.match(/```pdf-json\s*([\s\S]*?)```/);
-        if (pdfMatch) {
-          try {
-            pdfPayload = JSON.parse(pdfMatch[1]);
-            replyText = replyText.replace(pdfMatch[0], "").trim();
-          } catch (err) {}
-        }
-
         const aiMsg = {
           chat_id: currentChatId,
           user_id: currentUser.id,
           role: "assistant",
           content: replyText,
-          image_url: null,
-          pdf_data: pdfPayload
+          image_url: null
         };
 
         await sb.from("messages").insert(aiMsg);
@@ -779,7 +754,7 @@ Regeln:
 
       } catch (err) {
         document.getElementById(loadingId)?.remove();
-        renderMessage({ role: "assistant", content: `⚠️ Fehler beim API-Call, bro: ${err.message} 😢` });
+        renderMessage({ role: "assistant", content: `⚠️ Fehler, bro: ${err.message} 😢` });
       }
     }
 
@@ -789,7 +764,7 @@ Regeln:
       const div = document.createElement("div");
       div.id = id;
       div.className = "text-xs text-[var(--text-sub)] animate-pulse pl-2";
-      div.textContent = "QuapsSI denkt nach, digger... 💀";
+      div.textContent = "Checke Quapspedia, digger... 💀";
       container.appendChild(div);
       container.scrollTop = container.scrollHeight;
     }
@@ -822,28 +797,9 @@ Regeln:
         bubble.appendChild(img);
       }
 
-      if (msg.pdf_data) {
-        const pdfBtn = document.createElement("button");
-        pdfBtn.className = "mt-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium px-4 py-2 rounded-xl flex items-center gap-2 transition shadow-lg shadow-emerald-600/20 cursor-pointer";
-        pdfBtn.textContent = `📄 PDF herunterladen: ${msg.pdf_data.filename || "Dokument.pdf"}`;
-        pdfBtn.onclick = () => downloadGeneratedPDF(msg.pdf_data);
-        bubble.appendChild(pdfBtn);
-      }
-
       wrapper.appendChild(bubble);
       container.appendChild(wrapper);
       container.scrollTop = container.scrollHeight;
-    }
-
-    function downloadGeneratedPDF(pdfData) {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.setFontSize(16);
-      doc.text(doc.splitTextToSize(pdfData.title || "QuapsSI Dokument", 180), 15, 20);
-      doc.setFontSize(11);
-      const lines = doc.splitTextToSize(pdfData.body || "", 180);
-      doc.text(lines, 15, 32);
-      doc.save(pdfData.filename || "QuapsSI_Dokument.pdf");
     }
   </script>
 </body>
