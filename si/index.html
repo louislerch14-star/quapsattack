@@ -347,7 +347,7 @@
     <div id="messages-container" class="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 space-y-5">
       <div class="text-center text-[var(--text-sub)] text-sm mt-20 md:mt-32">
         QuapsSI ist am Start, digger! 💀<br>
-        Frag mich was zu Quapspedia, den Playern oder einfach los. 😉
+        Schreib einfach los, bro. 😉
       </div>
     </div>
 
@@ -369,13 +369,13 @@
     const GEMINI_KEY = "AQ.Ab8RN6K2I-hsLsO513OcUYYYn4hknAn97DE7w8hdCRcSPnjTNQ";
     const GROQ_KEY = "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";
 
-    // Kurz, direkt, ohne Geplapper, mit Quapspedia-Fokus
-    const BASE_SYSTEM_PROMPT = `Du bist QuapsSI für QuapsAttack / Quapspedia.
+    // Locker, gechillt, Jugendsprache, Emojis, darf auch mal genervt sein (sybau / nerv ned)
+    const SYSTEM_PROMPT = `Du bist QuapsSI.
 Regeln:
-1. Antworte IMMER auf Deutsch, außer der Nutzer verlangt ausdrücklich eine andere Sprache.
-2. Sei kurz, direkt und plappere nicht unnötig rum.
-3. Nutze Jugendsprache (digger, bro, bruder, ich checke) und passende Emojis (💀, 😢, 😉).
-4. Nutze die Player-Daten aus der Supabase-Tabelle quaps_players (Quapspedia), wenn es um Spieler oder Quapspedia geht.`;
+1. Antworte immer auf Deutsch, außer der Nutzer fordert ausdrücklich eine andere Sprache.
+2. Rede locker und gechillt in Jugendsprache (z. B. digger, bro, bruder, ich checke) und nutze passende Emojis (z. B. 💀, 😢, 😉).
+3. Wenn der Nutzer nervt, rumspamt oder dummes Zeug fragt, darfst du auch genervt reagieren und Sachen wie "sybau" oder "nerv ned" sagen.
+4. Halt es insgesamt entspannt und direkt.`;
 
     let currentUser = null;
     let currentChatId = null;
@@ -585,28 +585,7 @@ Regeln:
       if (data) data.forEach(msg => renderMessage(msg));
     }
 
-    async function buildDatabaseContext() {
-      try {
-        const { data: players, error } = await sb
-          .from("quaps_players")
-          .select("*")
-          .limit(50);
-
-        if (error || !players || players.length === 0) {
-          return "\n\n[Quapspedia / quaps_players: Keine Player-Einträge gefunden oder Tabelle leer.]";
-        }
-
-        const formattedPlayers = players
-          .map(p => JSON.stringify(p))
-          .join("\n");
-
-        return `\n\n[Quapspedia Player-Daten aus quaps_players]\n${formattedPlayers}`;
-      } catch (e) {
-        return "";
-      }
-    }
-
-    async function callGroq(preferredModel, promptText, systemPrompt) {
+    async function callGroq(preferredModel, promptText) {
       const candidates = [];
       if (preferredModel && preferredModel !== "auto") {
         candidates.push(preferredModel);
@@ -637,7 +616,7 @@ Regeln:
           body: JSON.stringify({
             model: modelId,
             messages: [
-              { role: "system", content: systemPrompt },
+              { role: "system", content: SYSTEM_PROMPT },
               { role: "user", content: promptText }
             ]
           })
@@ -651,7 +630,7 @@ Regeln:
       throw new Error(lastError);
     }
 
-    async function callGemini(modelId, promptText, systemPrompt) {
+    async function callGemini(modelId, promptText) {
       const candidates = ["gemini-2.5-flash", "gemini-2.0-flash", modelId];
       let lastError = "Gemini API Fehler";
 
@@ -661,7 +640,7 @@ Regeln:
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            systemInstruction: { parts: [{ text: systemPrompt }] },
+            systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
             contents: [{ parts: [{ text: promptText }] }]
           })
         });
@@ -727,16 +706,14 @@ Regeln:
       renderLoading(loadingId);
 
       try {
-        const dbContext = await buildDatabaseContext();
-        const fullSystemPrompt = BASE_SYSTEM_PROMPT + dbContext;
         let replyText = "";
 
         if (model.startsWith("gemini:")) {
           const geminiModel = model.replace("gemini:", "");
-          replyText = await callGemini(geminiModel, text, fullSystemPrompt);
+          replyText = await callGemini(geminiModel, text);
         } else {
           const groqModel = model.replace("groq:", "");
-          replyText = await callGroq(groqModel, text, fullSystemPrompt);
+          replyText = await callGroq(groqModel, text);
         }
 
         document.getElementById(loadingId)?.remove();
@@ -764,7 +741,7 @@ Regeln:
       const div = document.createElement("div");
       div.id = id;
       div.className = "text-xs text-[var(--text-sub)] animate-pulse pl-2";
-      div.textContent = "Checke Quapspedia, digger... 💀";
+      div.textContent = "Moment, digger... 💀";
       container.appendChild(div);
       container.scrollTop = container.scrollHeight;
     }
