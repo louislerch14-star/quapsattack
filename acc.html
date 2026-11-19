@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>QuapsAttack — Account & Passwort Reset</title>
+  <link rel="icon" type="image/jpeg" href="/unnamed.jpg" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg-main: #0a0a12;
+      --glass-bg: rgba(20, 20, 35, 0.92);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --demo-box-bg: rgba(255, 255, 255, 0.05);
+      --demo-box-border: rgba(255, 255, 255, 0.12);
+      --accent: #ef4444;
+      --accent-glow: rgba(239, 68, 68, 0.4);
+      --text-main: #ffffff;
+      --text-sub: rgba(255, 255, 255, 0.72);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(239, 68, 68, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 45%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+
+    .auth-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 32px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+    }
+
+    .tab-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: var(--demo-box-bg);
+      border: 1px solid var(--demo-box-border);
+      padding: 6px;
+      border-radius: 14px;
+      margin-bottom: 22px;
+    }
+
+    .tab-btn {
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      touch-action: manipulation;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 18px var(--accent-glow);
+    }
+
+    .glass-input {
+      width: 100%;
+      background: var(--demo-box-bg);
+      border: 1px solid var(--demo-box-border);
+      border-radius: 12px;
+      padding: 12px 15px;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .glass-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 4px 25px var(--accent-glow);
+      transition: all 0.2s ease;
+      width: 100%;
+      text-align: center;
+      touch-action: manipulation;
+    }
+
+    .btn-primary:hover {
+      background: #dc2626;
+      box-shadow: 0 4px 35px rgba(239, 68, 68, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-card">
+    <div class="mb-6 text-center flex flex-col items-center">
+      <img src="/unnamed.jpg" alt="QuapsAttack Logo" class="w-14 h-14 rounded-2xl object-cover mb-3 border border-white/20 shadow-lg" onerror="this.style.display='none'" />
+      <h1 class="text-3xl font-black tracking-tight text-white mb-1">Quaps<span style="color:var(--accent);">Attack</span></h1>
+      <p class="text-xs text-[var(--text-sub)]">Account erstellen oder Passwort zurücksetzen, digger! 😉</p>
+    </div>
+
+    <div class="tab-group">
+      <button id="tab-register" type="button" class="tab-btn active" onclick="switchMode('register')">Account erstellen</button>
+      <button id="tab-reset" type="button" class="tab-btn" onclick="switchMode('reset')">Passwort resetten</button>
+    </div>
+
+    <!-- ACCOUNT ERSTELLEN FORM -->
+    <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4">
+      <div>
+        <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">E-Mail</label>
+        <input id="reg-email" type="email" required placeholder="name@quapsattack.airbusfan.de" class="glass-input" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Neues Passwort</label>
+        <input id="reg-password" type="password" required minlength="6" placeholder="Mindestens 6 Zeichen" class="glass-input" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Passwort bestätigen</label>
+        <input id="reg-password-confirm" type="password" required minlength="6" placeholder="Passwort wiederholen" class="glass-input" />
+      </div>
+      <button id="btn-register" type="submit" class="btn-primary">Account erstellen</button>
+    </form>
+
+    <!-- PASSWORT RESETTEN FORM -->
+    <form id="form-reset" onsubmit="handleResetPassword(event)" class="space-y-4 hidden">
+      <div>
+        <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Account E-Mail</label>
+        <input id="reset-email" type="email" required placeholder="name@quapsattack.airbusfan.de" class="glass-input" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Neues Passwort</label>
+        <input id="reset-password" type="password" required minlength="6" placeholder="Neues Passwort eingeben" class="glass-input" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Neues Passwort bestätigen</label>
+        <input id="reset-password-confirm" type="password" required minlength="6" placeholder="Neues Passwort wiederholen" class="glass-input" />
+      </div>
+      <button id="btn-reset" type="submit" class="btn-primary">Passwort zurücksetzen</button>
+    </form>
+
+    <p id="status-msg" class="text-xs mt-4 text-center hidden"></p>
+
+    <div class="mt-6 pt-4 border-t border-[var(--glass-border)] flex items-center justify-between text-xs text-[var(--text-sub)]">
+      <a href="/" class="hover:text-white transition">← Zurück zu QuapsSI</a>
+      <span>QuapsAttack System 💀</span>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function switchMode(mode) {
+      const tabReg = document.getElementById("tab-register");
+      const tabReset = document.getElementById("tab-reset");
+      const formReg = document.getElementById("form-register");
+      const formReset = document.getElementById("form-reset");
+      hideStatus();
+
+      if (mode === "register") {
+        tabReg.classList.add("active");
+        tabReset.classList.remove("active");
+        formReg.classList.remove("hidden");
+        formReset.classList.add("hidden");
+      } else {
+        tabReset.classList.add("active");
+        tabReg.classList.remove("active");
+        formReset.classList.remove("hidden");
+        formReg.classList.add("hidden");
+      }
+    }
+
+    function showStatus(text, isError = false) {
+      const el = document.getElementById("status-msg");
+      if (!el) return;
+      el.textContent = text;
+      el.className = `text-xs mt-4 text-center ${isError ? "text-red-400" : "text-emerald-400"}`;
+      el.classList.remove("hidden");
+    }
+
+    function hideStatus() {
+      const el = document.getElementById("status-msg");
+      if (!el) return;
+      el.classList.add("hidden");
+      el.textContent = "";
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      hideStatus();
+
+      const email = document.getElementById("reg-email").value.trim().toLowerCase();
+      const pw = document.getElementById("reg-password").value;
+      const pwConfirm = document.getElementById("reg-password-confirm").value;
+      const btn = document.getElementById("btn-register");
+
+      if (!email || !pw) {
+        return showStatus("Bitte E-Mail und Passwort ausfüllen, bro! 💀", true);
+      }
+      if (pw !== pwConfirm) {
+        return showStatus("Passwörter stimmen nicht überein, digger! 😢", true);
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Wird erstellt...";
+
+      try {
+        const { data: existing, error: selectErr } = await sb
+          .from("allowed_users")
+          .select("email")
+          .eq("email", email)
+          .maybeSingle();
+
+        if (selectErr) {
+          throw new Error(selectErr.message);
+        }
+
+        if (existing) {
+          showStatus("Diese E-Mail existiert schon, bro! Nutze 'Passwort resetten'. 😉", true);
+          return;
+        }
+
+        const { error: insertErr } = await sb
+          .from("allowed_users")
+          .insert({ email: email, password: pw });
+
+        if (insertErr) {
+          throw new Error(insertErr.message);
+        }
+
+        showStatus("Account ist am Start, digger! Du kannst dich jetzt einloggen. 😉", false);
+        document.getElementById("form-register").reset();
+      } catch (err) {
+        showStatus(`Fehler beim Erstellen, bro: ${err.message} 😢`, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Account erstellen";
+      }
+    }
+
+    async function handleResetPassword(e) {
+      e.preventDefault();
+      hideStatus();
+
+      const email = document.getElementById("reset-email").value.trim().toLowerCase();
+      const pw = document.getElementById("reset-password").value;
+      const pwConfirm = document.getElementById("reset-password-confirm").value;
+      const btn = document.getElementById("btn-reset");
+
+      if (!email || !pw) {
+        return showStatus("Bitte E-Mail und neues Passwort eingeben, digger! 💀", true);
+      }
+      if (pw !== pwConfirm) {
+        return showStatus("Die neuen Passwörter passen nicht zusammen, bro! 😢", true);
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Wird gesetzt...";
+
+      try {
+        const { data: existing, error: selectErr } = await sb
+          .from("allowed_users")
+          .select("email")
+          .eq("email", email)
+          .maybeSingle();
+
+        if (selectErr) {
+          throw new Error(selectErr.message);
+        }
+
+        if (!existing) {
+          showStatus("Kein Account mit dieser E-Mail gefunden, digger! 😢", true);
+          return;
+        }
+
+        const { error: updateErr } = await sb
+          .from("allowed_users")
+          .update({ password: pw })
+          .eq("email", email);
+
+        if (updateErr) {
+          throw new Error(updateErr.message);
+        }
+
+        showStatus("Passwort wurde erfolgreich geändert, bro! 😉", false);
+        document.getElementById("form-reset").reset();
+      } catch (err) {
+        showStatus(`Fehler beim Resetten, digger: ${err.message} 😢`, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Passwort zurücksetzen";
+      }
+    }
+  </script>
+</body>
+</html>
