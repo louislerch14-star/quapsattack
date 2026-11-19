@@ -347,7 +347,7 @@
     <!-- MESSAGES -->
     <div id="messages-container" class="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 space-y-5">
       <div class="text-center text-[var(--text-sub)] text-sm mt-20 md:mt-32">
-        QuapsSI ist am Start, bro! 💀<br>
+        QuapsSI ist am Start, digger! 💀<br>
         Wähle oben dein Modell und schreib los! (Tipp: Für PDFs einfach <i>"Erstell ein PDF über..."</i> schreiben).
       </div>
     </div>
@@ -369,6 +369,9 @@
 
     const GEMINI_KEY = "AQ.Ab8RN6K2I-hsLsO513OcUYYYn4hknAn97DE7w8hdCRcSPnjTNQ";
     const GROQ_KEY = "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";
+
+    // Feste KI-Vorgaben für alle Text-KIs
+    const SYSTEM_PROMPT = "Antworte immer kurz, knackig und informativ auf Deutsch. Nutze lockere Jugendsprache wie digger, bro, bruder oder ich checke und bau passende Emojis wie 💀, 😢 oder 😉 ein. Laber nicht unnötig rum.";
 
     let currentUser = null;
     let currentChatId = null;
@@ -440,16 +443,16 @@
       const email = emailInput.value.trim().toLowerCase();
       const password = passwordInput.value;
       
-      if (!email || !password) return showAuthError("Bitte E-Mail und Passwort eingeben, digger!");
+      if (!email || !password) return showAuthError("Bitte E-Mail und Passwort eingeben, digger! 💀");
 
       const { data: userRecord, error: fetchError } = await sb.from("allowed_users").select("*").eq("email", email).single();
 
-      if (fetchError || !userRecord) return showAuthError("❌ E-Mail nicht freigeschaltet, digger!");
+      if (fetchError || !userRecord) return showAuthError("❌ E-Mail nicht freigeschaltet, digger! 😢");
 
       if (!userRecord.password) {
         await sb.from("allowed_users").update({ password: password }).eq("email", email);
       } else {
-        if (userRecord.password !== password) return showAuthError("❌ Falsches Passwort, digger!");
+        if (userRecord.password !== password) return showAuthError("❌ Falsches Passwort, digger! 😢");
       }
 
       localStorage.setItem("quapssi_user", email);
@@ -533,7 +536,7 @@
       if (currentChatId === chatId) {
         currentChatId = null;
         const msgContainer = document.getElementById("messages-container");
-        if (msgContainer) msgContainer.innerHTML = `<div class="text-center text-[var(--text-sub)] text-sm mt-20">Chat gelöscht!</div>`;
+        if (msgContainer) msgContainer.innerHTML = `<div class="text-center text-[var(--text-sub)] text-sm mt-20">Chat gelöscht, bro! 💀</div>`;
       }
       await loadChats();
     }
@@ -608,7 +611,10 @@
           },
           body: JSON.stringify({
             model: modelId,
-            messages: [{ role: "user", content: promptText }]
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              { role: "user", content: promptText }
+            ]
           })
         });
         const json = await res.json();
@@ -629,7 +635,10 @@
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${GEMINI_KEY}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            contents: [{ parts: [{ text: promptText }] }]
+          })
         });
         const json = await res.json();
         if (!json.error && json.candidates?.[0]?.content?.parts?.[0]?.text) {
@@ -638,6 +647,12 @@
         lastError = json.error?.message || "Gemini API Fehler";
       }
       throw new Error(lastError);
+    }
+
+    function buildImageUrl(promptText, seedOverride) {
+      const seed = seedOverride || Math.floor(Math.random() * 100000000);
+      const safePrompt = encodeURIComponent(`${promptText}, digital art, clean composition, high detail`);
+      return `https://image.pollinations.ai/prompt/${safePrompt}?width=768&height=768&nologo=true&seed=${seed}`;
     }
 
     async function sendMessage(e) {
@@ -670,13 +685,12 @@
       renderMessage(userMsg);
 
       if (model === "image-flux") {
-        const cleanPrompt = `${text}, detailed illustration, high quality`;
-        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanPrompt)}?width=1024&height=1024&nologo=true&seed=${Date.now()}`;
+        const imageUrl = buildImageUrl(text);
         const aiMsg = {
           chat_id: currentChatId,
           user_id: currentUser.id,
           role: "assistant",
-          content: `Hier ist dein Bild zu: **${text}**\n\nFalls der Bild-Server den Prompt blockt: [Neu laden](${imageUrl})`,
+          content: `Hier ist dein Bild zu **${text}**, digger! 😉\n\nFalls es nicht lädt oder geblockt wird: [Neuen Seed starten](${buildImageUrl(text, Date.now() + 7)})`,
           image_url: imageUrl
         };
         await sb.from("messages").insert(aiMsg);
@@ -723,7 +737,7 @@
 
       } catch (err) {
         document.getElementById(loadingId)?.remove();
-        renderMessage({ role: "assistant", content: `⚠️ Fehler beim API-Call: ${err.message}` });
+        renderMessage({ role: "assistant", content: `⚠️ Fehler beim API-Call, bro: ${err.message} 😢` });
       }
     }
 
@@ -733,7 +747,7 @@
       const div = document.createElement("div");
       div.id = id;
       div.className = "text-xs text-[var(--text-sub)] animate-pulse pl-2";
-      div.textContent = "QuapsSI denkt nach...";
+      div.textContent = "QuapsSI denkt nach, digger... 💀";
       container.appendChild(div);
       container.scrollTop = container.scrollHeight;
     }
@@ -755,6 +769,14 @@
         const img = document.createElement("img");
         img.src = msg.image_url;
         img.className = "mt-3 rounded-xl max-h-80 border border-white/10";
+        img.onerror = () => {
+          if (!img.dataset.retried) {
+            img.dataset.retried = "1";
+            img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent("a cool artwork")}?width=768&height=768&nologo=true&seed=${Date.now()}`;
+          } else {
+            img.style.display = "none";
+          }
+        };
         bubble.appendChild(img);
       }
 
