@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QuapsAttack — Command & Community Suite v2</title>
+  <title>QuapsAttack — Command & Community Suite v3</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
@@ -54,8 +54,8 @@
 
     .app-shell.overdrive-mode {
       background-image:
-        radial-gradient(circle at 20% 20%, rgba(245, 197, 24, 0.22) 0%, transparent 48%),
-        radial-gradient(circle at 80% 80%, rgba(239, 68, 68, 0.24) 0%, transparent 50%);
+        radial-gradient(circle at 20% 20%, rgba(245, 197, 24, 0.24) 0%, transparent 48%),
+        radial-gradient(circle at 80% 80%, rgba(239, 68, 68, 0.25) 0%, transparent 50%);
     }
 
     .app-shell.barrel-roll {
@@ -431,7 +431,9 @@
       }
     });
 
-    // Prüft ob eine Rolle Management-Rechte besitzt
+    // Fest hinterlegter Key für QuapsSI (kein manueller Input nötig!)
+    const QUAPSSI_EMBEDDED_KEY = 'AQ.Ab8RN6K2I-hsLsO513OcUYYYn4hknAn97DE7w8hdCRcSPnjTNQ';
+
     function isManagementRole(role) {
       if (!role) return false;
       const r = String(role).toLowerCase().trim();
@@ -671,7 +673,7 @@
     }
 
     // =========================================================================
-    // 4. GEMINI API ANBINDUNG (QuapsSI) + SPEICHERUNG IN qupas_si_messages
+    // 4. GEMINI API ANBINDUNG (QuapsSI mit fest hinterlegtem Key)
     // =========================================================================
     const QUAPSSI_PERSONALITY = `
 Du bist QuapsSI — die taktische Kommando- und Community-Intelligenz von QuapsAttack.
@@ -681,17 +683,8 @@ Deine Persönlichkeit:
 - Keine generischen KI-Floskeln wie "Als KI-Sprachmodell...". Antworte klar, strukturiert und praxisnah.
 `;
 
-    async function runQuapsSI(promptText, historyRows, userId, customKey) {
-      const apiKey =
-        (customKey || '').trim() ||
-        (localStorage.getItem('quaps_gemini_key') || '').trim() ||
-        (window.GEMINI_API_KEY || '').trim();
-
-      if (!apiKey) {
-        throw new Error(
-          'Kein GEMINI_API_KEY hinterlegt. Gib deinen Gemini API Key oben im QuapsSI-Key-Feld ein.'
-        );
-      }
+    async function runQuapsSI(promptText, historyRows, userId) {
+      const apiKey = QUAPSSI_EMBEDDED_KEY;
 
       const contents = [];
       for (const row of (historyRows || []).slice(-6)) {
@@ -906,7 +899,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 6. PROFIL BEARBEITEN MODAL (INKL. DIREKTEM PROFILBILD-UPLOAD!)
+    // 6. PROFIL BEARBEITEN MODAL (INKL. PROFILBILD-UPLOAD)
     // =========================================================================
     function ProfileModal({ profile, onClose, onSaved, onToast }) {
       const [username, setUsername] = useState(profile.username || '');
@@ -917,7 +910,6 @@ Deine Persönlichkeit:
       const [uploadingAvatar, setUploadingAvatar] = useState(false);
       const [saving, setSaving] = useState(false);
 
-      // Profilbild direkt vom PC hochladen (Supabase Storage 'vault/avatars/' mit DataURL-Fallback)
       const handleAvatarFileUpload = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -938,13 +930,12 @@ Deine Persönlichkeit:
             if (pub?.publicUrl) {
               setAvatarUrl(pub.publicUrl);
               soundEngine.play('upload_success');
-              onToast('Profilbild hochgeladen! Jetzt noch unten auf „Speichern“ klicken.');
+              onToast('Profilbild hochgeladen! Jetzt noch „Speichern“ klicken.');
               setUploadingAvatar(false);
               return;
             }
           }
 
-          // Fallback: Komprimierte Data-URL falls Storage-Bucket noch nicht angelegt wurde
           const reader = new FileReader();
           reader.onload = () => {
             const img = new Image();
@@ -956,8 +947,7 @@ Deine Persönlichkeit:
               canvas.height = Math.round(img.height * scale);
               const ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              const compressedUrl = canvas.toDataURL('image/webp', 0.85);
-              setAvatarUrl(compressedUrl);
+              setAvatarUrl(canvas.toDataURL('image/webp', 0.85));
               soundEngine.play('upload_success');
               onToast('Profilbild vorbereitet! Klicke auf „Speichern“.');
               setUploadingAvatar(false);
@@ -1016,7 +1006,6 @@ Deine Persönlichkeit:
             React.createElement('button', { className: 'btn-secondary', onClick: onClose }, '✕')
           ),
 
-          // Avatar Vorschau + Upload Button
           React.createElement(
             'div',
             { className: 'nested-box', style: { padding: 14, display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 } },
@@ -1119,7 +1108,314 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 7. MANAGEMENT-PANEL: ROLLEN VERWALTEN (Nur für Management-Rollen)
+    // 7. KRASSES EXTRA: INTERAKTIVES TAKTIK-RADAR & SQUAD-PULSE (2D Canvas)
+    // =========================================================================
+    function TacticalRadarModule({ currentUser, currentProfile, profilesMap, onToast }) {
+      const canvasRef = useRef(null);
+      const [sweepAngle, setSweepAngle] = useState(0);
+      const [pingPulse, setPingPulse] = useState(0);
+      const [selectedMember, setSelectedMember] = useState(null);
+      const [threatLevel, setThreatLevel] = useState('NOMINAL');
+
+      const members = useMemo(() => {
+        const list = Object.values(profilesMap);
+        return list.map((m, idx) => {
+          // Deterministische Radar-Position pro User-ID
+          let hash = 0;
+          for (let i = 0; i < (m.id || '').length; i++) {
+            hash = (hash * 31 + m.id.charCodeAt(i)) % 360;
+          }
+          const angle = ((hash + idx * 53) % 360) * (Math.PI / 180);
+          const radiusFactor = m.id === currentUser.id ? 0 : 0.25 + ((hash % 60) / 100);
+          return {
+            ...m,
+            angle,
+            radiusFactor
+          };
+        });
+      }, [profilesMap, currentUser.id]);
+
+      useEffect(() => {
+        let raf;
+        let last = performance.now();
+        const animate = (now) => {
+          const dt = (now - last) / 1000;
+          last = now;
+          setSweepAngle((prev) => (prev + dt * 1.65) % (Math.PI * 2));
+          setPingPulse((prev) => (prev + dt * 0.7) % 1);
+
+          const canvas = canvasRef.current;
+          if (canvas) {
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+            const maxR = Math.min(cx, cy) - 18;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Radar-Kreise
+            [0.25, 0.5, 0.75, 1].forEach((r) => {
+              ctx.beginPath();
+              ctx.arc(cx, cy, maxR * r, 0, Math.PI * 2);
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            });
+
+            // Fadenkreuz
+            ctx.beginPath();
+            ctx.moveTo(cx - maxR, cy);
+            ctx.lineTo(cx + maxR, cy);
+            ctx.moveTo(cx, cy - maxR);
+            ctx.lineTo(cx, cy + maxR);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+            ctx.stroke();
+
+            // Sweep-Kegel
+            const grad = ctx.createConicGradient(sweepAngle - 0.8, cx, cy);
+            grad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+            grad.addColorStop(0.85, 'rgba(239, 68, 68, 0.04)');
+            grad.addColorStop(1, 'rgba(239, 68, 68, 0.32)');
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, maxR, sweepAngle - 0.8, sweepAngle);
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Sweep-Linie
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + Math.cos(sweepAngle) * maxR, cy + Math.sin(sweepAngle) * maxR);
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Sonar-Ping Welle
+            ctx.beginPath();
+            ctx.arc(cx, cy, maxR * pingPulse, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(245, 197, 24, ${(1 - pingPulse) * 0.35})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Squad-Mitglieder als Blips zeichnen
+            members.forEach((m) => {
+              const bx = cx + Math.cos(m.angle) * maxR * m.radiusFactor;
+              const by = cy + Math.sin(m.angle) * maxR * m.radiusFactor;
+              const isMe = m.id === currentUser.id;
+              const isSelected = selectedMember?.id === m.id;
+              const color =
+                m.custom_status === 'dnd'
+                  ? '#ef4444'
+                  : m.custom_status === 'away'
+                  ? '#f5c518'
+                  : '#10b981';
+
+              ctx.beginPath();
+              ctx.arc(bx, by, isMe ? 7 : 5.5, 0, Math.PI * 2);
+              ctx.fillStyle = isMe ? '#f5c518' : color;
+              ctx.fill();
+
+              if (isSelected || isMe) {
+                ctx.beginPath();
+                ctx.arc(bx, by, 12, 0, Math.PI * 2);
+                ctx.strokeStyle = isSelected ? '#ffffff' : 'rgba(245,197,24,0.5)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+              }
+
+              ctx.font = '600 11px Inter, sans-serif';
+              ctx.fillStyle = 'rgba(255,255,255,0.88)';
+              ctx.fillText(m.username || 'Agent', bx + 9, by + 4);
+            });
+          }
+
+          raf = requestAnimationFrame(animate);
+        };
+        raf = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(raf);
+      }, [members, currentUser.id, selectedMember?.id, pingPulse]);
+
+      const handleRadarClick = (e) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * canvas.width;
+        const y = ((e.clientY - rect.top) / rect.height) * canvas.height;
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const maxR = Math.min(cx, cy) - 18;
+
+        let closest = null;
+        let minDist = 26;
+        members.forEach((m) => {
+          const bx = cx + Math.cos(m.angle) * maxR * m.radiusFactor;
+          const by = cy + Math.sin(m.angle) * maxR * m.radiusFactor;
+          const dist = Math.hypot(x - bx, y - by);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = m;
+          }
+        });
+
+        if (closest) {
+          setSelectedMember(closest);
+          soundEngine.play('chat_mention', true);
+        }
+      };
+
+      const triggerSonarPing = () => {
+        setPingPulse(0.02);
+        soundEngine.play('easter_egg', true);
+        onToast('📡 Taktischer Sonar-Ping über das gesamte Squad gesendet!');
+      };
+
+      return React.createElement(
+        'div',
+        { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 14 } },
+        React.createElement(
+          'div',
+          { className: 'glass-card', style: { padding: 18, display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 } },
+          React.createElement(
+            'div',
+            { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 } },
+            React.createElement(
+              'div',
+              null,
+              React.createElement('h2', { style: { fontSize: 17, fontWeight: 800 } },
+                'Squad-Pulse ',
+                React.createElement('span', { className: 'gold-gradient-text' }, 'Taktik-Radar')
+              ),
+              React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } },
+                'Klicke auf einen Blip im Radar, um ein Squad-Mitglied zu erfassen'
+              )
+            ),
+            React.createElement(
+              'div',
+              { style: { display: 'flex', gap: 8, alignItems: 'center' } },
+              React.createElement(
+                'select',
+                {
+                  className: 'select-field',
+                  style: { width: 'auto', padding: '6px 10px', fontSize: 12 },
+                  value: threatLevel,
+                  onChange: (e) => setThreatLevel(e.target.value)
+                },
+                React.createElement('option', { value: 'NOMINAL' }, '🟢 Lage: NOMINAL'),
+                React.createElement('option', { value: 'ELEVATED' }, '🟡 Lage: ERHÖHT'),
+                React.createElement('option', { value: 'CRITICAL' }, '🔴 Lage: ALARM')
+              ),
+              React.createElement('button', { className: 'btn-primary', onClick: triggerSonarPing }, '📡 Sonar-Ping')
+            )
+          ),
+
+          React.createElement(
+            'div',
+            {
+              style: {
+                flex: 1,
+                minHeight: 280,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'rgba(7, 7, 14, 0.75)',
+                borderRadius: 16,
+                border: '1px solid rgba(255,255,255,0.1)',
+                padding: 8
+              }
+            },
+            React.createElement('canvas', {
+              ref: canvasRef,
+              width: 460,
+              height: 460,
+              onClick: handleRadarClick,
+              style: { maxWidth: '100%', maxHeight: '100%', cursor: 'crosshair' }
+            })
+          )
+        ),
+
+        // Rechte Spalte: Telemetrie & Erfasstes Mitglied
+        React.createElement(
+          'div',
+          { style: { display: 'flex', flexDirection: 'column', gap: 14, minHeight: 0 } },
+          React.createElement(
+            'div',
+            { className: 'glass-card', style: { padding: 18 } },
+            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700, marginBottom: 10 } }, 'Erfasste Ziel-Telemetrie'),
+            selectedMember
+              ? React.createElement(
+                  'div',
+                  { className: 'nested-box', style: { padding: 14, display: 'flex', flexDirection: 'column', gap: 8 } },
+                  React.createElement(
+                    'div',
+                    { style: { display: 'flex', alignItems: 'center', gap: 11 } },
+                    React.createElement(AvatarBadge, { profile: selectedMember, size: 46 }),
+                    React.createElement(
+                      'div',
+                      null,
+                      React.createElement('div', { style: { fontWeight: 800, fontSize: 15 } }, selectedMember.username),
+                      React.createElement('div', { style: { display: 'flex', gap: 6, marginTop: 3 } },
+                        selectedMember.role && React.createElement('span', { className: 'badge-gold' }, selectedMember.role),
+                        React.createElement('span', { className: 'badge-green' }, selectedMember.custom_status || 'online')
+                      )
+                    )
+                  ),
+                  React.createElement('div', { style: { fontSize: 12.5, color: 'var(--text-muted)' } },
+                    'Statusmeldung: ' + (selectedMember.custom_status_text || 'Keine Meldung')
+                  ),
+                  selectedMember.personality_quote && React.createElement(
+                    'div',
+                    { style: { fontSize: 12, fontStyle: 'italic', color: '#f5c518', borderLeft: '2px solid #f5c518', paddingLeft: 8 } },
+                    `„${selectedMember.personality_quote}“`
+                  )
+                )
+              : React.createElement('div', { style: { fontSize: 12.5, color: 'var(--text-muted)' } },
+                  'Noch kein Mitglied angeklickt. Klicke im Radar links auf einen Punkt.'
+                )
+          ),
+
+          React.createElement(
+            'div',
+            { className: 'glass-card custom-scroll', style: { flex: 1, padding: 18, minHeight: 0 } },
+            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700, marginBottom: 10 } },
+              `Aktive Squad-Liste (${members.length})`
+            ),
+            React.createElement(
+              'div',
+              { style: { display: 'flex', flexDirection: 'column', gap: 7 } },
+              members.map((m) => React.createElement(
+                'button',
+                {
+                  key: m.id,
+                  className: 'nested-box',
+                  onClick: () => setSelectedMember(m),
+                  style: {
+                    padding: '9px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    color: '#fff',
+                    cursor: 'pointer'
+                  }
+                },
+                React.createElement(
+                  'div',
+                  { style: { display: 'flex', alignItems: 'center', gap: 9 } },
+                  React.createElement(AvatarBadge, { profile: m, size: 28 }),
+                  React.createElement('span', { style: { fontWeight: 600, fontSize: 13 } }, m.username)
+                ),
+                React.createElement('span', { className: isManagementRole(m.role) ? 'badge-gold' : 'badge-green' }, m.role || 'Member')
+              ))
+            )
+          )
+        )
+      );
+    }
+
+    // =========================================================================
+    // 8. MANAGEMENT-PANEL: ROLLEN VERWALTEN
     // =========================================================================
     const PRESET_ROLES = ['Management', 'Admin', 'Moderator', 'Squad-Leader', 'VIP', 'Member'];
 
@@ -1157,7 +1453,7 @@ Deine Persönlichkeit:
           await onRefreshProfiles();
         } catch (err) {
           soundEngine.play('error_alert');
-          onToast('Rollen-Update fehlgeschlagen (ggf. RLS-Policy prüfen): ' + err.message);
+          onToast('Rollen-Update fehlgeschlagen: ' + err.message);
         } finally {
           setUpdatingId(null);
         }
@@ -1291,7 +1587,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 8. WEBRTC CALL OVERLAY (Nutzt gewählte Hardware-Geräte aus Settings)
+    // 9. WEBRTC CALL OVERLAY
     // =========================================================================
     function CallOverlay({ callState, setCallState, currentUser, signalChannel, onToast }) {
       const [muted, setMuted] = useState(false);
@@ -1572,7 +1868,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 9. MODUL 1: DIRECT MESSAGES & GRUPPEN-CHATS (+ Typing, Suche, Easter Eggs)
+    // 10. MODUL 1: DIRECT MESSAGES & GRUPPEN-CHATS (+ /radar Easter Egg)
     // =========================================================================
     const QUICK_EMOJIS = ['🔥', '💀', '😂', '👍', '⚡', '🎯', '🚀'];
 
@@ -1791,13 +2087,16 @@ Deine Persönlichkeit:
         const text = msgInput.trim();
         setMsgInput('');
 
-        // Geheime Chat-Easter-Eggs!
         if (text.toLowerCase() === '/barrelroll') {
           onEasterEgg('barrelroll');
           return;
         }
         if (text.toLowerCase() === '/overdrive') {
           onEasterEgg('overdrive');
+          return;
+        }
+        if (text.toLowerCase() === '/radar') {
+          onEasterEgg('radar');
           return;
         }
 
@@ -1860,7 +2159,6 @@ Deine Persönlichkeit:
       return React.createElement(
         'div',
         { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '300px 1fr', gap: 14 } },
-        // Linke Spalte: Räume & DMs
         React.createElement(
           'div',
           { className: 'glass-card', style: { padding: 14, display: 'flex', flexDirection: 'column', gap: 10, minHeight: 0 } },
@@ -1927,7 +2225,6 @@ Deine Persönlichkeit:
           )
         ),
 
-        // Rechte Spalte: Nachrichten & Call-Buttons
         React.createElement(
           'div',
           { className: 'glass-card', style: { padding: 16, display: 'flex', flexDirection: 'column', minHeight: 0 } },
@@ -1979,7 +2276,6 @@ Deine Persönlichkeit:
                   )
                 ),
 
-                // Nachrichtenliste
                 React.createElement(
                   'div',
                   { className: 'custom-scroll', style: { flex: 1, padding: '14px 4px', display: 'flex', flexDirection: 'column', gap: 10 } },
@@ -2038,7 +2334,6 @@ Deine Persönlichkeit:
                   React.createElement('div', { ref: bottomRef })
                 ),
 
-                // Emoji Schnellleiste + Eingabeformular
                 React.createElement(
                   'div',
                   { style: { paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: 7 } },
@@ -2065,7 +2360,7 @@ Deine Persönlichkeit:
                       )
                     ),
                     React.createElement('span', { style: { fontSize: 11, color: 'rgba(255,255,255,0.4)', marginLeft: 'auto' } },
-                      'Tipp: /barrelroll oder /overdrive'
+                      'Commands: /radar · /barrelroll · /overdrive'
                     )
                   ),
                   React.createElement(
@@ -2083,7 +2378,6 @@ Deine Persönlichkeit:
               )
         ),
 
-        // Modal: Neue DM oder Gruppe erstellen
         showCreateModal && React.createElement(
           'div',
           { className: 'modal-backdrop', onClick: () => setShowCreateModal(false) },
@@ -2156,7 +2450,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 10. MODUL 2: KALENDER (Monat / Woche / Liste + Heute-Sprung + Suche)
+    // 11. MODUL 2: KALENDER
     // =========================================================================
     function CalendarModule({ currentUser, profilesMap, onToast }) {
       const [events, setEvents] = useState([]);
@@ -2468,7 +2762,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 11. MODUL 3: MEDIATHEK & ORDNERSTRUKTUR (+ Lightbox, Filter, Copy-Notiz)
+    // 12. MODUL 3: MEDIATHEK & ORDNERSTRUKTUR
     // =========================================================================
     function VaultModule({ currentUser, profilesMap, onToast }) {
       const [items, setItems] = useState([]);
@@ -2653,7 +2947,6 @@ Deine Persönlichkeit:
             )
           ),
 
-          // Breadcrumb + Filter Pills
           React.createElement(
             'div',
             { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 } },
@@ -2784,7 +3077,6 @@ Deine Persönlichkeit:
           )
         ),
 
-        // Rechts: Ordner anlegen & Text-Notiz erstellen
         React.createElement(
           'div',
           { style: { display: 'flex', flexDirection: 'column', gap: 14, minHeight: 0 } },
@@ -2832,7 +3124,6 @@ Deine Persönlichkeit:
           )
         ),
 
-        // Bild-Lightbox Modal
         lightboxImg && React.createElement(
           'div',
           { className: 'modal-backdrop', onClick: () => setLightboxImg(null) },
@@ -2856,7 +3147,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 12. MODUL 4: PINNWAND (pinboard_posts & pinboard_replies + Bearbeiten)
+    // 13. MODUL 4: PINNWAND
     // =========================================================================
     const REACTION_EMOJIS = ['🔥', '👍', '⚡', '🎯'];
 
@@ -3170,7 +3461,6 @@ Deine Persönlichkeit:
           )
         ),
 
-        // Rechts: Neuer / Bearbeiteter Post + Thread-Antworten
         React.createElement(
           'div',
           { style: { display: 'flex', flexDirection: 'column', gap: 14, minHeight: 0 } },
@@ -3275,7 +3565,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 13. MODUL 5: QUAPSSI KI-TERMINAL (Gemini API + Quick-Prompts)
+    // 14. MODUL 5: QUAPSSI KI-TERMINAL (Key fest hinterlegt!)
     // =========================================================================
     const QUAPSSI_QUICK_PROMPTS = [
       'Erstelle ein kurzes Event-Briefing für heute Abend',
@@ -3286,7 +3576,6 @@ Deine Persönlichkeit:
     function QuapsSIModule({ currentUser, onToast }) {
       const [messages, setMessages] = useState([]);
       const [prompt, setPrompt] = useState('');
-      const [apiKeyInput, setApiKeyInput] = useState(() => localStorage.getItem('quaps_gemini_key') || '');
       const [sending, setSending] = useState(false);
       const bottomRef = useRef(null);
 
@@ -3307,18 +3596,13 @@ Deine Persönlichkeit:
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, [messages]);
 
-      const saveKey = () => {
-        localStorage.setItem('quaps_gemini_key', apiKeyInput.trim());
-        onToast('Gemini API Key lokal gespeichert.');
-      };
-
       const sendPromptText = async (textToAsk) => {
         if (!textToAsk.trim() || sending) return;
         const q = textToAsk.trim();
         setPrompt('');
         setSending(true);
         try {
-          const savedRow = await runQuapsSI(q, messages, currentUser.id, apiKeyInput);
+          const savedRow = await runQuapsSI(q, messages, currentUser.id);
           setMessages((prev) => [...prev, savedRow]);
           soundEngine.play('upload_success');
         } catch (err) {
@@ -3344,25 +3628,12 @@ Deine Persönlichkeit:
               ' · Taktische KI'
             ),
             React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } },
-              'Verlauf wird automatisch in qupas_si_messages gespeichert'
+              'Key direkt aktiv · Verlauf wird in qupas_si_messages gespeichert'
             )
           ),
-          React.createElement(
-            'div',
-            { style: { display: 'flex', gap: 8, alignItems: 'center' } },
-            React.createElement('input', {
-              className: 'input-field',
-              type: 'password',
-              style: { width: 225, padding: '7px 11px', fontSize: 12 },
-              placeholder: 'GEMINI_API_KEY (AIza...)',
-              value: apiKeyInput,
-              onChange: (e) => setApiKeyInput(e.target.value)
-            }),
-            React.createElement('button', { className: 'btn-secondary', onClick: saveKey }, 'Key sichern')
-          )
+          React.createElement('span', { className: 'badge-green' }, '● KEY VERBUNDEN')
         ),
 
-        // Quick-Briefing Presets
         React.createElement(
           'div',
           { style: { display: 'flex', gap: 7, flexWrap: 'wrap' } },
@@ -3440,20 +3711,17 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 14. MODUL 6: AUDIO, VIDEO & CUSTOM SOUNDS STUDIO
-    //     (Mikrofon- & Kamera-Auswahl + VU-Meter + Live-Cam-Preview + Echo-Test + Sound-System)
+    // 15. MODUL 6: AUDIO, VIDEO & CUSTOM SOUNDS STUDIO
     // =========================================================================
     function SettingsStudioModule({ onToast }) {
-      const [subTab, setSubTab] = useState('devices'); // devices | sounds
+      const [subTab, setSubTab] = useState('devices');
       const [soundSettings, setSoundSettings] = useState(() => soundEngine.load());
 
-      // Hardware Geräte
       const [mediaPrefs, setMediaPrefs] = useState(() => getSavedMediaPrefs());
       const [audioInputs, setAudioInputs] = useState([]);
       const [videoInputs, setVideoInputs] = useState([]);
       const [audioOutputs, setAudioOutputs] = useState([]);
 
-      // Live Mikrofon Test & VU-Meter
       const [micTesting, setMicTesting] = useState(false);
       const [micLevel, setMicLevel] = useState(0);
       const [echoRecording, setEchoRecording] = useState(false);
@@ -3461,7 +3729,6 @@ Deine Persönlichkeit:
       const micRafRef = useRef(null);
       const micAudioCtxRef = useRef(null);
 
-      // Live Kamera Test
       const [camTesting, setCamTesting] = useState(false);
       const camVideoRef = useRef(null);
       const camStreamRef = useRef(null);
@@ -3545,7 +3812,6 @@ Deine Persönlichkeit:
         }
       };
 
-      // 4-Sekunden Echo-Test (nimmt Stimme auf und spielt sie direkt ab)
       const runEchoCheck = async () => {
         if (echoRecording) return;
         setEchoRecording(true);
@@ -3664,11 +3930,9 @@ Deine Persönlichkeit:
           )
         ),
 
-        // TAB 1: MIKROFON & KAMERA EINSTELLEN UND TESTEN
         subTab === 'devices' && React.createElement(
           'div',
           { className: 'custom-scroll', style: { flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 } },
-          // Mikrofon & Audio-Output Karte
           React.createElement(
             'div',
             { className: 'nested-box', style: { padding: 16, display: 'flex', flexDirection: 'column', gap: 12 } },
@@ -3678,7 +3942,6 @@ Deine Persönlichkeit:
               React.createElement('h3', { style: { fontSize: 15, fontWeight: 700 } }, '🎤 Mikrofon & Audio-Setup'),
               React.createElement('button', { className: 'btn-secondary', style: { padding: '5px 9px', fontSize: 11.5 }, onClick: refreshDevices }, '🔄 Geräte scannen')
             ),
-
             React.createElement(
               'div',
               null,
@@ -3696,7 +3959,6 @@ Deine Persönlichkeit:
                 )
               )
             ),
-
             React.createElement(
               'div',
               null,
@@ -3714,7 +3976,6 @@ Deine Persönlichkeit:
                 )
               )
             ),
-
             React.createElement(
               'div',
               { style: { display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 12.5 } },
@@ -3739,8 +4000,6 @@ Deine Persönlichkeit:
                 'Rauschunterdrückung'
               )
             ),
-
-            // Live VU-Meter
             React.createElement(
               'div',
               { style: { marginTop: 4 } },
@@ -3756,7 +4015,6 @@ Deine Persönlichkeit:
                 React.createElement('div', { className: 'vu-bar-fill', style: { width: `${micLevel}%` } })
               )
             ),
-
             React.createElement(
               'div',
               { style: { display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 } },
@@ -3771,7 +4029,6 @@ Deine Persönlichkeit:
             )
           ),
 
-          // Kamera Vorschau & Auswahl Karte
           React.createElement(
             'div',
             { className: 'nested-box', style: { padding: 16, display: 'flex', flexDirection: 'column', gap: 12 } },
@@ -3793,7 +4050,6 @@ Deine Persönlichkeit:
                 )
               )
             ),
-
             React.createElement(
               'div',
               {
@@ -3819,7 +4075,6 @@ Deine Persönlichkeit:
                   })
                 : React.createElement('span', { style: { fontSize: 12.5, color: 'var(--text-muted)' } }, 'Kamera-Vorschau ist ausgeschaltet')
             ),
-
             React.createElement(
               'div',
               { style: { display: 'flex', gap: 8 } },
@@ -3830,7 +4085,6 @@ Deine Persönlichkeit:
           )
         ),
 
-        // TAB 2: CUSTOM SOUNDS
         subTab === 'sounds' && React.createElement(
           React.Fragment,
           null,
@@ -3927,7 +4181,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 15. ROOT APP (INKL. EASTER EGGS: Konami Code, 5x Logo-Klick, Chat-Commands)
+    // 16. ROOT APP
     // =========================================================================
     const KONAMI_SEQ = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 
@@ -3942,7 +4196,6 @@ Deine Persönlichkeit:
       const [callState, setCallState] = useState(null);
       const [toast, setToast] = useState(null);
 
-      // Easter Egg States
       const [overdrive, setOverdrive] = useState(false);
       const [barrelRoll, setBarrelRoll] = useState(false);
       const [logoClicks, setLogoClicks] = useState(0);
@@ -3970,10 +4223,12 @@ Deine Persönlichkeit:
           setBarrelRoll(true);
           showToast('🛩️ DO A BARREL ROLL!');
           setTimeout(() => setBarrelRoll(false), 950);
+        } else if (type === 'radar') {
+          setActiveTab('radar');
+          showToast('📡 Taktik-Radar geöffnet!');
         }
       };
 
-      // Konami Code Listener
       useEffect(() => {
         const onKeyDown = (e) => {
           const expected = KONAMI_SEQ[konamiIdxRef.current];
@@ -4047,7 +4302,6 @@ Deine Persönlichkeit:
             if (data) setCurrentProfile(data);
           });
 
-        // Realtime für Profil- & Rollenänderungen
         const profChannel = supabase
           .channel('quaps-profiles-rt')
           .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
@@ -4055,7 +4309,6 @@ Deine Persönlichkeit:
           })
           .subscribe();
 
-        // Realtime Signaling Channel für WebRTC Voice/Video Calls
         const sigChannel = supabase.channel('quaps-webrtc-signaling', {
           config: { broadcast: { self: false } }
         });
@@ -4105,6 +4358,7 @@ Deine Persönlichkeit:
         calendar: 'Kalender',
         vault: 'Mediathek & Tresor',
         quapssi: 'QuapsSI Terminal',
+        radar: 'Squad Taktik-Radar',
         management: 'Management · Rollen',
         sounds: 'Audio, Video & Sounds'
       };
@@ -4122,6 +4376,7 @@ Deine Persönlichkeit:
         { id: 'calendar', label: '📅 Kalender' },
         { id: 'vault', label: '🗂️ Mediathek & Tresor' },
         { id: 'quapssi', label: '🤖 QuapsSI KI' },
+        { id: 'radar', label: '📡 Taktik-Radar' },
         ...(canManageRoles ? [{ id: 'management', label: '👑 Management & Rollen' }] : []),
         { id: 'sounds', label: '🎛️ Audio, Cam & Sounds' }
       ];
@@ -4172,7 +4427,7 @@ Deine Persönlichkeit:
                 { className: 'sidebar glass-card' },
                 React.createElement(
                   'div',
-                  { style: { display: 'flex', flexDirection: 'column', gap: 5 } },
+                  { style: { display: 'flex', flexDirection: 'column', gap: 4 } },
                   React.createElement('div', { style: { fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.45)', padding: '4px 10px 6px' } }, 'MODULE'),
                   navItems.map((item) => React.createElement(
                     'button',
@@ -4248,6 +4503,12 @@ Deine Persönlichkeit:
                   currentUser: session.user,
                   onToast: showToast
                 }),
+                activeTab === 'radar' && React.createElement(TacticalRadarModule, {
+                  currentUser: session.user,
+                  currentProfile,
+                  profilesMap,
+                  onToast: showToast
+                }),
                 activeTab === 'management' && React.createElement(ManagementModule, {
                   currentUser: session.user,
                   currentProfile,
@@ -4279,7 +4540,6 @@ Deine Persönlichkeit:
           onToast: showToast
         }),
 
-        // Geheimes Easter-Egg HUD (5x Klick auf Logo)
         showSecretHud && React.createElement(
           'div',
           { className: 'modal-backdrop', onClick: () => setShowSecretHud(false) },
@@ -4289,7 +4549,7 @@ Deine Persönlichkeit:
             React.createElement('div', { className: 'badge-gold', style: { display: 'inline-block', marginBottom: 10 } }, 'SECRET REACTOR HUD'),
             React.createElement('h3', { style: { fontSize: 19, fontWeight: 800, marginBottom: 8 } }, '🕵️ QuapsAttack Secret Bunker'),
             React.createElement('p', { style: { fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 14 } },
-              'Du hast das geheime Kommando-Menü entdeckt! Probiere auch den Konami-Code (↑↑↓↓←→←→BA) oder tippe /barrelroll im Chat.'
+              'Du hast das geheime Kommando-Menü entdeckt! Probiere auch den Konami-Code (↑↑↓↓←→←→BA) oder tippe /radar bzw. /barrelroll im Chat.'
             ),
             React.createElement(
               'div',
