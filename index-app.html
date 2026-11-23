@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QuapsAttack — Desktop Command Suite</title>
+  <title>QuapsAttack — Command & Community Suite v2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
@@ -49,6 +49,17 @@
       background-image:
         radial-gradient(circle at 14% 18%, rgba(239, 68, 68, 0.15) 0%, transparent 45%),
         radial-gradient(circle at 86% 82%, rgba(59, 130, 246, 0.15) 0%, transparent 48%);
+      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+    }
+
+    .app-shell.overdrive-mode {
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(245, 197, 24, 0.22) 0%, transparent 48%),
+        radial-gradient(circle at 80% 80%, rgba(239, 68, 68, 0.24) 0%, transparent 50%);
+    }
+
+    .app-shell.barrel-roll {
+      transform: rotate(360deg);
     }
 
     .glass-card {
@@ -67,7 +78,7 @@
     }
 
     .nested-box:hover {
-      border-color: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.19);
       background: rgba(255, 255, 255, 0.075);
     }
 
@@ -148,7 +159,7 @@
 
     .input-field, .select-field, .textarea-field {
       width: 100%;
-      background: rgba(10, 10, 18, 0.7);
+      background: rgba(10, 10, 18, 0.72);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 12px;
       padding: 10px 13px;
@@ -171,7 +182,7 @@
 
     .textarea-field {
       resize: vertical;
-      min-height: 76px;
+      min-height: 74px;
     }
 
     .custom-scroll {
@@ -197,14 +208,13 @@
       background: rgba(239, 68, 68, 0.55);
     }
 
-    /* Top Header / Window Bar */
     .top-bar {
       height: 52px;
       padding: 0 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(10, 10, 18, 0.9);
+      background: rgba(10, 10, 18, 0.92);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       flex-shrink: 0;
     }
@@ -216,6 +226,8 @@
       font-weight: 800;
       font-size: 15px;
       letter-spacing: 0.03em;
+      cursor: pointer;
+      user-select: none;
     }
 
     .brand-emblem {
@@ -229,6 +241,11 @@
       justify-content: center;
       font-weight: 800;
       font-size: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .brand-badge:hover .brand-emblem {
+      transform: scale(1.06);
     }
 
     .main-layout {
@@ -240,8 +257,8 @@
     }
 
     .sidebar {
-      width: 272px;
-      min-width: 272px;
+      width: 274px;
+      min-width: 274px;
       height: 100%;
       display: flex;
       flex-direction: column;
@@ -254,7 +271,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 11px 13px;
+      padding: 10px 13px;
       border-radius: 13px;
       border: 1px solid transparent;
       background: transparent;
@@ -282,7 +299,7 @@
     .badge-red {
       background: var(--accent-red);
       color: #fff;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       padding: 2px 7px;
       border-radius: 999px;
@@ -321,7 +338,7 @@
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(5, 5, 10, 0.78);
+      background: rgba(5, 5, 10, 0.8);
       backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
@@ -334,39 +351,62 @@
       position: fixed;
       bottom: 20px;
       right: 20px;
-      z-index: 150;
+      z-index: 160;
       padding: 12px 16px;
       border-radius: 14px;
-      background: rgba(20, 20, 35, 0.95);
+      background: rgba(20, 20, 35, 0.96);
       border: 1px solid rgba(239, 68, 68, 0.45);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
       font-size: 13px;
-      max-width: 360px;
+      max-width: 390px;
       transition: all 0.25s ease;
     }
 
     .grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
       gap: 12px;
     }
 
     .pill-tab {
-      padding: 6px 12px;
+      padding: 6px 11px;
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(255, 255, 255, 0.04);
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 12.5px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
     .pill-tab.active {
-      background: rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.22);
       border-color: rgba(239, 68, 68, 0.5);
       color: #ffffff;
+    }
+
+    .avatar-circle {
+      border-radius: 11px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      flex-shrink: 0;
+    }
+
+    .vu-bar-bg {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .vu-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #10b981, #f5c518, #ef4444);
+      transition: width 0.06s linear;
     }
   </style>
 </head>
@@ -378,7 +418,7 @@
     import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client';
 
     // =========================================================================
-    // 1. SUPABASE CLIENT INITIALISIERUNG (@supabase/supabase-js@2)
+    // 1. SUPABASE CLIENT (@supabase/supabase-js@2)
     // =========================================================================
     const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
     const SUPABASE_ANON_KEY =
@@ -391,8 +431,34 @@
       }
     });
 
+    // Prüft ob eine Rolle Management-Rechte besitzt
+    function isManagementRole(role) {
+      if (!role) return false;
+      const r = String(role).toLowerCase().trim();
+      return ['management', 'admin', 'owner', 'leader', 'leitung', 'mod', 'moderator'].includes(r);
+    }
+
     // =========================================================================
-    // 2. CUSTOM SOUND MANAGER (Web Audio API + Austauschbare Custom Audio Files)
+    // 2. HARDWARE MEDIA SETTINGS (Mikrofon & Kamera Auswahl)
+    // =========================================================================
+    const MEDIA_PREFS_KEY = 'quaps_media_devices_v1';
+
+    function getSavedMediaPrefs() {
+      try {
+        const raw = localStorage.getItem(MEDIA_PREFS_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch {}
+      return { audioInputId: '', videoInputId: '', audioOutputId: '', echoCancellation: true, noiseSuppression: true };
+    }
+
+    function saveMediaPrefs(next) {
+      try {
+        localStorage.setItem(MEDIA_PREFS_KEY, JSON.stringify(next));
+      } catch {}
+    }
+
+    // =========================================================================
+    // 3. CUSTOM SOUND ENGINE (Web Audio API + Austauschbare Custom Audio Files)
     // =========================================================================
     const SOUND_EVENTS = [
       { key: 'chat_message', label: 'Eingehende Chat-Nachricht', desc: 'Ton bei neuen DMs & Gruppennachrichten' },
@@ -404,7 +470,8 @@
       { key: 'pinboard_reply', label: 'Neue Pinnwand-Antwort', desc: 'Ton bei Antworten in Threads' },
       { key: 'calendar_event', label: 'Kalender-Termin & Erinnerung', desc: 'Signal bei neuen Terminen oder Erinnerungen' },
       { key: 'upload_success', label: 'Upload & Aktion erfolgreich', desc: 'Bestätigung bei Uploads & Speichern' },
-      { key: 'error_alert', label: 'Fehler- & Warnton', desc: 'Warnton bei Fehlern oder Verbindungsproblemen' }
+      { key: 'error_alert', label: 'Fehler- & Warnton', desc: 'Warnton bei Fehlern oder Verbindungsproblemen' },
+      { key: 'easter_egg', label: 'Easter-Egg / Overdrive Fanfare', desc: 'Geheimer Taktik-Sound bei Easter Eggs' }
     ];
 
     class SoundEngine {
@@ -547,6 +614,12 @@
               tone(196, 0, 0.18, 'sawtooth', 0.18);
               tone(146.83, 0.15, 0.24, 'sawtooth', 0.18);
               break;
+            case 'easter_egg':
+              tone(440, 0, 0.1, 'sawtooth', 0.22);
+              tone(554.37, 0.1, 0.1, 'sawtooth', 0.22);
+              tone(659.25, 0.2, 0.12, 'sawtooth', 0.24);
+              tone(880, 0.32, 0.3, 'triangle', 0.28);
+              break;
           }
         } catch {}
       }
@@ -568,19 +641,40 @@
       return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
     }
 
-    function formatDateTime(iso) {
-      if (!iso) return '';
-      const d = new Date(iso);
-      return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
-        ' · ' +
-        d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    function AvatarBadge({ profile, size = 34 }) {
+      if (profile?.avatar_url) {
+        return React.createElement('img', {
+          src: profile.avatar_url,
+          alt: profile.username || 'Avatar',
+          className: 'avatar-circle',
+          style: { width: size, height: size }
+        });
+      }
+      return React.createElement(
+        'div',
+        {
+          style: {
+            width: size,
+            height: size,
+            borderRadius: 11,
+            background: 'linear-gradient(135deg, #ef4444, #7f1d1d)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 800,
+            fontSize: Math.max(11, Math.floor(size * 0.38)),
+            flexShrink: 0
+          }
+        },
+        (profile?.username || 'Q').slice(0, 2).toUpperCase()
+      );
     }
 
     // =========================================================================
-    // 3. GEMINI API ANBINDUNG (QuapsSI) + SPEICHERUNG IN qupas_si_messages
+    // 4. GEMINI API ANBINDUNG (QuapsSI) + SPEICHERUNG IN qupas_si_messages
     // =========================================================================
     const QUAPSSI_PERSONALITY = `
-Du bist QuapsSI — die taktische Kommando- und Community-KI von QuapsAttack.
+Du bist QuapsSI — die taktische Kommando- und Community-Intelligenz von QuapsAttack.
 Deine Persönlichkeit:
 - Direkt, souverän, locker auf Augenhöhe wie ein erfahrener Squad-Leader und Strategist.
 - Du hilfst bei Team-Koordination, Events, Projektplanung, Technik, Mods/Servern und Community-Management.
@@ -639,7 +733,6 @@ Deine Persönlichkeit:
         .single();
 
       if (error) {
-        console.warn('Speichern in qupas_si_messages fehlgeschlagen:', error.message);
         return {
           id: 'local-' + Date.now(),
           user_id: userId,
@@ -652,7 +745,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 4. AUTH SCREEN
+    // 5. AUTH SCREEN
     // =========================================================================
     function AuthView({ onToast }) {
       const [mode, setMode] = useState('login');
@@ -694,7 +787,7 @@ Deine Persönlichkeit:
           }
         } catch (error) {
           soundEngine.play('error_alert');
-          setErr(error.message || 'Login/Registrierung fehlgeschlagen.');
+          setErr(error.message || 'Authentifizierung fehlgeschlagen.');
         } finally {
           setLoading(false);
         }
@@ -702,15 +795,7 @@ Deine Persönlichkeit:
 
       return React.createElement(
         'div',
-        {
-          style: {
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 24
-          }
-        },
+        { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 } },
         React.createElement(
           'div',
           { className: 'glass-card', style: { width: '100%', maxWidth: 420, padding: 30 } },
@@ -726,7 +811,7 @@ Deine Persönlichkeit:
                 React.createElement('span', { className: 'gold-gradient-text' }, 'ATTACK')
               ),
               React.createElement('div', { style: { fontSize: 12.5, color: 'var(--text-muted)' } },
-                'Command & Community Suite (HTML)'
+                'Command & Community Suite'
               )
             )
           ),
@@ -821,7 +906,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 5. PROFIL BEARBEITEN MODAL
+    // 6. PROFIL BEARBEITEN MODAL (INKL. DIREKTEM PROFILBILD-UPLOAD!)
     // =========================================================================
     function ProfileModal({ profile, onClose, onSaved, onToast }) {
       const [username, setUsername] = useState(profile.username || '');
@@ -829,7 +914,63 @@ Deine Persönlichkeit:
       const [customStatusText, setCustomStatusText] = useState(profile.custom_status_text || '');
       const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || '');
       const [personalityQuote, setPersonalityQuote] = useState(profile.personality_quote || '');
+      const [uploadingAvatar, setUploadingAvatar] = useState(false);
       const [saving, setSaving] = useState(false);
+
+      // Profilbild direkt vom PC hochladen (Supabase Storage 'vault/avatars/' mit DataURL-Fallback)
+      const handleAvatarFileUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+          onToast('Bitte eine Bilddatei (.png, .jpg, .webp, .gif) auswählen.');
+          return;
+        }
+        setUploadingAvatar(true);
+        try {
+          const ext = (file.name.split('.').pop() || 'png').replace(/[^a-zA-Z0-9]/g, '');
+          const filePath = `avatars/${profile.id}_${Date.now()}.${ext}`;
+          const { error: upErr } = await supabase.storage
+            .from('vault')
+            .upload(filePath, file, { upsert: true });
+
+          if (!upErr) {
+            const { data: pub } = supabase.storage.from('vault').getPublicUrl(filePath);
+            if (pub?.publicUrl) {
+              setAvatarUrl(pub.publicUrl);
+              soundEngine.play('upload_success');
+              onToast('Profilbild hochgeladen! Jetzt noch unten auf „Speichern“ klicken.');
+              setUploadingAvatar(false);
+              return;
+            }
+          }
+
+          // Fallback: Komprimierte Data-URL falls Storage-Bucket noch nicht angelegt wurde
+          const reader = new FileReader();
+          reader.onload = () => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const maxDim = 256;
+              const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+              canvas.width = Math.round(img.width * scale);
+              canvas.height = Math.round(img.height * scale);
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              const compressedUrl = canvas.toDataURL('image/webp', 0.85);
+              setAvatarUrl(compressedUrl);
+              soundEngine.play('upload_success');
+              onToast('Profilbild vorbereitet! Klicke auf „Speichern“.');
+              setUploadingAvatar(false);
+            };
+            img.src = String(reader.result);
+          };
+          reader.readAsDataURL(file);
+        } catch (err) {
+          soundEngine.play('error_alert');
+          onToast('Avatar-Upload Fehler: ' + err.message);
+          setUploadingAvatar(false);
+        }
+      };
 
       const handleSave = async (e) => {
         e.preventDefault();
@@ -852,7 +993,7 @@ Deine Persönlichkeit:
           if (error) throw error;
           soundEngine.play('upload_success');
           onSaved(data);
-          onToast('Profil aktualisiert!');
+          onToast('Profil gespeichert!');
           onClose();
         } catch (err) {
           soundEngine.play('error_alert');
@@ -867,13 +1008,47 @@ Deine Persönlichkeit:
         { className: 'modal-backdrop', onClick: onClose },
         React.createElement(
           'div',
-          { className: 'glass-card', style: { width: '100%', maxWidth: 460, padding: 24 }, onClick: (e) => e.stopPropagation() },
+          { className: 'glass-card', style: { width: '100%', maxWidth: 490, padding: 24 }, onClick: (e) => e.stopPropagation() },
           React.createElement(
             'div',
             { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 } },
-            React.createElement('h2', { style: { fontSize: 18, fontWeight: 700 } }, 'Profil bearbeiten'),
+            React.createElement('h2', { style: { fontSize: 18, fontWeight: 700 } }, 'Profil & Avatar anpassen'),
             React.createElement('button', { className: 'btn-secondary', onClick: onClose }, '✕')
           ),
+
+          // Avatar Vorschau + Upload Button
+          React.createElement(
+            'div',
+            { className: 'nested-box', style: { padding: 14, display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 } },
+            React.createElement(AvatarBadge, { profile: { ...profile, avatar_url: avatarUrl, username }, size: 62 }),
+            React.createElement(
+              'div',
+              { style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 6 } },
+              React.createElement('div', { style: { fontSize: 13, fontWeight: 700 } }, 'Profilbild hochladen'),
+              React.createElement(
+                'div',
+                { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+                React.createElement(
+                  'label',
+                  { className: 'btn-primary', style: { padding: '6px 12px', fontSize: 12, cursor: uploadingAvatar ? 'wait' : 'pointer' } },
+                  uploadingAvatar ? 'Lädt hoch...' : '📷 Bild vom PC wählen',
+                  React.createElement('input', {
+                    type: 'file',
+                    accept: 'image/*',
+                    style: { display: 'none' },
+                    disabled: uploadingAvatar,
+                    onChange: handleAvatarFileUpload
+                  })
+                ),
+                avatarUrl && React.createElement(
+                  'button',
+                  { type: 'button', className: 'btn-danger', onClick: () => setAvatarUrl('') },
+                  'Entfernen'
+                )
+              )
+            )
+          ),
+
           React.createElement(
             'form',
             { onSubmit: handleSave, style: { display: 'flex', flexDirection: 'column', gap: 12 } },
@@ -913,7 +1088,7 @@ Deine Persönlichkeit:
             React.createElement(
               'div',
               null,
-              React.createElement('label', { style: { fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 } }, 'Avatar-URL'),
+              React.createElement('label', { style: { fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 } }, 'Oder direkte Bild-URL'),
               React.createElement('input', {
                 className: 'input-field',
                 placeholder: 'https://...',
@@ -936,7 +1111,7 @@ Deine Persönlichkeit:
               'div',
               { style: { display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 } },
               React.createElement('button', { type: 'button', className: 'btn-secondary', onClick: onClose }, 'Abbrechen'),
-              React.createElement('button', { type: 'submit', className: 'btn-primary', disabled: saving }, saving ? 'Speichere...' : 'Speichern')
+              React.createElement('button', { type: 'submit', className: 'btn-primary', disabled: saving }, saving ? 'Speichere...' : 'Profil speichern')
             )
           )
         )
@@ -944,9 +1119,181 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 6. WEBRTC CALL OVERLAY (Audio & Video über Supabase Realtime Signaling)
+    // 7. MANAGEMENT-PANEL: ROLLEN VERWALTEN (Nur für Management-Rollen)
     // =========================================================================
-    function CallOverlay({ callState, setCallState, currentUser, currentProfile, signalChannel, onToast }) {
+    const PRESET_ROLES = ['Management', 'Admin', 'Moderator', 'Squad-Leader', 'VIP', 'Member'];
+
+    function ManagementModule({ currentUser, currentProfile, profilesMap, onRefreshProfiles, onToast }) {
+      const [search, setSearch] = useState('');
+      const [customRoles, setCustomRoles] = useState({});
+      const [updatingId, setUpdatingId] = useState(null);
+
+      const canManage = isManagementRole(currentProfile?.role);
+      const usersList = useMemo(() => {
+        return Object.values(profilesMap)
+          .filter((p) => {
+            if (!search.trim()) return true;
+            const q = search.toLowerCase();
+            return (
+              (p.username || '').toLowerCase().includes(q) ||
+              (p.role || '').toLowerCase().includes(q)
+            );
+          })
+          .sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+      }, [profilesMap, search]);
+
+      const handleUpdateRole = async (targetUser, nextRole) => {
+        const cleanRole = (nextRole || '').trim();
+        if (!cleanRole) return;
+        setUpdatingId(targetUser.id);
+        try {
+          const { error } = await supabase
+            .from('profiles')
+            .update({ role: cleanRole, updated_at: new Date().toISOString() })
+            .eq('id', targetUser.id);
+          if (error) throw error;
+          soundEngine.play('upload_success');
+          onToast(`Rolle von ${targetUser.username} auf „${cleanRole}“ gesetzt!`);
+          await onRefreshProfiles();
+        } catch (err) {
+          soundEngine.play('error_alert');
+          onToast('Rollen-Update fehlgeschlagen (ggf. RLS-Policy prüfen): ' + err.message);
+        } finally {
+          setUpdatingId(null);
+        }
+      };
+
+      if (!canManage) {
+        return React.createElement(
+          'div',
+          { className: 'glass-card', style: { flex: 1, padding: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' } },
+          React.createElement(
+            'div',
+            null,
+            React.createElement('h2', { style: { fontSize: 20, fontWeight: 800, marginBottom: 8 } }, '🔒 Zugriff eingeschränkt'),
+            React.createElement('p', { style: { color: 'var(--text-muted)', fontSize: 13.5 } },
+              'Dieses Panel steht nur Mitgliedern mit Management-Rolle zur Verfügung.'
+            )
+          )
+        );
+      }
+
+      return React.createElement(
+        'div',
+        { className: 'glass-card', style: { flex: 1, minHeight: 0, padding: 18, display: 'flex', flexDirection: 'column', gap: 14 } },
+        React.createElement(
+          'div',
+          { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 } },
+          React.createElement(
+            'div',
+            null,
+            React.createElement('h2', { style: { fontSize: 17.5, fontWeight: 800 } },
+              'Management · ',
+              React.createElement('span', { className: 'gold-gradient-text' }, 'Rollen & Rechte')
+            ),
+            React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } },
+              'Ändere Rollen anderer Community-Mitglieder in Echtzeit'
+            )
+          ),
+          React.createElement('input', {
+            className: 'input-field',
+            style: { width: 250 },
+            placeholder: 'Mitglied oder Rolle suchen...',
+            value: search,
+            onChange: (e) => setSearch(e.target.value)
+          })
+        ),
+
+        React.createElement(
+          'div',
+          { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 9 } },
+          usersList.map((u) => {
+            const draftRole = customRoles[u.id] !== undefined ? customRoles[u.id] : (u.role || 'Member');
+            return React.createElement(
+              'div',
+              {
+                key: u.id,
+                className: 'nested-box',
+                style: {
+                  padding: '12px 15px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: 12,
+                  flexWrap: 'wrap'
+                }
+              },
+              React.createElement(
+                'div',
+                { style: { display: 'flex', alignItems: 'center', gap: 11 } },
+                React.createElement(AvatarBadge, { profile: u, size: 40 }),
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement(
+                    'div',
+                    { style: { display: 'flex', alignItems: 'center', gap: 8 } },
+                    React.createElement('span', { style: { fontWeight: 700, fontSize: 14 } }, u.username || 'Unbekannt'),
+                    React.createElement(
+                      'span',
+                      { className: isManagementRole(u.role) ? 'badge-gold' : 'badge-green' },
+                      u.role || 'Member'
+                    ),
+                    u.id === currentUser.id && React.createElement('span', { style: { fontSize: 11, color: 'var(--text-muted)' } }, '(Du)')
+                  ),
+                  React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } },
+                    u.custom_status_text || 'Kein Statustext'
+                  )
+                )
+              ),
+
+              React.createElement(
+                'div',
+                { style: { display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' } },
+                React.createElement(
+                  'select',
+                  {
+                    className: 'select-field',
+                    style: { width: 155, padding: '7px 10px' },
+                    value: PRESET_ROLES.includes(draftRole) ? draftRole : '__custom__',
+                    onChange: (e) => {
+                      const v = e.target.value;
+                      if (v !== '__custom__') {
+                        setCustomRoles((prev) => ({ ...prev, [u.id]: v }));
+                      }
+                    }
+                  },
+                  PRESET_ROLES.map((r) => React.createElement('option', { key: r, value: r }, r)),
+                  !PRESET_ROLES.includes(draftRole) && React.createElement('option', { value: '__custom__' }, draftRole)
+                ),
+                React.createElement('input', {
+                  className: 'input-field',
+                  style: { width: 145, padding: '7px 10px' },
+                  placeholder: 'Eigene Rolle...',
+                  value: draftRole,
+                  onChange: (e) => setCustomRoles((prev) => ({ ...prev, [u.id]: e.target.value }))
+                }),
+                React.createElement(
+                  'button',
+                  {
+                    className: 'btn-primary',
+                    style: { padding: '7px 13px' },
+                    disabled: updatingId === u.id || draftRole === (u.role || 'Member'),
+                    onClick: () => handleUpdateRole(u, draftRole)
+                  },
+                  updatingId === u.id ? 'Speichert...' : 'Zuweisen'
+                )
+              )
+            );
+          })
+        )
+      );
+    }
+
+    // =========================================================================
+    // 8. WEBRTC CALL OVERLAY (Nutzt gewählte Hardware-Geräte aus Settings)
+    // =========================================================================
+    function CallOverlay({ callState, setCallState, currentUser, signalChannel, onToast }) {
       const [muted, setMuted] = useState(false);
       const [camOff, setCamOff] = useState(!callState?.isVideo);
       const [elapsed, setElapsed] = useState(0);
@@ -957,7 +1304,6 @@ Deine Persönlichkeit:
       const pcRef = useRef(null);
       const localStreamRef = useRef(null);
 
-      // Anrufdauer zählen sobald verbunden
       useEffect(() => {
         if (!callState || callState.status !== 'connected') {
           setElapsed(0);
@@ -980,10 +1326,30 @@ Deine Persönlichkeit:
 
       const startPeerConnection = async (isInitiator, targetUserId, isVideo) => {
         cleanupMedia();
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: isVideo ? { width: 1280, height: 720 } : false
-        });
+        const prefs = getSavedMediaPrefs();
+        const audioConstraints = {
+          deviceId: prefs.audioInputId ? { exact: prefs.audioInputId } : undefined,
+          echoCancellation: prefs.echoCancellation !== false,
+          noiseSuppression: prefs.noiseSuppression !== false
+        };
+        const videoConstraints = isVideo
+          ? {
+              deviceId: prefs.videoInputId ? { exact: prefs.videoInputId } : undefined,
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            }
+          : false;
+
+        let stream;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: audioConstraints,
+            video: videoConstraints
+          });
+        } catch {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: isVideo });
+        }
+
         localStreamRef.current = stream;
         if (localVideoRef.current && isVideo) {
           localVideoRef.current.srcObject = stream;
@@ -998,11 +1364,12 @@ Deine Persönlichkeit:
 
         pc.ontrack = (event) => {
           const remoteStream = event.streams[0];
-          if (remoteVideoRef.current) {
-            remoteVideoRef.current.srcObject = remoteStream;
-          }
+          if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStream;
           if (remoteAudioRef.current) {
             remoteAudioRef.current.srcObject = remoteStream;
+            if (prefs.audioOutputId && typeof remoteAudioRef.current.setSinkId === 'function') {
+              remoteAudioRef.current.setSinkId(prefs.audioOutputId).catch(() => {});
+            }
           }
         };
 
@@ -1039,7 +1406,6 @@ Deine Persönlichkeit:
         }
       };
 
-      // Externe WebRTC-Signale verarbeiten
       useEffect(() => {
         if (!callState) return;
         const handler = async (e) => {
@@ -1206,13 +1572,17 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 7. MODUL 1: DIRECT MESSAGES & GRUPPEN-CHATS + ANRUFE
+    // 9. MODUL 1: DIRECT MESSAGES & GRUPPEN-CHATS (+ Typing, Suche, Easter Eggs)
     // =========================================================================
-    function ChatModule({ currentUser, currentProfile, profilesMap, signalChannel, setCallState, onUnreadChange, onToast }) {
+    const QUICK_EMOJIS = ['🔥', '💀', '😂', '👍', '⚡', '🎯', '🚀'];
+
+    function ChatModule({ currentUser, currentProfile, profilesMap, signalChannel, setCallState, onUnreadChange, onEasterEgg, onToast }) {
       const [rooms, setRooms] = useState([]);
       const [activeRoomId, setActiveRoomId] = useState(null);
       const [messages, setMessages] = useState([]);
       const [msgInput, setMsgInput] = useState('');
+      const [chatSearch, setChatSearch] = useState('');
+      const [typingUser, setTypingUser] = useState(null);
       const [loadingRooms, setLoadingRooms] = useState(true);
       const [showCreateModal, setShowCreateModal] = useState(false);
       const [isGroupMode, setIsGroupMode] = useState(false);
@@ -1220,6 +1590,7 @@ Deine Persönlichkeit:
       const [selectedMemberIds, setSelectedMemberIds] = useState([]);
       const [unreadByRoom, setUnreadByRoom] = useState({});
       const bottomRef = useRef(null);
+      const typingTimeoutRef = useRef(null);
 
       const allProfilesList = useMemo(
         () => Object.values(profilesMap).filter((p) => p.id !== currentUser.id),
@@ -1287,6 +1658,7 @@ Deine Persönlichkeit:
       }, [currentUser.id]);
 
       useEffect(() => {
+        setTypingUser(null);
         if (activeRoomId) {
           loadMessages(activeRoomId);
           setUnreadByRoom((prev) => {
@@ -1302,7 +1674,6 @@ Deine Persönlichkeit:
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, [messages]);
 
-      // Realtime Subscription für chat_messages
       useEffect(() => {
         const channel = supabase
           .channel('quaps-chat-realtime')
@@ -1340,6 +1711,13 @@ Deine Persönlichkeit:
               setMessages((prev) => prev.filter((m) => m.id !== payload.old.id));
             }
           )
+          .on('broadcast', { event: 'typing' }, ({ payload }) => {
+            if (payload?.roomId === activeRoomId && payload?.userId !== currentUser.id) {
+              setTypingUser(payload.username);
+              clearTimeout(typingTimeoutRef.current);
+              typingTimeoutRef.current = setTimeout(() => setTypingUser(null), 2400);
+            }
+          })
           .subscribe();
 
         return () => {
@@ -1351,6 +1729,21 @@ Deine Persönlichkeit:
         if (room.is_group) return room.name || 'Gruppenraum';
         const otherId = (room.memberIds || []).find((id) => id !== currentUser.id);
         return profilesMap[otherId]?.username || 'Direct Message';
+      };
+
+      const handleTypingInput = (val) => {
+        setMsgInput(val);
+        if (activeRoomId && val.trim()) {
+          supabase.channel('quaps-chat-realtime').send({
+            type: 'broadcast',
+            event: 'typing',
+            payload: {
+              roomId: activeRoomId,
+              userId: currentUser.id,
+              username: currentProfile?.username || 'Mitglied'
+            }
+          });
+        }
       };
 
       const handleCreateRoom = async (e) => {
@@ -1397,6 +1790,17 @@ Deine Persönlichkeit:
         if (!msgInput.trim() || !activeRoomId) return;
         const text = msgInput.trim();
         setMsgInput('');
+
+        // Geheime Chat-Easter-Eggs!
+        if (text.toLowerCase() === '/barrelroll') {
+          onEasterEgg('barrelroll');
+          return;
+        }
+        if (text.toLowerCase() === '/overdrive') {
+          onEasterEgg('overdrive');
+          return;
+        }
+
         const { error } = await supabase.from('chat_messages').insert({
           room_id: activeRoomId,
           sender_id: currentUser.id,
@@ -1410,9 +1814,7 @@ Deine Persönlichkeit:
 
       const handleDeleteMessage = async (msgId) => {
         const { error } = await supabase.from('chat_messages').delete().eq('id', msgId);
-        if (error) {
-          onToast('Löschen nicht möglich: ' + error.message);
-        } else {
+        if (!error) {
           setMessages((prev) => prev.filter((m) => m.id !== msgId));
         }
       };
@@ -1449,6 +1851,12 @@ Deine Persönlichkeit:
         });
       };
 
+      const displayedMessages = useMemo(() => {
+        if (!chatSearch.trim()) return messages;
+        const q = chatSearch.toLowerCase();
+        return messages.filter((m) => (m.content || '').toLowerCase().includes(q));
+      }, [messages, chatSearch]);
+
       return React.createElement(
         'div',
         { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '300px 1fr', gap: 14 } },
@@ -1476,6 +1884,8 @@ Deine Persönlichkeit:
               : rooms.map((room) => {
                   const isSel = room.id === activeRoomId;
                   const unread = unreadByRoom[room.id] || 0;
+                  const otherId = !room.is_group ? (room.memberIds || []).find((id) => id !== currentUser.id) : null;
+                  const peerProfile = otherId ? profilesMap[otherId] : null;
                   return React.createElement(
                     'button',
                     {
@@ -1487,6 +1897,7 @@ Deine Persönlichkeit:
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
+                        gap: 9,
                         cursor: 'pointer',
                         color: '#fff',
                         borderColor: isSel ? 'rgba(239,68,68,0.55)' : undefined,
@@ -1495,12 +1906,19 @@ Deine Persönlichkeit:
                     },
                     React.createElement(
                       'div',
-                      { style: { textAlign: 'left', minWidth: 0 } },
-                      React.createElement('div', { style: { fontWeight: 600, fontSize: 13 } },
-                        (room.is_group ? '👥 ' : '💬 ') + getRoomTitle(room)
-                      ),
-                      React.createElement('div', { style: { fontSize: 11, color: 'var(--text-muted)' } },
-                        `${(room.memberIds || []).length} Mitglieder`
+                      { style: { display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 } },
+                      peerProfile
+                        ? React.createElement(AvatarBadge, { profile: peerProfile, size: 32 })
+                        : React.createElement('div', { style: { width: 32, height: 32, borderRadius: 10, background: 'rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, '👥'),
+                      React.createElement(
+                        'div',
+                        { style: { textAlign: 'left', minWidth: 0 } },
+                        React.createElement('div', { style: { fontWeight: 600, fontSize: 13, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } },
+                          getRoomTitle(room)
+                        ),
+                        React.createElement('div', { style: { fontSize: 11, color: 'var(--text-muted)' } },
+                          peerProfile?.custom_status_text || `${(room.memberIds || []).length} Mitglieder`
+                        )
                       )
                     ),
                     unread > 0 && React.createElement('span', { className: 'badge-red' }, unread)
@@ -1522,7 +1940,6 @@ Deine Persönlichkeit:
             : React.createElement(
                 React.Fragment,
                 null,
-                // Chat Header
                 React.createElement(
                   'div',
                   {
@@ -1530,8 +1947,10 @@ Deine Persönlichkeit:
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
+                      gap: 10,
                       paddingBottom: 12,
-                      borderBottom: '1px solid rgba(255,255,255,0.08)'
+                      borderBottom: '1px solid rgba(255,255,255,0.08)',
+                      flexWrap: 'wrap'
                     }
                   },
                   React.createElement(
@@ -1547,7 +1966,14 @@ Deine Persönlichkeit:
                   ),
                   React.createElement(
                     'div',
-                    { style: { display: 'flex', gap: 8 } },
+                    { style: { display: 'flex', gap: 8, alignItems: 'center' } },
+                    React.createElement('input', {
+                      className: 'input-field',
+                      style: { width: 165, padding: '6px 10px', fontSize: 12 },
+                      placeholder: 'Chat durchsuchen...',
+                      value: chatSearch,
+                      onChange: (e) => setChatSearch(e.target.value)
+                    }),
                     React.createElement('button', { className: 'btn-secondary', onClick: () => handleStartCall(false) }, '📞 Voice'),
                     React.createElement('button', { className: 'btn-primary', onClick: () => handleStartCall(true) }, '📹 Video')
                   )
@@ -1557,56 +1983,102 @@ Deine Persönlichkeit:
                 React.createElement(
                   'div',
                   { className: 'custom-scroll', style: { flex: 1, padding: '14px 4px', display: 'flex', flexDirection: 'column', gap: 10 } },
-                  messages.map((m) => {
+                  displayedMessages.map((m) => {
                     const author = profilesMap[m.sender_id] || {};
                     const isMine = m.sender_id === currentUser.id;
                     return React.createElement(
                       'div',
                       {
                         key: m.id,
-                        className: 'nested-box',
                         style: {
-                          padding: '10px 13px',
+                          display: 'flex',
+                          gap: 9,
                           alignSelf: isMine ? 'flex-end' : 'flex-start',
-                          maxWidth: '75%',
-                          borderColor: isMine ? 'rgba(239,68,68,0.35)' : undefined
+                          maxWidth: '78%',
+                          flexDirection: isMine ? 'row-reverse' : 'row'
                         }
                       },
+                      React.createElement(AvatarBadge, { profile: author, size: 32 }),
                       React.createElement(
                         'div',
-                        { style: { display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 } },
-                        React.createElement('span', { style: { fontWeight: 700, fontSize: 12.5, color: isMine ? '#fca5a5' : '#f5c518' } },
-                          author.username || 'Mitglied'
+                        {
+                          className: 'nested-box',
+                          style: {
+                            padding: '10px 13px',
+                            borderColor: isMine ? 'rgba(239,68,68,0.35)' : undefined
+                          }
+                        },
+                        React.createElement(
+                          'div',
+                          { style: { display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 } },
+                          React.createElement('span', { style: { fontWeight: 700, fontSize: 12.5, color: isMine ? '#fca5a5' : '#f5c518' } },
+                            author.username || 'Mitglied'
+                          ),
+                          author.role && React.createElement('span', { className: isManagementRole(author.role) ? 'badge-gold' : 'badge-green' }, author.role),
+                          React.createElement('span', { style: { fontSize: 10.5, color: 'var(--text-muted)' } }, formatTime(m.created_at)),
+                          isMine && React.createElement(
+                            'button',
+                            {
+                              onClick: () => handleDeleteMessage(m.id),
+                              title: 'Nachricht löschen',
+                              style: { background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 11 }
+                            },
+                            '🗑'
+                          )
                         ),
-                        author.role && React.createElement('span', { className: 'badge-gold' }, author.role),
-                        React.createElement('span', { style: { fontSize: 10.5, color: 'var(--text-muted)' } }, formatTime(m.created_at)),
-                        isMine && React.createElement(
-                          'button',
-                          {
-                            onClick: () => handleDeleteMessage(m.id),
-                            title: 'Nachricht löschen',
-                            style: { background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 11 }
-                          },
-                          '🗑'
-                        )
-                      ),
-                      React.createElement('div', { style: { fontSize: 13.5, lineHeight: 1.45, whiteSpace: 'pre-wrap' } }, m.content)
+                        React.createElement('div', { style: { fontSize: 13.5, lineHeight: 1.45, whiteSpace: 'pre-wrap' } }, m.content)
+                      )
                     );
                   }),
+                  typingUser && React.createElement(
+                    'div',
+                    { style: { fontSize: 12, color: '#f5c518', fontStyle: 'italic', paddingLeft: 6 } },
+                    `✍️ ${typingUser} tippt gerade...`
+                  ),
                   React.createElement('div', { ref: bottomRef })
                 ),
 
-                // Eingabeformular
+                // Emoji Schnellleiste + Eingabeformular
                 React.createElement(
-                  'form',
-                  { onSubmit: handleSendMessage, style: { display: 'flex', gap: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.08)' } },
-                  React.createElement('input', {
-                    className: 'input-field',
-                    placeholder: `Nachricht an ${getRoomTitle(activeRoom)} schreiben (@username für Mention)...`,
-                    value: msgInput,
-                    onChange: (e) => setMsgInput(e.target.value)
-                  }),
-                  React.createElement('button', { type: 'submit', className: 'btn-primary' }, 'Senden')
+                  'div',
+                  { style: { paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: 7 } },
+                  React.createElement(
+                    'div',
+                    { style: { display: 'flex', gap: 6, alignItems: 'center' } },
+                    QUICK_EMOJIS.map((em) =>
+                      React.createElement(
+                        'button',
+                        {
+                          key: em,
+                          type: 'button',
+                          onClick: () => setMsgInput((prev) => prev + em),
+                          style: {
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: 8,
+                            padding: '2px 7px',
+                            cursor: 'pointer',
+                            fontSize: 13
+                          }
+                        },
+                        em
+                      )
+                    ),
+                    React.createElement('span', { style: { fontSize: 11, color: 'rgba(255,255,255,0.4)', marginLeft: 'auto' } },
+                      'Tipp: /barrelroll oder /overdrive'
+                    )
+                  ),
+                  React.createElement(
+                    'form',
+                    { onSubmit: handleSendMessage, style: { display: 'flex', gap: 10 } },
+                    React.createElement('input', {
+                      className: 'input-field',
+                      placeholder: `Nachricht an ${getRoomTitle(activeRoom)} schreiben...`,
+                      value: msgInput,
+                      onChange: (e) => handleTypingInput(e.target.value)
+                    }),
+                    React.createElement('button', { type: 'submit', className: 'btn-primary' }, 'Senden')
+                  )
                 )
               )
         ),
@@ -1665,6 +2137,7 @@ Deine Persönlichkeit:
                         }
                       }
                     }),
+                    React.createElement(AvatarBadge, { profile: p, size: 26 }),
                     React.createElement('span', { style: { fontWeight: 600 } }, p.username),
                     p.role && React.createElement('span', { className: 'badge-gold' }, p.role)
                   );
@@ -1683,11 +2156,11 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 8. MODUL 2: KALENDER (Monat / Woche / Liste + Tagesdetail + CRUD)
+    // 10. MODUL 2: KALENDER (Monat / Woche / Liste + Heute-Sprung + Suche)
     // =========================================================================
     function CalendarModule({ currentUser, profilesMap, onToast }) {
       const [events, setEvents] = useState([]);
-      const [viewMode, setViewMode] = useState('month'); // month | week | list
+      const [viewMode, setViewMode] = useState('month');
       const [cursorDate, setCursorDate] = useState(() => new Date());
       const [selectedDayStr, setSelectedDayStr] = useState(() => new Date().toISOString().slice(0, 10));
       const [title, setTitle] = useState('');
@@ -1756,13 +2229,21 @@ Deine Persönlichkeit:
         }
       };
 
-      const dayEvents = events.filter((ev) => normalizeDay(ev) === selectedDayStr);
+      const jumpToday = () => {
+        const now = new Date();
+        const iso = now.toISOString().slice(0, 10);
+        setCursorDate(now);
+        setSelectedDayStr(iso);
+        setEventDate(iso);
+      };
 
-      // Monatsraster berechnen
+      const dayEvents = events.filter((ev) => normalizeDay(ev) === selectedDayStr);
+      const todayIso = new Date().toISOString().slice(0, 10);
+
       const year = cursorDate.getFullYear();
       const month = cursorDate.getMonth();
       const firstDay = new Date(year, month, 1);
-      const startOffset = (firstDay.getDay() + 6) % 7; // Montag = 0
+      const startOffset = (firstDay.getDay() + 6) % 7;
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const monthCells = [];
       for (let i = 0; i < startOffset; i++) monthCells.push(null);
@@ -1774,7 +2255,6 @@ Deine Persönlichkeit:
       return React.createElement(
         'div',
         { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.55fr 1fr', gap: 14 } },
-        // Links: Kalenderansicht
         React.createElement(
           'div',
           { className: 'glass-card', style: { padding: 18, display: 'flex', flexDirection: 'column', gap: 14, minHeight: 0 } },
@@ -1783,18 +2263,19 @@ Deine Persönlichkeit:
             { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 } },
             React.createElement(
               'div',
-              { style: { display: 'flex', alignItems: 'center', gap: 10 } },
+              { style: { display: 'flex', alignItems: 'center', gap: 8 } },
               React.createElement('button', {
                 className: 'btn-secondary',
                 onClick: () => setCursorDate(new Date(year, month - 1, 1))
               }, '‹'),
-              React.createElement('h2', { style: { fontSize: 17, fontWeight: 700 } },
+              React.createElement('h2', { style: { fontSize: 17, fontWeight: 700, minWidth: 165, textAlign: 'center' } },
                 cursorDate.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })
               ),
               React.createElement('button', {
                 className: 'btn-secondary',
                 onClick: () => setCursorDate(new Date(year, month + 1, 1))
-              }, '›')
+              }, '›'),
+              React.createElement('button', { className: 'btn-secondary', onClick: jumpToday }, 'Heute')
             ),
             React.createElement(
               'div',
@@ -1828,8 +2309,9 @@ Deine Persönlichkeit:
               ),
               monthCells.map((cell, idx) => {
                 if (!cell) return React.createElement('div', { key: 'empty-' + idx });
-                const count = events.filter((e) => normalizeDay(e) === cell.iso).length;
+                const dayEvs = events.filter((e) => normalizeDay(e) === cell.iso);
                 const isSelected = cell.iso === selectedDayStr;
+                const isToday = cell.iso === todayIso;
                 return React.createElement(
                   'button',
                   {
@@ -1840,20 +2322,38 @@ Deine Persönlichkeit:
                     },
                     className: 'nested-box',
                     style: {
-                      minHeight: 68,
+                      minHeight: 72,
                       padding: 8,
                       textAlign: 'left',
                       cursor: 'pointer',
                       color: '#fff',
-                      borderColor: isSelected ? '#ef4444' : undefined,
+                      borderColor: isSelected ? '#ef4444' : isToday ? 'rgba(16,185,129,0.5)' : undefined,
                       background: isSelected ? 'rgba(239,68,68,0.16)' : undefined
                     }
                   },
-                  React.createElement('div', { style: { fontWeight: 700, fontSize: 13 } }, cell.day),
-                  count > 0 && React.createElement(
+                  React.createElement(
                     'div',
-                    { style: { marginTop: 6, fontSize: 10.5, color: '#f5c518', fontWeight: 600 } },
-                    `${count} Termin${count > 1 ? 'e' : ''}`
+                    { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+                    React.createElement('span', { style: { fontWeight: 700, fontSize: 13 } }, cell.day),
+                    isToday && React.createElement('span', { style: { width: 7, height: 7, borderRadius: '50%', background: '#10b981' } })
+                  ),
+                  dayEvs.slice(0, 2).map((ev) =>
+                    React.createElement(
+                      'div',
+                      {
+                        key: ev.id,
+                        style: {
+                          marginTop: 4,
+                          fontSize: 10.5,
+                          color: '#f5c518',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis'
+                        }
+                      },
+                      '• ' + ev.title
+                    )
                   )
                 );
               })
@@ -1902,7 +2402,6 @@ Deine Persönlichkeit:
           )
         ),
 
-        // Rechts: Neuer Termin & Tagesdetail
         React.createElement(
           'div',
           { style: { display: 'flex', flexDirection: 'column', gap: 14, minHeight: 0 } },
@@ -1969,12 +2468,15 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 9. MODUL 3: MEDIATHEK & ORDNERSTRUKTUR (vault_items: Ordner, Medien, Text)
+    // 11. MODUL 3: MEDIATHEK & ORDNERSTRUKTUR (+ Lightbox, Filter, Copy-Notiz)
     // =========================================================================
     function VaultModule({ currentUser, profilesMap, onToast }) {
       const [items, setItems] = useState([]);
       const [currentFolderId, setCurrentFolderId] = useState(null);
-      const [folderStack, setFolderStack] = useState([]); // [{ id, name }]
+      const [folderStack, setFolderStack] = useState([]);
+      const [typeFilter, setTypeFilter] = useState('ALL');
+      const [searchVault, setSearchVault] = useState('');
+      const [lightboxImg, setLightboxImg] = useState(null);
       const [newFolderName, setNewFolderName] = useState('');
       const [noteTitle, setNoteTitle] = useState('');
       const [noteText, setNoteText] = useState('');
@@ -1999,12 +2501,19 @@ Deine Persönlichkeit:
 
       const visibleItems = useMemo(() => {
         return items.filter((it) => {
-          if (currentFolderId === null) {
-            return !it.parent_id;
+          const inFolder = currentFolderId === null ? !it.parent_id : it.parent_id === currentFolderId;
+          if (!inFolder) return false;
+          const kind = it.item_type || (it.media_url ? 'media' : 'text');
+          if (typeFilter !== 'ALL' && kind !== typeFilter) return false;
+          if (searchVault.trim()) {
+            const q = searchVault.toLowerCase();
+            const matchTitle = (it.title || '').toLowerCase().includes(q);
+            const matchText = (it.text_content || '').toLowerCase().includes(q);
+            if (!matchTitle && !matchText) return false;
           }
-          return it.parent_id === currentFolderId;
+          return true;
         });
-      }, [items, currentFolderId]);
+      }, [items, currentFolderId, typeFilter, searchVault]);
 
       const handleCreateFolder = async (e) => {
         e.preventDefault();
@@ -2113,7 +2622,6 @@ Deine Persönlichkeit:
       return React.createElement(
         'div',
         { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 14 } },
-        // Links: Ordner & Dateien
         React.createElement(
           'div',
           { className: 'glass-card', style: { padding: 18, display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 } },
@@ -2122,41 +2630,71 @@ Deine Persönlichkeit:
             { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 } },
             React.createElement('h2', { style: { fontSize: 16.5, fontWeight: 700 } }, 'Mediathek & Ordner'),
             React.createElement(
-              'label',
-              { className: 'btn-primary', style: { cursor: uploading ? 'wait' : 'pointer' } },
-              uploading ? 'Lade hoch...' : '+ Datei / Bild hochladen',
+              'div',
+              { style: { display: 'flex', gap: 8, alignItems: 'center' } },
               React.createElement('input', {
-                type: 'file',
-                style: { display: 'none' },
-                disabled: uploading,
-                onChange: handleFileUpload
-              })
+                className: 'input-field',
+                style: { width: 170, padding: '6px 10px', fontSize: 12 },
+                placeholder: 'Tresor durchsuchen...',
+                value: searchVault,
+                onChange: (e) => setSearchVault(e.target.value)
+              }),
+              React.createElement(
+                'label',
+                { className: 'btn-primary', style: { cursor: uploading ? 'wait' : 'pointer' } },
+                uploading ? 'Lade hoch...' : '+ Datei / Bild',
+                React.createElement('input', {
+                  type: 'file',
+                  style: { display: 'none' },
+                  disabled: uploading,
+                  onChange: handleFileUpload
+                })
+              )
             )
           ),
 
-          // Breadcrumb Pfad
+          // Breadcrumb + Filter Pills
           React.createElement(
             'div',
-            { style: { display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', fontSize: 12.5 } },
+            { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 } },
             React.createElement(
-              'button',
-              { className: 'pill-tab', onClick: () => jumpBreadcrumb(-1) },
-              '📁 Root'
+              'div',
+              { style: { display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', fontSize: 12.5 } },
+              React.createElement('button', { className: 'pill-tab', onClick: () => jumpBreadcrumb(-1) }, '📁 Root'),
+              folderStack.map((f, i) => React.createElement(
+                React.Fragment,
+                { key: f.id },
+                React.createElement('span', { style: { color: 'var(--text-muted)' } }, '/'),
+                React.createElement('button', { className: 'pill-tab', onClick: () => jumpBreadcrumb(i) }, f.name)
+              ))
             ),
-            folderStack.map((f, i) => React.createElement(
-              React.Fragment,
-              { key: f.id },
-              React.createElement('span', { style: { color: 'var(--text-muted)' } }, '/'),
-              React.createElement('button', { className: 'pill-tab', onClick: () => jumpBreadcrumb(i) }, f.name)
-            ))
+            React.createElement(
+              'div',
+              { style: { display: 'flex', gap: 5 } },
+              [
+                { id: 'ALL', label: 'Alle' },
+                { id: 'folder', label: 'Ordner' },
+                { id: 'media', label: 'Medien' },
+                { id: 'text', label: 'Notizen' }
+              ].map((t) =>
+                React.createElement(
+                  'button',
+                  {
+                    key: t.id,
+                    className: `pill-tab ${typeFilter === t.id ? 'active' : ''}`,
+                    onClick: () => setTypeFilter(t.id)
+                  },
+                  t.label
+                )
+              )
+            )
           ),
 
-          // Items Grid
           React.createElement(
             'div',
             { className: 'custom-scroll grid-2', style: { flex: 1, alignContent: 'start' } },
             visibleItems.length === 0
-              ? React.createElement('div', { style: { fontSize: 13, color: 'var(--text-muted)' } }, 'Dieser Ordner ist leer.')
+              ? React.createElement('div', { style: { fontSize: 13, color: 'var(--text-muted)' } }, 'Keine Einträge in dieser Ansicht.')
               : visibleItems.map((it) => {
                   const type = it.item_type || (it.media_url ? 'media' : 'text');
                   return React.createElement(
@@ -2184,7 +2722,8 @@ Deine Persönlichkeit:
                       isImageUrl(it.media_url) && React.createElement('img', {
                         src: it.media_url,
                         alt: it.title,
-                        style: { width: '100%', height: 120, objectFit: 'cover', borderRadius: 10 }
+                        onClick: () => setLightboxImg(it),
+                        style: { width: '100%', height: 124, objectFit: 'cover', borderRadius: 10, cursor: 'zoom-in' }
                       }),
                       React.createElement('div', { style: { fontWeight: 600, fontSize: 13, wordBreak: 'break-word' } }, '📎 ' + it.title),
                       it.media_url && React.createElement(
@@ -2196,7 +2735,23 @@ Deine Persönlichkeit:
                     type === 'text' && React.createElement(
                       React.Fragment,
                       null,
-                      React.createElement('div', { style: { fontWeight: 700, fontSize: 13.5, color: '#f5c518' } }, '📝 ' + it.title),
+                      React.createElement(
+                        'div',
+                        { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+                        React.createElement('div', { style: { fontWeight: 700, fontSize: 13.5, color: '#f5c518' } }, '📝 ' + it.title),
+                        React.createElement(
+                          'button',
+                          {
+                            className: 'btn-secondary',
+                            style: { padding: '3px 7px', fontSize: 11 },
+                            onClick: () => {
+                              navigator.clipboard?.writeText(it.text_content || '');
+                              onToast('Notiztext kopiert!');
+                            }
+                          },
+                          'Kopieren'
+                        )
+                      ),
                       React.createElement(
                         'div',
                         {
@@ -2275,12 +2830,33 @@ Deine Persönlichkeit:
               React.createElement('button', { type: 'submit', className: 'btn-primary' }, 'Notiz speichern')
             )
           )
+        ),
+
+        // Bild-Lightbox Modal
+        lightboxImg && React.createElement(
+          'div',
+          { className: 'modal-backdrop', onClick: () => setLightboxImg(null) },
+          React.createElement(
+            'div',
+            { className: 'glass-card', style: { maxWidth: '86vw', maxHeight: '88vh', padding: 16, textAlign: 'center' }, onClick: (e) => e.stopPropagation() },
+            React.createElement('img', {
+              src: lightboxImg.media_url,
+              alt: lightboxImg.title,
+              style: { maxWidth: '80vw', maxHeight: '72vh', borderRadius: 12, objectFit: 'contain' }
+            }),
+            React.createElement(
+              'div',
+              { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 } },
+              React.createElement('span', { style: { fontWeight: 700, fontSize: 13.5 } }, lightboxImg.title),
+              React.createElement('button', { className: 'btn-secondary', onClick: () => setLightboxImg(null) }, 'Schließen')
+            )
+          )
         )
       );
     }
 
     // =========================================================================
-    // 10. MODUL 4: PINNWAND (pinboard_posts & pinboard_replies)
+    // 12. MODUL 4: PINNWAND (pinboard_posts & pinboard_replies + Bearbeiten)
     // =========================================================================
     const REACTION_EMOJIS = ['🔥', '👍', '⚡', '🎯'];
 
@@ -2288,11 +2864,13 @@ Deine Persönlichkeit:
       const [posts, setPosts] = useState([]);
       const [filterCategory, setFilterCategory] = useState('ALL');
       const [filterStatus, setFilterStatus] = useState('ALL');
+      const [searchQuery, setSearchQuery] = useState('');
       const [title, setTitle] = useState('');
       const [content, setContent] = useState('');
       const [category, setCategory] = useState('Allgemein');
       const [status, setStatus] = useState('Aktiv');
       const [coordinates, setCoordinates] = useState('');
+      const [editingPostId, setEditingPostId] = useState(null);
       const [openThreadId, setOpenThreadId] = useState(null);
       const [replies, setReplies] = useState([]);
       const [replyText, setReplyText] = useState('');
@@ -2342,9 +2920,51 @@ Deine Persönlichkeit:
         if (openThreadId) loadReplies(openThreadId);
       }, [openThreadId]);
 
-      const handleCreatePost = async (e) => {
+      const startEditPost = (post) => {
+        setEditingPostId(post.id);
+        setTitle(post.title || '');
+        setContent(post.content || '');
+        setCategory(post.category || 'Allgemein');
+        setStatus(post.status || 'Aktiv');
+        setCoordinates(post.coordinates || '');
+      };
+
+      const resetForm = () => {
+        setEditingPostId(null);
+        setTitle('');
+        setContent('');
+        setCategory('Allgemein');
+        setStatus('Aktiv');
+        setCoordinates('');
+      };
+
+      const handleSubmitPost = async (e) => {
         e.preventDefault();
         if (!content.trim()) return;
+
+        if (editingPostId) {
+          const { error } = await supabase
+            .from('pinboard_posts')
+            .update({
+              title: title.trim() || null,
+              content: content.trim(),
+              category,
+              status,
+              coordinates: coordinates.trim() || null
+            })
+            .eq('id', editingPostId);
+          if (error) {
+            soundEngine.play('error_alert');
+            onToast('Update-Fehler: ' + error.message);
+          } else {
+            soundEngine.play('upload_success');
+            resetForm();
+            onToast('Beitrag aktualisiert!');
+            loadPosts();
+          }
+          return;
+        }
+
         const { error } = await supabase.from('pinboard_posts').insert({
           author_id: currentUser.id,
           title: title.trim() || null,
@@ -2361,9 +2981,7 @@ Deine Persönlichkeit:
           onToast('Post-Fehler: ' + error.message);
         } else {
           soundEngine.play('pinboard_post');
-          setTitle('');
-          setContent('');
-          setCoordinates('');
+          resetForm();
           onToast('Beitrag gepostet!');
           loadPosts();
         }
@@ -2416,13 +3034,20 @@ Deine Persönlichkeit:
       const filteredPosts = posts.filter((p) => {
         if (filterCategory !== 'ALL' && p.category !== filterCategory) return false;
         if (filterStatus !== 'ALL' && p.status !== filterStatus) return false;
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase();
+          const hit =
+            (p.title || '').toLowerCase().includes(q) ||
+            (p.content || '').toLowerCase().includes(q) ||
+            (p.coordinates || '').toLowerCase().includes(q);
+          if (!hit) return false;
+        }
         return true;
       });
 
       return React.createElement(
         'div',
         { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 14 } },
-        // Links: Filter & Pinnwand-Posts
         React.createElement(
           'div',
           { className: 'glass-card', style: { padding: 18, display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 } },
@@ -2432,7 +3057,14 @@ Deine Persönlichkeit:
             React.createElement('h2', { style: { fontSize: 16.5, fontWeight: 700 } }, 'Pinnwand'),
             React.createElement(
               'div',
-              { style: { display: 'flex', gap: 8 } },
+              { style: { display: 'flex', gap: 7, flexWrap: 'wrap' } },
+              React.createElement('input', {
+                className: 'input-field',
+                style: { width: 155, padding: '6px 10px', fontSize: 12 },
+                placeholder: 'Suche...',
+                value: searchQuery,
+                onChange: (e) => setSearchQuery(e.target.value)
+              }),
               React.createElement(
                 'select',
                 { className: 'select-field', style: { width: 'auto', padding: '6px 10px' }, value: filterCategory, onChange: (e) => setFilterCategory(e.target.value) },
@@ -2474,6 +3106,7 @@ Deine Persönlichkeit:
                   React.createElement(
                     'div',
                     { style: { display: 'flex', alignItems: 'center', gap: 8 } },
+                    React.createElement(AvatarBadge, { profile: author, size: 26 }),
                     p.pinned && React.createElement('span', { className: 'badge-gold' }, '📌 ANGEPINNT'),
                     React.createElement('span', { style: { fontWeight: 700, fontSize: 13 } }, author.username || 'Mitglied'),
                     React.createElement('span', { className: 'badge-green' }, p.category || 'Allgemein'),
@@ -2483,6 +3116,7 @@ Deine Persönlichkeit:
                     'div',
                     { style: { display: 'flex', gap: 6 } },
                     React.createElement('button', { className: 'btn-secondary', style: { padding: '4px 8px', fontSize: 11 }, onClick: () => togglePin(p) }, p.pinned ? 'Lösen' : 'Anpinnen'),
+                    p.author_id === currentUser.id && React.createElement('button', { className: 'btn-secondary', style: { padding: '4px 8px', fontSize: 11 }, onClick: () => startEditPost(p) }, '✏️'),
                     p.author_id === currentUser.id && React.createElement('button', { className: 'btn-danger', onClick: () => deletePost(p.id) }, '✕')
                   )
                 ),
@@ -2536,17 +3170,24 @@ Deine Persönlichkeit:
           )
         ),
 
-        // Rechts: Neuer Post + Thread-Antworten
+        // Rechts: Neuer / Bearbeiteter Post + Thread-Antworten
         React.createElement(
           'div',
           { style: { display: 'flex', flexDirection: 'column', gap: 14, minHeight: 0 } },
           React.createElement(
             'div',
             { className: 'glass-card', style: { padding: 18 } },
-            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700, marginBottom: 10 } }, 'Neuen Pinnwand-Beitrag erstellen'),
+            React.createElement(
+              'div',
+              { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 } },
+              React.createElement('h3', { style: { fontSize: 15, fontWeight: 700 } },
+                editingPostId ? 'Beitrag bearbeiten' : 'Neuen Pinnwand-Beitrag erstellen'
+              ),
+              editingPostId && React.createElement('button', { type: 'button', className: 'btn-secondary', style: { padding: '4px 8px', fontSize: 11 }, onClick: resetForm }, 'Abbrechen')
+            ),
             React.createElement(
               'form',
-              { onSubmit: handleCreatePost, style: { display: 'flex', flexDirection: 'column', gap: 9 } },
+              { onSubmit: handleSubmitPost, style: { display: 'flex', flexDirection: 'column', gap: 9 } },
               React.createElement('input', {
                 className: 'input-field',
                 placeholder: 'Titel (optional)',
@@ -2585,7 +3226,9 @@ Deine Persönlichkeit:
                 onChange: (e) => setContent(e.target.value),
                 required: true
               }),
-              React.createElement('button', { type: 'submit', className: 'btn-primary' }, 'Anheften & Posten')
+              React.createElement('button', { type: 'submit', className: 'btn-primary' },
+                editingPostId ? 'Änderungen speichern' : 'Anheften & Posten'
+              )
             )
           ),
 
@@ -2632,8 +3275,14 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 11. MODUL 5: QUAPSSI KI-TERMINAL (Gemini API + qupas_si_messages)
+    // 13. MODUL 5: QUAPSSI KI-TERMINAL (Gemini API + Quick-Prompts)
     // =========================================================================
+    const QUAPSSI_QUICK_PROMPTS = [
+      'Erstelle ein kurzes Event-Briefing für heute Abend',
+      'Formuliere eine knackige Pinnwand-Ankündigung',
+      'Gib mir eine Checkliste für unseren nächsten Squad-Einsatz'
+    ];
+
     function QuapsSIModule({ currentUser, onToast }) {
       const [messages, setMessages] = useState([]);
       const [prompt, setPrompt] = useState('');
@@ -2663,10 +3312,9 @@ Deine Persönlichkeit:
         onToast('Gemini API Key lokal gespeichert.');
       };
 
-      const handleAsk = async (e) => {
-        e.preventDefault();
-        if (!prompt.trim() || sending) return;
-        const q = prompt.trim();
+      const sendPromptText = async (textToAsk) => {
+        if (!textToAsk.trim() || sending) return;
+        const q = textToAsk.trim();
         setPrompt('');
         setSending(true);
         try {
@@ -2705,12 +3353,31 @@ Deine Persönlichkeit:
             React.createElement('input', {
               className: 'input-field',
               type: 'password',
-              style: { width: 230, padding: '7px 11px', fontSize: 12 },
+              style: { width: 225, padding: '7px 11px', fontSize: 12 },
               placeholder: 'GEMINI_API_KEY (AIza...)',
               value: apiKeyInput,
               onChange: (e) => setApiKeyInput(e.target.value)
             }),
             React.createElement('button', { className: 'btn-secondary', onClick: saveKey }, 'Key sichern')
+          )
+        ),
+
+        // Quick-Briefing Presets
+        React.createElement(
+          'div',
+          { style: { display: 'flex', gap: 7, flexWrap: 'wrap' } },
+          QUAPSSI_QUICK_PROMPTS.map((qp) =>
+            React.createElement(
+              'button',
+              {
+                key: qp,
+                type: 'button',
+                className: 'pill-tab',
+                disabled: sending,
+                onClick: () => sendPromptText(qp)
+              },
+              '⚡ ' + qp
+            )
           )
         ),
 
@@ -2751,7 +3418,13 @@ Deine Persönlichkeit:
 
         React.createElement(
           'form',
-          { onSubmit: handleAsk, style: { display: 'flex', gap: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.08)' } },
+          {
+            onSubmit: (e) => {
+              e.preventDefault();
+              sendPromptText(prompt);
+            },
+            style: { display: 'flex', gap: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.08)' }
+          },
           React.createElement('input', {
             className: 'input-field',
             placeholder: 'Befehl oder Frage an QuapsSI senden...',
@@ -2767,14 +3440,186 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 12. MODUL 6: CUSTOM SOUND-SYSTEM (Lautstärke, DND, Custom Files, Test)
+    // 14. MODUL 6: AUDIO, VIDEO & CUSTOM SOUNDS STUDIO
+    //     (Mikrofon- & Kamera-Auswahl + VU-Meter + Live-Cam-Preview + Echo-Test + Sound-System)
     // =========================================================================
-    function SoundSettingsModule({ onToast }) {
-      const [settings, setSettings] = useState(() => soundEngine.load());
+    function SettingsStudioModule({ onToast }) {
+      const [subTab, setSubTab] = useState('devices'); // devices | sounds
+      const [soundSettings, setSoundSettings] = useState(() => soundEngine.load());
+
+      // Hardware Geräte
+      const [mediaPrefs, setMediaPrefs] = useState(() => getSavedMediaPrefs());
+      const [audioInputs, setAudioInputs] = useState([]);
+      const [videoInputs, setVideoInputs] = useState([]);
+      const [audioOutputs, setAudioOutputs] = useState([]);
+
+      // Live Mikrofon Test & VU-Meter
+      const [micTesting, setMicTesting] = useState(false);
+      const [micLevel, setMicLevel] = useState(0);
+      const [echoRecording, setEchoRecording] = useState(false);
+      const micStreamRef = useRef(null);
+      const micRafRef = useRef(null);
+      const micAudioCtxRef = useRef(null);
+
+      // Live Kamera Test
+      const [camTesting, setCamTesting] = useState(false);
+      const camVideoRef = useRef(null);
+      const camStreamRef = useRef(null);
 
       useEffect(() => {
-        return soundEngine.subscribe((next) => setSettings(next));
+        const unsub = soundEngine.subscribe((next) => setSoundSettings(next));
+        refreshDevices();
+        return () => {
+          unsub();
+          stopMicTest();
+          stopCamTest();
+        };
       }, []);
+
+      const refreshDevices = async () => {
+        try {
+          if (!navigator.mediaDevices?.enumerateDevices) return;
+          const devs = await navigator.mediaDevices.enumerateDevices();
+          setAudioInputs(devs.filter((d) => d.kind === 'audioinput'));
+          setVideoInputs(devs.filter((d) => d.kind === 'videoinput'));
+          setAudioOutputs(devs.filter((d) => d.kind === 'audiooutput'));
+        } catch {}
+      };
+
+      const updatePref = (patch) => {
+        const next = { ...mediaPrefs, ...patch };
+        setMediaPrefs(next);
+        saveMediaPrefs(next);
+      };
+
+      const stopMicTest = () => {
+        cancelAnimationFrame(micRafRef.current);
+        if (micStreamRef.current) {
+          micStreamRef.current.getTracks().forEach((t) => t.stop());
+          micStreamRef.current = null;
+        }
+        if (micAudioCtxRef.current) {
+          micAudioCtxRef.current.close().catch(() => {});
+          micAudioCtxRef.current = null;
+        }
+        setMicTesting(false);
+        setMicLevel(0);
+      };
+
+      const startMicTest = async () => {
+        stopMicTest();
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              deviceId: mediaPrefs.audioInputId ? { exact: mediaPrefs.audioInputId } : undefined,
+              echoCancellation: mediaPrefs.echoCancellation !== false,
+              noiseSuppression: mediaPrefs.noiseSuppression !== false
+            }
+          });
+          micStreamRef.current = stream;
+          await refreshDevices();
+
+          const AC = window.AudioContext || window.webkitAudioContext;
+          const ctx = new AC();
+          micAudioCtxRef.current = ctx;
+          const src = ctx.createMediaStreamSource(stream);
+          const analyser = ctx.createAnalyser();
+          analyser.fftSize = 256;
+          src.connect(analyser);
+
+          const dataArr = new Uint8Array(analyser.frequencyBinCount);
+          setMicTesting(true);
+
+          const tick = () => {
+            analyser.getByteFrequencyData(dataArr);
+            let sum = 0;
+            for (let i = 0; i < dataArr.length; i++) sum += dataArr[i];
+            const avg = sum / dataArr.length;
+            setMicLevel(Math.min(100, Math.round((avg / 128) * 100)));
+            micRafRef.current = requestAnimationFrame(tick);
+          };
+          tick();
+        } catch (err) {
+          soundEngine.play('error_alert');
+          onToast('Mikrofon konnte nicht gestartet werden: ' + err.message);
+        }
+      };
+
+      // 4-Sekunden Echo-Test (nimmt Stimme auf und spielt sie direkt ab)
+      const runEchoCheck = async () => {
+        if (echoRecording) return;
+        setEchoRecording(true);
+        onToast('🎙️ Sprich jetzt 4 Sekunden in dein Mikrofon...');
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              deviceId: mediaPrefs.audioInputId ? { exact: mediaPrefs.audioInputId } : undefined,
+              echoCancellation: mediaPrefs.echoCancellation !== false,
+              noiseSuppression: mediaPrefs.noiseSuppression !== false
+            }
+          });
+          const recorder = new MediaRecorder(stream);
+          const chunks = [];
+          recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) chunks.push(e.data);
+          };
+          recorder.onstop = () => {
+            stream.getTracks().forEach((t) => t.stop());
+            const blob = new Blob(chunks, { type: 'audio/webm' });
+            const url = URL.createObjectURL(blob);
+            const audio = new Audio(url);
+            if (mediaPrefs.audioOutputId && typeof audio.setSinkId === 'function') {
+              audio.setSinkId(mediaPrefs.audioOutputId).catch(() => {});
+            }
+            audio.onended = () => URL.revokeObjectURL(url);
+            audio.play().catch(() => {});
+            setEchoRecording(false);
+            onToast('🔊 Spiele deine Testaufnahme ab!');
+          };
+          recorder.start();
+          setTimeout(() => {
+            if (recorder.state !== 'inactive') recorder.stop();
+          }, 4000);
+        } catch (err) {
+          setEchoRecording(false);
+          onToast('Echo-Test fehlgeschlagen: ' + err.message);
+        }
+      };
+
+      const stopCamTest = () => {
+        if (camStreamRef.current) {
+          camStreamRef.current.getTracks().forEach((t) => t.stop());
+          camStreamRef.current = null;
+        }
+        if (camVideoRef.current) {
+          camVideoRef.current.srcObject = null;
+        }
+        setCamTesting(false);
+      };
+
+      const startCamTest = async () => {
+        stopCamTest();
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              deviceId: mediaPrefs.videoInputId ? { exact: mediaPrefs.videoInputId } : undefined,
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            }
+          });
+          camStreamRef.current = stream;
+          await refreshDevices();
+          setCamTesting(true);
+          setTimeout(() => {
+            if (camVideoRef.current) {
+              camVideoRef.current.srcObject = stream;
+            }
+          }, 30);
+        } catch (err) {
+          soundEngine.play('error_alert');
+          onToast('Kamera konnte nicht gestartet werden: ' + err.message);
+        }
+      };
 
       const handleCustomFileChange = (key, file) => {
         if (!file) return;
@@ -2794,24 +3639,210 @@ Deine Persönlichkeit:
         { className: 'glass-card', style: { flex: 1, minHeight: 0, padding: 18, display: 'flex', flexDirection: 'column', gap: 14 } },
         React.createElement(
           'div',
-          { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 } },
+          { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 } },
           React.createElement(
             'div',
             null,
-            React.createElement('h2', { style: { fontSize: 17, fontWeight: 700 } }, 'Custom Sound-System'),
+            React.createElement('h2', { style: { fontSize: 17, fontWeight: 800 } }, 'Audio, Video & Sound-Studio'),
             React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } },
-              'Eigene Audio-Dateien (.mp3, .wav, .ogg) pro Event festlegen oder integrierte QuapsAttack-Töne nutzen'
+              'Mikrofon & Kamera für Calls konfigurieren/testen sowie eigene Benachrichtigungstöne hinterlegen'
             )
           ),
           React.createElement(
             'div',
-            { style: { display: 'flex', alignItems: 'center', gap: 14 } },
+            { style: { display: 'flex', gap: 8 } },
+            React.createElement(
+              'button',
+              { className: `pill-tab ${subTab === 'devices' ? 'active' : ''}`, onClick: () => setSubTab('devices') },
+              '🎙️ Mikrofon & Kamera'
+            ),
+            React.createElement(
+              'button',
+              { className: `pill-tab ${subTab === 'sounds' ? 'active' : ''}`, onClick: () => setSubTab('sounds') },
+              '🔊 Custom Sound-Effekte'
+            )
+          )
+        ),
+
+        // TAB 1: MIKROFON & KAMERA EINSTELLEN UND TESTEN
+        subTab === 'devices' && React.createElement(
+          'div',
+          { className: 'custom-scroll', style: { flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 } },
+          // Mikrofon & Audio-Output Karte
+          React.createElement(
+            'div',
+            { className: 'nested-box', style: { padding: 16, display: 'flex', flexDirection: 'column', gap: 12 } },
+            React.createElement(
+              'div',
+              { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+              React.createElement('h3', { style: { fontSize: 15, fontWeight: 700 } }, '🎤 Mikrofon & Audio-Setup'),
+              React.createElement('button', { className: 'btn-secondary', style: { padding: '5px 9px', fontSize: 11.5 }, onClick: refreshDevices }, '🔄 Geräte scannen')
+            ),
+
+            React.createElement(
+              'div',
+              null,
+              React.createElement('label', { style: { fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 } }, 'Eingabegerät (Mikrofon)'),
+              React.createElement(
+                'select',
+                {
+                  className: 'select-field',
+                  value: mediaPrefs.audioInputId || '',
+                  onChange: (e) => updatePref({ audioInputId: e.target.value })
+                },
+                React.createElement('option', { value: '' }, 'Standard-Mikrofon (System)'),
+                audioInputs.map((d, i) =>
+                  React.createElement('option', { key: d.deviceId || i, value: d.deviceId }, d.label || `Mikrofon ${i + 1}`)
+                )
+              )
+            ),
+
+            React.createElement(
+              'div',
+              null,
+              React.createElement('label', { style: { fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 } }, 'Ausgabegerät (Kopfhörer / Lautsprecher)'),
+              React.createElement(
+                'select',
+                {
+                  className: 'select-field',
+                  value: mediaPrefs.audioOutputId || '',
+                  onChange: (e) => updatePref({ audioOutputId: e.target.value })
+                },
+                React.createElement('option', { value: '' }, 'Standard-Wiedergabegerät'),
+                audioOutputs.map((d, i) =>
+                  React.createElement('option', { key: d.deviceId || i, value: d.deviceId }, d.label || `Ausgang ${i + 1}`)
+                )
+              )
+            ),
+
+            React.createElement(
+              'div',
+              { style: { display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 12.5 } },
+              React.createElement(
+                'label',
+                { style: { display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' } },
+                React.createElement('input', {
+                  type: 'checkbox',
+                  checked: mediaPrefs.echoCancellation !== false,
+                  onChange: (e) => updatePref({ echoCancellation: e.target.checked })
+                }),
+                'Echounterdrückung'
+              ),
+              React.createElement(
+                'label',
+                { style: { display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' } },
+                React.createElement('input', {
+                  type: 'checkbox',
+                  checked: mediaPrefs.noiseSuppression !== false,
+                  onChange: (e) => updatePref({ noiseSuppression: e.target.checked })
+                }),
+                'Rauschunterdrückung'
+              )
+            ),
+
+            // Live VU-Meter
+            React.createElement(
+              'div',
+              { style: { marginTop: 4 } },
+              React.createElement(
+                'div',
+                { style: { display: 'flex', justifyContent: 'space-between', fontSize: 11.5, color: 'var(--text-muted)', marginBottom: 5 } },
+                React.createElement('span', null, 'Live-Eingangspegel'),
+                React.createElement('span', null, micTesting ? `${micLevel}%` : 'Inaktiv')
+              ),
+              React.createElement(
+                'div',
+                { className: 'vu-bar-bg' },
+                React.createElement('div', { className: 'vu-bar-fill', style: { width: `${micLevel}%` } })
+              )
+            ),
+
+            React.createElement(
+              'div',
+              { style: { display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 } },
+              !micTesting
+                ? React.createElement('button', { className: 'btn-primary', onClick: startMicTest }, '🎙️ Pegel-Test starten')
+                : React.createElement('button', { className: 'btn-danger', onClick: stopMicTest }, '⏹ Pegel-Test stoppen'),
+              React.createElement(
+                'button',
+                { className: 'btn-secondary', disabled: echoRecording, onClick: runEchoCheck },
+                echoRecording ? '🔴 Nimmt 4s auf...' : '🔁 4s Echo-Check (Stimme hören)'
+              )
+            )
+          ),
+
+          // Kamera Vorschau & Auswahl Karte
+          React.createElement(
+            'div',
+            { className: 'nested-box', style: { padding: 16, display: 'flex', flexDirection: 'column', gap: 12 } },
+            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700 } }, '📹 Kamera-Setup & Live-Vorschau'),
+            React.createElement(
+              'div',
+              null,
+              React.createElement('label', { style: { fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 } }, 'Videoquelle (Webcam)'),
+              React.createElement(
+                'select',
+                {
+                  className: 'select-field',
+                  value: mediaPrefs.videoInputId || '',
+                  onChange: (e) => updatePref({ videoInputId: e.target.value })
+                },
+                React.createElement('option', { value: '' }, 'Standard-Kamera (System)'),
+                videoInputs.map((d, i) =>
+                  React.createElement('option', { key: d.deviceId || i, value: d.deviceId }, d.label || `Kamera ${i + 1}`)
+                )
+              )
+            ),
+
+            React.createElement(
+              'div',
+              {
+                style: {
+                  flex: 1,
+                  minHeight: 200,
+                  borderRadius: 14,
+                  background: '#07070d',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden'
+                }
+              },
+              camTesting
+                ? React.createElement('video', {
+                    ref: camVideoRef,
+                    autoPlay: true,
+                    playsInline: true,
+                    muted: true,
+                    style: { width: '100%', height: '100%', maxHeight: 240, objectFit: 'cover' }
+                  })
+                : React.createElement('span', { style: { fontSize: 12.5, color: 'var(--text-muted)' } }, 'Kamera-Vorschau ist ausgeschaltet')
+            ),
+
+            React.createElement(
+              'div',
+              { style: { display: 'flex', gap: 8 } },
+              !camTesting
+                ? React.createElement('button', { className: 'btn-primary', onClick: startCamTest }, '📹 Kamera testen')
+                : React.createElement('button', { className: 'btn-danger', onClick: stopCamTest }, '⏹ Kamera stoppen')
+            )
+          )
+        ),
+
+        // TAB 2: CUSTOM SOUNDS
+        subTab === 'sounds' && React.createElement(
+          React.Fragment,
+          null,
+          React.createElement(
+            'div',
+            { style: { display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' } },
             React.createElement(
               'label',
               { style: { display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, cursor: 'pointer' } },
               React.createElement('input', {
                 type: 'checkbox',
-                checked: settings.dnd,
+                checked: soundSettings.dnd,
                 onChange: (e) => soundEngine.setDnd(e.target.checked)
               }),
               'Nicht stören (DND)'
@@ -2820,84 +3851,86 @@ Deine Persönlichkeit:
               'div',
               { style: { display: 'flex', alignItems: 'center', gap: 8 } },
               React.createElement('span', { style: { fontSize: 12, color: 'var(--text-muted)' } },
-                `Lautstärke: ${Math.round(settings.volume * 100)}%`
+                `Gesamtlautstärke: ${Math.round(soundSettings.volume * 100)}%`
               ),
               React.createElement('input', {
                 type: 'range',
                 min: 0,
                 max: 1,
                 step: 0.05,
-                value: settings.volume,
+                value: soundSettings.volume,
                 onChange: (e) => soundEngine.setVolume(parseFloat(e.target.value))
               })
             )
-          )
-        ),
+          ),
 
-        React.createElement(
-          'div',
-          { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 8 } },
-          SOUND_EVENTS.map((ev) => {
-            const custom = settings.customFiles[ev.key];
-            return React.createElement(
-              'div',
-              {
-                key: ev.key,
-                className: 'nested-box',
-                style: {
-                  padding: '12px 14px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 12,
-                  flexWrap: 'wrap'
-                }
-              },
-              React.createElement(
+          React.createElement(
+            'div',
+            { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 8 } },
+            SOUND_EVENTS.map((ev) => {
+              const custom = soundSettings.customFiles[ev.key];
+              return React.createElement(
                 'div',
-                null,
-                React.createElement('div', { style: { fontWeight: 700, fontSize: 13.5 } }, ev.label),
-                React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } }, ev.desc),
-                custom && React.createElement(
+                {
+                  key: ev.key,
+                  className: 'nested-box',
+                  style: {
+                    padding: '12px 14px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 12,
+                    flexWrap: 'wrap'
+                  }
+                },
+                React.createElement(
                   'div',
-                  { style: { fontSize: 11.5, color: '#10b981', marginTop: 3 } },
-                  '✓ Eigene Datei: ' + custom.fileName
-                )
-              ),
-              React.createElement(
-                'div',
-                { style: { display: 'flex', gap: 8, alignItems: 'center' } },
-                React.createElement(
-                  'button',
-                  { className: 'btn-secondary', onClick: () => soundEngine.play(ev.key, true) },
-                  '▶ Test'
+                  null,
+                  React.createElement('div', { style: { fontWeight: 700, fontSize: 13.5 } }, ev.label),
+                  React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } }, ev.desc),
+                  custom && React.createElement(
+                    'div',
+                    { style: { fontSize: 11.5, color: '#10b981', marginTop: 3 } },
+                    '✓ Eigene Datei: ' + custom.fileName
+                  )
                 ),
                 React.createElement(
-                  'label',
-                  { className: 'btn-secondary', style: { cursor: 'pointer' } },
-                  'Datei wählen',
-                  React.createElement('input', {
-                    type: 'file',
-                    accept: 'audio/*',
-                    style: { display: 'none' },
-                    onChange: (e) => handleCustomFileChange(ev.key, e.target.files?.[0])
-                  })
-                ),
-                custom && React.createElement(
-                  'button',
-                  { className: 'btn-danger', onClick: () => soundEngine.setCustomSound(ev.key, null) },
-                  'Reset'
+                  'div',
+                  { style: { display: 'flex', gap: 8, alignItems: 'center' } },
+                  React.createElement(
+                    'button',
+                    { className: 'btn-secondary', onClick: () => soundEngine.play(ev.key, true) },
+                    '▶ Test'
+                  ),
+                  React.createElement(
+                    'label',
+                    { className: 'btn-secondary', style: { cursor: 'pointer' } },
+                    'Datei wählen',
+                    React.createElement('input', {
+                      type: 'file',
+                      accept: 'audio/*',
+                      style: { display: 'none' },
+                      onChange: (e) => handleCustomFileChange(ev.key, e.target.files?.[0])
+                    })
+                  ),
+                  custom && React.createElement(
+                    'button',
+                    { className: 'btn-danger', onClick: () => soundEngine.setCustomSound(ev.key, null) },
+                    'Reset'
+                  )
                 )
-              )
-            );
-          })
+              );
+            })
+          )
         )
       );
     }
 
     // =========================================================================
-    // 13. ROOT APP
+    // 15. ROOT APP (INKL. EASTER EGGS: Konami Code, 5x Logo-Klick, Chat-Commands)
     // =========================================================================
+    const KONAMI_SEQ = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+
     function App() {
       const [session, setSession] = useState(null);
       const [authChecked, setAuthChecked] = useState(false);
@@ -2908,7 +3941,15 @@ Deine Persönlichkeit:
       const [showProfileModal, setShowProfileModal] = useState(false);
       const [callState, setCallState] = useState(null);
       const [toast, setToast] = useState(null);
+
+      // Easter Egg States
+      const [overdrive, setOverdrive] = useState(false);
+      const [barrelRoll, setBarrelRoll] = useState(false);
+      const [logoClicks, setLogoClicks] = useState(0);
+      const [showSecretHud, setShowSecretHud] = useState(false);
+
       const signalChannelRef = useRef(null);
+      const konamiIdxRef = useRef(0);
 
       const showToast = (msg) => {
         setToast(msg);
@@ -2917,12 +3958,59 @@ Deine Persönlichkeit:
         }, 3800);
       };
 
+      const triggerEasterEgg = (type) => {
+        soundEngine.play('easter_egg', true);
+        if (type === 'overdrive') {
+          setOverdrive((prev) => {
+            const next = !prev;
+            showToast(next ? '⚡ OVERDRIVE-MODUS AKTIVIERT! Volle Energie!' : 'Overdrive-Modus deaktiviert.');
+            return next;
+          });
+        } else if (type === 'barrelroll') {
+          setBarrelRoll(true);
+          showToast('🛩️ DO A BARREL ROLL!');
+          setTimeout(() => setBarrelRoll(false), 950);
+        }
+      };
+
+      // Konami Code Listener
+      useEffect(() => {
+        const onKeyDown = (e) => {
+          const expected = KONAMI_SEQ[konamiIdxRef.current];
+          if (e.key.toLowerCase() === expected.toLowerCase()) {
+            konamiIdxRef.current += 1;
+            if (konamiIdxRef.current === KONAMI_SEQ.length) {
+              konamiIdxRef.current = 0;
+              triggerEasterEgg('overdrive');
+            }
+          } else {
+            konamiIdxRef.current = 0;
+          }
+        };
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+      }, []);
+
+      const handleLogoClick = () => {
+        const next = logoClicks + 1;
+        if (next >= 5) {
+          setLogoClicks(0);
+          soundEngine.play('easter_egg', true);
+          setShowSecretHud(true);
+        } else {
+          setLogoClicks(next);
+        }
+      };
+
       const loadAllProfiles = async () => {
         const { data } = await supabase.from('profiles').select('*');
         if (data) {
           const map = {};
           for (const p of data) map[p.id] = p;
           setProfilesMap(map);
+          if (session?.user?.id && map[session.user.id]) {
+            setCurrentProfile(map[session.user.id]);
+          }
         }
       };
 
@@ -2959,6 +4047,14 @@ Deine Persönlichkeit:
             if (data) setCurrentProfile(data);
           });
 
+        // Realtime für Profil- & Rollenänderungen
+        const profChannel = supabase
+          .channel('quaps-profiles-rt')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+            loadAllProfiles();
+          })
+          .subscribe();
+
         // Realtime Signaling Channel für WebRTC Voice/Video Calls
         const sigChannel = supabase.channel('quaps-webrtc-signaling', {
           config: { broadcast: { self: false } }
@@ -2990,6 +4086,7 @@ Deine Persönlichkeit:
         signalChannelRef.current = sigChannel;
 
         return () => {
+          supabase.removeChannel(profChannel);
           supabase.removeChannel(sigChannel);
         };
       }, [session?.user?.id]);
@@ -3000,13 +4097,16 @@ Deine Persönlichkeit:
         showToast('Abgemeldet.');
       };
 
+      const canManageRoles = isManagementRole(currentProfile?.role);
+
       const tabLabels = {
         chat: 'Direkt & Gruppen',
         pinboard: 'Pinnwand',
         calendar: 'Kalender',
         vault: 'Mediathek & Tresor',
         quapssi: 'QuapsSI Terminal',
-        sounds: 'Sound-System'
+        management: 'Management · Rollen',
+        sounds: 'Audio, Video & Sounds'
       };
 
       const statusDotColor =
@@ -3016,22 +4116,32 @@ Deine Persönlichkeit:
           ? '#f5c518'
           : '#10b981';
 
+      const navItems = [
+        { id: 'chat', label: '💬 Direkt & Gruppen', badge: unreadChatCount > 0 ? unreadChatCount : null },
+        { id: 'pinboard', label: '📌 Pinnwand' },
+        { id: 'calendar', label: '📅 Kalender' },
+        { id: 'vault', label: '🗂️ Mediathek & Tresor' },
+        { id: 'quapssi', label: '🤖 QuapsSI KI' },
+        ...(canManageRoles ? [{ id: 'management', label: '👑 Management & Rollen' }] : []),
+        { id: 'sounds', label: '🎛️ Audio, Cam & Sounds' }
+      ];
+
       return React.createElement(
         'div',
-        { className: 'app-shell' },
-        // Top Header Bar
+        { className: `app-shell ${overdrive ? 'overdrive-mode' : ''} ${barrelRoll ? 'barrel-roll' : ''}` },
         React.createElement(
           'header',
           { className: 'top-bar' },
           React.createElement(
             'div',
-            { className: 'brand-badge' },
+            { className: 'brand-badge', onClick: handleLogoClick, title: 'QuapsAttack Command Suite' },
             React.createElement('div', { className: 'brand-emblem' }, 'Q'),
             React.createElement('span', null,
               'QUAPS',
               React.createElement('span', { className: 'gold-gradient-text' }, 'ATTACK')
             ),
-            React.createElement('span', { className: 'badge-gold' }, tabLabels[activeTab] || 'SUITE')
+            React.createElement('span', { className: 'badge-gold' }, tabLabels[activeTab] || 'SUITE'),
+            overdrive && React.createElement('span', { className: 'badge-red' }, '⚡ OVERDRIVE')
           ),
           session?.user && React.createElement(
             'div',
@@ -3042,11 +4152,14 @@ Deine Persönlichkeit:
             React.createElement('span', { style: { color: '#fff', fontWeight: 600 } },
               currentProfile?.username || session.user.email
             ),
-            currentProfile?.role && React.createElement('span', { className: 'badge-green' }, currentProfile.role)
+            currentProfile?.role && React.createElement(
+              'span',
+              { className: canManageRoles ? 'badge-gold' : 'badge-green' },
+              currentProfile.role
+            )
           )
         ),
 
-        // Body
         !authChecked
           ? React.createElement('div', { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' } }, 'Lade QuapsAttack...')
           : !session?.user
@@ -3054,7 +4167,6 @@ Deine Persönlichkeit:
           : React.createElement(
               'div',
               { className: 'main-layout' },
-              // Sidebar
               React.createElement(
                 'aside',
                 { className: 'sidebar glass-card' },
@@ -3062,14 +4174,7 @@ Deine Persönlichkeit:
                   'div',
                   { style: { display: 'flex', flexDirection: 'column', gap: 5 } },
                   React.createElement('div', { style: { fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.45)', padding: '4px 10px 6px' } }, 'MODULE'),
-                  [
-                    { id: 'chat', label: '💬 Direkt & Gruppen', badge: unreadChatCount > 0 ? unreadChatCount : null },
-                    { id: 'pinboard', label: '📌 Pinnwand' },
-                    { id: 'calendar', label: '📅 Kalender' },
-                    { id: 'vault', label: '🗂️ Mediathek & Tresor' },
-                    { id: 'quapssi', label: '🤖 QuapsSI KI' },
-                    { id: 'sounds', label: '🔊 Custom Sounds' }
-                  ].map((item) => React.createElement(
+                  navItems.map((item) => React.createElement(
                     'button',
                     {
                       key: item.id,
@@ -3081,35 +4186,13 @@ Deine Persönlichkeit:
                   ))
                 ),
 
-                // Profilkarte unten in der Sidebar
                 React.createElement(
                   'div',
                   { className: 'nested-box', style: { padding: 12, display: 'flex', flexDirection: 'column', gap: 8 } },
                   React.createElement(
                     'div',
                     { style: { display: 'flex', alignItems: 'center', gap: 10 } },
-                    currentProfile?.avatar_url
-                      ? React.createElement('img', {
-                          src: currentProfile.avatar_url,
-                          alt: currentProfile.username,
-                          style: { width: 38, height: 38, borderRadius: 11, objectFit: 'cover' }
-                        })
-                      : React.createElement(
-                          'div',
-                          {
-                            style: {
-                              width: 38,
-                              height: 38,
-                              borderRadius: 11,
-                              background: 'linear-gradient(135deg, #ef4444, #7f1d1d)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontWeight: 800
-                            }
-                          },
-                          (currentProfile?.username || 'Q').slice(0, 2).toUpperCase()
-                        ),
+                    React.createElement(AvatarBadge, { profile: currentProfile, size: 40 }),
                     React.createElement(
                       'div',
                       { style: { minWidth: 0, flex: 1 } },
@@ -3133,7 +4216,6 @@ Deine Persönlichkeit:
                 )
               ),
 
-              // Hauptbereich
               React.createElement(
                 'main',
                 { className: 'content-area' },
@@ -3144,6 +4226,7 @@ Deine Persönlichkeit:
                   signalChannel: signalChannelRef.current,
                   setCallState,
                   onUnreadChange: setUnreadChatCount,
+                  onEasterEgg: triggerEasterEgg,
                   onToast: showToast
                 }),
                 activeTab === 'pinboard' && React.createElement(PinboardModule, {
@@ -3165,13 +4248,19 @@ Deine Persönlichkeit:
                   currentUser: session.user,
                   onToast: showToast
                 }),
-                activeTab === 'sounds' && React.createElement(SoundSettingsModule, {
+                activeTab === 'management' && React.createElement(ManagementModule, {
+                  currentUser: session.user,
+                  currentProfile,
+                  profilesMap,
+                  onRefreshProfiles: loadAllProfiles,
+                  onToast: showToast
+                }),
+                activeTab === 'sounds' && React.createElement(SettingsStudioModule, {
                   onToast: showToast
                 })
               )
             ),
 
-        // Modals & Overlays
         showProfileModal && currentProfile && React.createElement(ProfileModal, {
           profile: currentProfile,
           onClose: () => setShowProfileModal(false),
@@ -3186,10 +4275,30 @@ Deine Persönlichkeit:
           callState,
           setCallState,
           currentUser: session.user,
-          currentProfile,
           signalChannel: signalChannelRef.current,
           onToast: showToast
         }),
+
+        // Geheimes Easter-Egg HUD (5x Klick auf Logo)
+        showSecretHud && React.createElement(
+          'div',
+          { className: 'modal-backdrop', onClick: () => setShowSecretHud(false) },
+          React.createElement(
+            'div',
+            { className: 'glass-card', style: { width: '100%', maxWidth: 440, padding: 24, textAlign: 'center' }, onClick: (e) => e.stopPropagation() },
+            React.createElement('div', { className: 'badge-gold', style: { display: 'inline-block', marginBottom: 10 } }, 'SECRET REACTOR HUD'),
+            React.createElement('h3', { style: { fontSize: 19, fontWeight: 800, marginBottom: 8 } }, '🕵️ QuapsAttack Secret Bunker'),
+            React.createElement('p', { style: { fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 14 } },
+              'Du hast das geheime Kommando-Menü entdeckt! Probiere auch den Konami-Code (↑↑↓↓←→←→BA) oder tippe /barrelroll im Chat.'
+            ),
+            React.createElement(
+              'div',
+              { style: { display: 'flex', justifyContent: 'center', gap: 10 } },
+              React.createElement('button', { className: 'btn-primary', onClick: () => triggerEasterEgg('overdrive') }, '⚡ Overdrive umschalten'),
+              React.createElement('button', { className: 'btn-secondary', onClick: () => setShowSecretHud(false) }, 'Schließen')
+            )
+          )
+        ),
 
         toast && React.createElement('div', { className: 'toast-banner' }, toast)
       );
