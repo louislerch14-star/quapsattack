@@ -147,8 +147,16 @@
     <!-- ACCOUNT ERSTELLEN FORM -->
     <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4">
       <div>
-        <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">E-Mail</label>
-        <input id="reg-email" type="email" required placeholder="name@quapsattack.airbusfan.de" class="glass-input" />
+        <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">E-Mail (nur @quapsattack.airbusfan.de)</label>
+        <input
+          id="reg-email"
+          type="email"
+          required
+          pattern="^[^@\s]+@quapsattack\.airbusfan\.de$"
+          title="Bitte eine E-Mail-Adresse mit @quapsattack.airbusfan.de verwenden"
+          placeholder="name@quapsattack.airbusfan.de"
+          class="glass-input"
+        />
       </div>
       <div>
         <label class="block text-xs font-medium text-[var(--text-sub)] mb-1">Neues Passwort</label>
@@ -189,6 +197,7 @@
   <script>
     const SUPABASE_URL = "https://xibaufkxapezpuvszpxf.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E";
+    const ALLOWED_DOMAIN = "@quapsattack.airbusfan.de";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     function switchMode(mode) {
@@ -226,6 +235,11 @@
       el.textContent = "";
     }
 
+    function isAllowedRegisterEmail(email) {
+      const parts = email.split("@");
+      return parts.length === 2 && parts[0].length > 0 && email.endsWith(ALLOWED_DOMAIN);
+    }
+
     async function handleRegister(e) {
       e.preventDefault();
       hideStatus();
@@ -237,6 +251,9 @@
 
       if (!email || !pw) {
         return showStatus("Bitte E-Mail und Passwort ausfüllen, bro! 💀", true);
+      }
+      if (!isAllowedRegisterEmail(email)) {
+        return showStatus(`Nur E-Mails mit ${ALLOWED_DOMAIN} sind erlaubt, digger! 😢`, true);
       }
       if (pw !== pwConfirm) {
         return showStatus("Passwörter stimmen nicht überein, digger! 😢", true);
