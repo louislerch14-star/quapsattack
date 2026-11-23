@@ -442,6 +442,68 @@
       border-color: #ffffff;
       box-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
     }
+
+    .reply-quote-bar {
+      font-size: 11.5px;
+      color: rgba(255, 255, 255, 0.75);
+      background: rgba(0, 0, 0, 0.28);
+      border-left: 2px solid #f5c518;
+      padding: 4px 8px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .context-menu {
+      position: fixed;
+      z-index: 250;
+      min-width: 210px;
+      padding: 6px;
+      border-radius: 14px;
+      background: rgba(16, 16, 28, 0.97);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.75);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .context-item {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-radius: 9px;
+      padding: 8px 11px;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      transition: background 0.14s ease;
+    }
+
+    .context-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .context-item.danger {
+      color: #fca5a5;
+    }
+
+    .context-item.danger:hover {
+      background: rgba(239, 68, 68, 0.22);
+    }
+
+    .context-sep {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 3px 4px;
+    }
   </style>
 </head>
 <body>
@@ -465,9 +527,7 @@
       }
     });
 
-    // Fest hinterlegter Key für QuapsSI
     const QUAPSSI_EMBEDDED_KEY = 'AQ.Ab8RN6K2I-hsLsO513OcUYYYn4hknAn97DE7w8hdCRcSPnjTNQ';
-
     const MAIN_GROUP_NAME = 'QuapsAttack Main Squad';
 
     function isManagementRole(role) {
@@ -476,8 +536,75 @@
       return ['management', 'admin', 'owner', 'leader', 'leitung', 'mod', 'moderator'].includes(r);
     }
 
+    async function syncUserSettingsToCloud(userId, patchObj) {
+      if (!userId || !patchObj) return;
+      try {
+        await supabase
+          .from('profiles')
+          .update({ ...patchObj, updated_at: new Date().toISOString() })
+          .eq('id', userId);
+      } catch {}
+    }
+
     // =========================================================================
-    // 2. DESIGN-CUSTOMIZER (Farben, Mood, Glass, Radius, Schriftgröße)
+    // 2. RECHTSKLICK-KONTEXTMENÜ
+    // =========================================================================
+    function ContextMenuPopup({ menuState, onClose }) {
+      if (!menuState || !menuState.items || menuState.items.length === 0) return null;
+
+      const menuWidth = 218;
+      const menuHeight = menuState.items.length * 36 + 18;
+      const left = Math.min(menuState.x, window.innerWidth - menuWidth - 12);
+      const top = Math.min(menuState.y, window.innerHeight - menuHeight - 12);
+
+      return React.createElement(
+        'div',
+        {
+          className: 'context-menu',
+          style: { left: Math.max(8, left), top: Math.max(8, top) },
+          onClick: (e) => e.stopPropagation(),
+          onContextMenu: (e) => e.preventDefault()
+        },
+        menuState.title && React.createElement(
+          'div',
+          {
+            style: {
+              fontSize: 10.5,
+              fontWeight: 700,
+              color: '#f5c518',
+              padding: '4px 10px 5px',
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
+              marginBottom: 2,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }
+          },
+          menuState.title
+        ),
+        menuState.items.map((item, idx) =>
+          item.separator
+            ? React.createElement('div', { key: 'sep-' + idx, className: 'context-sep' })
+            : React.createElement(
+                'button',
+                {
+                  key: item.label + idx,
+                  type: 'button',
+                  className: `context-item ${item.danger ? 'danger' : ''}`,
+                  onClick: () => {
+                    onClose();
+                    item.onClick();
+                  }
+                },
+                React.createElement('span', { style: { width: 18, textAlign: 'center' } }, item.icon || '•'),
+                React.createElement('span', null, item.label)
+              )
+        )
+      );
+    }
+
+    // =========================================================================
+    // 3. DESIGN-CUSTOMIZER (Farben, Mood, Glass, Radius, Schriftgröße)
     // =========================================================================
     const DESIGN_KEY = 'quaps_design_v1';
     const ACCENT_PRESETS = [
@@ -493,10 +620,10 @@
       accentHex: '#ef4444',
       accentHover: '#dc2626',
       accentGlow: 'rgba(239, 68, 68, 0.42)',
-      bgMood: 'night', // 'night' | 'cozy' | 'cyber'
+      bgMood: 'night',
       bgBase: '#0a0a12',
       glassOpacity: 0.85,
-      radiusStyle: 'modern', // 'sharp' | 'modern' | 'soft'
+      radiusStyle: 'modern',
       fontScale: 1.0
     };
 
@@ -540,7 +667,7 @@
     }
 
     // =========================================================================
-    // 3. HARDWARE MEDIA SETTINGS (Mikrofon & Kamera Auswahl)
+    // 4. HARDWARE MEDIA SETTINGS (Mikrofon, Kamera & Ausgang)
     // =========================================================================
     const MEDIA_PREFS_KEY = 'quaps_media_devices_v1';
 
@@ -552,14 +679,17 @@
       return { audioInputId: '', videoInputId: '', audioOutputId: '', echoCancellation: true, noiseSuppression: true };
     }
 
-    function saveMediaPrefs(next) {
+    function saveMediaPrefs(next, userId = null) {
       try {
         localStorage.setItem(MEDIA_PREFS_KEY, JSON.stringify(next));
       } catch {}
+      if (userId) {
+        syncUserSettingsToCloud(userId, { media_settings: next });
+      }
     }
 
     // =========================================================================
-    // 4. SOUND ENGINE MIT 3 UMSCHALTBAREN SOUNDPACKS (Cozy / Cyber / Retro)
+    // 5. SOUND ENGINE MIT 3 UMSCHALTBAREN SOUNDPACKS + CLOUD SYNC
     // =========================================================================
     const SOUND_EVENTS = [
       { key: 'chat_message', label: 'Eingehende Chat-Nachricht', desc: 'Ton bei neuen DMs & Gruppennachrichten' },
@@ -596,8 +726,13 @@
     class SoundEngine {
       constructor() {
         this.ctx = null;
+        this.userId = null;
         this.settings = this.load();
         this.listeners = new Set();
+      }
+
+      setUserId(uid) {
+        this.userId = uid || null;
       }
 
       load() {
@@ -616,10 +751,34 @@
         return { pack: 'cozy', volume: 0.7, dnd: false, customFiles: {} };
       }
 
-      save() {
+      hydrateFromCloud(cloudObj) {
+        if (!cloudObj || typeof cloudObj !== 'object') return;
+        this.settings = {
+          pack: SOUNDPACKS[cloudObj.pack] ? cloudObj.pack : this.settings.pack,
+          volume: typeof cloudObj.volume === 'number' ? cloudObj.volume : this.settings.volume,
+          dnd: typeof cloudObj.dnd === 'boolean' ? cloudObj.dnd : this.settings.dnd,
+          customFiles: { ...this.settings.customFiles, ...(cloudObj.customFiles || {}) }
+        };
         try {
           localStorage.setItem('quaps_sound_v2', JSON.stringify(this.settings));
         } catch {}
+        this.listeners.forEach((fn) => fn({ ...this.settings }));
+      }
+
+      save(syncCloud = true) {
+        try {
+          localStorage.setItem('quaps_sound_v2', JSON.stringify(this.settings));
+        } catch {}
+        if (syncCloud && this.userId) {
+          syncUserSettingsToCloud(this.userId, {
+            sound_settings: {
+              pack: this.settings.pack,
+              volume: this.settings.volume,
+              dnd: this.settings.dnd,
+              customFiles: this.settings.customFiles
+            }
+          });
+        }
         this.listeners.forEach((fn) => fn({ ...this.settings }));
       }
 
@@ -631,17 +790,17 @@
       setPack(pack) {
         if (!SOUNDPACKS[pack]) return;
         this.settings.pack = pack;
-        this.save();
+        this.save(true);
       }
 
       setVolume(val) {
         this.settings.volume = Math.max(0, Math.min(1, val));
-        this.save();
+        this.save(true);
       }
 
       setDnd(val) {
         this.settings.dnd = Boolean(val);
-        this.save();
+        this.save(true);
       }
 
       setCustomSound(key, fileObj) {
@@ -650,7 +809,7 @@
         } else {
           delete this.settings.customFiles[key];
         }
-        this.save();
+        this.save(true);
       }
 
       getCtx() {
@@ -706,7 +865,6 @@
           };
 
           if (pack === 'cozy') {
-            // Warme, gemütliche Akkord-/Marimba-Töne
             switch (key) {
               case 'chat_message':
                 note(523.25, 0, 0.22, 'sine', 0.9);
@@ -810,7 +968,6 @@
                 break;
             }
           } else {
-            // Retro Arcade (8-Bit)
             switch (key) {
               case 'chat_message':
                 note(660, 0, 0.07, 'square', 0.9);
@@ -915,7 +1072,7 @@
     }
 
     // =========================================================================
-    // 5. GEMINI API ANBINDUNG (QuapsSI mit fest hinterlegtem Key)
+    // 6. GEMINI API ANBINDUNG (QuapsSI mit fest hinterlegtem Key)
     // =========================================================================
     const QUAPSSI_PERSONALITY = `
 Du bist QuapsSI — die taktische Kommando- und Community-Intelligenz von QuapsAttack.
@@ -980,7 +1137,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 6. AUTH SCREEN
+    // 7. AUTH SCREEN
     // =========================================================================
     function AuthView({ onToast }) {
       const [mode, setMode] = useState('login');
@@ -1141,7 +1298,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 7. PROFIL BEARBEITEN MODAL
+    // 8. PROFIL BEARBEITEN MODAL
     // =========================================================================
     function ProfileModal({ profile, onClose, onSaved, onToast }) {
       const [username, setUsername] = useState(profile.username || '');
@@ -1350,7 +1507,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 8. MANAGEMENT-PANEL: ROLLEN VERWALTEN
+    // 9. MANAGEMENT-PANEL: ROLLEN & GRUPPEN VERWALTEN
     // =========================================================================
     const PRESET_ROLES = ['Management', 'Admin', 'Moderator', 'Squad-Leader', 'VIP', 'Member'];
 
@@ -1358,8 +1515,23 @@ Deine Persönlichkeit:
       const [search, setSearch] = useState('');
       const [customRoles, setCustomRoles] = useState({});
       const [updatingId, setUpdatingId] = useState(null);
+      const [allGroups, setAllGroups] = useState([]);
 
       const canManage = isManagementRole(currentProfile?.role);
+
+      const loadGroupsForMgmt = async () => {
+        const { data } = await supabase
+          .from('chat_rooms')
+          .select('*')
+          .eq('is_group', true)
+          .order('created_at', { ascending: false });
+        setAllGroups(data || []);
+      };
+
+      useEffect(() => {
+        if (canManage) loadGroupsForMgmt();
+      }, [canManage]);
+
       const usersList = useMemo(() => {
         return Object.values(profilesMap)
           .filter((p) => {
@@ -1394,6 +1566,24 @@ Deine Persönlichkeit:
         }
       };
 
+      const handleDeleteGroup = async (group) => {
+        if (group.name === MAIN_GROUP_NAME) {
+          onToast('Die Main-Gruppe kann nicht gelöscht werden.');
+          return;
+        }
+        try {
+          await supabase.from('chat_messages').delete().eq('room_id', group.id);
+          await supabase.from('chat_room_members').delete().eq('room_id', group.id);
+          const { error } = await supabase.from('chat_rooms').delete().eq('id', group.id);
+          if (error) throw error;
+          soundEngine.play('upload_success');
+          onToast(`Gruppe „${group.name}“ gelöscht.`);
+          loadGroupsForMgmt();
+        } catch (err) {
+          onToast('Gruppe konnte nicht gelöscht werden: ' + err.message);
+        }
+      };
+
       if (!canManage) {
         return React.createElement(
           'div',
@@ -1420,10 +1610,10 @@ Deine Persönlichkeit:
             null,
             React.createElement('h2', { style: { fontSize: 17.5, fontWeight: 800 } },
               'Management · ',
-              React.createElement('span', { className: 'gold-gradient-text' }, 'Rollen & Rechte')
+              React.createElement('span', { className: 'gold-gradient-text' }, 'Rollen, Moderation & Gruppen')
             ),
             React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } },
-              'Ändere Rollen anderer Community-Mitglieder in Echtzeit'
+              'Ändere Rollen anderer Community-Mitglieder und verwalte Gruppen'
             )
           ),
           React.createElement('input', {
@@ -1437,7 +1627,27 @@ Deine Persönlichkeit:
 
         React.createElement(
           'div',
-          { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 9 } },
+          { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 12 } },
+          React.createElement(
+            'div',
+            { className: 'nested-box', style: { padding: 14, display: 'flex', flexDirection: 'column', gap: 8 } },
+            React.createElement('div', { style: { fontWeight: 700, fontSize: 13.5, color: '#f5c518' } }, `👥 Aktive Gruppen (${allGroups.length})`),
+            React.createElement(
+              'div',
+              { style: { display: 'flex', flexWrap: 'wrap', gap: 8 } },
+              allGroups.map((g) =>
+                React.createElement(
+                  'div',
+                  { key: g.id, className: 'nested-box', style: { padding: '7px 11px', display: 'flex', alignItems: 'center', gap: 8 } },
+                  React.createElement('span', { style: { fontWeight: 600, fontSize: 12.5 } }, g.name || 'Gruppe'),
+                  g.name === MAIN_GROUP_NAME
+                    ? React.createElement('span', { className: 'badge-gold' }, 'MAIN')
+                    : React.createElement('button', { type: 'button', className: 'btn-danger', style: { padding: '3px 7px', fontSize: 11 }, onClick: () => handleDeleteGroup(g) }, '🗑 Löschen')
+                )
+              )
+            )
+          ),
+
           usersList.map((u) => {
             const draftRole = customRoles[u.id] !== undefined ? customRoles[u.id] : (u.role || 'Member');
             return React.createElement(
@@ -1522,7 +1732,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 9. ÜBERARBEITETE WEBRTC ANRUF-LOGIK (Sauberer State + Klingelton + Cleanup)
+    // 10. ÜBERARBEITETE WEBRTC ANRUF-LOGIK (Sauberer State + Klingelton + Cleanup)
     // =========================================================================
     function CallOverlay({ callState, setCallState, currentUser, signalChannel, onToast }) {
       const [muted, setMuted] = useState(false);
@@ -1538,7 +1748,6 @@ Deine Persönlichkeit:
       const pendingIceRef = useRef([]);
       const ringIntervalRef = useRef(null);
 
-      // Klingelton während incoming / outgoing
       useEffect(() => {
         if (!callState) return;
         if (callState.status === 'incoming' || callState.status === 'outgoing') {
@@ -1884,15 +2093,17 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 10. MODUL 1: DIRECT MESSAGES & AUTOMATISCHE MAIN-GRUPPE FÜR ALLE AKTIVEN
+    // 11. MODUL 1: DIRECT MESSAGES & AUTOMATISCHE MAIN-GRUPPE + RECHTSKLICK
     // =========================================================================
     const QUICK_EMOJIS = ['🔥', '💀', '😂', '👍', '⚡', '☕', '🚀'];
 
-    function ChatModule({ currentUser, currentProfile, profilesMap, signalChannel, setCallState, onUnreadChange, onEasterEgg, onToast }) {
+    function ChatModule({ currentUser, currentProfile, profilesMap, signalChannel, setCallState, onUnreadChange, onOpenContextMenu, onEasterEgg, onToast }) {
       const [rooms, setRooms] = useState([]);
       const [activeRoomId, setActiveRoomId] = useState(null);
       const [messages, setMessages] = useState([]);
       const [msgInput, setMsgInput] = useState('');
+      const [replyToMsg, setReplyToMsg] = useState(null);
+      const [editingMsg, setEditingMsg] = useState(null);
       const [chatSearch, setChatSearch] = useState('');
       const [typingUser, setTypingUser] = useState(null);
       const [loadingRooms, setLoadingRooms] = useState(true);
@@ -1903,14 +2114,15 @@ Deine Persönlichkeit:
       const [unreadByRoom, setUnreadByRoom] = useState({});
       const bottomRef = useRef(null);
       const typingTimeoutRef = useRef(null);
+      const inputRef = useRef(null);
 
+      const canManage = isManagementRole(currentProfile?.role);
       const allProfileIds = useMemo(() => Object.keys(profilesMap || {}), [profilesMap]);
       const otherProfilesList = useMemo(
         () => Object.values(profilesMap).filter((p) => p.id !== currentUser.id),
         [profilesMap, currentUser.id]
       );
 
-      // Main-Gruppe sicherstellen & alle aktiven Profile darin synchronisieren
       const ensureMainGroupAndSyncMembers = async (existingRooms) => {
         let mainRoom = (existingRooms || []).find(
           (r) => r.is_group && (r.name === MAIN_GROUP_NAME || r.is_main_group)
@@ -2000,7 +2212,6 @@ Deine Persönlichkeit:
                 memberIds: mIds
               };
             })
-            // Main-Gruppe immer ganz oben anzeigen
             .sort((a, b) => {
               if (a.isMainGroup && !b.isMainGroup) return -1;
               if (!a.isMainGroup && b.isMainGroup) return 1;
@@ -2009,7 +2220,9 @@ Deine Persönlichkeit:
 
           setRooms(enriched);
 
-          const targetId = preferRoomId || activeRoomId || mainRoomId || enriched[0]?.id || null;
+          const targetId = enriched.some((r) => r.id === (preferRoomId || activeRoomId))
+            ? (preferRoomId || activeRoomId)
+            : (mainRoomId || enriched[0]?.id || null);
           if (targetId) {
             setActiveRoomId(targetId);
           }
@@ -2038,6 +2251,9 @@ Deine Persönlichkeit:
 
       useEffect(() => {
         setTypingUser(null);
+        setReplyToMsg(null);
+        setEditingMsg(null);
+        setMsgInput('');
         if (activeRoomId) {
           loadMessages(activeRoomId);
           setUnreadByRoom((prev) => {
@@ -2085,9 +2301,23 @@ Deine Persönlichkeit:
           )
           .on(
             'postgres_changes',
+            { event: 'UPDATE', schema: 'public', table: 'chat_messages' },
+            (payload) => {
+              setMessages((prev) => prev.map((m) => (m.id === payload.new.id ? payload.new : m)));
+            }
+          )
+          .on(
+            'postgres_changes',
             { event: 'DELETE', schema: 'public', table: 'chat_messages' },
             (payload) => {
               setMessages((prev) => prev.filter((m) => m.id !== payload.old.id));
+            }
+          )
+          .on(
+            'postgres_changes',
+            { event: 'DELETE', schema: 'public', table: 'chat_rooms' },
+            () => {
+              loadRooms();
             }
           )
           .on('broadcast', { event: 'typing' }, ({ payload }) => {
@@ -2169,6 +2399,40 @@ Deine Persönlichkeit:
         }
       };
 
+      const handleDeleteRoom = async (room) => {
+        if (room.isMainGroup) {
+          onToast('Die Main-Gruppe ist geschützt und kann nicht gelöscht werden.');
+          return;
+        }
+        if (!(canManage || room.creator_id === currentUser.id)) {
+          onToast('Keine Berechtigung zum Löschen dieses Raums.');
+          return;
+        }
+        try {
+          await supabase.from('chat_messages').delete().eq('room_id', room.id);
+          await supabase.from('chat_room_members').delete().eq('room_id', room.id);
+          const { error } = await supabase.from('chat_rooms').delete().eq('id', room.id);
+          if (error) throw error;
+          soundEngine.play('upload_success');
+          onToast(`Raum „${getRoomTitle(room)}“ gelöscht.`);
+          await loadRooms();
+        } catch (err) {
+          soundEngine.play('error_alert');
+          onToast('Löschen fehlgeschlagen: ' + err.message);
+        }
+      };
+
+      const handleRenameRoom = async (room) => {
+        if (!room.is_group || room.isMainGroup) return;
+        const nextName = window.prompt('Neuer Gruppenname:', room.name || '');
+        if (!nextName || !nextName.trim()) return;
+        const { error } = await supabase.from('chat_rooms').update({ name: nextName.trim() }).eq('id', room.id);
+        if (!error) {
+          onToast('Gruppenname geändert!');
+          loadRooms(room.id);
+        }
+      };
+
       const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!msgInput.trim() || !activeRoomId) return;
@@ -2184,10 +2448,32 @@ Deine Persönlichkeit:
           return;
         }
 
+        if (editingMsg) {
+          const targetId = editingMsg.id;
+          setEditingMsg(null);
+          const { error } = await supabase
+            .from('chat_messages')
+            .update({ content: text, edited_at: new Date().toISOString() })
+            .eq('id', targetId);
+          if (!error) {
+            setMessages((prev) =>
+              prev.map((m) => (m.id === targetId ? { ...m, content: text, edited_at: new Date().toISOString() } : m))
+            );
+            onToast('Nachricht bearbeitet.');
+          } else {
+            onToast('Bearbeiten fehlgeschlagen: ' + error.message);
+          }
+          return;
+        }
+
+        const currentReplyId = replyToMsg?.id || null;
+        setReplyToMsg(null);
+
         const { error } = await supabase.from('chat_messages').insert({
           room_id: activeRoomId,
           sender_id: currentUser.id,
-          content: text
+          content: text,
+          ...(currentReplyId ? { reply_to_id: currentReplyId } : {})
         });
         if (error) {
           soundEngine.play('error_alert');
@@ -2199,6 +2485,20 @@ Deine Persönlichkeit:
         const { error } = await supabase.from('chat_messages').delete().eq('id', msgId);
         if (!error) {
           setMessages((prev) => prev.filter((m) => m.id !== msgId));
+          onToast('Nachricht gelöscht.');
+        } else {
+          onToast('Löschen fehlgeschlagen: ' + error.message);
+        }
+      };
+
+      const handleTogglePinMessage = async (msg) => {
+        const nextPinned = !msg.is_pinned;
+        const { error } = await supabase.from('chat_messages').update({ is_pinned: nextPinned }).eq('id', msg.id);
+        if (!error) {
+          setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, is_pinned: nextPinned } : m)));
+          onToast(nextPinned ? 'Nachricht angepinnt!' : 'Pin gelöst.');
+        } else {
+          onToast('Pin-Fehler: ' + error.message);
         }
       };
 
@@ -2236,6 +2536,122 @@ Deine Persönlichkeit:
           peerName
         });
       };
+
+      const handleMessageContextMenu = (e, msg) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isMine = msg.sender_id === currentUser.id;
+        const canMod = isMine || canManage;
+        const items = [
+          {
+            icon: '↩️',
+            label: 'Antworten',
+            onClick: () => {
+              setEditingMsg(null);
+              setReplyToMsg(msg);
+              inputRef.current?.focus();
+            }
+          },
+          ...(isMine
+            ? [{
+                icon: '✏️',
+                label: 'Nachricht bearbeiten',
+                onClick: () => {
+                  setReplyToMsg(null);
+                  setEditingMsg(msg);
+                  setMsgInput(msg.content || '');
+                  inputRef.current?.focus();
+                }
+              }]
+            : []),
+          {
+            icon: '📋',
+            label: 'Text kopieren',
+            onClick: () => {
+              navigator.clipboard?.writeText(msg.content || '');
+              onToast('Text kopiert!');
+            }
+          },
+          ...(canMod
+            ? [{
+                icon: '📌',
+                label: msg.is_pinned ? 'Pin lösen' : 'Anpinnen',
+                onClick: () => handleTogglePinMessage(msg)
+              }]
+            : []),
+          ...(canMod
+            ? [
+                { separator: true },
+                {
+                  icon: '🗑️',
+                  label: isMine ? 'Nachricht löschen' : 'Löschen (Management)',
+                  danger: true,
+                  onClick: () => handleDeleteMessage(msg.id)
+                }
+              ]
+            : [])
+        ];
+        onOpenContextMenu({
+          x: e.clientX,
+          y: e.clientY,
+          title: profilesMap[msg.sender_id]?.username || 'Nachricht',
+          items
+        });
+      };
+
+      const handleRoomContextMenu = (e, room) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const canModRoom = canManage || room.creator_id === currentUser.id;
+        const items = [
+          {
+            icon: '📞',
+            label: 'Voice-Call starten',
+            onClick: () => {
+              setActiveRoomId(room.id);
+              setTimeout(() => handleStartCall(false), 60);
+            }
+          },
+          {
+            icon: '📹',
+            label: 'Video-Call starten',
+            onClick: () => {
+              setActiveRoomId(room.id);
+              setTimeout(() => handleStartCall(true), 60);
+            }
+          }
+        ];
+        if (canModRoom && room.is_group && !room.isMainGroup) {
+          items.push({
+            icon: '✏️',
+            label: 'Gruppe umbenennen',
+            onClick: () => handleRenameRoom(room)
+          });
+        }
+        if (canModRoom && !room.isMainGroup) {
+          items.push({ separator: true });
+          items.push({
+            icon: '🗑️',
+            label: room.is_group ? 'Gruppe löschen' : 'Chat löschen',
+            danger: true,
+            onClick: () => handleDeleteRoom(room)
+          });
+        }
+        onOpenContextMenu({
+          x: e.clientX,
+          y: e.clientY,
+          title: getRoomTitle(room),
+          items
+        });
+      };
+
+      const messagesById = useMemo(() => {
+        const map = {};
+        for (const m of messages) map[m.id] = m;
+        return map;
+      }, [messages]);
+
+      const pinnedMessages = useMemo(() => messages.filter((m) => m.is_pinned), [messages]);
 
       const displayedMessages = useMemo(() => {
         if (!chatSearch.trim()) return messages;
@@ -2276,6 +2692,7 @@ Deine Persönlichkeit:
                     {
                       key: room.id,
                       onClick: () => setActiveRoomId(room.id),
+                      onContextMenu: (e) => handleRoomContextMenu(e, room),
                       className: 'nested-box',
                       style: {
                         padding: '10px 12px',
@@ -2387,8 +2804,19 @@ Deine Persönlichkeit:
                       onChange: (e) => setChatSearch(e.target.value)
                     }),
                     React.createElement('button', { className: 'btn-secondary', onClick: () => handleStartCall(false) }, '📞 Voice'),
-                    React.createElement('button', { className: 'btn-primary', onClick: () => handleStartCall(true) }, '📹 Video')
+                    React.createElement('button', { className: 'btn-primary', onClick: () => handleStartCall(true) }, '📹 Video'),
+                    (canManage || activeRoom.creator_id === currentUser.id) && !activeRoom.isMainGroup && React.createElement(
+                      'button',
+                      { className: 'btn-danger', onClick: () => handleDeleteRoom(activeRoom) },
+                      '🗑'
+                    )
                   )
+                ),
+
+                pinnedMessages.length > 0 && React.createElement(
+                  'div',
+                  { style: { marginTop: 8, padding: '6px 10px', borderRadius: 9, background: 'rgba(245,197,24,0.1)', border: '1px solid rgba(245,197,24,0.3)', fontSize: 12 } },
+                  '📌 Angepinnt: ' + pinnedMessages[pinnedMessages.length - 1].content
                 ),
 
                 React.createElement(
@@ -2397,10 +2825,12 @@ Deine Persönlichkeit:
                   displayedMessages.map((m) => {
                     const author = profilesMap[m.sender_id] || {};
                     const isMine = m.sender_id === currentUser.id;
+                    const repliedMsg = m.reply_to_id ? messagesById[m.reply_to_id] : null;
                     return React.createElement(
                       'div',
                       {
                         key: m.id,
+                        onContextMenu: (e) => handleMessageContextMenu(e, m),
                         style: {
                           display: 'flex',
                           gap: 9,
@@ -2416,18 +2846,29 @@ Deine Persönlichkeit:
                           className: 'nested-box',
                           style: {
                             padding: '10px 13px',
-                            borderColor: isMine ? 'color-mix(in srgb, var(--accent) 45%, transparent)' : undefined
+                            borderColor: m.is_pinned
+                              ? 'rgba(245, 197, 24, 0.5)'
+                              : isMine
+                              ? 'color-mix(in srgb, var(--accent) 45%, transparent)'
+                              : undefined
                           }
                         },
+                        repliedMsg && React.createElement(
+                          'div',
+                          { className: 'reply-quote-bar' },
+                          '↩️ ' + (repliedMsg.content || '').slice(0, 75)
+                        ),
                         React.createElement(
                           'div',
-                          { style: { display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 } },
+                          { style: { display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4, flexWrap: 'wrap' } },
+                          m.is_pinned && React.createElement('span', null, '📌'),
                           React.createElement('span', { style: { fontWeight: 700, fontSize: 12.5, color: isMine ? '#fca5a5' : '#f5c518' } },
                             author.username || 'Mitglied'
                           ),
                           author.role && React.createElement('span', { className: isManagementRole(author.role) ? 'badge-gold' : 'badge-green' }, author.role),
                           React.createElement('span', { style: { fontSize: 10.5, color: 'var(--text-muted)' } }, formatTime(m.created_at)),
-                          isMine && React.createElement(
+                          m.edited_at && React.createElement('span', { style: { fontSize: 10, color: 'rgba(255,255,255,0.45)', fontStyle: 'italic' } }, '(bearbeitet)'),
+                          (isMine || canManage) && React.createElement(
                             'button',
                             {
                               onClick: () => handleDeleteMessage(m.id),
@@ -2452,6 +2893,42 @@ Deine Persönlichkeit:
                 React.createElement(
                   'div',
                   { style: { paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: 7 } },
+                  (replyToMsg || editingMsg) && React.createElement(
+                    'div',
+                    {
+                      style: {
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '6px 10px',
+                        borderRadius: 9,
+                        background: 'rgba(255,255,255,0.07)',
+                        borderLeft: '3px solid var(--accent)',
+                        fontSize: 12
+                      }
+                    },
+                    React.createElement(
+                      'span',
+                      null,
+                      editingMsg
+                        ? `✏️ Bearbeiten: ${(editingMsg.content || '').slice(0, 65)}`
+                        : `↩️ Antwort an: ${(replyToMsg.content || '').slice(0, 65)}`
+                    ),
+                    React.createElement(
+                      'button',
+                      {
+                        type: 'button',
+                        className: 'btn-secondary',
+                        style: { padding: '2px 7px', fontSize: 11 },
+                        onClick: () => {
+                          setReplyToMsg(null);
+                          setEditingMsg(null);
+                          setMsgInput('');
+                        }
+                      },
+                      '✕'
+                    )
+                  ),
                   React.createElement(
                     'div',
                     { style: { display: 'flex', gap: 6, alignItems: 'center' } },
@@ -2475,19 +2952,22 @@ Deine Persönlichkeit:
                       )
                     ),
                     React.createElement('span', { style: { fontSize: 11, color: 'rgba(255,255,255,0.4)', marginLeft: 'auto' } },
-                      'Commands: /barrelroll · /overdrive'
+                      'Rechtsklick für Optionen · /barrelroll · /overdrive'
                     )
                   ),
                   React.createElement(
                     'form',
                     { onSubmit: handleSendMessage, style: { display: 'flex', gap: 10 } },
                     React.createElement('input', {
+                      ref: inputRef,
                       className: 'input-field',
-                      placeholder: `Nachricht an ${getRoomTitle(activeRoom)} schreiben...`,
+                      placeholder: editingMsg
+                        ? 'Nachricht bearbeiten...'
+                        : `Nachricht an ${getRoomTitle(activeRoom)} schreiben...`,
                       value: msgInput,
                       onChange: (e) => handleTypingInput(e.target.value)
                     }),
-                    React.createElement('button', { type: 'submit', className: 'btn-primary' }, 'Senden')
+                    React.createElement('button', { type: 'submit', className: 'btn-primary' }, editingMsg ? 'Speichern' : 'Senden')
                   )
                 )
               )
@@ -2565,7 +3045,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 11. MODUL 2: KALENDER
+    // 12. MODUL 2: KALENDER (Monat, Woche, Liste & Tagesansicht)
     // =========================================================================
     function CalendarModule({ currentUser, profilesMap, onToast }) {
       const [events, setEvents] = useState([]);
@@ -2877,7 +3357,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 12. MODUL 3: MEDIATHEK & ORDNERSTRUKTUR
+    // 13. MODUL 3: MEDIATHEK & ORDNERSTRUKTUR
     // =========================================================================
     function VaultModule({ currentUser, profilesMap, onToast }) {
       const [items, setItems] = useState([]);
@@ -3262,11 +3742,11 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 13. MODUL 4: PINNWAND
+    // 14. MODUL 4: PINNWAND (+ RECHTSKLICK & MANAGEMENT)
     // =========================================================================
     const REACTION_EMOJIS = ['🔥', '👍', '⚡', '🎯'];
 
-    function PinboardModule({ currentUser, profilesMap, onToast }) {
+    function PinboardModule({ currentUser, currentProfile, profilesMap, onOpenContextMenu, onToast }) {
       const [posts, setPosts] = useState([]);
       const [filterCategory, setFilterCategory] = useState('ALL');
       const [filterStatus, setFilterStatus] = useState('ALL');
@@ -3280,6 +3760,8 @@ Deine Persönlichkeit:
       const [openThreadId, setOpenThreadId] = useState(null);
       const [replies, setReplies] = useState([]);
       const [replyText, setReplyText] = useState('');
+
+      const canManage = isManagementRole(currentProfile?.role);
 
       const loadPosts = async () => {
         const { data, error } = await supabase
@@ -3399,8 +3881,10 @@ Deine Persönlichkeit:
       };
 
       const deletePost = async (postId) => {
+        await supabase.from('pinboard_replies').delete().eq('post_id', postId);
         await supabase.from('pinboard_posts').delete().eq('id', postId);
         if (openThreadId === postId) setOpenThreadId(null);
+        onToast('Beitrag gelöscht.');
         loadPosts();
       };
 
@@ -3415,6 +3899,49 @@ Deine Persönlichkeit:
         current[emoji] = Array.from(users);
         await supabase.from('pinboard_posts').update({ reactions: current }).eq('id', post.id);
         loadPosts();
+      };
+
+      const handlePostContextMenu = (e, post) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isMine = post.author_id === currentUser.id;
+        const canMod = isMine || canManage;
+        const items = [
+          { icon: '💬', label: 'Antworten öffnen', onClick: () => setOpenThreadId(post.id) },
+          { icon: '📌', label: post.pinned ? 'Pin lösen' : 'Anpinnen', onClick: () => togglePin(post) },
+          ...(canMod
+            ? [{
+                icon: '✏️',
+                label: 'Beitrag bearbeiten',
+                onClick: () => startEditPost(post)
+              }]
+            : []),
+          {
+            icon: '📋',
+            label: 'Inhalt kopieren',
+            onClick: () => {
+              navigator.clipboard?.writeText(post.content || '');
+              onToast('Kopiert!');
+            }
+          },
+          ...(canMod
+            ? [
+                { separator: true },
+                {
+                  icon: '🗑️',
+                  label: isMine ? 'Beitrag löschen' : 'Löschen (Management)',
+                  danger: true,
+                  onClick: () => deletePost(post.id)
+                }
+              ]
+            : [])
+        ];
+        onOpenContextMenu({
+          x: e.clientX,
+          y: e.clientY,
+          title: post.title || 'Pinnwand-Post',
+          items
+        });
       };
 
       const handleAddReply = async (e) => {
@@ -3496,10 +4023,12 @@ Deine Persönlichkeit:
             { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 10 } },
             filteredPosts.map((p) => {
               const author = profilesMap[p.author_id] || {};
+              const isMine = p.author_id === currentUser.id;
               return React.createElement(
                 'div',
                 {
                   key: p.id,
+                  onContextMenu: (e) => handlePostContextMenu(e, p),
                   className: 'nested-box',
                   style: {
                     padding: 14,
@@ -3522,8 +4051,8 @@ Deine Persönlichkeit:
                     'div',
                     { style: { display: 'flex', gap: 6 } },
                     React.createElement('button', { className: 'btn-secondary', style: { padding: '4px 8px', fontSize: 11 }, onClick: () => togglePin(p) }, p.pinned ? 'Lösen' : 'Anpinnen'),
-                    p.author_id === currentUser.id && React.createElement('button', { className: 'btn-secondary', style: { padding: '4px 8px', fontSize: 11 }, onClick: () => startEditPost(p) }, '✏️'),
-                    p.author_id === currentUser.id && React.createElement('button', { className: 'btn-danger', onClick: () => deletePost(p.id) }, '✕')
+                    (isMine || canManage) && React.createElement('button', { className: 'btn-secondary', style: { padding: '4px 8px', fontSize: 11 }, onClick: () => startEditPost(p) }, '✏️'),
+                    (isMine || canManage) && React.createElement('button', { className: 'btn-danger', onClick: () => deletePost(p.id) }, '✕')
                   )
                 ),
                 p.title && React.createElement('h4', { style: { fontSize: 14.5, fontWeight: 700, marginBottom: 4 } }, p.title),
@@ -3680,7 +4209,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 14. MODUL 5: QUAPSSI KI-TERMINAL (Key fest hinterlegt!)
+    // 15. MODUL 5: QUAPSSI KI-TERMINAL (Key fest hinterlegt + Quick Prompts)
     // =========================================================================
     const QUAPSSI_QUICK_PROMPTS = [
       'Erstelle ein kurzes Event-Briefing für heute Abend',
@@ -3826,9 +4355,9 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 15. MODUL 6: AUDIO, VIDEO, 3 SOUNDPACKS & DESIGN-CUSTOMIZER
+    // 16. MODUL 6: AUDIO, VIDEO, 3 SOUNDPACKS & DESIGN-CUSTOMIZER
     // =========================================================================
-    function SettingsStudioModule({ design, onChangeDesign, onToast }) {
+    function SettingsStudioModule({ currentUserId, design, onChangeDesign, onToast }) {
       const [subTab, setSubTab] = useState('design');
       const [soundSettings, setSoundSettings] = useState(() => soundEngine.load());
 
@@ -3871,7 +4400,7 @@ Deine Persönlichkeit:
       const updatePref = (patch) => {
         const next = { ...mediaPrefs, ...patch };
         setMediaPrefs(next);
-        saveMediaPrefs(next);
+        saveMediaPrefs(next, currentUserId);
       };
 
       const stopMicTest = () => {
@@ -4050,7 +4579,6 @@ Deine Persönlichkeit:
           )
         ),
 
-        // TAB 1: DESIGN CUSTOMIZER
         subTab === 'design' && React.createElement(
           'div',
           { className: 'custom-scroll', style: { flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 } },
@@ -4209,7 +4737,6 @@ Deine Persönlichkeit:
           )
         ),
 
-        // TAB 2: 3 SOUNDPACKS + CUSTOM SOUNDS
         subTab === 'sounds' && React.createElement(
           React.Fragment,
           null,
@@ -4365,7 +4892,6 @@ Deine Persönlichkeit:
           )
         ),
 
-        // TAB 3: MIKROFON & KAMERA
         subTab === 'devices' && React.createElement(
           'div',
           { className: 'custom-scroll', style: { flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 } },
@@ -4524,7 +5050,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 16. ROOT APP
+    // 17. ROOT APP
     // =========================================================================
     const KONAMI_SEQ = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 
@@ -4539,6 +5065,7 @@ Deine Persönlichkeit:
       const [callState, setCallState] = useState(null);
       const [toast, setToast] = useState(null);
       const [design, setDesign] = useState(() => getSavedDesign());
+      const [contextMenu, setContextMenu] = useState(null);
 
       const [overdrive, setOverdrive] = useState(false);
       const [barrelRoll, setBarrelRoll] = useState(false);
@@ -4547,6 +5074,37 @@ Deine Persönlichkeit:
 
       const signalChannelRef = useRef(null);
       const konamiIdxRef = useRef(0);
+      const cloudSaveTimerRef = useRef(null);
+
+      useEffect(() => {
+        const closeMenu = () => setContextMenu(null);
+        const onEsc = (e) => {
+          if (e.key === 'Escape') {
+            setContextMenu(null);
+            setShowSecretHud(false);
+          }
+        };
+        window.addEventListener('click', closeMenu);
+        window.addEventListener('keydown', onEsc);
+        return () => {
+          window.removeEventListener('click', closeMenu);
+          window.removeEventListener('keydown', onEsc);
+        };
+      }, []);
+
+      const handleChangeDesign = (nextDesign) => {
+        setDesign(nextDesign);
+        applyDesignToDom(nextDesign);
+        try {
+          localStorage.setItem(DESIGN_KEY, JSON.stringify(nextDesign));
+        } catch {}
+        if (session?.user?.id) {
+          clearTimeout(cloudSaveTimerRef.current);
+          cloudSaveTimerRef.current = setTimeout(() => {
+            syncUserSettingsToCloud(session.user.id, { design_settings: nextDesign });
+          }, 400);
+        }
+      };
 
       useEffect(() => {
         applyDesignToDom(design);
@@ -4612,7 +5170,17 @@ Deine Persönlichkeit:
           for (const p of data) map[p.id] = p;
           setProfilesMap(map);
           if (session?.user?.id && map[session.user.id]) {
-            setCurrentProfile(map[session.user.id]);
+            const myProf = map[session.user.id];
+            setCurrentProfile(myProf);
+            if (myProf.design_settings && Object.keys(myProf.design_settings).length > 0) {
+              setDesign((prev) => ({ ...prev, ...myProf.design_settings }));
+            }
+            if (myProf.sound_settings && Object.keys(myProf.sound_settings).length > 0) {
+              soundEngine.hydrateFromCloud(myProf.sound_settings);
+            }
+            if (myProf.media_settings && Object.keys(myProf.media_settings).length > 0) {
+              saveMediaPrefs(myProf.media_settings, null);
+            }
           }
         }
       };
@@ -4637,18 +5205,12 @@ Deine Persönlichkeit:
       useEffect(() => {
         if (!session?.user) {
           setCurrentProfile(null);
+          soundEngine.setUserId(null);
           return;
         }
 
+        soundEngine.setUserId(session.user.id);
         loadAllProfiles();
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data }) => {
-            if (data) setCurrentProfile(data);
-          });
 
         const profChannel = supabase
           .channel('quaps-profiles-rt')
@@ -4829,12 +5391,15 @@ Deine Persönlichkeit:
                   signalChannel: signalChannelRef.current,
                   setCallState,
                   onUnreadChange: setUnreadChatCount,
+                  onOpenContextMenu: setContextMenu,
                   onEasterEgg: triggerEasterEgg,
                   onToast: showToast
                 }),
                 activeTab === 'pinboard' && React.createElement(PinboardModule, {
                   currentUser: session.user,
+                  currentProfile,
                   profilesMap,
+                  onOpenContextMenu: setContextMenu,
                   onToast: showToast
                 }),
                 activeTab === 'calendar' && React.createElement(CalendarModule, {
@@ -4859,8 +5424,9 @@ Deine Persönlichkeit:
                   onToast: showToast
                 }),
                 activeTab === 'sounds' && React.createElement(SettingsStudioModule, {
+                  currentUserId: session.user.id,
                   design,
-                  onChangeDesign: setDesign,
+                  onChangeDesign: handleChangeDesign,
                   onToast: showToast
                 })
               )
@@ -4904,6 +5470,7 @@ Deine Persönlichkeit:
           )
         ),
 
+        React.createElement(ContextMenuPopup, { menuState: contextMenu, onClose: () => setContextMenu(null) }),
         toast && React.createElement('div', { className: 'toast-banner' }, toast)
       );
     }
