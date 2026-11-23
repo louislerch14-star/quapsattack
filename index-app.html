@@ -3,25 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QuapsAttack — Command & Community Suite v3</title>
+  <title>QuapsAttack — Command & Community Suite</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --bg-base: #0a0a12;
-      --glass-bg: rgba(20, 20, 35, 0.85);
+      --glass-opacity: 0.85;
+      --glass-bg: rgba(20, 20, 35, var(--glass-opacity));
       --glass-border: rgba(255, 255, 255, 0.2);
       --box-bg: rgba(255, 255, 255, 0.05);
       --box-border: rgba(255, 255, 255, 0.1);
-      --accent-red: #ef4444;
-      --accent-red-glow: rgba(239, 68, 68, 0.4);
+      --accent: #ef4444;
+      --accent-hover: #dc2626;
+      --accent-glow: rgba(239, 68, 68, 0.4);
       --gold-start: #f5c518;
       --gold-end: #ff9900;
       --text-main: #ffffff;
       --text-muted: rgba(255, 255, 255, 0.7);
       --status-green: #10b981;
+      --radius-card: 20px;
+      --radius-box: 14px;
+      --radius-btn: 12px;
+      --font-scale: 1;
     }
 
     * {
@@ -36,6 +42,7 @@
       background-color: var(--bg-base);
       color: var(--text-main);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: calc(14px * var(--font-scale));
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
     }
@@ -45,17 +52,29 @@
       width: 100vw;
       display: flex;
       flex-direction: column;
-      background-color: #0a0a12;
+      background-color: var(--bg-base);
       background-image:
-        radial-gradient(circle at 14% 18%, rgba(239, 68, 68, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 14% 18%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 45%),
         radial-gradient(circle at 86% 82%, rgba(59, 130, 246, 0.15) 0%, transparent 48%);
-      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), background-image 0.35s ease;
+    }
+
+    .app-shell.theme-cozy {
+      background-image:
+        radial-gradient(circle at 16% 20%, rgba(251, 146, 60, 0.2) 0%, transparent 48%),
+        radial-gradient(circle at 84% 80%, rgba(245, 197, 24, 0.14) 0%, transparent 50%);
+    }
+
+    .app-shell.theme-cyber {
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.22) 0%, transparent 46%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.18) 0%, transparent 48%);
     }
 
     .app-shell.overdrive-mode {
       background-image:
-        radial-gradient(circle at 20% 20%, rgba(245, 197, 24, 0.24) 0%, transparent 48%),
-        radial-gradient(circle at 80% 80%, rgba(239, 68, 68, 0.25) 0%, transparent 50%);
+        radial-gradient(circle at 20% 20%, rgba(245, 197, 24, 0.25) 0%, transparent 48%),
+        radial-gradient(circle at 80% 80%, color-mix(in srgb, var(--accent) 28%, transparent) 0%, transparent 50%);
     }
 
     .app-shell.barrel-roll {
@@ -67,18 +86,18 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--glass-border);
-      border-radius: 20px;
+      border-radius: var(--radius-card);
     }
 
     .nested-box {
       background: var(--box-bg);
       border: 1px solid var(--box-border);
-      border-radius: 14px;
+      border-radius: var(--radius-box);
       transition: all 0.2s ease;
     }
 
     .nested-box:hover {
-      border-color: rgba(255, 255, 255, 0.19);
+      border-color: rgba(255, 255, 255, 0.2);
       background: rgba(255, 255, 255, 0.075);
     }
 
@@ -90,10 +109,10 @@
     }
 
     .btn-primary {
-      background: var(--accent-red);
+      background: var(--accent);
       color: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 12px;
+      border-radius: var(--radius-btn);
       padding: 9px 15px;
       font-weight: 600;
       font-size: 13px;
@@ -102,13 +121,13 @@
       align-items: center;
       justify-content: center;
       gap: 7px;
-      box-shadow: 0 4px 18px var(--accent-red-glow);
+      box-shadow: 0 4px 18px var(--accent-glow);
       transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: #dc2626;
-      box-shadow: 0 6px 24px rgba(239, 68, 68, 0.55);
+      background: var(--accent-hover);
+      box-shadow: 0 6px 24px var(--accent-glow);
       transform: translateY(-1px);
     }
 
@@ -121,7 +140,7 @@
       background: rgba(255, 255, 255, 0.06);
       color: var(--text-main);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
+      border-radius: var(--radius-btn);
       padding: 8px 13px;
       font-weight: 500;
       font-size: 12.5px;
@@ -142,7 +161,7 @@
       background: rgba(239, 68, 68, 0.16);
       color: #fca5a5;
       border: 1px solid rgba(239, 68, 68, 0.35);
-      border-radius: 10px;
+      border-radius: var(--radius-btn);
       padding: 6px 10px;
       font-size: 12px;
       font-weight: 600;
@@ -161,7 +180,7 @@
       width: 100%;
       background: rgba(10, 10, 18, 0.72);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
+      border-radius: var(--radius-btn);
       padding: 10px 13px;
       color: #ffffff;
       font-family: 'Inter', sans-serif;
@@ -171,8 +190,8 @@
     }
 
     .input-field:focus, .select-field:focus, .textarea-field:focus {
-      border-color: var(--accent-red);
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
     }
 
     .select-field option {
@@ -205,7 +224,7 @@
     }
 
     .custom-scroll::-webkit-scrollbar-thumb:hover {
-      background: rgba(239, 68, 68, 0.55);
+      background: var(--accent);
     }
 
     .top-bar {
@@ -234,8 +253,8 @@
       width: 30px;
       height: 30px;
       border-radius: 9px;
-      background: linear-gradient(135deg, #ef4444, #991b1b);
-      box-shadow: 0 0 16px rgba(239, 68, 68, 0.45);
+      background: linear-gradient(135deg, var(--accent), #450a0a);
+      box-shadow: 0 0 16px var(--accent-glow);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -272,7 +291,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 10px 13px;
-      border-radius: 13px;
+      border-radius: var(--radius-btn);
       border: 1px solid transparent;
       background: transparent;
       color: rgba(255, 255, 255, 0.72);
@@ -289,21 +308,21 @@
     }
 
     .nav-btn.active {
-      border-color: rgba(239, 68, 68, 0.45);
-      background: linear-gradient(90deg, rgba(239, 68, 68, 0.22), rgba(239, 68, 68, 0.06));
+      border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+      background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 25%, transparent), color-mix(in srgb, var(--accent) 7%, transparent));
       color: #ffffff;
       font-weight: 600;
-      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.16);
+      box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 20%, transparent);
     }
 
     .badge-red {
-      background: var(--accent-red);
+      background: var(--accent);
       color: #fff;
       font-size: 10.5px;
       font-weight: 700;
       padding: 2px 7px;
       border-radius: 999px;
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+      box-shadow: 0 0 10px var(--accent-glow);
     }
 
     .badge-gold {
@@ -353,9 +372,9 @@
       right: 20px;
       z-index: 160;
       padding: 12px 16px;
-      border-radius: 14px;
+      border-radius: var(--radius-box);
       background: rgba(20, 20, 35, 0.96);
-      border: 1px solid rgba(239, 68, 68, 0.45);
+      border: 1px solid var(--accent);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
       font-size: 13px;
       max-width: 390px;
@@ -381,8 +400,8 @@
     }
 
     .pill-tab.active {
-      background: rgba(239, 68, 68, 0.22);
-      border-color: rgba(239, 68, 68, 0.5);
+      background: color-mix(in srgb, var(--accent) 25%, transparent);
+      border-color: var(--accent);
       color: #ffffff;
     }
 
@@ -405,8 +424,23 @@
     .vu-bar-fill {
       height: 100%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #10b981, #f5c518, #ef4444);
+      background: linear-gradient(90deg, #10b981, #f5c518, var(--accent));
       transition: width 0.06s linear;
+    }
+
+    .swatch-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .swatch-btn.active {
+      transform: scale(1.14);
+      border-color: #ffffff;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
     }
   </style>
 </head>
@@ -431,8 +465,10 @@
       }
     });
 
-    // Fest hinterlegter Key für QuapsSI (kein manueller Input nötig!)
+    // Fest hinterlegter Key für QuapsSI
     const QUAPSSI_EMBEDDED_KEY = 'AQ.Ab8RN6K2I-hsLsO513OcUYYYn4hknAn97DE7w8hdCRcSPnjTNQ';
+
+    const MAIN_GROUP_NAME = 'QuapsAttack Main Squad';
 
     function isManagementRole(role) {
       if (!role) return false;
@@ -441,7 +477,70 @@
     }
 
     // =========================================================================
-    // 2. HARDWARE MEDIA SETTINGS (Mikrofon & Kamera Auswahl)
+    // 2. DESIGN-CUSTOMIZER (Farben, Mood, Glass, Radius, Schriftgröße)
+    // =========================================================================
+    const DESIGN_KEY = 'quaps_design_v1';
+    const ACCENT_PRESETS = [
+      { name: 'Crimson Red', hex: '#ef4444', hover: '#dc2626', glow: 'rgba(239, 68, 68, 0.42)' },
+      { name: 'Solar Gold', hex: '#f59e0b', hover: '#d97706', glow: 'rgba(245, 158, 11, 0.42)' },
+      { name: 'Emerald Squad', hex: '#10b981', hover: '#059669', glow: 'rgba(16, 185, 129, 0.42)' },
+      { name: 'Cyber Cyan', hex: '#06b6d4', hover: '#0891b2', glow: 'rgba(6, 182, 212, 0.42)' },
+      { name: 'Nebula Violet', hex: '#8b5cf6', hover: '#7c3aed', glow: 'rgba(139, 92, 246, 0.42)' },
+      { name: 'Sunset Coral', hex: '#f97316', hover: '#ea580c', glow: 'rgba(249, 115, 22, 0.42)' }
+    ];
+
+    const DEFAULT_DESIGN = {
+      accentHex: '#ef4444',
+      accentHover: '#dc2626',
+      accentGlow: 'rgba(239, 68, 68, 0.42)',
+      bgMood: 'night', // 'night' | 'cozy' | 'cyber'
+      bgBase: '#0a0a12',
+      glassOpacity: 0.85,
+      radiusStyle: 'modern', // 'sharp' | 'modern' | 'soft'
+      fontScale: 1.0
+    };
+
+    function getSavedDesign() {
+      try {
+        const raw = localStorage.getItem(DESIGN_KEY);
+        if (raw) return { ...DEFAULT_DESIGN, ...JSON.parse(raw) };
+      } catch {}
+      return { ...DEFAULT_DESIGN };
+    }
+
+    function applyDesignToDom(design) {
+      const root = document.documentElement;
+      root.style.setProperty('--accent', design.accentHex);
+      root.style.setProperty('--accent-hover', design.accentHover);
+      root.style.setProperty('--accent-glow', design.accentGlow);
+      root.style.setProperty('--glass-opacity', String(design.glassOpacity));
+      root.style.setProperty('--font-scale', String(design.fontScale));
+
+      const baseMap = {
+        night: '#0a0a12',
+        cozy: '#140f0c',
+        cyber: '#070c16'
+      };
+      const baseColor = baseMap[design.bgMood] || '#0a0a12';
+      root.style.setProperty('--bg-base', baseColor);
+
+      if (design.radiusStyle === 'sharp') {
+        root.style.setProperty('--radius-card', '10px');
+        root.style.setProperty('--radius-box', '8px');
+        root.style.setProperty('--radius-btn', '7px');
+      } else if (design.radiusStyle === 'soft') {
+        root.style.setProperty('--radius-card', '28px');
+        root.style.setProperty('--radius-box', '20px');
+        root.style.setProperty('--radius-btn', '18px');
+      } else {
+        root.style.setProperty('--radius-card', '20px');
+        root.style.setProperty('--radius-box', '14px');
+        root.style.setProperty('--radius-btn', '12px');
+      }
+    }
+
+    // =========================================================================
+    // 3. HARDWARE MEDIA SETTINGS (Mikrofon & Kamera Auswahl)
     // =========================================================================
     const MEDIA_PREFS_KEY = 'quaps_media_devices_v1';
 
@@ -460,7 +559,7 @@
     }
 
     // =========================================================================
-    // 3. CUSTOM SOUND ENGINE (Web Audio API + Austauschbare Custom Audio Files)
+    // 4. SOUND ENGINE MIT 3 UMSCHALTBAREN SOUNDPACKS (Cozy / Cyber / Retro)
     // =========================================================================
     const SOUND_EVENTS = [
       { key: 'chat_message', label: 'Eingehende Chat-Nachricht', desc: 'Ton bei neuen DMs & Gruppennachrichten' },
@@ -473,8 +572,26 @@
       { key: 'calendar_event', label: 'Kalender-Termin & Erinnerung', desc: 'Signal bei neuen Terminen oder Erinnerungen' },
       { key: 'upload_success', label: 'Upload & Aktion erfolgreich', desc: 'Bestätigung bei Uploads & Speichern' },
       { key: 'error_alert', label: 'Fehler- & Warnton', desc: 'Warnton bei Fehlern oder Verbindungsproblemen' },
-      { key: 'easter_egg', label: 'Easter-Egg / Overdrive Fanfare', desc: 'Geheimer Taktik-Sound bei Easter Eggs' }
+      { key: 'easter_egg', label: 'Easter-Egg / Overdrive Fanfare', desc: 'Geheimer Sound bei Easter Eggs' }
     ];
+
+    const SOUNDPACKS = {
+      cozy: {
+        name: 'Cozy Lounge',
+        badge: '☕ Warm & Sanft',
+        desc: 'Weiche Sinus-/Dreiecksklänge mit warmen Harmonien – angenehm für die Ohren.'
+      },
+      cyber: {
+        name: 'Cyber Ops',
+        badge: '⚡ Klar & Modern',
+        desc: 'Präzise taktische Signaltöne mit klarem Attack und modernem Synth-Charakter.'
+      },
+      retro: {
+        name: 'Retro Arcade',
+        badge: '🕹️ 8-Bit Classic',
+        desc: 'Verspielte Square-/Pulse-Töne im klassischen Gaming- und Konsolen-Stil.'
+      }
+    };
 
     class SoundEngine {
       constructor() {
@@ -485,22 +602,23 @@
 
       load() {
         try {
-          const raw = localStorage.getItem('quaps_sound_v1');
+          const raw = localStorage.getItem('quaps_sound_v2');
           if (raw) {
             const p = JSON.parse(raw);
             return {
-              volume: typeof p.volume === 'number' ? p.volume : 0.75,
+              pack: SOUNDPACKS[p.pack] ? p.pack : 'cozy',
+              volume: typeof p.volume === 'number' ? p.volume : 0.7,
               dnd: Boolean(p.dnd),
               customFiles: p.customFiles || {}
             };
           }
         } catch {}
-        return { volume: 0.75, dnd: false, customFiles: {} };
+        return { pack: 'cozy', volume: 0.7, dnd: false, customFiles: {} };
       }
 
       save() {
         try {
-          localStorage.setItem('quaps_sound_v1', JSON.stringify(this.settings));
+          localStorage.setItem('quaps_sound_v2', JSON.stringify(this.settings));
         } catch {}
         this.listeners.forEach((fn) => fn({ ...this.settings }));
       }
@@ -508,6 +626,12 @@
       subscribe(fn) {
         this.listeners.add(fn);
         return () => this.listeners.delete(fn);
+      }
+
+      setPack(pack) {
+        if (!SOUNDPACKS[pack]) return;
+        this.settings.pack = pack;
+        this.save();
       }
 
       setVolume(val) {
@@ -558,70 +682,188 @@
         try {
           const ctx = this.getCtx();
           const now = ctx.currentTime;
-          const tone = (freq, delay, dur, type = 'sine', amp = 0.22) => {
+          const pack = this.settings.pack || 'cozy';
+
+          const defaultWave =
+            pack === 'cozy' ? 'sine' : pack === 'cyber' ? 'triangle' : 'square';
+          const ampScale =
+            pack === 'cozy' ? 0.16 : pack === 'cyber' ? 0.2 : 0.12;
+
+          const note = (freq, delay, dur, type = defaultWave, amp = 1) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = type;
             osc.frequency.setValueAtTime(freq, now + delay);
+            const attack = pack === 'cozy' ? 0.035 : 0.01;
+            const peak = Math.max(0.001, vol * ampScale * amp);
             gain.gain.setValueAtTime(0.0001, now + delay);
-            gain.gain.exponentialRampToValueAtTime(Math.max(0.001, vol * amp), now + delay + 0.015);
+            gain.gain.exponentialRampToValueAtTime(peak, now + delay + attack);
             gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + dur);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now + delay);
-            osc.stop(now + delay + dur + 0.02);
+            osc.stop(now + delay + dur + 0.03);
           };
 
-          switch (key) {
-            case 'chat_message':
-              tone(640, 0, 0.11, 'triangle', 0.22);
-              tone(880, 0.07, 0.15, 'sine', 0.2);
-              break;
-            case 'chat_mention':
-              tone(784, 0, 0.1, 'triangle', 0.28);
-              tone(1046.5, 0.09, 0.12, 'triangle', 0.28);
-              tone(1318.5, 0.18, 0.22, 'sine', 0.25);
-              break;
-            case 'call_incoming':
-              tone(523.25, 0, 0.15, 'sine', 0.3);
-              tone(659.25, 0.15, 0.15, 'sine', 0.3);
-              tone(783.99, 0.3, 0.22, 'triangle', 0.3);
-              tone(1046.5, 0.52, 0.28, 'sine', 0.28);
-              break;
-            case 'call_connected':
-              tone(440, 0, 0.12, 'sine', 0.25);
-              tone(659.25, 0.1, 0.22, 'triangle', 0.26);
-              break;
-            case 'call_ended':
-              tone(587.33, 0, 0.14, 'sine', 0.24);
-              tone(392.0, 0.13, 0.24, 'sine', 0.22);
-              break;
-            case 'pinboard_post':
-              tone(523.25, 0, 0.1, 'triangle', 0.22);
-              tone(698.46, 0.09, 0.18, 'sine', 0.22);
-              break;
-            case 'pinboard_reply':
-              tone(659.25, 0, 0.09, 'sine', 0.2);
-              tone(880, 0.08, 0.15, 'triangle', 0.2);
-              break;
-            case 'calendar_event':
-              tone(880, 0, 0.11, 'sine', 0.24);
-              tone(1174.66, 0.12, 0.18, 'triangle', 0.24);
-              break;
-            case 'upload_success':
-              tone(523.25, 0, 0.09, 'sine', 0.22);
-              tone(783.99, 0.08, 0.18, 'triangle', 0.24);
-              break;
-            case 'error_alert':
-              tone(196, 0, 0.18, 'sawtooth', 0.18);
-              tone(146.83, 0.15, 0.24, 'sawtooth', 0.18);
-              break;
-            case 'easter_egg':
-              tone(440, 0, 0.1, 'sawtooth', 0.22);
-              tone(554.37, 0.1, 0.1, 'sawtooth', 0.22);
-              tone(659.25, 0.2, 0.12, 'sawtooth', 0.24);
-              tone(880, 0.32, 0.3, 'triangle', 0.28);
-              break;
+          if (pack === 'cozy') {
+            // Warme, gemütliche Akkord-/Marimba-Töne
+            switch (key) {
+              case 'chat_message':
+                note(523.25, 0, 0.22, 'sine', 0.9);
+                note(659.25, 0.09, 0.28, 'sine', 0.8);
+                break;
+              case 'chat_mention':
+                note(587.33, 0, 0.18, 'sine', 1.0);
+                note(783.99, 0.11, 0.2, 'sine', 1.0);
+                note(987.77, 0.22, 0.34, 'triangle', 0.85);
+                break;
+              case 'call_incoming':
+                note(440, 0, 0.24, 'sine', 1.0);
+                note(554.37, 0.22, 0.24, 'sine', 0.95);
+                note(659.25, 0.44, 0.36, 'sine', 1.0);
+                break;
+              case 'call_connected':
+                note(392.0, 0, 0.18, 'sine', 0.9);
+                note(587.33, 0.12, 0.3, 'sine', 0.95);
+                break;
+              case 'call_ended':
+                note(523.25, 0, 0.2, 'sine', 0.85);
+                note(392.0, 0.15, 0.34, 'sine', 0.8);
+                break;
+              case 'pinboard_post':
+                note(493.88, 0, 0.18, 'sine', 0.9);
+                note(739.99, 0.11, 0.26, 'sine', 0.85);
+                break;
+              case 'pinboard_reply':
+                note(659.25, 0, 0.16, 'sine', 0.85);
+                note(783.99, 0.1, 0.22, 'sine', 0.8);
+                break;
+              case 'calendar_event':
+                note(587.33, 0, 0.18, 'sine', 0.9);
+                note(880, 0.12, 0.28, 'sine', 0.9);
+                break;
+              case 'upload_success':
+                note(523.25, 0, 0.16, 'sine', 0.9);
+                note(659.25, 0.09, 0.16, 'sine', 0.9);
+                note(783.99, 0.18, 0.28, 'sine', 0.95);
+                break;
+              case 'error_alert':
+                note(293.66, 0, 0.22, 'sine', 0.9);
+                note(246.94, 0.16, 0.3, 'sine', 0.85);
+                break;
+              case 'easter_egg':
+                note(523.25, 0, 0.18, 'sine', 1.0);
+                note(659.25, 0.12, 0.18, 'sine', 1.0);
+                note(783.99, 0.24, 0.18, 'sine', 1.0);
+                note(1046.5, 0.36, 0.4, 'triangle', 0.95);
+                break;
+            }
+          } else if (pack === 'cyber') {
+            switch (key) {
+              case 'chat_message':
+                note(740, 0, 0.09, 'triangle', 1.0);
+                note(1108.73, 0.06, 0.14, 'sine', 0.95);
+                break;
+              case 'chat_mention':
+                note(880, 0, 0.09, 'triangle', 1.1);
+                note(1174.66, 0.08, 0.09, 'triangle', 1.1);
+                note(1567.98, 0.16, 0.2, 'sine', 1.0);
+                break;
+              case 'call_incoming':
+                note(587.33, 0, 0.14, 'triangle', 1.1);
+                note(880, 0.14, 0.14, 'triangle', 1.1);
+                note(1174.66, 0.28, 0.22, 'sine', 1.0);
+                break;
+              case 'call_connected':
+                note(523.25, 0, 0.1, 'triangle', 1.0);
+                note(1046.5, 0.09, 0.2, 'sine', 1.0);
+                break;
+              case 'call_ended':
+                note(698.46, 0, 0.12, 'triangle', 0.95);
+                note(440, 0.11, 0.22, 'sine', 0.9);
+                break;
+              case 'pinboard_post':
+                note(659.25, 0, 0.09, 'triangle', 1.0);
+                note(987.77, 0.08, 0.16, 'sine', 0.95);
+                break;
+              case 'pinboard_reply':
+                note(783.99, 0, 0.08, 'triangle', 0.9);
+                note(1046.5, 0.07, 0.14, 'sine', 0.9);
+                break;
+              case 'calendar_event':
+                note(987.77, 0, 0.1, 'triangle', 1.0);
+                note(1318.51, 0.1, 0.18, 'sine', 1.0);
+                break;
+              case 'upload_success':
+                note(659.25, 0, 0.08, 'triangle', 1.0);
+                note(987.77, 0.07, 0.18, 'sine', 1.0);
+                break;
+              case 'error_alert':
+                note(220, 0, 0.16, 'sawtooth', 0.8);
+                note(164.81, 0.14, 0.22, 'sawtooth', 0.8);
+                break;
+              case 'easter_egg':
+                note(587.33, 0, 0.09, 'triangle', 1.1);
+                note(880, 0.09, 0.09, 'triangle', 1.1);
+                note(1174.66, 0.18, 0.12, 'triangle', 1.1);
+                note(1760, 0.28, 0.28, 'sine', 1.0);
+                break;
+            }
+          } else {
+            // Retro Arcade (8-Bit)
+            switch (key) {
+              case 'chat_message':
+                note(660, 0, 0.07, 'square', 0.9);
+                note(990, 0.07, 0.11, 'square', 0.9);
+                break;
+              case 'chat_mention':
+                note(784, 0, 0.07, 'square', 1.0);
+                note(1046, 0.07, 0.07, 'square', 1.0);
+                note(1318, 0.14, 0.16, 'square', 1.0);
+                break;
+              case 'call_incoming':
+                note(523, 0, 0.11, 'square', 1.0);
+                note(659, 0.11, 0.11, 'square', 1.0);
+                note(784, 0.22, 0.11, 'square', 1.0);
+                note(1046, 0.33, 0.18, 'square', 1.0);
+                break;
+              case 'call_connected':
+                note(440, 0, 0.08, 'square', 0.95);
+                note(880, 0.08, 0.16, 'square', 0.95);
+                break;
+              case 'call_ended':
+                note(587, 0, 0.1, 'square', 0.9);
+                note(392, 0.1, 0.18, 'square', 0.9);
+                break;
+              case 'pinboard_post':
+                note(587, 0, 0.08, 'square', 0.95);
+                note(880, 0.08, 0.14, 'square', 0.95);
+                break;
+              case 'pinboard_reply':
+                note(740, 0, 0.07, 'square', 0.9);
+                note(988, 0.07, 0.12, 'square', 0.9);
+                break;
+              case 'calendar_event':
+                note(880, 0, 0.08, 'square', 0.95);
+                note(1175, 0.08, 0.14, 'square', 0.95);
+                break;
+              case 'upload_success':
+                note(523, 0, 0.07, 'square', 0.95);
+                note(659, 0.07, 0.07, 'square', 0.95);
+                note(784, 0.14, 0.07, 'square', 0.95);
+                note(1046, 0.21, 0.18, 'square', 1.0);
+                break;
+              case 'error_alert':
+                note(196, 0, 0.14, 'square', 0.85);
+                note(130, 0.13, 0.2, 'square', 0.85);
+                break;
+              case 'easter_egg':
+                note(523, 0, 0.08, 'square', 1.0);
+                note(659, 0.08, 0.08, 'square', 1.0);
+                note(784, 0.16, 0.08, 'square', 1.0);
+                note(1046, 0.24, 0.24, 'square', 1.0);
+                break;
+            }
           }
         } catch {}
       }
@@ -658,8 +900,8 @@
           style: {
             width: size,
             height: size,
-            borderRadius: 11,
-            background: 'linear-gradient(135deg, #ef4444, #7f1d1d)',
+            borderRadius: 'var(--radius-btn)',
+            background: 'linear-gradient(135deg, var(--accent), #450a0a)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -673,7 +915,7 @@
     }
 
     // =========================================================================
-    // 4. GEMINI API ANBINDUNG (QuapsSI mit fest hinterlegtem Key)
+    // 5. GEMINI API ANBINDUNG (QuapsSI mit fest hinterlegtem Key)
     // =========================================================================
     const QUAPSSI_PERSONALITY = `
 Du bist QuapsSI — die taktische Kommando- und Community-Intelligenz von QuapsAttack.
@@ -738,7 +980,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 5. AUTH SCREEN
+    // 6. AUTH SCREEN
     // =========================================================================
     function AuthView({ onToast }) {
       const [mode, setMode] = useState('login');
@@ -816,7 +1058,7 @@ Deine Persönlichkeit:
                 gridTemplateColumns: '1fr 1fr',
                 gap: 6,
                 padding: 4,
-                borderRadius: 12,
+                borderRadius: 'var(--radius-btn)',
                 background: 'rgba(255,255,255,0.05)',
                 marginBottom: 18
               }
@@ -899,7 +1141,7 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 6. PROFIL BEARBEITEN MODAL (INKL. PROFILBILD-UPLOAD)
+    // 7. PROFIL BEARBEITEN MODAL
     // =========================================================================
     function ProfileModal({ profile, onClose, onSaved, onToast }) {
       const [username, setUsername] = useState(profile.username || '');
@@ -1068,7 +1310,7 @@ Deine Persönlichkeit:
                 React.createElement('label', { style: { fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 4 } }, 'Statustext'),
                 React.createElement('input', {
                   className: 'input-field',
-                  placeholder: 'z. B. Im Einsatz oder Bauprojekt',
+                  placeholder: 'z. B. Im Einsatz oder gemütlich unterwegs',
                   value: customStatusText,
                   onChange: (e) => setCustomStatusText(e.target.value)
                 })
@@ -1101,313 +1343,6 @@ Deine Persönlichkeit:
               { style: { display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 } },
               React.createElement('button', { type: 'button', className: 'btn-secondary', onClick: onClose }, 'Abbrechen'),
               React.createElement('button', { type: 'submit', className: 'btn-primary', disabled: saving }, saving ? 'Speichere...' : 'Profil speichern')
-            )
-          )
-        )
-      );
-    }
-
-    // =========================================================================
-    // 7. KRASSES EXTRA: INTERAKTIVES TAKTIK-RADAR & SQUAD-PULSE (2D Canvas)
-    // =========================================================================
-    function TacticalRadarModule({ currentUser, currentProfile, profilesMap, onToast }) {
-      const canvasRef = useRef(null);
-      const [sweepAngle, setSweepAngle] = useState(0);
-      const [pingPulse, setPingPulse] = useState(0);
-      const [selectedMember, setSelectedMember] = useState(null);
-      const [threatLevel, setThreatLevel] = useState('NOMINAL');
-
-      const members = useMemo(() => {
-        const list = Object.values(profilesMap);
-        return list.map((m, idx) => {
-          // Deterministische Radar-Position pro User-ID
-          let hash = 0;
-          for (let i = 0; i < (m.id || '').length; i++) {
-            hash = (hash * 31 + m.id.charCodeAt(i)) % 360;
-          }
-          const angle = ((hash + idx * 53) % 360) * (Math.PI / 180);
-          const radiusFactor = m.id === currentUser.id ? 0 : 0.25 + ((hash % 60) / 100);
-          return {
-            ...m,
-            angle,
-            radiusFactor
-          };
-        });
-      }, [profilesMap, currentUser.id]);
-
-      useEffect(() => {
-        let raf;
-        let last = performance.now();
-        const animate = (now) => {
-          const dt = (now - last) / 1000;
-          last = now;
-          setSweepAngle((prev) => (prev + dt * 1.65) % (Math.PI * 2));
-          setPingPulse((prev) => (prev + dt * 0.7) % 1);
-
-          const canvas = canvasRef.current;
-          if (canvas) {
-            const ctx = canvas.getContext('2d');
-            const w = canvas.width;
-            const h = canvas.height;
-            const cx = w / 2;
-            const cy = h / 2;
-            const maxR = Math.min(cx, cy) - 18;
-
-            ctx.clearRect(0, 0, w, h);
-
-            // Radar-Kreise
-            [0.25, 0.5, 0.75, 1].forEach((r) => {
-              ctx.beginPath();
-              ctx.arc(cx, cy, maxR * r, 0, Math.PI * 2);
-              ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-              ctx.lineWidth = 1;
-              ctx.stroke();
-            });
-
-            // Fadenkreuz
-            ctx.beginPath();
-            ctx.moveTo(cx - maxR, cy);
-            ctx.lineTo(cx + maxR, cy);
-            ctx.moveTo(cx, cy - maxR);
-            ctx.lineTo(cx, cy + maxR);
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
-            ctx.stroke();
-
-            // Sweep-Kegel
-            const grad = ctx.createConicGradient(sweepAngle - 0.8, cx, cy);
-            grad.addColorStop(0, 'rgba(239, 68, 68, 0)');
-            grad.addColorStop(0.85, 'rgba(239, 68, 68, 0.04)');
-            grad.addColorStop(1, 'rgba(239, 68, 68, 0.32)');
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-            ctx.arc(cx, cy, maxR, sweepAngle - 0.8, sweepAngle);
-            ctx.closePath();
-            ctx.fillStyle = grad;
-            ctx.fill();
-
-            // Sweep-Linie
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-            ctx.lineTo(cx + Math.cos(sweepAngle) * maxR, cy + Math.sin(sweepAngle) * maxR);
-            ctx.strokeStyle = '#ef4444';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // Sonar-Ping Welle
-            ctx.beginPath();
-            ctx.arc(cx, cy, maxR * pingPulse, 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(245, 197, 24, ${(1 - pingPulse) * 0.35})`;
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-
-            // Squad-Mitglieder als Blips zeichnen
-            members.forEach((m) => {
-              const bx = cx + Math.cos(m.angle) * maxR * m.radiusFactor;
-              const by = cy + Math.sin(m.angle) * maxR * m.radiusFactor;
-              const isMe = m.id === currentUser.id;
-              const isSelected = selectedMember?.id === m.id;
-              const color =
-                m.custom_status === 'dnd'
-                  ? '#ef4444'
-                  : m.custom_status === 'away'
-                  ? '#f5c518'
-                  : '#10b981';
-
-              ctx.beginPath();
-              ctx.arc(bx, by, isMe ? 7 : 5.5, 0, Math.PI * 2);
-              ctx.fillStyle = isMe ? '#f5c518' : color;
-              ctx.fill();
-
-              if (isSelected || isMe) {
-                ctx.beginPath();
-                ctx.arc(bx, by, 12, 0, Math.PI * 2);
-                ctx.strokeStyle = isSelected ? '#ffffff' : 'rgba(245,197,24,0.5)';
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-              }
-
-              ctx.font = '600 11px Inter, sans-serif';
-              ctx.fillStyle = 'rgba(255,255,255,0.88)';
-              ctx.fillText(m.username || 'Agent', bx + 9, by + 4);
-            });
-          }
-
-          raf = requestAnimationFrame(animate);
-        };
-        raf = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(raf);
-      }, [members, currentUser.id, selectedMember?.id, pingPulse]);
-
-      const handleRadarClick = (e) => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const rect = canvas.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * canvas.width;
-        const y = ((e.clientY - rect.top) / rect.height) * canvas.height;
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        const maxR = Math.min(cx, cy) - 18;
-
-        let closest = null;
-        let minDist = 26;
-        members.forEach((m) => {
-          const bx = cx + Math.cos(m.angle) * maxR * m.radiusFactor;
-          const by = cy + Math.sin(m.angle) * maxR * m.radiusFactor;
-          const dist = Math.hypot(x - bx, y - by);
-          if (dist < minDist) {
-            minDist = dist;
-            closest = m;
-          }
-        });
-
-        if (closest) {
-          setSelectedMember(closest);
-          soundEngine.play('chat_mention', true);
-        }
-      };
-
-      const triggerSonarPing = () => {
-        setPingPulse(0.02);
-        soundEngine.play('easter_egg', true);
-        onToast('📡 Taktischer Sonar-Ping über das gesamte Squad gesendet!');
-      };
-
-      return React.createElement(
-        'div',
-        { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 14 } },
-        React.createElement(
-          'div',
-          { className: 'glass-card', style: { padding: 18, display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 } },
-          React.createElement(
-            'div',
-            { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 } },
-            React.createElement(
-              'div',
-              null,
-              React.createElement('h2', { style: { fontSize: 17, fontWeight: 800 } },
-                'Squad-Pulse ',
-                React.createElement('span', { className: 'gold-gradient-text' }, 'Taktik-Radar')
-              ),
-              React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } },
-                'Klicke auf einen Blip im Radar, um ein Squad-Mitglied zu erfassen'
-              )
-            ),
-            React.createElement(
-              'div',
-              { style: { display: 'flex', gap: 8, alignItems: 'center' } },
-              React.createElement(
-                'select',
-                {
-                  className: 'select-field',
-                  style: { width: 'auto', padding: '6px 10px', fontSize: 12 },
-                  value: threatLevel,
-                  onChange: (e) => setThreatLevel(e.target.value)
-                },
-                React.createElement('option', { value: 'NOMINAL' }, '🟢 Lage: NOMINAL'),
-                React.createElement('option', { value: 'ELEVATED' }, '🟡 Lage: ERHÖHT'),
-                React.createElement('option', { value: 'CRITICAL' }, '🔴 Lage: ALARM')
-              ),
-              React.createElement('button', { className: 'btn-primary', onClick: triggerSonarPing }, '📡 Sonar-Ping')
-            )
-          ),
-
-          React.createElement(
-            'div',
-            {
-              style: {
-                flex: 1,
-                minHeight: 280,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'rgba(7, 7, 14, 0.75)',
-                borderRadius: 16,
-                border: '1px solid rgba(255,255,255,0.1)',
-                padding: 8
-              }
-            },
-            React.createElement('canvas', {
-              ref: canvasRef,
-              width: 460,
-              height: 460,
-              onClick: handleRadarClick,
-              style: { maxWidth: '100%', maxHeight: '100%', cursor: 'crosshair' }
-            })
-          )
-        ),
-
-        // Rechte Spalte: Telemetrie & Erfasstes Mitglied
-        React.createElement(
-          'div',
-          { style: { display: 'flex', flexDirection: 'column', gap: 14, minHeight: 0 } },
-          React.createElement(
-            'div',
-            { className: 'glass-card', style: { padding: 18 } },
-            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700, marginBottom: 10 } }, 'Erfasste Ziel-Telemetrie'),
-            selectedMember
-              ? React.createElement(
-                  'div',
-                  { className: 'nested-box', style: { padding: 14, display: 'flex', flexDirection: 'column', gap: 8 } },
-                  React.createElement(
-                    'div',
-                    { style: { display: 'flex', alignItems: 'center', gap: 11 } },
-                    React.createElement(AvatarBadge, { profile: selectedMember, size: 46 }),
-                    React.createElement(
-                      'div',
-                      null,
-                      React.createElement('div', { style: { fontWeight: 800, fontSize: 15 } }, selectedMember.username),
-                      React.createElement('div', { style: { display: 'flex', gap: 6, marginTop: 3 } },
-                        selectedMember.role && React.createElement('span', { className: 'badge-gold' }, selectedMember.role),
-                        React.createElement('span', { className: 'badge-green' }, selectedMember.custom_status || 'online')
-                      )
-                    )
-                  ),
-                  React.createElement('div', { style: { fontSize: 12.5, color: 'var(--text-muted)' } },
-                    'Statusmeldung: ' + (selectedMember.custom_status_text || 'Keine Meldung')
-                  ),
-                  selectedMember.personality_quote && React.createElement(
-                    'div',
-                    { style: { fontSize: 12, fontStyle: 'italic', color: '#f5c518', borderLeft: '2px solid #f5c518', paddingLeft: 8 } },
-                    `„${selectedMember.personality_quote}“`
-                  )
-                )
-              : React.createElement('div', { style: { fontSize: 12.5, color: 'var(--text-muted)' } },
-                  'Noch kein Mitglied angeklickt. Klicke im Radar links auf einen Punkt.'
-                )
-          ),
-
-          React.createElement(
-            'div',
-            { className: 'glass-card custom-scroll', style: { flex: 1, padding: 18, minHeight: 0 } },
-            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700, marginBottom: 10 } },
-              `Aktive Squad-Liste (${members.length})`
-            ),
-            React.createElement(
-              'div',
-              { style: { display: 'flex', flexDirection: 'column', gap: 7 } },
-              members.map((m) => React.createElement(
-                'button',
-                {
-                  key: m.id,
-                  className: 'nested-box',
-                  onClick: () => setSelectedMember(m),
-                  style: {
-                    padding: '9px 12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    color: '#fff',
-                    cursor: 'pointer'
-                  }
-                },
-                React.createElement(
-                  'div',
-                  { style: { display: 'flex', alignItems: 'center', gap: 9 } },
-                  React.createElement(AvatarBadge, { profile: m, size: 28 }),
-                  React.createElement('span', { style: { fontWeight: 600, fontSize: 13 } }, m.username)
-                ),
-                React.createElement('span', { className: isManagementRole(m.role) ? 'badge-gold' : 'badge-green' }, m.role || 'Member')
-              ))
             )
           )
         )
@@ -1587,18 +1522,39 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 9. WEBRTC CALL OVERLAY
+    // 9. ÜBERARBEITETE WEBRTC ANRUF-LOGIK (Sauberer State + Klingelton + Cleanup)
     // =========================================================================
     function CallOverlay({ callState, setCallState, currentUser, signalChannel, onToast }) {
       const [muted, setMuted] = useState(false);
       const [camOff, setCamOff] = useState(!callState?.isVideo);
       const [elapsed, setElapsed] = useState(0);
+      const [connState, setConnState] = useState('new');
 
       const localVideoRef = useRef(null);
       const remoteVideoRef = useRef(null);
       const remoteAudioRef = useRef(null);
       const pcRef = useRef(null);
       const localStreamRef = useRef(null);
+      const pendingIceRef = useRef([]);
+      const ringIntervalRef = useRef(null);
+
+      // Klingelton während incoming / outgoing
+      useEffect(() => {
+        if (!callState) return;
+        if (callState.status === 'incoming' || callState.status === 'outgoing') {
+          soundEngine.play('call_incoming');
+          ringIntervalRef.current = setInterval(() => {
+            soundEngine.play('call_incoming');
+          }, 2600);
+        } else {
+          clearInterval(ringIntervalRef.current);
+          ringIntervalRef.current = null;
+        }
+        return () => {
+          clearInterval(ringIntervalRef.current);
+          ringIntervalRef.current = null;
+        };
+      }, [callState?.status, callState?.roomId]);
 
       useEffect(() => {
         if (!callState || callState.status !== 'connected') {
@@ -1610,13 +1566,35 @@ Deine Persönlichkeit:
       }, [callState?.status]);
 
       const cleanupMedia = () => {
+        clearInterval(ringIntervalRef.current);
+        ringIntervalRef.current = null;
+        pendingIceRef.current = [];
         if (localStreamRef.current) {
-          localStreamRef.current.getTracks().forEach((t) => t.stop());
+          localStreamRef.current.getTracks().forEach((t) => {
+            try { t.stop(); } catch {}
+          });
           localStreamRef.current = null;
         }
         if (pcRef.current) {
-          pcRef.current.close();
+          try {
+            pcRef.current.ontrack = null;
+            pcRef.current.onicecandidate = null;
+            pcRef.current.onconnectionstatechange = null;
+            pcRef.current.close();
+          } catch {}
           pcRef.current = null;
+        }
+        setConnState('closed');
+      };
+
+      const flushPendingIce = async (pc) => {
+        if (!pc || !pc.remoteDescription) return;
+        const queue = [...pendingIceRef.current];
+        pendingIceRef.current = [];
+        for (const cand of queue) {
+          try {
+            await pc.addIceCandidate(new RTCIceCandidate(cand));
+          } catch {}
         }
       };
 
@@ -1647,19 +1625,34 @@ Deine Persönlichkeit:
         }
 
         localStreamRef.current = stream;
+        setMuted(false);
+        setCamOff(!isVideo);
+
         if (localVideoRef.current && isVideo) {
           localVideoRef.current.srcObject = stream;
         }
 
         const pc = new RTCPeerConnection({
-          iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' }
+          ]
         });
         pcRef.current = pc;
+        setConnState('connecting');
 
         stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
+        pc.onconnectionstatechange = () => {
+          setConnState(pc.connectionState);
+          if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
+            onToast('Verbindung zum Gesprächspartner wurde unterbrochen.');
+          }
+        };
+
         pc.ontrack = (event) => {
           const remoteStream = event.streams[0];
+          if (!remoteStream) return;
           if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStream;
           if (remoteAudioRef.current) {
             remoteAudioRef.current.srcObject = remoteStream;
@@ -1686,7 +1679,10 @@ Deine Persönlichkeit:
         };
 
         if (isInitiator) {
-          const offer = await pc.createOffer();
+          const offer = await pc.createOffer({
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: Boolean(isVideo)
+          });
           await pc.setLocalDescription(offer);
           signalChannel?.send({
             type: 'broadcast',
@@ -1700,6 +1696,8 @@ Deine Persönlichkeit:
             }
           });
         }
+
+        return pc;
       };
 
       useEffect(() => {
@@ -1711,17 +1709,28 @@ Deine Persönlichkeit:
 
           if (sig.type === 'call-accept' && callState.status === 'outgoing') {
             soundEngine.play('call_connected');
-            setCallState((prev) => (prev ? { ...prev, status: 'connected' } : null));
-            await startPeerConnection(true, sig.fromUserId, callState.isVideo);
-          } else if (sig.type === 'call-reject' || sig.type === 'call-end') {
+            setCallState((prev) => (prev ? { ...prev, status: 'connected', peerUserId: sig.fromUserId } : null));
+            try {
+              await startPeerConnection(true, sig.fromUserId, callState.isVideo);
+            } catch (err) {
+              onToast('Medienzugriff fehlgeschlagen: ' + err.message);
+            }
+          } else if (sig.type === 'call-reject') {
+            soundEngine.play('call_ended');
+            cleanupMedia();
+            setCallState(null);
+            onToast('Anruf wurde abgelehnt.');
+          } else if (sig.type === 'call-end') {
             soundEngine.play('call_ended');
             cleanupMedia();
             setCallState(null);
             onToast('Anruf wurde beendet.');
-          } else if (sig.type === 'webrtc-offer' && pcRef.current) {
-            await pcRef.current.setRemoteDescription(new RTCSessionDescription(sig.sdp));
-            const answer = await pcRef.current.createAnswer();
-            await pcRef.current.setLocalDescription(answer);
+          } else if (sig.type === 'webrtc-offer') {
+            const pc = pcRef.current || (await startPeerConnection(false, sig.fromUserId, callState.isVideo));
+            await pc.setRemoteDescription(new RTCSessionDescription(sig.sdp));
+            await flushPendingIce(pc);
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
             signalChannel?.send({
               type: 'broadcast',
               event: 'call-signal',
@@ -1735,16 +1744,23 @@ Deine Persönlichkeit:
             });
           } else if (sig.type === 'webrtc-answer' && pcRef.current) {
             await pcRef.current.setRemoteDescription(new RTCSessionDescription(sig.sdp));
-          } else if (sig.type === 'webrtc-ice' && pcRef.current && sig.candidate) {
-            try {
-              await pcRef.current.addIceCandidate(new RTCIceCandidate(sig.candidate));
-            } catch {}
+            await flushPendingIce(pcRef.current);
+          } else if (sig.type === 'webrtc-ice' && sig.candidate) {
+            if (pcRef.current && pcRef.current.remoteDescription) {
+              try {
+                await pcRef.current.addIceCandidate(new RTCIceCandidate(sig.candidate));
+              } catch {}
+            } else {
+              pendingIceRef.current.push(sig.candidate);
+            }
           }
         };
 
         window.addEventListener('quaps-call-signal', handler);
         return () => window.removeEventListener('quaps-call-signal', handler);
       }, [callState, currentUser?.id]);
+
+      useEffect(() => () => cleanupMedia(), []);
 
       if (!callState) return null;
 
@@ -1817,7 +1833,7 @@ Deine Persönlichkeit:
           React.createElement('div', { style: { fontSize: 13.5, color: 'var(--text-muted)', marginBottom: 18 } },
             callState.status === 'incoming' && `${callState.peerName} ruft an...`,
             callState.status === 'outgoing' && `Rufe ${callState.peerName} an...`,
-            callState.status === 'connected' && `Verbunden · ${mins}:${secs}`
+            callState.status === 'connected' && `Verbunden (${connState}) · ${mins}:${secs}`
           ),
           React.createElement('audio', { ref: remoteAudioRef, autoPlay: true }),
           callState.isVideo && React.createElement(
@@ -1827,14 +1843,14 @@ Deine Persönlichkeit:
               ref: remoteVideoRef,
               autoPlay: true,
               playsInline: true,
-              style: { width: '100%', height: 180, borderRadius: 14, background: '#07070d', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.14)' }
+              style: { width: '100%', height: 180, borderRadius: 'var(--radius-box)', background: '#07070d', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.14)' }
             }),
             React.createElement('video', {
               ref: localVideoRef,
               autoPlay: true,
               playsInline: true,
               muted: true,
-              style: { width: '100%', height: 180, borderRadius: 14, background: '#07070d', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.14)' }
+              style: { width: '100%', height: 180, borderRadius: 'var(--radius-box)', background: '#07070d', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.14)' }
             })
           ),
           React.createElement(
@@ -1868,9 +1884,9 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 10. MODUL 1: DIRECT MESSAGES & GRUPPEN-CHATS (+ /radar Easter Egg)
+    // 10. MODUL 1: DIRECT MESSAGES & AUTOMATISCHE MAIN-GRUPPE FÜR ALLE AKTIVEN
     // =========================================================================
-    const QUICK_EMOJIS = ['🔥', '💀', '😂', '👍', '⚡', '🎯', '🚀'];
+    const QUICK_EMOJIS = ['🔥', '💀', '😂', '👍', '⚡', '☕', '🚀'];
 
     function ChatModule({ currentUser, currentProfile, profilesMap, signalChannel, setCallState, onUnreadChange, onEasterEgg, onToast }) {
       const [rooms, setRooms] = useState([]);
@@ -1888,21 +1904,72 @@ Deine Persönlichkeit:
       const bottomRef = useRef(null);
       const typingTimeoutRef = useRef(null);
 
-      const allProfilesList = useMemo(
+      const allProfileIds = useMemo(() => Object.keys(profilesMap || {}), [profilesMap]);
+      const otherProfilesList = useMemo(
         () => Object.values(profilesMap).filter((p) => p.id !== currentUser.id),
         [profilesMap, currentUser.id]
       );
 
-      const loadRooms = async () => {
+      // Main-Gruppe sicherstellen & alle aktiven Profile darin synchronisieren
+      const ensureMainGroupAndSyncMembers = async (existingRooms) => {
+        let mainRoom = (existingRooms || []).find(
+          (r) => r.is_group && (r.name === MAIN_GROUP_NAME || r.is_main_group)
+        );
+
+        if (!mainRoom) {
+          const { data: created, error } = await supabase
+            .from('chat_rooms')
+            .insert({
+              name: MAIN_GROUP_NAME,
+              is_group: true,
+              creator_id: currentUser.id
+            })
+            .select('*')
+            .single();
+          if (!error && created) {
+            mainRoom = created;
+          }
+        }
+
+        if (mainRoom && allProfileIds.length > 0) {
+          const { data: currentMembers } = await supabase
+            .from('chat_room_members')
+            .select('user_id')
+            .eq('room_id', mainRoom.id);
+
+          const presentIds = new Set((currentMembers || []).map((m) => m.user_id));
+          const missingIds = allProfileIds.filter((uid) => !presentIds.has(uid));
+          if (missingIds.length > 0) {
+            await supabase.from('chat_room_members').insert(
+              missingIds.map((uid) => ({ room_id: mainRoom.id, user_id: uid }))
+            );
+          }
+        }
+
+        return mainRoom?.id || null;
+      };
+
+      const loadRooms = async (preferRoomId = null) => {
         setLoadingRooms(true);
         try {
+          const { data: allGroupRows } = await supabase
+            .from('chat_rooms')
+            .select('*')
+            .eq('is_group', true)
+            .eq('name', MAIN_GROUP_NAME);
+
+          const mainRoomId = await ensureMainGroupAndSyncMembers(allGroupRows || []);
+
           const { data: memberRows, error: mErr } = await supabase
             .from('chat_room_members')
             .select('room_id')
             .eq('user_id', currentUser.id);
           if (mErr) throw mErr;
 
-          const roomIds = (memberRows || []).map((r) => r.room_id);
+          const roomIds = Array.from(
+            new Set([...(memberRows || []).map((r) => r.room_id), ...(mainRoomId ? [mainRoomId] : [])])
+          );
+
           if (!roomIds.length) {
             setRooms([]);
             setLoadingRooms(false);
@@ -1921,14 +1988,30 @@ Deine Persönlichkeit:
             .select('room_id, user_id')
             .in('room_id', roomIds);
 
-          const enriched = (roomRows || []).map((room) => ({
-            ...room,
-            memberIds: (allMembers || []).filter((m) => m.room_id === room.id).map((m) => m.user_id)
-          }));
+          const enriched = (roomRows || [])
+            .map((room) => {
+              const isMain = room.name === MAIN_GROUP_NAME;
+              const mIds = isMain
+                ? Array.from(new Set([...allProfileIds, ...((allMembers || []).filter((m) => m.room_id === room.id).map((m) => m.user_id))]))
+                : (allMembers || []).filter((m) => m.room_id === room.id).map((m) => m.user_id);
+              return {
+                ...room,
+                isMainGroup: isMain,
+                memberIds: mIds
+              };
+            })
+            // Main-Gruppe immer ganz oben anzeigen
+            .sort((a, b) => {
+              if (a.isMainGroup && !b.isMainGroup) return -1;
+              if (!a.isMainGroup && b.isMainGroup) return 1;
+              return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+            });
 
           setRooms(enriched);
-          if (!activeRoomId && enriched.length > 0) {
-            setActiveRoomId(enriched[0].id);
+
+          const targetId = preferRoomId || activeRoomId || mainRoomId || enriched[0]?.id || null;
+          if (targetId) {
+            setActiveRoomId(targetId);
           }
         } catch (err) {
           onToast('Fehler beim Laden der Chats: ' + err.message);
@@ -1951,7 +2034,7 @@ Deine Persönlichkeit:
 
       useEffect(() => {
         loadRooms();
-      }, [currentUser.id]);
+      }, [currentUser.id, allProfileIds.length]);
 
       useEffect(() => {
         setTypingUser(null);
@@ -2022,6 +2105,7 @@ Deine Persönlichkeit:
       }, [activeRoomId, currentUser.id, currentProfile?.username, profilesMap]);
 
       const getRoomTitle = (room) => {
+        if (room.isMainGroup) return '🌐 ' + MAIN_GROUP_NAME;
         if (room.is_group) return room.name || 'Gruppenraum';
         const otherId = (room.memberIds || []).find((id) => id !== currentUser.id);
         return profilesMap[otherId]?.username || 'Direct Message';
@@ -2049,10 +2133,15 @@ Deine Persönlichkeit:
           return;
         }
         try {
+          const cleanName = isGroupMode ? (groupName.trim() || 'Squad-Gruppe') : null;
+          if (cleanName === MAIN_GROUP_NAME) {
+            onToast('Dieser Gruppenname ist für die automatische Main-Gruppe reserviert.');
+            return;
+          }
           const { data: room, error: rErr } = await supabase
             .from('chat_rooms')
             .insert({
-              name: isGroupMode ? (groupName.trim() || 'Squad-Gruppe') : null,
+              name: cleanName,
               is_group: isGroupMode,
               creator_id: currentUser.id
             })
@@ -2072,8 +2161,7 @@ Deine Persönlichkeit:
           setShowCreateModal(false);
           setGroupName('');
           setSelectedMemberIds([]);
-          await loadRooms();
-          setActiveRoomId(room.id);
+          await loadRooms(room.id);
           onToast(isGroupMode ? 'Gruppenraum erstellt!' : 'Direct Message gestartet!');
         } catch (err) {
           soundEngine.play('error_alert');
@@ -2093,10 +2181,6 @@ Deine Persönlichkeit:
         }
         if (text.toLowerCase() === '/overdrive') {
           onEasterEgg('overdrive');
-          return;
-        }
-        if (text.toLowerCase() === '/radar') {
-          onEasterEgg('radar');
           return;
         }
 
@@ -2122,8 +2206,11 @@ Deine Persönlichkeit:
 
       const handleStartCall = (isVideo) => {
         if (!activeRoom) return;
-        const peerId = (activeRoom.memberIds || []).find((id) => id !== currentUser.id);
-        const peerName = profilesMap[peerId]?.username || 'Mitglied';
+        const peerId = (activeRoom.memberIds || []).find((id) => id !== currentUser.id) || null;
+        const peerName = activeRoom.isMainGroup
+          ? MAIN_GROUP_NAME
+          : (profilesMap[peerId]?.username || 'Mitglied');
+
         soundEngine.play('call_incoming');
         signalChannel?.send({
           type: 'broadcast',
@@ -2136,7 +2223,7 @@ Deine Persönlichkeit:
             isVideo,
             fromUserId: currentUser.id,
             fromUsername: currentProfile?.username || 'Agent',
-            targetUserId: peerId
+            targetUserId: activeRoom.is_group ? null : peerId
           }
         });
         setCallState({
@@ -2158,7 +2245,7 @@ Deine Persönlichkeit:
 
       return React.createElement(
         'div',
-        { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '300px 1fr', gap: 14 } },
+        { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '305px 1fr', gap: 14 } },
         React.createElement(
           'div',
           { className: 'glass-card', style: { padding: 14, display: 'flex', flexDirection: 'column', gap: 10, minHeight: 0 } },
@@ -2198,8 +2285,16 @@ Deine Persönlichkeit:
                         gap: 9,
                         cursor: 'pointer',
                         color: '#fff',
-                        borderColor: isSel ? 'rgba(239,68,68,0.55)' : undefined,
-                        background: isSel ? 'rgba(239,68,68,0.14)' : undefined
+                        borderColor: isSel
+                          ? 'var(--accent)'
+                          : room.isMainGroup
+                          ? 'rgba(245, 197, 24, 0.35)'
+                          : undefined,
+                        background: isSel
+                          ? 'color-mix(in srgb, var(--accent) 16%, transparent)'
+                          : room.isMainGroup
+                          ? 'rgba(245, 197, 24, 0.06)'
+                          : undefined
                       }
                     },
                     React.createElement(
@@ -2207,15 +2302,32 @@ Deine Persönlichkeit:
                       { style: { display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 } },
                       peerProfile
                         ? React.createElement(AvatarBadge, { profile: peerProfile, size: 32 })
-                        : React.createElement('div', { style: { width: 32, height: 32, borderRadius: 10, background: 'rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, '👥'),
+                        : React.createElement(
+                            'div',
+                            {
+                              style: {
+                                width: 32,
+                                height: 32,
+                                borderRadius: 'var(--radius-btn)',
+                                background: room.isMainGroup ? 'rgba(245,197,24,0.18)' : 'rgba(255,255,255,0.08)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0
+                              }
+                            },
+                            room.isMainGroup ? '🌐' : '👥'
+                          ),
                       React.createElement(
                         'div',
                         { style: { textAlign: 'left', minWidth: 0 } },
-                        React.createElement('div', { style: { fontWeight: 600, fontSize: 13, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } },
+                        React.createElement('div', { style: { fontWeight: 700, fontSize: 13, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } },
                           getRoomTitle(room)
                         ),
-                        React.createElement('div', { style: { fontSize: 11, color: 'var(--text-muted)' } },
-                          peerProfile?.custom_status_text || `${(room.memberIds || []).length} Mitglieder`
+                        React.createElement('div', { style: { fontSize: 11, color: room.isMainGroup ? '#f5c518' : 'var(--text-muted)' } },
+                          room.isMainGroup
+                            ? `Alle Aktiven (${(room.memberIds || []).length})`
+                            : (peerProfile?.custom_status_text || `${(room.memberIds || []).length} Mitglieder`)
                         )
                       )
                     ),
@@ -2253,8 +2365,11 @@ Deine Persönlichkeit:
                   React.createElement(
                     'div',
                     null,
-                    React.createElement('h3', { style: { fontSize: 16, fontWeight: 700 } }, getRoomTitle(activeRoom)),
-                    React.createElement('div', { style: { fontSize: 11.5, color: 'var(--text-muted)' } },
+                    React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 8 } },
+                      React.createElement('h3', { style: { fontSize: 16, fontWeight: 700 } }, getRoomTitle(activeRoom)),
+                      activeRoom.isMainGroup && React.createElement('span', { className: 'badge-gold' }, 'AUTO-SYNC MAIN')
+                    ),
+                    React.createElement('div', { style: { fontSize: 11.5, color: 'var(--text-muted)', marginTop: 2 } },
                       'Mitglieder: ' +
                         (activeRoom.memberIds || [])
                           .map((id) => profilesMap[id]?.username || 'User')
@@ -2301,7 +2416,7 @@ Deine Persönlichkeit:
                           className: 'nested-box',
                           style: {
                             padding: '10px 13px',
-                            borderColor: isMine ? 'rgba(239,68,68,0.35)' : undefined
+                            borderColor: isMine ? 'color-mix(in srgb, var(--accent) 45%, transparent)' : undefined
                           }
                         },
                         React.createElement(
@@ -2360,7 +2475,7 @@ Deine Persönlichkeit:
                       )
                     ),
                     React.createElement('span', { style: { fontSize: 11, color: 'rgba(255,255,255,0.4)', marginLeft: 'auto' } },
-                      'Commands: /radar · /barrelroll · /overdrive'
+                      'Commands: /barrelroll · /overdrive'
                     )
                   ),
                   React.createElement(
@@ -2408,7 +2523,7 @@ Deine Persönlichkeit:
               React.createElement(
                 'div',
                 { className: 'custom-scroll', style: { maxHeight: 190, display: 'flex', flexDirection: 'column', gap: 6 } },
-                allProfilesList.map((p) => {
+                otherProfilesList.map((p) => {
                   const checked = selectedMemberIds.includes(p.id);
                   return React.createElement(
                     'label',
@@ -2621,8 +2736,8 @@ Deine Persönlichkeit:
                       textAlign: 'left',
                       cursor: 'pointer',
                       color: '#fff',
-                      borderColor: isSelected ? '#ef4444' : isToday ? 'rgba(16,185,129,0.5)' : undefined,
-                      background: isSelected ? 'rgba(239,68,68,0.16)' : undefined
+                      borderColor: isSelected ? 'var(--accent)' : isToday ? 'rgba(16,185,129,0.5)' : undefined,
+                      background: isSelected ? 'color-mix(in srgb, var(--accent) 18%, transparent)' : undefined
                     }
                   },
                   React.createElement(
@@ -3016,7 +3131,7 @@ Deine Persönlichkeit:
                         src: it.media_url,
                         alt: it.title,
                         onClick: () => setLightboxImg(it),
-                        style: { width: '100%', height: 124, objectFit: 'cover', borderRadius: 10, cursor: 'zoom-in' }
+                        style: { width: '100%', height: 124, objectFit: 'cover', borderRadius: 'var(--radius-btn)', cursor: 'zoom-in' }
                       }),
                       React.createElement('div', { style: { fontWeight: 600, fontSize: 13, wordBreak: 'break-word' } }, '📎 ' + it.title),
                       it.media_url && React.createElement(
@@ -3133,7 +3248,7 @@ Deine Persönlichkeit:
             React.createElement('img', {
               src: lightboxImg.media_url,
               alt: lightboxImg.title,
-              style: { maxWidth: '80vw', maxHeight: '72vh', borderRadius: 12, objectFit: 'contain' }
+              style: { maxWidth: '80vw', maxHeight: '72vh', borderRadius: 'var(--radius-box)', objectFit: 'contain' }
             }),
             React.createElement(
               'div',
@@ -3435,8 +3550,8 @@ Deine Persönlichkeit:
                           style: {
                             padding: '3px 8px',
                             borderRadius: 8,
-                            border: active ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.12)',
-                            background: active ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.05)',
+                            border: active ? '1px solid var(--accent)' : '1px solid rgba(255,255,255,0.12)',
+                            background: active ? 'color-mix(in srgb, var(--accent) 22%, transparent)' : 'rgba(255,255,255,0.05)',
                             color: '#fff',
                             fontSize: 12,
                             cursor: 'pointer'
@@ -3667,7 +3782,7 @@ Deine Persönlichkeit:
               'div',
               {
                 className: 'nested-box',
-                style: { alignSelf: 'flex-end', maxWidth: '78%', padding: '10px 14px', borderColor: 'rgba(239,68,68,0.35)' }
+                style: { alignSelf: 'flex-end', maxWidth: '78%', padding: '10px 14px', borderColor: 'color-mix(in srgb, var(--accent) 45%, transparent)' }
               },
               React.createElement('div', { style: { fontSize: 11, color: '#fca5a5', fontWeight: 700, marginBottom: 3 } }, 'DU'),
               React.createElement('div', { style: { fontSize: 13.5, whiteSpace: 'pre-wrap' } }, m.prompt)
@@ -3711,10 +3826,10 @@ Deine Persönlichkeit:
     }
 
     // =========================================================================
-    // 15. MODUL 6: AUDIO, VIDEO & CUSTOM SOUNDS STUDIO
+    // 15. MODUL 6: AUDIO, VIDEO, 3 SOUNDPACKS & DESIGN-CUSTOMIZER
     // =========================================================================
-    function SettingsStudioModule({ onToast }) {
-      const [subTab, setSubTab] = useState('devices');
+    function SettingsStudioModule({ design, onChangeDesign, onToast }) {
+      const [subTab, setSubTab] = useState('design');
       const [soundSettings, setSoundSettings] = useState(() => soundEngine.load());
 
       const [mediaPrefs, setMediaPrefs] = useState(() => getSavedMediaPrefs());
@@ -3909,27 +4024,348 @@ Deine Persönlichkeit:
           React.createElement(
             'div',
             null,
-            React.createElement('h2', { style: { fontSize: 17, fontWeight: 800 } }, 'Audio, Video & Sound-Studio'),
+            React.createElement('h2', { style: { fontSize: 17, fontWeight: 800 } }, 'Design, 3 Soundpacks & Media-Studio'),
             React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } },
-              'Mikrofon & Kamera für Calls konfigurieren/testen sowie eigene Benachrichtigungstöne hinterlegen'
+              'Passe das Design frei an, wähle zwischen 3 Soundpacks und teste Mikrofon & Kamera'
             )
           ),
           React.createElement(
             'div',
-            { style: { display: 'flex', gap: 8 } },
+            { style: { display: 'flex', gap: 7, flexWrap: 'wrap' } },
             React.createElement(
               'button',
-              { className: `pill-tab ${subTab === 'devices' ? 'active' : ''}`, onClick: () => setSubTab('devices') },
-              '🎙️ Mikrofon & Kamera'
+              { className: `pill-tab ${subTab === 'design' ? 'active' : ''}`, onClick: () => setSubTab('design') },
+              '🎨 Design-Customizing'
             ),
             React.createElement(
               'button',
               { className: `pill-tab ${subTab === 'sounds' ? 'active' : ''}`, onClick: () => setSubTab('sounds') },
-              '🔊 Custom Sound-Effekte'
+              '🔊 3 Soundpacks'
+            ),
+            React.createElement(
+              'button',
+              { className: `pill-tab ${subTab === 'devices' ? 'active' : ''}`, onClick: () => setSubTab('devices') },
+              '🎙️ Mikrofon & Kamera'
             )
           )
         ),
 
+        // TAB 1: DESIGN CUSTOMIZER
+        subTab === 'design' && React.createElement(
+          'div',
+          { className: 'custom-scroll', style: { flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 } },
+          React.createElement(
+            'div',
+            { className: 'nested-box', style: { padding: 16, display: 'flex', flexDirection: 'column', gap: 14 } },
+            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700 } }, 'Akzentfarbe & Stimmung'),
+            React.createElement(
+              'div',
+              null,
+              React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 } }, 'Akzentfarbe wählen'),
+              React.createElement(
+                'div',
+                { style: { display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' } },
+                ACCENT_PRESETS.map((p) =>
+                  React.createElement('button', {
+                    key: p.hex,
+                    type: 'button',
+                    title: p.name,
+                    className: `swatch-btn ${design.accentHex === p.hex ? 'active' : ''}`,
+                    style: { background: p.hex },
+                    onClick: () =>
+                      onChangeDesign({
+                        ...design,
+                        accentHex: p.hex,
+                        accentHover: p.hover,
+                        accentGlow: p.glow
+                      })
+                  })
+                ),
+                React.createElement('input', {
+                  type: 'color',
+                  value: design.accentHex,
+                  onChange: (e) =>
+                    onChangeDesign({
+                      ...design,
+                      accentHex: e.target.value,
+                      accentHover: e.target.value,
+                      accentGlow: 'color-mix(in srgb, ' + e.target.value + ' 45%, transparent)'
+                    }),
+                  title: 'Beliebige Farbe wählen',
+                  style: { width: 34, height: 32, border: 'none', background: 'transparent', cursor: 'pointer' }
+                })
+              )
+            ),
+            React.createElement(
+              'div',
+              null,
+              React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 } }, 'Hintergrund-Atmosphäre'),
+              React.createElement(
+                'div',
+                { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+                [
+                  { id: 'night', label: '🌙 Deep Night' },
+                  { id: 'cozy', label: '☕ Cozy Warm' },
+                  { id: 'cyber', label: '⚡ Cyber Deep' }
+                ].map((m) =>
+                  React.createElement(
+                    'button',
+                    {
+                      key: m.id,
+                      type: 'button',
+                      className: `pill-tab ${design.bgMood === m.id ? 'active' : ''}`,
+                      onClick: () => onChangeDesign({ ...design, bgMood: m.id })
+                    },
+                    m.label
+                  )
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              null,
+              React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 } }, 'Kanten & Eckenstil'),
+              React.createElement(
+                'div',
+                { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+                [
+                  { id: 'sharp', label: 'Sharp Tech' },
+                  { id: 'modern', label: 'Modern Glass' },
+                  { id: 'soft', label: 'Soft Cozy' }
+                ].map((r) =>
+                  React.createElement(
+                    'button',
+                    {
+                      key: r.id,
+                      type: 'button',
+                      className: `pill-tab ${design.radiusStyle === r.id ? 'active' : ''}`,
+                      onClick: () => onChangeDesign({ ...design, radiusStyle: r.id })
+                    },
+                    r.label
+                  )
+                )
+              )
+            )
+          ),
+
+          React.createElement(
+            'div',
+            { className: 'nested-box', style: { padding: 16, display: 'flex', flexDirection: 'column', gap: 14 } },
+            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700 } }, 'Glass-Transparenz & Schriftgröße'),
+            React.createElement(
+              'div',
+              null,
+              React.createElement(
+                'div',
+                { style: { display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 } },
+                React.createElement('span', null, 'Karten-Deckkraft (Glass Opacity)'),
+                React.createElement('span', null, `${Math.round(design.glassOpacity * 100)}%`)
+              ),
+              React.createElement('input', {
+                type: 'range',
+                min: 0.45,
+                max: 0.98,
+                step: 0.01,
+                style: { width: '100%' },
+                value: design.glassOpacity,
+                onChange: (e) => onChangeDesign({ ...design, glassOpacity: parseFloat(e.target.value) })
+              })
+            ),
+            React.createElement(
+              'div',
+              null,
+              React.createElement(
+                'div',
+                { style: { display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 } },
+                React.createElement('span', null, 'Schriftgröße'),
+                React.createElement('span', null, `${Math.round(design.fontScale * 100)}%`)
+              ),
+              React.createElement('input', {
+                type: 'range',
+                min: 0.88,
+                max: 1.18,
+                step: 0.02,
+                style: { width: '100%' },
+                value: design.fontScale,
+                onChange: (e) => onChangeDesign({ ...design, fontScale: parseFloat(e.target.value) })
+              })
+            ),
+            React.createElement(
+              'div',
+              { style: { marginTop: 'auto', display: 'flex', gap: 8 } },
+              React.createElement(
+                'button',
+                {
+                  type: 'button',
+                  className: 'btn-secondary',
+                  onClick: () => {
+                    onChangeDesign({ ...DEFAULT_DESIGN });
+                    onToast('Design auf Standard zurückgesetzt.');
+                  }
+                },
+                '↺ Design zurücksetzen'
+              )
+            )
+          )
+        ),
+
+        // TAB 2: 3 SOUNDPACKS + CUSTOM SOUNDS
+        subTab === 'sounds' && React.createElement(
+          React.Fragment,
+          null,
+          React.createElement(
+            'div',
+            { style: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 } },
+            Object.entries(SOUNDPACKS).map(([packKey, packInfo]) => {
+              const active = soundSettings.pack === packKey;
+              return React.createElement(
+                'div',
+                {
+                  key: packKey,
+                  className: 'nested-box',
+                  style: {
+                    padding: 13,
+                    borderColor: active ? 'var(--accent)' : undefined,
+                    background: active ? 'color-mix(in srgb, var(--accent) 15%, transparent)' : undefined,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 6
+                  }
+                },
+                React.createElement(
+                  'div',
+                  { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+                  React.createElement('span', { style: { fontWeight: 800, fontSize: 13.5 } }, packInfo.name),
+                  active && React.createElement('span', { className: 'badge-red' }, 'AKTIV')
+                ),
+                React.createElement('div', { style: { fontSize: 11.5, color: '#f5c518', fontWeight: 600 } }, packInfo.badge),
+                React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 } }, packInfo.desc),
+                React.createElement(
+                  'div',
+                  { style: { display: 'flex', gap: 6, marginTop: 4 } },
+                  React.createElement(
+                    'button',
+                    {
+                      type: 'button',
+                      className: active ? 'btn-primary' : 'btn-secondary',
+                      style: { padding: '5px 10px', fontSize: 11.5 },
+                      onClick: () => {
+                        soundEngine.setPack(packKey);
+                        soundEngine.play('chat_message', true);
+                        onToast(`Soundpack „${packInfo.name}“ aktiviert!`);
+                      }
+                    },
+                    active ? 'Ausgewählt' : 'Aktivieren'
+                  ),
+                  React.createElement(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'btn-secondary',
+                      style: { padding: '5px 9px', fontSize: 11.5 },
+                      onClick: () => {
+                        soundEngine.setPack(packKey);
+                        soundEngine.play('call_incoming', true);
+                      }
+                    },
+                    '▶ Probe'
+                  )
+                )
+              );
+            })
+          ),
+
+          React.createElement(
+            'div',
+            { style: { display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' } },
+            React.createElement(
+              'label',
+              { style: { display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, cursor: 'pointer' } },
+              React.createElement('input', {
+                type: 'checkbox',
+                checked: soundSettings.dnd,
+                onChange: (e) => soundEngine.setDnd(e.target.checked)
+              }),
+              'Nicht stören (DND)'
+            ),
+            React.createElement(
+              'div',
+              { style: { display: 'flex', alignItems: 'center', gap: 8 } },
+              React.createElement('span', { style: { fontSize: 12, color: 'var(--text-muted)' } },
+                `Gesamtlautstärke: ${Math.round(soundSettings.volume * 100)}%`
+              ),
+              React.createElement('input', {
+                type: 'range',
+                min: 0,
+                max: 1,
+                step: 0.05,
+                value: soundSettings.volume,
+                onChange: (e) => soundEngine.setVolume(parseFloat(e.target.value))
+              })
+            )
+          ),
+
+          React.createElement(
+            'div',
+            { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 8 } },
+            SOUND_EVENTS.map((ev) => {
+              const custom = soundSettings.customFiles[ev.key];
+              return React.createElement(
+                'div',
+                {
+                  key: ev.key,
+                  className: 'nested-box',
+                  style: {
+                    padding: '11px 14px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 12,
+                    flexWrap: 'wrap'
+                  }
+                },
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement('div', { style: { fontWeight: 700, fontSize: 13 } }, ev.label),
+                  React.createElement('div', { style: { fontSize: 11.5, color: 'var(--text-muted)' } }, ev.desc),
+                  custom && React.createElement(
+                    'div',
+                    { style: { fontSize: 11.5, color: '#10b981', marginTop: 2 } },
+                    '✓ Eigene Datei: ' + custom.fileName
+                  )
+                ),
+                React.createElement(
+                  'div',
+                  { style: { display: 'flex', gap: 8, alignItems: 'center' } },
+                  React.createElement(
+                    'button',
+                    { className: 'btn-secondary', onClick: () => soundEngine.play(ev.key, true) },
+                    '▶ Test'
+                  ),
+                  React.createElement(
+                    'label',
+                    { className: 'btn-secondary', style: { cursor: 'pointer' } },
+                    'Datei wählen',
+                    React.createElement('input', {
+                      type: 'file',
+                      accept: 'audio/*',
+                      style: { display: 'none' },
+                      onChange: (e) => handleCustomFileChange(ev.key, e.target.files?.[0])
+                    })
+                  ),
+                  custom && React.createElement(
+                    'button',
+                    { className: 'btn-danger', onClick: () => soundEngine.setCustomSound(ev.key, null) },
+                    'Reset'
+                  )
+                )
+              );
+            })
+          )
+        ),
+
+        // TAB 3: MIKROFON & KAMERA
         subTab === 'devices' && React.createElement(
           'div',
           { className: 'custom-scroll', style: { flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 } },
@@ -4056,7 +4492,7 @@ Deine Persönlichkeit:
                 style: {
                   flex: 1,
                   minHeight: 200,
-                  borderRadius: 14,
+                  borderRadius: 'var(--radius-box)',
                   background: '#07070d',
                   border: '1px solid rgba(255,255,255,0.12)',
                   display: 'flex',
@@ -4083,99 +4519,6 @@ Deine Persönlichkeit:
                 : React.createElement('button', { className: 'btn-danger', onClick: stopCamTest }, '⏹ Kamera stoppen')
             )
           )
-        ),
-
-        subTab === 'sounds' && React.createElement(
-          React.Fragment,
-          null,
-          React.createElement(
-            'div',
-            { style: { display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' } },
-            React.createElement(
-              'label',
-              { style: { display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, cursor: 'pointer' } },
-              React.createElement('input', {
-                type: 'checkbox',
-                checked: soundSettings.dnd,
-                onChange: (e) => soundEngine.setDnd(e.target.checked)
-              }),
-              'Nicht stören (DND)'
-            ),
-            React.createElement(
-              'div',
-              { style: { display: 'flex', alignItems: 'center', gap: 8 } },
-              React.createElement('span', { style: { fontSize: 12, color: 'var(--text-muted)' } },
-                `Gesamtlautstärke: ${Math.round(soundSettings.volume * 100)}%`
-              ),
-              React.createElement('input', {
-                type: 'range',
-                min: 0,
-                max: 1,
-                step: 0.05,
-                value: soundSettings.volume,
-                onChange: (e) => soundEngine.setVolume(parseFloat(e.target.value))
-              })
-            )
-          ),
-
-          React.createElement(
-            'div',
-            { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 8 } },
-            SOUND_EVENTS.map((ev) => {
-              const custom = soundSettings.customFiles[ev.key];
-              return React.createElement(
-                'div',
-                {
-                  key: ev.key,
-                  className: 'nested-box',
-                  style: {
-                    padding: '12px 14px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: 12,
-                    flexWrap: 'wrap'
-                  }
-                },
-                React.createElement(
-                  'div',
-                  null,
-                  React.createElement('div', { style: { fontWeight: 700, fontSize: 13.5 } }, ev.label),
-                  React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } }, ev.desc),
-                  custom && React.createElement(
-                    'div',
-                    { style: { fontSize: 11.5, color: '#10b981', marginTop: 3 } },
-                    '✓ Eigene Datei: ' + custom.fileName
-                  )
-                ),
-                React.createElement(
-                  'div',
-                  { style: { display: 'flex', gap: 8, alignItems: 'center' } },
-                  React.createElement(
-                    'button',
-                    { className: 'btn-secondary', onClick: () => soundEngine.play(ev.key, true) },
-                    '▶ Test'
-                  ),
-                  React.createElement(
-                    'label',
-                    { className: 'btn-secondary', style: { cursor: 'pointer' } },
-                    'Datei wählen',
-                    React.createElement('input', {
-                      type: 'file',
-                      accept: 'audio/*',
-                      style: { display: 'none' },
-                      onChange: (e) => handleCustomFileChange(ev.key, e.target.files?.[0])
-                    })
-                  ),
-                  custom && React.createElement(
-                    'button',
-                    { className: 'btn-danger', onClick: () => soundEngine.setCustomSound(ev.key, null) },
-                    'Reset'
-                  )
-                )
-              );
-            })
-          )
         )
       );
     }
@@ -4195,6 +4538,7 @@ Deine Persönlichkeit:
       const [showProfileModal, setShowProfileModal] = useState(false);
       const [callState, setCallState] = useState(null);
       const [toast, setToast] = useState(null);
+      const [design, setDesign] = useState(() => getSavedDesign());
 
       const [overdrive, setOverdrive] = useState(false);
       const [barrelRoll, setBarrelRoll] = useState(false);
@@ -4203,6 +4547,13 @@ Deine Persönlichkeit:
 
       const signalChannelRef = useRef(null);
       const konamiIdxRef = useRef(0);
+
+      useEffect(() => {
+        applyDesignToDom(design);
+        try {
+          localStorage.setItem(DESIGN_KEY, JSON.stringify(design));
+        } catch {}
+      }, [design]);
 
       const showToast = (msg) => {
         setToast(msg);
@@ -4223,9 +4574,6 @@ Deine Persönlichkeit:
           setBarrelRoll(true);
           showToast('🛩️ DO A BARREL ROLL!');
           setTimeout(() => setBarrelRoll(false), 950);
-        } else if (type === 'radar') {
-          setActiveTab('radar');
-          showToast('📡 Taktik-Radar geöffnet!');
         }
       };
 
@@ -4319,7 +4667,6 @@ Deine Persönlichkeit:
             if (payload.targetUserId && payload.targetUserId !== session.user.id) return;
 
             if (payload.type === 'call-invite') {
-              soundEngine.play('call_incoming');
               notifyDesktop('Eingehender QuapsAttack Call', `${payload.fromUsername} ruft an...`);
               setCallState({
                 status: 'incoming',
@@ -4358,9 +4705,8 @@ Deine Persönlichkeit:
         calendar: 'Kalender',
         vault: 'Mediathek & Tresor',
         quapssi: 'QuapsSI Terminal',
-        radar: 'Squad Taktik-Radar',
         management: 'Management · Rollen',
-        sounds: 'Audio, Video & Sounds'
+        sounds: 'Design, Sounds & Media'
       };
 
       const statusDotColor =
@@ -4376,14 +4722,16 @@ Deine Persönlichkeit:
         { id: 'calendar', label: '📅 Kalender' },
         { id: 'vault', label: '🗂️ Mediathek & Tresor' },
         { id: 'quapssi', label: '🤖 QuapsSI KI' },
-        { id: 'radar', label: '📡 Taktik-Radar' },
         ...(canManageRoles ? [{ id: 'management', label: '👑 Management & Rollen' }] : []),
-        { id: 'sounds', label: '🎛️ Audio, Cam & Sounds' }
+        { id: 'sounds', label: '🎨 Design, Sounds & Media' }
       ];
+
+      const moodClass =
+        design.bgMood === 'cozy' ? 'theme-cozy' : design.bgMood === 'cyber' ? 'theme-cyber' : '';
 
       return React.createElement(
         'div',
-        { className: `app-shell ${overdrive ? 'overdrive-mode' : ''} ${barrelRoll ? 'barrel-roll' : ''}` },
+        { className: `app-shell ${moodClass} ${overdrive ? 'overdrive-mode' : ''} ${barrelRoll ? 'barrel-roll' : ''}` },
         React.createElement(
           'header',
           { className: 'top-bar' },
@@ -4503,12 +4851,6 @@ Deine Persönlichkeit:
                   currentUser: session.user,
                   onToast: showToast
                 }),
-                activeTab === 'radar' && React.createElement(TacticalRadarModule, {
-                  currentUser: session.user,
-                  currentProfile,
-                  profilesMap,
-                  onToast: showToast
-                }),
                 activeTab === 'management' && React.createElement(ManagementModule, {
                   currentUser: session.user,
                   currentProfile,
@@ -4517,6 +4859,8 @@ Deine Persönlichkeit:
                   onToast: showToast
                 }),
                 activeTab === 'sounds' && React.createElement(SettingsStudioModule, {
+                  design,
+                  onChangeDesign: setDesign,
                   onToast: showToast
                 })
               )
@@ -4549,7 +4893,7 @@ Deine Persönlichkeit:
             React.createElement('div', { className: 'badge-gold', style: { display: 'inline-block', marginBottom: 10 } }, 'SECRET REACTOR HUD'),
             React.createElement('h3', { style: { fontSize: 19, fontWeight: 800, marginBottom: 8 } }, '🕵️ QuapsAttack Secret Bunker'),
             React.createElement('p', { style: { fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 14 } },
-              'Du hast das geheime Kommando-Menü entdeckt! Probiere auch den Konami-Code (↑↑↓↓←→←→BA) oder tippe /radar bzw. /barrelroll im Chat.'
+              'Du hast das geheime Kommando-Menü entdeckt! Probiere auch den Konami-Code (↑↑↓↓←→←→BA) oder tippe /barrelroll im Chat.'
             ),
             React.createElement(
               'div',
