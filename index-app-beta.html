@@ -1,0 +1,3141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuapsAttack — Command & Community Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg-base: #0a0a12;
+      --glass-opacity: 0.85;
+      --glass-bg: rgba(20, 20, 35, var(--glass-opacity));
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --box-bg: rgba(255, 255, 255, 0.05);
+      --box-border: rgba(255, 255, 255, 0.1);
+      --accent: #ef4444;
+      --accent-hover: #dc2626;
+      --accent-glow: rgba(239, 68, 68, 0.4);
+      --gold-start: #f5c518;
+      --gold-end: #ff9900;
+      --text-main: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.7);
+      --status-green: #10b981;
+      --radius-card: 20px;
+      --radius-box: 14px;
+      --radius-btn: 12px;
+      --font-scale: 1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: calc(14px * var(--font-scale));
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-shell {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-base);
+      background-image:
+        radial-gradient(circle at 14% 18%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 45%),
+        radial-gradient(circle at 86% 82%, rgba(59, 130, 246, 0.15) 0%, transparent 48%);
+      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), background-image 0.35s ease;
+    }
+
+    .app-shell.theme-cozy {
+      background-image:
+        radial-gradient(circle at 16% 20%, rgba(251, 146, 60, 0.2) 0%, transparent 48%),
+        radial-gradient(circle at 84% 80%, rgba(245, 197, 24, 0.14) 0%, transparent 50%);
+    }
+
+    .app-shell.theme-cyber {
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.22) 0%, transparent 46%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.18) 0%, transparent 48%);
+    }
+
+    .app-shell.overdrive-mode {
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(245, 197, 24, 0.25) 0%, transparent 48%),
+        radial-gradient(circle at 80% 80%, color-mix(in srgb, var(--accent) 28%, transparent) 0%, transparent 50%);
+    }
+
+    .app-shell.barrel-roll {
+      transform: rotate(360deg);
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-card);
+    }
+
+    .nested-box {
+      background: var(--box-bg);
+      border: 1px solid var(--box-border);
+      border-radius: var(--radius-box);
+      transition: all 0.2s ease;
+    }
+
+    .nested-box:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.075);
+    }
+
+    .gold-gradient-text {
+      background: linear-gradient(135deg, var(--gold-start), var(--gold-end));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radius-btn);
+      padding: 9px 15px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      box-shadow: 0 4px 18px var(--accent-glow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      box-shadow: 0 6px 24px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-btn);
+      padding: 8px 13px;
+      font-weight: 500;
+      font-size: 12.5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.24);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: var(--radius-btn);
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.28);
+    }
+
+    .input-field, .select-field, .textarea-field {
+      width: 100%;
+      background: rgba(10, 10, 18, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-btn);
+      padding: 10px 13px;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input-field:focus, .select-field:focus, .textarea-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    .select-field option {
+      background: #141423;
+      color: #ffffff;
+    }
+
+    .textarea-field {
+      resize: vertical;
+      min-height: 74px;
+    }
+
+    .custom-scroll {
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    .top-bar {
+      height: 52px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 10, 18, 0.92);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+    }
+
+    .brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .brand-emblem {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--accent), #450a0a);
+      box-shadow: 0 0 16px var(--accent-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .brand-badge:hover .brand-emblem {
+      transform: scale(1.06);
+    }
+
+    .main-layout {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .sidebar {
+      width: 274px;
+      min-width: 274px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 14px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 13px;
+      border-radius: var(--radius-btn);
+      border: 1px solid transparent;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.72);
+      font-weight: 500;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+    }
+
+    .nav-btn.active {
+      border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+      background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 25%, transparent), color-mix(in srgb, var(--accent) 7%, transparent));
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    .badge-red {
+      background: var(--accent);
+      color: #fff;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .badge-gold {
+      background: rgba(245, 197, 24, 0.16);
+      color: #f5c518;
+      border: 1px solid rgba(245, 197, 24, 0.35);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .badge-green {
+      background: rgba(16, 185, 129, 0.16);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .content-area {
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 10, 0.8);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .toast-banner {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 160;
+      padding: 12px 16px;
+      border-radius: var(--radius-box);
+      background: rgba(20, 20, 35, 0.96);
+      border: 1px solid var(--accent);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+      font-size: 13px;
+      max-width: 390px;
+      transition: all 0.25s ease;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+      gap: 12px;
+    }
+
+    .pill-tab {
+      padding: 6px 11px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pill-tab.active {
+      background: color-mix(in srgb, var(--accent) 25%, transparent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .avatar-circle {
+      border-radius: 11px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      flex-shrink: 0;
+    }
+
+    .vu-bar-bg {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .vu-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #10b981, #f5c518, var(--accent));
+      transition: width 0.06s linear;
+    }
+
+    .swatch-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .swatch-btn.active {
+      transform: scale(1.14);
+      border-color: #ffffff;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+    }
+
+    .reply-quote-bar {
+      font-size: 11.5px;
+      color: rgba(255, 255, 255, 0.75);
+      background: rgba(0, 0, 0, 0.28);
+      border-left: 2px solid #f5c518;
+      padding: 4px 8px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .context-menu {
+      position: fixed;
+      z-index: 250;
+      min-width: 205px;
+      padding: 6px;
+      border-radius: 14px;
+      background: rgba(16, 16, 28, 0.97);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.75);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .context-item {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-radius: 9px;
+      padding: 8px 11px;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      transition: background 0.14s ease;
+    }
+
+    .context-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .context-item.danger {
+      color: #fca5a5;
+    }
+
+    .context-item.danger:hover {
+      background: rgba(239, 68, 68, 0.22);
+    }
+
+    .context-sep {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 3px 4px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="module">
+    import React, { useState, useEffect, useRef, useMemo } from 'https://esm.sh/react@18.3.1';
+    import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client';
+
+    // =========================================================================
+    // 1. SUPABASE CLIENT
+    // =========================================================================
+    const SUPABASE_URL = 'https://xibaufkxapezpuvszpxf.supabase.co';
+    const SUPABASE_ANON_KEY =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpYmF1Zmt4YXBlenB1dnN6cHhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNjEwNzUsImV4cCI6MjEwMzkzNzA3NX0.Tv3IKj95iBsGy5TGTosb7mMT-d_sySuu7QZ4RpNhB5E';
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true
+      }
+    });
+
+    const QUAPSSI_EMBEDDED_KEY = 'AQ.Ab8RN6K2I-hsLsO513OcUYYYn4hknAn97DE7w8hdCRcSPnjTNQ';
+    const MAIN_GROUP_NAME = 'QuapsAttack Main Squad';
+
+    function isManagementRole(role) {
+      if (!role) return false;
+      const r = String(role).toLowerCase().trim();
+      return ['management', 'admin', 'owner', 'leader', 'leitung', 'mod', 'moderator'].includes(r);
+    }
+
+    async function syncUserSettingsToCloud(userId, patchObj) {
+      if (!userId || !patchObj) return;
+      try {
+        await supabase
+          .from('profiles')
+          .update({ ...patchObj, updated_at: new Date().toISOString() })
+          .eq('id', userId);
+      } catch {}
+    }
+
+    // =========================================================================
+    // 2. RECHTSKLICK-KONTEXTMENÜ
+    // =========================================================================
+    function ContextMenuPopup({ menuState, onClose }) {
+      if (!menuState || !menuState.items || menuState.items.length === 0) return null;
+
+      const menuWidth = 215;
+      const menuHeight = menuState.items.length * 36 + 18;
+      const left = Math.min(menuState.x, window.innerWidth - menuWidth - 12);
+      const top = Math.min(menuState.y, window.innerHeight - menuHeight - 12);
+
+      return React.createElement(
+        'div',
+        {
+          className: 'context-menu',
+          style: { left: Math.max(8, left), top: Math.max(8, top) },
+          onClick: (e) => e.stopPropagation(),
+          onContextMenu: (e) => e.preventDefault()
+        },
+        menuState.title && React.createElement(
+          'div',
+          {
+            style: {
+              fontSize: 10.5,
+              fontWeight: 700,
+              color: '#f5c518',
+              padding: '4px 10px 5px',
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
+              marginBottom: 2,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }
+          },
+          menuState.title
+        ),
+        menuState.items.map((item, idx) =>
+          item.separator
+            ? React.createElement('div', { key: 'sep-' + idx, className: 'context-sep' })
+            : React.createElement(
+                'button',
+                {
+                  key: item.label + idx,
+                  type: 'button',
+                  className: `context-item ${item.danger ? 'danger' : ''}`,
+                  onClick: () => {
+                    onClose();
+                    item.onClick();
+                  }
+                },
+                React.createElement('span', { style: { width: 18, textAlign: 'center' } }, item.icon || '•'),
+                React.createElement('span', null, item.label)
+              )
+        )
+      );
+    }
+
+    // =========================================================================
+    // 3. DESIGN-CUSTOMIZER
+    // =========================================================================
+    const DESIGN_KEY = 'quaps_design_v1';
+    const ACCENT_PRESETS = [
+      { name: 'Crimson Red', hex: '#ef4444', hover: '#dc2626', glow: 'rgba(239, 68, 68, 0.42)' },
+      { name: 'Solar Gold', hex: '#f59e0b', hover: '#d97706', glow: 'rgba(245, 158, 11, 0.42)' },
+      { name: 'Emerald Squad', hex: '#10b981', hover: '#059669', glow: 'rgba(16, 185, 129, 0.42)' },
+      { name: 'Cyber Cyan', hex: '#06b6d4', hover: '#0891b2', glow: 'rgba(6, 182, 212, 0.42)' },
+      { name: 'Nebula Violet', hex: '#8b5cf6', hover: '#7c3aed', glow: 'rgba(139, 92, 246, 0.42)' },
+      { name: 'Sunset Coral', hex: '#f97316', hover: '#ea580c', glow: 'rgba(249, 115, 22, 0.42)' }
+    ];
+
+    const DEFAULT_DESIGN = {
+      accentHex: '#ef4444',
+      accentHover: '#dc2626',
+      accentGlow: 'rgba(239, 68, 68, 0.42)',
+      bgMood: 'night',
+      glassOpacity: 0.85,
+      radiusStyle: 'modern',
+      fontScale: 1.0
+    };
+
+    function getSavedDesign() {
+      try {
+        const raw = localStorage.getItem(DESIGN_KEY);
+        if (raw) return { ...DEFAULT_DESIGN, ...JSON.parse(raw) };
+      } catch {}
+      return { ...DEFAULT_DESIGN };
+    }
+
+    function applyDesignToDom(design) {
+      const root = document.documentElement;
+      root.style.setProperty('--accent', design.accentHex);
+      root.style.setProperty('--accent-hover', design.accentHover);
+      root.style.setProperty('--accent-glow', design.accentGlow);
+      root.style.setProperty('--glass-opacity', String(design.glassOpacity));
+      root.style.setProperty('--font-scale', String(design.fontScale));
+
+      const baseMap = {
+        night: '#0a0a12',
+        cozy: '#140f0c',
+        cyber: '#070c16'
+      };
+      root.style.setProperty('--bg-base', baseMap[design.bgMood] || '#0a0a12');
+
+      if (design.radiusStyle === 'sharp') {
+        root.style.setProperty('--radius-card', '10px');
+        root.style.setProperty('--radius-box', '8px');
+        root.style.setProperty('--radius-btn', '7px');
+      } else if (design.radiusStyle === 'soft') {
+        root.style.setProperty('--radius-card', '28px');
+        root.style.setProperty('--radius-box', '20px');
+        root.style.setProperty('--radius-btn', '18px');
+      } else {
+        root.style.setProperty('--radius-card', '20px');
+        root.style.setProperty('--radius-box', '14px');
+        root.style.setProperty('--radius-btn', '12px');
+      }
+    }
+
+    // =========================================================================
+    // 4. HARDWARE MEDIA SETTINGS
+    // =========================================================================
+    const MEDIA_PREFS_KEY = 'quaps_media_devices_v1';
+
+    function getSavedMediaPrefs() {
+      try {
+        const raw = localStorage.getItem(MEDIA_PREFS_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch {}
+      return { audioInputId: '', videoInputId: '', audioOutputId: '', echoCancellation: true, noiseSuppression: true };
+    }
+
+    function saveMediaPrefs(next, userId = null) {
+      try {
+        localStorage.setItem(MEDIA_PREFS_KEY, JSON.stringify(next));
+      } catch {}
+      if (userId) {
+        syncUserSettingsToCloud(userId, { media_settings: next });
+      }
+    }
+
+    // =========================================================================
+    // 5. SOUND ENGINE MIT 3 SOUNDPACKS + CLOUD SYNC
+    // =========================================================================
+    const SOUND_EVENTS = [
+      { key: 'chat_message', label: 'Eingehende Chat-Nachricht', desc: 'Ton bei neuen DMs & Gruppennachrichten' },
+      { key: 'chat_mention', label: 'Mention / Direkter Ping', desc: 'Signalton bei Erwähnung deines Usernames' },
+      { key: 'call_incoming', label: 'Eingehender Anruf', desc: 'Klingelton bei Voice- & Video-Calls' },
+      { key: 'call_connected', label: 'Anruf verbunden', desc: 'Bestätigung beim Betreten eines Anrufs' },
+      { key: 'call_ended', label: 'Anruf beendet / Aufgelegt', desc: 'Abschlusston beim Beenden eines Calls' },
+      { key: 'pinboard_post', label: 'Neuer Pinnwand-Post', desc: 'Hinweis bei neuen Pinnwand-Einträgen' },
+      { key: 'pinboard_reply', label: 'Neue Pinnwand-Antwort', desc: 'Ton bei Antworten in Threads' },
+      { key: 'calendar_event', label: 'Kalender-Termin & Erinnerung', desc: 'Signal bei neuen Terminen oder Erinnerungen' },
+      { key: 'upload_success', label: 'Upload & Aktion erfolgreich', desc: 'Bestätigung bei Uploads & Speichern' },
+      { key: 'error_alert', label: 'Fehler- & Warnton', desc: 'Warnton bei Fehlern oder Verbindungsproblemen' },
+      { key: 'easter_egg', label: 'Easter-Egg / Overdrive Fanfare', desc: 'Geheimer Sound bei Easter Eggs' }
+    ];
+
+    const SOUNDPACKS = {
+      cozy: {
+        name: 'Cozy Lounge',
+        badge: '☕ Warm & Sanft',
+        desc: 'Weiche Sinus-/Dreiecksklänge mit warmen Harmonien – angenehm für die Ohren.'
+      },
+      cyber: {
+        name: 'Cyber Ops',
+        badge: '⚡ Klar & Modern',
+        desc: 'Präzise taktische Signaltöne mit klarem Attack und modernem Synth-Charakter.'
+      },
+      retro: {
+        name: 'Retro Arcade',
+        badge: '🕹️ 8-Bit Classic',
+        desc: 'Verspielte Square-/Pulse-Töne im klassischen Gaming- und Konsolen-Stil.'
+      }
+    };
+
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.userId = null;
+        this.settings = this.load();
+        this.listeners = new Set();
+      }
+
+      setUserId(uid) {
+        this.userId = uid || null;
+      }
+
+      load() {
+        try {
+          const raw = localStorage.getItem('quaps_sound_v2');
+          if (raw) {
+            const p = JSON.parse(raw);
+            return {
+              pack: SOUNDPACKS[p.pack] ? p.pack : 'cozy',
+              volume: typeof p.volume === 'number' ? p.volume : 0.7,
+              dnd: Boolean(p.dnd),
+              customFiles: p.customFiles || {}
+            };
+          }
+        } catch {}
+        return { pack: 'cozy', volume: 0.7, dnd: false, customFiles: {} };
+      }
+
+      hydrateFromCloud(cloudObj) {
+        if (!cloudObj || typeof cloudObj !== 'object') return;
+        this.settings = {
+          pack: SOUNDPACKS[cloudObj.pack] ? cloudObj.pack : this.settings.pack,
+          volume: typeof cloudObj.volume === 'number' ? cloudObj.volume : this.settings.volume,
+          dnd: typeof cloudObj.dnd === 'boolean' ? cloudObj.dnd : this.settings.dnd,
+          customFiles: { ...this.settings.customFiles, ...(cloudObj.customFiles || {}) }
+        };
+        try {
+          localStorage.setItem('quaps_sound_v2', JSON.stringify(this.settings));
+        } catch {}
+        this.listeners.forEach((fn) => fn({ ...this.settings }));
+      }
+
+      save(syncCloud = true) {
+        try {
+          localStorage.setItem('quaps_sound_v2', JSON.stringify(this.settings));
+        } catch {}
+        if (syncCloud && this.userId) {
+          syncUserSettingsToCloud(this.userId, {
+            sound_settings: {
+              pack: this.settings.pack,
+              volume: this.settings.volume,
+              dnd: this.settings.dnd,
+              customFiles: this.settings.customFiles
+            }
+          });
+        }
+        this.listeners.forEach((fn) => fn({ ...this.settings }));
+      }
+
+      subscribe(fn) {
+        this.listeners.add(fn);
+        return () => this.listeners.delete(fn);
+      }
+
+      setPack(pack) {
+        if (!SOUNDPACKS[pack]) return;
+        this.settings.pack = pack;
+        this.save(true);
+      }
+
+      setVolume(val) {
+        this.settings.volume = Math.max(0, Math.min(1, val));
+        this.save(true);
+      }
+
+      setDnd(val) {
+        this.settings.dnd = Boolean(val);
+        this.save(true);
+      }
+
+      setCustomSound(key, fileObj) {
+        if (fileObj) {
+          this.settings.customFiles[key] = fileObj;
+        } else {
+          delete this.settings.customFiles[key];
+        }
+        this.save(true);
+      }
+
+      getCtx() {
+        if (!this.ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AC();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+        return this.ctx;
+      }
+
+      async play(key, preview = false) {
+        if (this.settings.dnd && !preview) return;
+        if (this.settings.volume <= 0.01 && !preview) return;
+        const vol = preview ? Math.max(0.45, this.settings.volume) : this.settings.volume;
+
+        const custom = this.settings.customFiles[key];
+        if (custom?.dataUrl) {
+          try {
+            const audio = new Audio(custom.dataUrl);
+            audio.volume = vol;
+            await audio.play();
+            return;
+          } catch {}
+        }
+
+        try {
+          const ctx = this.getCtx();
+          const now = ctx.currentTime;
+          const pack = this.settings.pack || 'cozy';
+          const defaultWave = pack === 'cozy' ? 'sine' : pack === 'cyber' ? 'triangle' : 'square';
+          const ampScale = pack === 'cozy' ? 0.16 : pack === 'cyber' ? 0.2 : 0.11;
+
+          const note = (freq, delay, dur, type = defaultWave, amp = 1) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, now + delay);
+            const attack = pack === 'cozy' ? 0.035 : 0.01;
+            const peak = Math.max(0.001, vol * ampScale * amp);
+            gain.gain.setValueAtTime(0.0001, now + delay);
+            gain.gain.exponentialRampToValueAtTime(peak, now + delay + attack);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + dur);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + delay);
+            osc.stop(now + delay + dur + 0.03);
+          };
+
+          if (key === 'call_incoming') {
+            note(523.25, 0, 0.18, defaultWave, 1);
+            note(659.25, 0.18, 0.18, defaultWave, 0.95);
+            note(783.99, 0.36, 0.28, defaultWave, 1);
+          } else if (key === 'call_connected') {
+            note(440, 0, 0.14, defaultWave, 0.9);
+            note(659.25, 0.1, 0.24, defaultWave, 1);
+          } else if (key === 'call_ended') {
+            note(587.33, 0, 0.15, defaultWave, 0.85);
+            note(392.0, 0.12, 0.26, defaultWave, 0.85);
+          } else if (key === 'chat_mention') {
+            note(587.33, 0, 0.14, defaultWave, 1);
+            note(880.0, 0.11, 0.24, defaultWave, 1);
+          } else if (key === 'error_alert') {
+            note(240, 0, 0.18, 'sawtooth', 0.8);
+            note(185, 0.16, 0.24, 'sawtooth', 0.8);
+          } else if (key === 'easter_egg') {
+            note(523.25, 0, 0.1, defaultWave, 1);
+            note(659.25, 0.09, 0.1, defaultWave, 1);
+            note(783.99, 0.18, 0.1, defaultWave, 1);
+            note(1046.5, 0.27, 0.26, defaultWave, 1);
+          } else {
+            note(523.25, 0, 0.14, defaultWave, 0.9);
+            note(659.25, 0.09, 0.2, defaultWave, 0.85);
+          }
+        } catch {}
+      }
+    }
+
+    const soundEngine = new SoundEngine();
+
+    function notifyDesktop(title, body) {
+      if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
+        try {
+          new Notification(title, { body, silent: true });
+        } catch {}
+      }
+    }
+
+    function formatTime(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function AvatarBadge({ profile, size = 34 }) {
+      if (profile?.avatar_url) {
+        return React.createElement('img', {
+          src: profile.avatar_url,
+          alt: profile.username || 'Avatar',
+          className: 'avatar-circle',
+          style: { width: size, height: size }
+        });
+      }
+      return React.createElement(
+        'div',
+        {
+          style: {
+            width: size,
+            height: size,
+            borderRadius: 'var(--radius-btn)',
+            background: 'linear-gradient(135deg, var(--accent), #450a0a)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 800,
+            fontSize: Math.max(11, Math.floor(size * 0.38)),
+            flexShrink: 0
+          }
+        },
+        (profile?.username || 'Q').slice(0, 2).toUpperCase()
+      );
+    }
+
+    // =========================================================================
+    // 6. QUAPSSI KI
+    // =========================================================================
+    const QUAPSSI_PERSONALITY = `
+Du bist QuapsSI — die taktische Kommando- und Community-Intelligenz von QuapsAttack.
+Antworte klar, direkt, locker auf Augenhöhe und praxisnah ohne generische KI-Floskeln.
+`;
+
+    async function runQuapsSI(promptText, historyRows, userId) {
+      const apiKey = QUAPSSI_EMBEDDED_KEY;
+      const contents = [];
+      for (const row of (historyRows || []).slice(-6)) {
+        contents.push({ role: 'user', parts: [{ text: row.prompt }] });
+        contents.push({ role: 'model', parts: [{ text: row.response }] });
+      }
+      contents.push({ role: 'user', parts: [{ text: promptText }] });
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: QUAPSSI_PERSONALITY }] },
+            contents,
+            generationConfig: { temperature: 0.75, maxOutputTokens: 2048 }
+          })
+        }
+      );
+
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(`Gemini API Fehler (${res.status}): ${txt}`);
+      }
+
+      const json = await res.json();
+      const reply = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!reply) throw new Error('Leere Antwort von QuapsSI erhalten.');
+
+      const { data, error } = await supabase
+        .from('qupas_si_messages')
+        .insert({ user_id: userId, prompt: promptText, response: reply })
+        .select('*')
+        .single();
+
+      if (error) {
+        return {
+          id: 'local-' + Date.now(),
+          user_id: userId,
+          prompt: promptText,
+          response: reply,
+          created_at: new Date().toISOString()
+        };
+      }
+      return data;
+    }
+
+    // =========================================================================
+    // 7. AUTH SCREEN
+    // =========================================================================
+    function AuthView({ onToast }) {
+      const [mode, setMode] = useState('login');
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+      const [username, setUsername] = useState('');
+      const [loading, setLoading] = useState(false);
+      const [err, setErr] = useState('');
+
+      const handleAuth = async (e) => {
+        e.preventDefault();
+        setErr('');
+        setLoading(true);
+        try {
+          if (mode === 'login') {
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            soundEngine.play('upload_success');
+            onToast('Willkommen zurück bei QuapsAttack!');
+          } else {
+            if (!username.trim()) throw new Error('Bitte einen Benutzernamen eingeben.');
+            const { data, error } = await supabase.auth.signUp({
+              email,
+              password,
+              options: { data: { username: username.trim() } }
+            });
+            if (error) throw error;
+            if (data.user) {
+              await supabase.from('profiles').upsert({
+                id: data.user.id,
+                username: username.trim(),
+                role: 'Member',
+                custom_status: 'online',
+                custom_status_text: 'Neu im Squad'
+              });
+            }
+            soundEngine.play('upload_success');
+            onToast('Account erstellt!');
+          }
+        } catch (error) {
+          soundEngine.play('error_alert');
+          setErr(error.message || 'Authentifizierung fehlgeschlagen.');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      return React.createElement(
+        'div',
+        { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 } },
+        React.createElement(
+          'div',
+          { className: 'glass-card', style: { width: '100%', maxWidth: 420, padding: 30 } },
+          React.createElement(
+            'div',
+            { style: { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 } },
+            React.createElement('div', { className: 'brand-emblem', style: { width: 42, height: 42, fontSize: 18 } }, 'Q'),
+            React.createElement(
+              'div',
+              null,
+              React.createElement('h1', { style: { fontSize: 22, fontWeight: 800 } },
+                'QUAPS',
+                React.createElement('span', { className: 'gold-gradient-text' }, 'ATTACK')
+              ),
+              React.createElement('div', { style: { fontSize: 12.5, color: 'var(--text-muted)' } }, 'Command & Community Suite')
+            )
+          ),
+          React.createElement(
+            'div',
+            { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, padding: 4, borderRadius: 'var(--radius-btn)', background: 'rgba(255,255,255,0.05)', marginBottom: 18 } },
+            React.createElement('button', {
+              type: 'button',
+              className: mode === 'login' ? 'btn-primary' : 'btn-secondary',
+              style: mode === 'login' ? {} : { border: 'none' },
+              onClick: () => setMode('login')
+            }, 'Anmelden'),
+            React.createElement('button', {
+              type: 'button',
+              className: mode === 'register' ? 'btn-primary' : 'btn-secondary',
+              style: mode === 'register' ? {} : { border: 'none' },
+              onClick: () => setMode('register')
+            }, 'Registrieren')
+          ),
+          React.createElement(
+            'form',
+            { onSubmit: handleAuth, style: { display: 'flex', flexDirection: 'column', gap: 13 } },
+            mode === 'register' && React.createElement(
+              'div',
+              null,
+              React.createElement('label', { style: { fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 5 } }, 'Benutzername'),
+              React.createElement('input', { className: 'input-field', type: 'text', placeholder: 'z. B. QuapsPilot', value: username, onChange: (e) => setUsername(e.target.value), required: true })
+            ),
+            React.createElement(
+              'div',
+              null,
+              React.createElement('label', { style: { fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 5 } }, 'E-Mail'),
+              React.createElement('input', { className: 'input-field', type: 'email', placeholder: 'agent@quapsattack.de', value: email, onChange: (e) => setEmail(e.target.value), required: true })
+            ),
+            React.createElement(
+              'div',
+              null,
+              React.createElement('label', { style: { fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 5 } }, 'Passwort'),
+              React.createElement('input', { className: 'input-field', type: 'password', placeholder: '••••••••', value: password, onChange: (e) => setPassword(e.target.value), required: true })
+            ),
+            err && React.createElement('div', { style: { padding: '9px 12px', borderRadius: 10, background: 'rgba(239,68,68,0.16)', border: '1px solid rgba(239,68,68,0.4)', color: '#fca5a5', fontSize: 12.5 } }, err),
+            React.createElement('button', { type: 'submit', className: 'btn-primary', disabled: loading, style: { height: 42, marginTop: 4 } },
+              loading ? 'Verbinde...' : mode === 'login' ? 'Einloggen' : 'Account anlegen'
+            )
+          )
+        )
+      );
+    }
+
+    // =========================================================================
+    // 8. PROFIL BEARBEITEN MODAL
+    // =========================================================================
+    function ProfileModal({ profile, onClose, onSaved, onToast }) {
+      const [username, setUsername] = useState(profile.username || '');
+      const [customStatus, setCustomStatus] = useState(profile.custom_status || 'online');
+      const [customStatusText, setCustomStatusText] = useState(profile.custom_status_text || '');
+      const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || '');
+      const [personalityQuote, setPersonalityQuote] = useState(profile.personality_quote || '');
+      const [uploadingAvatar, setUploadingAvatar] = useState(false);
+      const [saving, setSaving] = useState(false);
+
+      const handleAvatarFileUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file || !file.type.startsWith('image/')) return;
+        setUploadingAvatar(true);
+        try {
+          const ext = (file.name.split('.').pop() || 'png').replace(/[^a-zA-Z0-9]/g, '');
+          const filePath = `avatars/${profile.id}_${Date.now()}.${ext}`;
+          const { error: upErr } = await supabase.storage.from('vault').upload(filePath, file, { upsert: true });
+          if (!upErr) {
+            const { data: pub } = supabase.storage.from('vault').getPublicUrl(filePath);
+            if (pub?.publicUrl) {
+              setAvatarUrl(pub.publicUrl);
+              soundEngine.play('upload_success');
+              onToast('Profilbild hochgeladen! Jetzt „Speichern“ klicken.');
+              setUploadingAvatar(false);
+              return;
+            }
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const scale = Math.min(1, 256 / Math.max(img.width, img.height));
+              canvas.width = Math.round(img.width * scale);
+              canvas.height = Math.round(img.height * scale);
+              canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+              setAvatarUrl(canvas.toDataURL('image/webp', 0.85));
+              setUploadingAvatar(false);
+            };
+            img.src = String(reader.result);
+          };
+          reader.readAsDataURL(file);
+        } catch (err) {
+          onToast('Avatar-Fehler: ' + err.message);
+          setUploadingAvatar(false);
+        }
+      };
+
+      const handleSave = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        try {
+          const { data, error } = await supabase
+            .from('profiles')
+            .upsert({
+              id: profile.id,
+              username: username.trim() || profile.username,
+              custom_status: customStatus,
+              custom_status_text: customStatusText.trim() || null,
+              avatar_url: avatarUrl.trim() || null,
+              personality_quote: personalityQuote.trim() || null,
+              updated_at: new Date().toISOString()
+            })
+            .select('*')
+            .single();
+          if (error) throw error;
+          soundEngine.play('upload_success');
+          onSaved(data);
+          onToast('Profil gespeichert!');
+          onClose();
+        } catch (err) {
+          onToast('Fehler beim Speichern: ' + err.message);
+        } finally {
+          setSaving(false);
+        }
+      };
+
+      return React.createElement(
+        'div',
+        { className: 'modal-backdrop', onClick: onClose },
+        React.createElement(
+          'div',
+          { className: 'glass-card', style: { width: '100%', maxWidth: 490, padding: 24 }, onClick: (e) => e.stopPropagation() },
+          React.createElement(
+            'div',
+            { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 } },
+            React.createElement('h2', { style: { fontSize: 18, fontWeight: 700 } }, 'Profil & Avatar anpassen'),
+            React.createElement('button', { className: 'btn-secondary', onClick: onClose }, '✕')
+          ),
+          React.createElement(
+            'div',
+            { className: 'nested-box', style: { padding: 14, display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 } },
+            React.createElement(AvatarBadge, { profile: { ...profile, avatar_url: avatarUrl, username }, size: 62 }),
+            React.createElement(
+              'div',
+              { style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 6 } },
+              React.createElement('div', { style: { fontSize: 13, fontWeight: 700 } }, 'Profilbild hochladen'),
+              React.createElement(
+                'div',
+                { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+                React.createElement(
+                  'label',
+                  { className: 'btn-primary', style: { padding: '6px 12px', fontSize: 12, cursor: 'pointer' } },
+                  uploadingAvatar ? 'Lädt...' : '📷 Bild wählen',
+                  React.createElement('input', { type: 'file', accept: 'image/*', style: { display: 'none' }, onChange: handleAvatarFileUpload })
+                ),
+                avatarUrl && React.createElement('button', { type: 'button', className: 'btn-danger', onClick: () => setAvatarUrl('') }, 'Entfernen')
+              )
+            )
+          ),
+          React.createElement(
+            'form',
+            { onSubmit: handleSave, style: { display: 'flex', flexDirection: 'column', gap: 12 } },
+            React.createElement('input', { className: 'input-field', placeholder: 'Username', value: username, onChange: (e) => setUsername(e.target.value), required: true }),
+            React.createElement(
+              'div',
+              { style: { display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 10 } },
+              React.createElement(
+                'select',
+                { className: 'select-field', value: customStatus, onChange: (e) => setCustomStatus(e.target.value) },
+                React.createElement('option', { value: 'online' }, '🟢 Online'),
+                React.createElement('option', { value: 'away' }, '🟡 Abwesend'),
+                React.createElement('option', { value: 'dnd' }, '🔴 Nicht stören')
+              ),
+              React.createElement('input', { className: 'input-field', placeholder: 'Statustext', value: customStatusText, onChange: (e) => setCustomStatusText(e.target.value) })
+            ),
+            React.createElement('input', { className: 'input-field', placeholder: 'Persönliches Motto', value: personalityQuote, onChange: (e) => setPersonalityQuote(e.target.value) }),
+            React.createElement(
+              'div',
+              { style: { display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 } },
+              React.createElement('button', { type: 'button', className: 'btn-secondary', onClick: onClose }, 'Abbrechen'),
+              React.createElement('button', { type: 'submit', className: 'btn-primary', disabled: saving }, saving ? 'Speichere...' : 'Speichern')
+            )
+          )
+        )
+      );
+    }
+
+    // =========================================================================
+    // 9. MANAGEMENT-PANEL
+    // =========================================================================
+    const PRESET_ROLES = ['Management', 'Admin', 'Moderator', 'Squad-Leader', 'VIP', 'Member'];
+
+    function ManagementModule({ currentUser, currentProfile, profilesMap, onRefreshProfiles, onToast }) {
+      const [search, setSearch] = useState('');
+      const [customRoles, setCustomRoles] = useState({});
+      const [updatingId, setUpdatingId] = useState(null);
+      const [allGroups, setAllGroups] = useState([]);
+
+      const canManage = isManagementRole(currentProfile?.role);
+
+      const loadGroupsForMgmt = async () => {
+        const { data } = await supabase
+          .from('chat_rooms')
+          .select('*')
+          .eq('is_group', true)
+          .order('created_at', { ascending: false });
+        setAllGroups(data || []);
+      };
+
+      useEffect(() => {
+        if (canManage) loadGroupsForMgmt();
+      }, [canManage]);
+
+      const usersList = useMemo(() => {
+        return Object.values(profilesMap)
+          .filter((p) => {
+            if (!search.trim()) return true;
+            const q = search.toLowerCase();
+            return (p.username || '').toLowerCase().includes(q) || (p.role || '').toLowerCase().includes(q);
+          })
+          .sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+      }, [profilesMap, search]);
+
+      const handleUpdateRole = async (targetUser, nextRole) => {
+        const cleanRole = (nextRole || '').trim();
+        if (!cleanRole) return;
+        setUpdatingId(targetUser.id);
+        try {
+          const { error } = await supabase
+            .from('profiles')
+            .update({ role: cleanRole, updated_at: new Date().toISOString() })
+            .eq('id', targetUser.id);
+          if (error) throw error;
+          soundEngine.play('upload_success');
+          onToast(`Rolle von ${targetUser.username} auf „${cleanRole}“ gesetzt!`);
+          await onRefreshProfiles();
+        } catch (err) {
+          onToast('Rollen-Update fehlgeschlagen: ' + err.message);
+        } finally {
+          setUpdatingId(null);
+        }
+      };
+
+      const handleDeleteGroup = async (group) => {
+        if (group.name === MAIN_GROUP_NAME) {
+          onToast('Die Main-Gruppe kann nicht gelöscht werden.');
+          return;
+        }
+        try {
+          await supabase.from('chat_messages').delete().eq('room_id', group.id);
+          await supabase.from('chat_room_members').delete().eq('room_id', group.id);
+          const { error } = await supabase.from('chat_rooms').delete().eq('id', group.id);
+          if (error) throw error;
+          soundEngine.play('upload_success');
+          onToast(`Gruppe „${group.name}“ gelöscht.`);
+          loadGroupsForMgmt();
+        } catch (err) {
+          onToast('Gruppe konnte nicht gelöscht werden: ' + err.message);
+        }
+      };
+
+      if (!canManage) {
+        return React.createElement(
+          'div',
+          { className: 'glass-card', style: { flex: 1, padding: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+          '🔒 Nur für Management zugänglich.'
+        );
+      }
+
+      return React.createElement(
+        'div',
+        { className: 'glass-card', style: { flex: 1, minHeight: 0, padding: 18, display: 'flex', flexDirection: 'column', gap: 14 } },
+        React.createElement(
+          'div',
+          { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 } },
+          React.createElement('h2', { style: { fontSize: 17.5, fontWeight: 800 } }, 'Management · Rollen & Gruppen'),
+          React.createElement('input', { className: 'input-field', style: { width: 250 }, placeholder: 'Mitglied suchen...', value: search, onChange: (e) => setSearch(e.target.value) })
+        ),
+        React.createElement(
+          'div',
+          { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 14 } },
+          React.createElement(
+            'div',
+            { className: 'nested-box', style: { padding: 14, display: 'flex', flexDirection: 'column', gap: 8 } },
+            React.createElement('div', { style: { fontWeight: 700, fontSize: 13.5, color: '#f5c518' } }, `👥 Aktive Gruppen (${allGroups.length})`),
+            React.createElement(
+              'div',
+              { style: { display: 'flex', flexWrap: 'wrap', gap: 8 } },
+              allGroups.map((g) =>
+                React.createElement(
+                  'div',
+                  { key: g.id, className: 'nested-box', style: { padding: '7px 11px', display: 'flex', alignItems: 'center', gap: 8 } },
+                  React.createElement('span', { style: { fontWeight: 600, fontSize: 12.5 } }, g.name || 'Gruppe'),
+                  g.name === MAIN_GROUP_NAME
+                    ? React.createElement('span', { className: 'badge-gold' }, 'MAIN')
+                    : React.createElement('button', { type: 'button', className: 'btn-danger', style: { padding: '3px 7px', fontSize: 11 }, onClick: () => handleDeleteGroup(g) }, '🗑 Löschen')
+                )
+              )
+            )
+          ),
+          usersList.map((u) => {
+            const draftRole = customRoles[u.id] !== undefined ? customRoles[u.id] : (u.role || 'Member');
+            return React.createElement(
+              'div',
+              { key: u.id, className: 'nested-box', style: { padding: '12px 15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' } },
+              React.createElement(
+                'div',
+                { style: { display: 'flex', alignItems: 'center', gap: 11 } },
+                React.createElement(AvatarBadge, { profile: u, size: 38 }),
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement('span', { style: { fontWeight: 700, fontSize: 14, marginRight: 8 } }, u.username || 'User'),
+                  React.createElement('span', { className: isManagementRole(u.role) ? 'badge-gold' : 'badge-green' }, u.role || 'Member')
+                )
+              ),
+              React.createElement(
+                'div',
+                { style: { display: 'flex', alignItems: 'center', gap: 8 } },
+                React.createElement(
+                  'select',
+                  {
+                    className: 'select-field',
+                    style: { width: 150, padding: '7px 10px' },
+                    value: PRESET_ROLES.includes(draftRole) ? draftRole : '__custom__',
+                    onChange: (e) => {
+                      if (e.target.value !== '__custom__') setCustomRoles((prev) => ({ ...prev, [u.id]: e.target.value }));
+                    }
+                  },
+                  PRESET_ROLES.map((r) => React.createElement('option', { key: r, value: r }, r)),
+                  !PRESET_ROLES.includes(draftRole) && React.createElement('option', { value: '__custom__' }, draftRole)
+                ),
+                React.createElement('input', {
+                  className: 'input-field',
+                  style: { width: 140, padding: '7px 10px' },
+                  value: draftRole,
+                  onChange: (e) => setCustomRoles((prev) => ({ ...prev, [u.id]: e.target.value }))
+                }),
+                React.createElement(
+                  'button',
+                  {
+                    className: 'btn-primary',
+                    style: { padding: '7px 13px' },
+                    disabled: updatingId === u.id || draftRole === (u.role || 'Member'),
+                    onClick: () => handleUpdateRole(u, draftRole)
+                  },
+                  'Zuweisen'
+                )
+              )
+            );
+          })
+        )
+      );
+    }
+
+    // =========================================================================
+    // 10. WEBRTC CALL OVERLAY
+    // =========================================================================
+    function CallOverlay({ callState, setCallState, currentUser, signalChannel, onToast }) {
+      const [muted, setMuted] = useState(false);
+      const [camOff, setCamOff] = useState(!callState?.isVideo);
+      const [elapsed, setElapsed] = useState(0);
+      const localVideoRef = useRef(null);
+      const remoteVideoRef = useRef(null);
+      const remoteAudioRef = useRef(null);
+      const pcRef = useRef(null);
+      const localStreamRef = useRef(null);
+      const pendingIceRef = useRef([]);
+
+      useEffect(() => {
+        if (!callState || callState.status !== 'connected') {
+          setElapsed(0);
+          return;
+        }
+        const t = setInterval(() => setElapsed((s) => s + 1), 1000);
+        return () => clearInterval(t);
+      }, [callState?.status]);
+
+      const cleanupMedia = () => {
+        pendingIceRef.current = [];
+        if (localStreamRef.current) {
+          localStreamRef.current.getTracks().forEach((tr) => tr.stop());
+          localStreamRef.current = null;
+        }
+        if (pcRef.current) {
+          pcRef.current.close();
+          pcRef.current = null;
+        }
+      };
+
+      const startPeer = async (isInitiator, targetUserId, isVideo) => {
+        cleanupMedia();
+        const prefs = getSavedMediaPrefs();
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            deviceId: prefs.audioInputId ? { exact: prefs.audioInputId } : undefined,
+            echoCancellation: prefs.echoCancellation !== false,
+            noiseSuppression: prefs.noiseSuppression !== false
+          },
+          video: isVideo
+            ? { deviceId: prefs.videoInputId ? { exact: prefs.videoInputId } : undefined }
+            : false
+        });
+        localStreamRef.current = stream;
+        if (localVideoRef.current && isVideo) localVideoRef.current.srcObject = stream;
+
+        const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+        pcRef.current = pc;
+        stream.getTracks().forEach((tr) => pc.addTrack(tr, stream));
+
+        pc.ontrack = (ev) => {
+          const rs = ev.streams[0];
+          if (!rs) return;
+          if (remoteVideoRef.current) remoteVideoRef.current.srcObject = rs;
+          if (remoteAudioRef.current) remoteAudioRef.current.srcObject = rs;
+        };
+
+        pc.onicecandidate = (ev) => {
+          if (ev.candidate && signalChannel) {
+            signalChannel.send({
+              type: 'broadcast',
+              event: 'call-signal',
+              payload: { type: 'webrtc-ice', roomId: callState.roomId, fromUserId: currentUser.id, targetUserId, candidate: ev.candidate.toJSON() }
+            });
+          }
+        };
+
+        if (isInitiator) {
+          const offer = await pc.createOffer();
+          await pc.setLocalDescription(offer);
+          signalChannel?.send({
+            type: 'broadcast',
+            event: 'call-signal',
+            payload: { type: 'webrtc-offer', roomId: callState.roomId, fromUserId: currentUser.id, targetUserId, sdp: offer }
+          });
+        }
+        return pc;
+      };
+
+      useEffect(() => {
+        if (!callState) return;
+        const onSig = async (e) => {
+          const sig = e.detail;
+          if (!sig || sig.roomId !== callState.roomId) return;
+          if (sig.targetUserId && sig.targetUserId !== currentUser.id) return;
+
+          if (sig.type === 'call-accept' && callState.status === 'outgoing') {
+            soundEngine.play('call_connected');
+            setCallState((prev) => (prev ? { ...prev, status: 'connected', peerUserId: sig.fromUserId } : null));
+            await startPeer(true, sig.fromUserId, callState.isVideo);
+          } else if (sig.type === 'call-reject' || sig.type === 'call-end') {
+            soundEngine.play('call_ended');
+            cleanupMedia();
+            setCallState(null);
+          } else if (sig.type === 'webrtc-offer') {
+            const pc = pcRef.current || (await startPeer(false, sig.fromUserId, callState.isVideo));
+            await pc.setRemoteDescription(new RTCSessionDescription(sig.sdp));
+            for (const c of pendingIceRef.current) {
+              try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+            }
+            pendingIceRef.current = [];
+            const ans = await pc.createAnswer();
+            await pc.setLocalDescription(ans);
+            signalChannel?.send({
+              type: 'broadcast',
+              event: 'call-signal',
+              payload: { type: 'webrtc-answer', roomId: callState.roomId, fromUserId: currentUser.id, targetUserId: sig.fromUserId, sdp: ans }
+            });
+          } else if (sig.type === 'webrtc-answer' && pcRef.current) {
+            await pcRef.current.setRemoteDescription(new RTCSessionDescription(sig.sdp));
+            for (const c of pendingIceRef.current) {
+              try { await pcRef.current.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+            }
+            pendingIceRef.current = [];
+          } else if (sig.type === 'webrtc-ice' && sig.candidate) {
+            if (pcRef.current?.remoteDescription) {
+              try { await pcRef.current.addIceCandidate(new RTCIceCandidate(sig.candidate)); } catch {}
+            } else {
+              pendingIceRef.current.push(sig.candidate);
+            }
+          }
+        };
+        window.addEventListener('quaps-call-signal', onSig);
+        return () => window.removeEventListener('quaps-call-signal', onSig);
+      }, [callState, currentUser?.id]);
+
+      useEffect(() => () => cleanupMedia(), []);
+
+      if (!callState) return null;
+
+      const accept = async () => {
+        soundEngine.play('call_connected');
+        setCallState((prev) => ({ ...prev, status: 'connected' }));
+        signalChannel?.send({
+          type: 'broadcast',
+          event: 'call-signal',
+          payload: { type: 'call-accept', roomId: callState.roomId, fromUserId: currentUser.id, targetUserId: callState.peerUserId }
+        });
+        try {
+          await startPeer(false, callState.peerUserId, callState.isVideo);
+        } catch (err) {
+          onToast('Medienzugriff fehlgeschlagen: ' + err.message);
+        }
+      };
+
+      const hangup = () => {
+        soundEngine.play('call_ended');
+        signalChannel?.send({
+          type: 'broadcast',
+          event: 'call-signal',
+          payload: { type: callState.status === 'incoming' ? 'call-reject' : 'call-end', roomId: callState.roomId, fromUserId: currentUser.id, targetUserId: callState.peerUserId }
+        });
+        cleanupMedia();
+        setCallState(null);
+      };
+
+      const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      const secs = String(elapsed % 60).padStart(2, '0');
+
+      return React.createElement(
+        'div',
+        { className: 'modal-backdrop', style: { zIndex: 120 } },
+        React.createElement(
+          'div',
+          { className: 'glass-card', style: { width: '100%', maxWidth: 520, padding: 26, textAlign: 'center' } },
+          React.createElement('h2', { style: { fontSize: 20, fontWeight: 800, marginBottom: 6 } }, callState.roomName || callState.peerName),
+          React.createElement('div', { style: { fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 } },
+            callState.status === 'incoming' ? `${callState.peerName} ruft an...` : callState.status === 'outgoing' ? `Rufe ${callState.peerName} an...` : `Verbunden · ${mins}:${secs}`
+          ),
+          React.createElement('audio', { ref: remoteAudioRef, autoPlay: true }),
+          callState.isVideo && React.createElement(
+            'div',
+            { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 } },
+            React.createElement('video', { ref: remoteVideoRef, autoPlay: true, playsInline: true, style: { width: '100%', height: 160, borderRadius: 12, background: '#07070d', objectFit: 'cover' } }),
+            React.createElement('video', { ref: localVideoRef, autoPlay: true, playsInline: true, muted: true, style: { width: '100%', height: 160, borderRadius: 12, background: '#07070d', objectFit: 'cover' } })
+          ),
+          React.createElement(
+            'div',
+            { style: { display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' } },
+            callState.status === 'incoming' && React.createElement('button', { className: 'btn-primary', style: { background: '#10b981' }, onClick: accept }, '✓ Annehmen'),
+            callState.status === 'connected' && React.createElement('button', {
+              className: 'btn-secondary',
+              onClick: () => {
+                const next = !muted;
+                localStreamRef.current?.getAudioTracks().forEach((t) => (t.enabled = !next));
+                setMuted(next);
+              }
+            }, muted ? '🔇 Stumm' : '🎤 Mikro'),
+            callState.status === 'connected' && callState.isVideo && React.createElement('button', {
+              className: 'btn-secondary',
+              onClick: () => {
+                const next = !camOff;
+                localStreamRef.current?.getVideoTracks().forEach((t) => (t.enabled = !next));
+                setCamOff(next);
+              }
+            }, camOff ? '📷 Aus' : '📹 Cam'),
+            React.createElement('button', { className: 'btn-primary', onClick: hangup }, callState.status === 'incoming' ? '✕ Ablehnen' : '📞 Auflegen')
+          )
+        )
+      );
+    }
+
+    // =========================================================================
+    // 11. CHAT MODUL (MIT RECHTSKLICK & MANAGEMENT-LÖSCHUNG)
+    // =========================================================================
+    const QUICK_EMOJIS = ['🔥', '💀', '😂', '👍', '⚡', '☕', '🚀'];
+
+    function ChatModule({ currentUser, currentProfile, profilesMap, signalChannel, setCallState, onUnreadChange, onOpenContextMenu, onEasterEgg, onToast }) {
+      const [rooms, setRooms] = useState([]);
+      const [activeRoomId, setActiveRoomId] = useState(null);
+      const [messages, setMessages] = useState([]);
+      const [msgInput, setMsgInput] = useState('');
+      const [replyToMsg, setReplyToMsg] = useState(null);
+      const [editingMsg, setEditingMsg] = useState(null);
+      const [chatSearch, setChatSearch] = useState('');
+      const [typingUser, setTypingUser] = useState(null);
+      const [loadingRooms, setLoadingRooms] = useState(true);
+      const [showCreateModal, setShowCreateModal] = useState(false);
+      const [isGroupMode, setIsGroupMode] = useState(false);
+      const [groupName, setGroupName] = useState('');
+      const [selectedMemberIds, setSelectedMemberIds] = useState([]);
+      const [unreadByRoom, setUnreadByRoom] = useState({});
+      const bottomRef = useRef(null);
+      const typingTimeoutRef = useRef(null);
+      const inputRef = useRef(null);
+
+      const canManage = isManagementRole(currentProfile?.role);
+      const allProfileIds = useMemo(() => Object.keys(profilesMap || {}), [profilesMap]);
+      const otherProfilesList = useMemo(
+        () => Object.values(profilesMap).filter((p) => p.id !== currentUser.id),
+        [profilesMap, currentUser.id]
+      );
+
+      const ensureMainGroupAndSyncMembers = async (existingRooms) => {
+        let mainRoom = (existingRooms || []).find((r) => r.is_group && r.name === MAIN_GROUP_NAME);
+        if (!mainRoom) {
+          const { data: created, error } = await supabase
+            .from('chat_rooms')
+            .insert({ name: MAIN_GROUP_NAME, is_group: true, creator_id: currentUser.id })
+            .select('*')
+            .single();
+          if (!error && created) mainRoom = created;
+        }
+        if (mainRoom && allProfileIds.length > 0) {
+          const { data: currentMembers } = await supabase.from('chat_room_members').select('user_id').eq('room_id', mainRoom.id);
+          const presentIds = new Set((currentMembers || []).map((m) => m.user_id));
+          const missingIds = allProfileIds.filter((uid) => !presentIds.has(uid));
+          if (missingIds.length > 0) {
+            await supabase.from('chat_room_members').insert(missingIds.map((uid) => ({ room_id: mainRoom.id, user_id: uid })));
+          }
+        }
+        return mainRoom?.id || null;
+      };
+
+      const loadRooms = async (preferRoomId = null) => {
+        setLoadingRooms(true);
+        try {
+          const { data: allGroupRows } = await supabase.from('chat_rooms').select('*').eq('is_group', true).eq('name', MAIN_GROUP_NAME);
+          const mainRoomId = await ensureMainGroupAndSyncMembers(allGroupRows || []);
+
+          const { data: memberRows, error: mErr } = await supabase.from('chat_room_members').select('room_id').eq('user_id', currentUser.id);
+          if (mErr) throw mErr;
+
+          const roomIds = Array.from(new Set([...(memberRows || []).map((r) => r.room_id), ...(mainRoomId ? [mainRoomId] : [])]));
+          if (!roomIds.length) {
+            setRooms([]);
+            setLoadingRooms(false);
+            return;
+          }
+
+          const { data: roomRows, error: rErr } = await supabase.from('chat_rooms').select('*').in('id', roomIds).order('created_at', { ascending: false });
+          if (rErr) throw rErr;
+
+          const { data: allMembers } = await supabase.from('chat_room_members').select('room_id, user_id').in('room_id', roomIds);
+
+          const enriched = (roomRows || [])
+            .map((room) => {
+              const isMain = room.name === MAIN_GROUP_NAME;
+              const mIds = isMain
+                ? Array.from(new Set([...allProfileIds, ...((allMembers || []).filter((m) => m.room_id === room.id).map((m) => m.user_id))]))
+                : (allMembers || []).filter((m) => m.room_id === room.id).map((m) => m.user_id);
+              return { ...room, isMainGroup: isMain, memberIds: mIds };
+            })
+            .sort((a, b) => (a.isMainGroup && !b.isMainGroup ? -1 : !a.isMainGroup && b.isMainGroup ? 1 : 0));
+
+          setRooms(enriched);
+          const targetId = enriched.some((r) => r.id === (preferRoomId || activeRoomId))
+            ? (preferRoomId || activeRoomId)
+            : (mainRoomId || enriched[0]?.id || null);
+          setActiveRoomId(targetId);
+        } catch (err) {
+          onToast('Fehler beim Laden der Chats: ' + err.message);
+        } finally {
+          setLoadingRooms(false);
+        }
+      };
+
+      const loadMessages = async (roomId) => {
+        if (!roomId) return;
+        const { data, error } = await supabase.from('chat_messages').select('*').eq('room_id', roomId).order('created_at', { ascending: true });
+        if (!error) setMessages(data || []);
+      };
+
+      useEffect(() => {
+        loadRooms();
+      }, [currentUser.id, allProfileIds.length]);
+
+      useEffect(() => {
+        setTypingUser(null);
+        setReplyToMsg(null);
+        setEditingMsg(null);
+        setMsgInput('');
+        if (activeRoomId) {
+          loadMessages(activeRoomId);
+          setUnreadByRoom((prev) => {
+            const next = { ...prev, [activeRoomId]: 0 };
+            onUnreadChange(Object.values(next).reduce((a, b) => a + b, 0));
+            return next;
+          });
+        }
+      }, [activeRoomId]);
+
+      useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, [messages]);
+
+      useEffect(() => {
+        const channel = supabase
+          .channel('quaps-chat-realtime')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, (payload) => {
+            const newMsg = payload.new;
+            if (newMsg.room_id === activeRoomId) {
+              setMessages((prev) => (prev.some((m) => m.id === newMsg.id) ? prev : [...prev, newMsg]));
+            }
+            if (newMsg.sender_id !== currentUser.id) {
+              const mentioned = currentProfile?.username && newMsg.content?.toLowerCase().includes('@' + currentProfile.username.toLowerCase());
+              soundEngine.play(mentioned ? 'chat_mention' : 'chat_message');
+              notifyDesktop(`QuapsAttack · ${profilesMap[newMsg.sender_id]?.username || 'Mitglied'}`, newMsg.content);
+              if (newMsg.room_id !== activeRoomId) {
+                setUnreadByRoom((prev) => {
+                  const next = { ...prev, [newMsg.room_id]: (prev[newMsg.room_id] || 0) + 1 };
+                  onUnreadChange(Object.values(next).reduce((a, b) => a + b, 0));
+                  return next;
+                });
+              }
+            }
+          })
+          .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chat_messages' }, (payload) => {
+            setMessages((prev) => prev.map((m) => (m.id === payload.new.id ? payload.new : m)));
+          })
+          .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'chat_messages' }, (payload) => {
+            setMessages((prev) => prev.filter((m) => m.id !== payload.old.id));
+          })
+          .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'chat_rooms' }, () => {
+            loadRooms();
+          })
+          .on('broadcast', { event: 'typing' }, ({ payload }) => {
+            if (payload?.roomId === activeRoomId && payload?.userId !== currentUser.id) {
+              setTypingUser(payload.username);
+              clearTimeout(typingTimeoutRef.current);
+              typingTimeoutRef.current = setTimeout(() => setTypingUser(null), 2400);
+            }
+          })
+          .subscribe();
+
+        return () => supabase.removeChannel(channel);
+      }, [activeRoomId, currentUser.id, currentProfile?.username, profilesMap]);
+
+      const getRoomTitle = (room) => {
+        if (room.isMainGroup) return '🌐 ' + MAIN_GROUP_NAME;
+        if (room.is_group) return room.name || 'Gruppenraum';
+        const otherId = (room.memberIds || []).find((id) => id !== currentUser.id);
+        return profilesMap[otherId]?.username || 'Direct Message';
+      };
+
+      const handleTypingInput = (val) => {
+        setMsgInput(val);
+        if (activeRoomId && val.trim()) {
+          supabase.channel('quaps-chat-realtime').send({
+            type: 'broadcast',
+            event: 'typing',
+            payload: { roomId: activeRoomId, userId: currentUser.id, username: currentProfile?.username || 'Mitglied' }
+          });
+        }
+      };
+
+      const handleCreateRoom = async (e) => {
+        e.preventDefault();
+        if (!selectedMemberIds.length) {
+          onToast('Bitte mindestens ein Mitglied auswählen.');
+          return;
+        }
+        try {
+          const cleanName = isGroupMode ? (groupName.trim() || 'Squad-Gruppe') : null;
+          if (cleanName === MAIN_GROUP_NAME) {
+            onToast('Name für Main-Gruppe reserviert.');
+            return;
+          }
+          const { data: room, error: rErr } = await supabase
+            .from('chat_rooms')
+            .insert({ name: cleanName, is_group: isGroupMode, creator_id: currentUser.id })
+            .select('*')
+            .single();
+          if (rErr) throw rErr;
+
+          const uniqueMembers = Array.from(new Set([currentUser.id, ...selectedMemberIds]));
+          const { error: mErr } = await supabase
+            .from('chat_room_members')
+            .insert(uniqueMembers.map((uid) => ({ room_id: room.id, user_id: uid })));
+          if (mErr) throw mErr;
+
+          soundEngine.play('upload_success');
+          setShowCreateModal(false);
+          setGroupName('');
+          setSelectedMemberIds([]);
+          await loadRooms(room.id);
+          onToast(isGroupMode ? 'Gruppe erstellt!' : 'DM gestartet!');
+        } catch (err) {
+          onToast('Fehler: ' + err.message);
+        }
+      };
+
+      const handleDeleteRoom = async (room) => {
+        if (room.isMainGroup) {
+          onToast('Die Main-Gruppe ist geschützt.');
+          return;
+        }
+        if (!(canManage || room.creator_id === currentUser.id)) {
+          onToast('Keine Berechtigung zum Löschen dieses Raums.');
+          return;
+        }
+        try {
+          await supabase.from('chat_messages').delete().eq('room_id', room.id);
+          await supabase.from('chat_room_members').delete().eq('room_id', room.id);
+          const { error } = await supabase.from('chat_rooms').delete().eq('id', room.id);
+          if (error) throw error;
+          soundEngine.play('upload_success');
+          onToast(`Raum „${getRoomTitle(room)}“ gelöscht.`);
+          await loadRooms();
+        } catch (err) {
+          onToast('Löschen fehlgeschlagen: ' + err.message);
+        }
+      };
+
+      const handleRenameRoom = async (room) => {
+        if (!room.is_group || room.isMainGroup) return;
+        const nextName = window.prompt('Neuer Gruppenname:', room.name || '');
+        if (!nextName || !nextName.trim()) return;
+        const { error } = await supabase.from('chat_rooms').update({ name: nextName.trim() }).eq('id', room.id);
+        if (!error) {
+          onToast('Gruppenname geändert!');
+          loadRooms(room.id);
+        }
+      };
+
+      const handleSendMessage = async (e) => {
+        e.preventDefault();
+        if (!msgInput.trim() || !activeRoomId) return;
+        const text = msgInput.trim();
+        setMsgInput('');
+
+        if (text.toLowerCase() === '/barrelroll') return onEasterEgg('barrelroll');
+        if (text.toLowerCase() === '/overdrive') return onEasterEgg('overdrive');
+
+        if (editingMsg) {
+          const targetId = editingMsg.id;
+          setEditingMsg(null);
+          const { error } = await supabase.from('chat_messages').update({ content: text, edited_at: new Date().toISOString() }).eq('id', targetId);
+          if (!error) {
+            setMessages((prev) => prev.map((m) => (m.id === targetId ? { ...m, content: text, edited_at: new Date().toISOString() } : m)));
+            onToast('Nachricht bearbeitet.');
+          } else {
+            onToast('Bearbeiten fehlgeschlagen: ' + error.message);
+          }
+          return;
+        }
+
+        const currentReplyId = replyToMsg?.id || null;
+        setReplyToMsg(null);
+
+        const { error } = await supabase.from('chat_messages').insert({
+          room_id: activeRoomId,
+          sender_id: currentUser.id,
+          content: text,
+          ...(currentReplyId ? { reply_to_id: currentReplyId } : {})
+        });
+        if (error) {
+          soundEngine.play('error_alert');
+          onToast('Senden fehlgeschlagen: ' + error.message);
+        }
+      };
+
+      const handleDeleteMessage = async (msgId) => {
+        const { error } = await supabase.from('chat_messages').delete().eq('id', msgId);
+        if (!error) {
+          setMessages((prev) => prev.filter((m) => m.id !== msgId));
+          onToast('Nachricht gelöscht.');
+        } else {
+          onToast('Löschen fehlgeschlagen: ' + error.message);
+        }
+      };
+
+      const handleTogglePinMessage = async (msg) => {
+        const nextPinned = !msg.is_pinned;
+        const { error } = await supabase.from('chat_messages').update({ is_pinned: nextPinned }).eq('id', msg.id);
+        if (!error) {
+          setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, is_pinned: nextPinned } : m)));
+          onToast(nextPinned ? 'Nachricht angepinnt!' : 'Pin gelöst.');
+        } else {
+          onToast('Pin-Fehler: ' + error.message);
+        }
+      };
+
+      const activeRoom = rooms.find((r) => r.id === activeRoomId);
+
+      const handleStartCall = (isVideo) => {
+        if (!activeRoom) return;
+        const peerId = (activeRoom.memberIds || []).find((id) => id !== currentUser.id) || null;
+        const peerName = activeRoom.isMainGroup ? MAIN_GROUP_NAME : (profilesMap[peerId]?.username || 'Mitglied');
+        soundEngine.play('call_incoming');
+        signalChannel?.send({
+          type: 'broadcast',
+          event: 'call-signal',
+          payload: {
+            type: 'call-invite',
+            roomId: activeRoom.id,
+            roomName: getRoomTitle(activeRoom),
+            isGroup: Boolean(activeRoom.is_group),
+            isVideo,
+            fromUserId: currentUser.id,
+            fromUsername: currentProfile?.username || 'Agent',
+            targetUserId: activeRoom.is_group ? null : peerId
+          }
+        });
+        setCallState({
+          status: 'outgoing',
+          roomId: activeRoom.id,
+          roomName: getRoomTitle(activeRoom),
+          isGroup: Boolean(activeRoom.is_group),
+          isVideo,
+          peerUserId: peerId,
+          peerName
+        });
+      };
+
+      const handleMessageContextMenu = (e, msg) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isMine = msg.sender_id === currentUser.id;
+        const canMod = isMine || canManage;
+        const items = [
+          {
+            icon: '↩️',
+            label: 'Antworten',
+            onClick: () => {
+              setEditingMsg(null);
+              setReplyToMsg(msg);
+              inputRef.current?.focus();
+            }
+          },
+          ...(isMine
+            ? [{
+                icon: '✏️',
+                label: 'Nachricht bearbeiten',
+                onClick: () => {
+                  setReplyToMsg(null);
+                  setEditingMsg(msg);
+                  setMsgInput(msg.content || '');
+                  inputRef.current?.focus();
+                }
+              }]
+            : []),
+          {
+            icon: '📋',
+            label: 'Text kopieren',
+            onClick: () => {
+              navigator.clipboard?.writeText(msg.content || '');
+              onToast('Kopiert!');
+            }
+          },
+          ...(canMod
+            ? [{
+                icon: '📌',
+                label: msg.is_pinned ? 'Pin lösen' : 'Anpinnen',
+                onClick: () => handleTogglePinMessage(msg)
+              }]
+            : []),
+          ...(canMod
+            ? [
+                { separator: true },
+                {
+                  icon: '🗑️',
+                  label: isMine ? 'Nachricht löschen' : 'Löschen (Management)',
+                  danger: true,
+                  onClick: () => handleDeleteMessage(msg.id)
+                }
+              ]
+            : [])
+        ];
+        onOpenContextMenu({ x: e.clientX, y: e.clientY, title: profilesMap[msg.sender_id]?.username || 'Nachricht', items });
+      };
+
+      const handleRoomContextMenu = (e, room) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const canModRoom = canManage || room.creator_id === currentUser.id;
+        const items = [
+          { icon: '📞', label: 'Voice-Call', onClick: () => { setActiveRoomId(room.id); setTimeout(() => handleStartCall(false), 60); } },
+          { icon: '📹', label: 'Video-Call', onClick: () => { setActiveRoomId(room.id); setTimeout(() => handleStartCall(true), 60); } }
+        ];
+        if (canModRoom && room.is_group && !room.isMainGroup) {
+          items.push({ icon: '✏️', label: 'Gruppe umbenennen', onClick: () => handleRenameRoom(room) });
+        }
+        if (canModRoom && !room.isMainGroup) {
+          items.push({ separator: true });
+          items.push({ icon: '🗑️', label: room.is_group ? 'Gruppe löschen' : 'Chat löschen', danger: true, onClick: () => handleDeleteRoom(room) });
+        }
+        onOpenContextMenu({ x: e.clientX, y: e.clientY, title: getRoomTitle(room), items });
+      };
+
+      const messagesById = useMemo(() => {
+        const map = {};
+        for (const m of messages) map[m.id] = m;
+        return map;
+      }, [messages]);
+
+      const pinnedMessages = useMemo(() => messages.filter((m) => m.is_pinned), [messages]);
+      const displayedMessages = useMemo(() => {
+        if (!chatSearch.trim()) return messages;
+        const q = chatSearch.toLowerCase();
+        return messages.filter((m) => (m.content || '').toLowerCase().includes(q));
+      }, [messages, chatSearch]);
+
+      return React.createElement(
+        'div',
+        { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '305px 1fr', gap: 14 } },
+        React.createElement(
+          'div',
+          { className: 'glass-card', style: { padding: 14, display: 'flex', flexDirection: 'column', gap: 10, minHeight: 0 } },
+          React.createElement(
+            'div',
+            { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+            React.createElement('h2', { style: { fontSize: 15, fontWeight: 700 } }, 'Chats & Räume'),
+            React.createElement('button', { className: 'btn-primary', style: { padding: '6px 10px', fontSize: 12 }, onClick: () => setShowCreateModal(true) }, '+ Neu')
+          ),
+          React.createElement(
+            'div',
+            { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 6 } },
+            loadingRooms
+              ? React.createElement('div', { style: { fontSize: 12.5, color: 'var(--text-muted)', padding: 8 } }, 'Lade Räume...')
+              : rooms.map((room) => {
+                  const isSel = room.id === activeRoomId;
+                  const unread = unreadByRoom[room.id] || 0;
+                  const otherId = !room.is_group ? (room.memberIds || []).find((id) => id !== currentUser.id) : null;
+                  const peerProfile = otherId ? profilesMap[otherId] : null;
+                  return React.createElement(
+                    'button',
+                    {
+                      key: room.id,
+                      onClick: () => setActiveRoomId(room.id),
+                      onContextMenu: (e) => handleRoomContextMenu(e, room),
+                      className: 'nested-box',
+                      style: {
+                        padding: '10px 12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 9,
+                        cursor: 'pointer',
+                        color: '#fff',
+                        borderColor: isSel ? 'var(--accent)' : room.isMainGroup ? 'rgba(245,197,24,0.35)' : undefined,
+                        background: isSel ? 'color-mix(in srgb, var(--accent) 16%, transparent)' : undefined
+                      }
+                    },
+                    React.createElement(
+                      'div',
+                      { style: { display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 } },
+                      peerProfile
+                        ? React.createElement(AvatarBadge, { profile: peerProfile, size: 32 })
+                        : React.createElement('div', { style: { width: 32, height: 32, borderRadius: 'var(--radius-btn)', background: 'rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, room.isMainGroup ? '🌐' : '👥'),
+                      React.createElement(
+                        'div',
+                        { style: { textAlign: 'left', minWidth: 0 } },
+                        React.createElement('div', { style: { fontWeight: 700, fontSize: 13, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }, getRoomTitle(room)),
+                        React.createElement('div', { style: { fontSize: 11, color: room.isMainGroup ? '#f5c518' : 'var(--text-muted)' } },
+                          room.isMainGroup ? `Alle Aktiven (${(room.memberIds || []).length})` : (peerProfile?.custom_status_text || `${(room.memberIds || []).length} Mitglieder`)
+                        )
+                      )
+                    ),
+                    unread > 0 && React.createElement('span', { className: 'badge-red' }, unread)
+                  );
+                })
+          )
+        ),
+
+        React.createElement(
+          'div',
+          { className: 'glass-card', style: { padding: 16, display: 'flex', flexDirection: 'column', minHeight: 0 } },
+          !activeRoom
+            ? React.createElement('div', { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' } }, 'Wähle einen Chat aus.')
+            : React.createElement(
+                React.Fragment,
+                null,
+                React.createElement(
+                  'div',
+                  { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, paddingBottom: 12, borderBottom: '1px solid rgba(255,255,255,0.08)', flexWrap: 'wrap' } },
+                  React.createElement(
+                    'div',
+                    null,
+                    React.createElement('h3', { style: { fontSize: 16, fontWeight: 700 } }, getRoomTitle(activeRoom)),
+                    React.createElement('div', { style: { fontSize: 11.5, color: 'var(--text-muted)' } },
+                      (activeRoom.memberIds || []).map((id) => profilesMap[id]?.username || 'User').join(', ')
+                    )
+                  ),
+                  React.createElement(
+                    'div',
+                    { style: { display: 'flex', gap: 8, alignItems: 'center' } },
+                    React.createElement('input', { className: 'input-field', style: { width: 150, padding: '6px 10px', fontSize: 12 }, placeholder: 'Suche...', value: chatSearch, onChange: (e) => setChatSearch(e.target.value) }),
+                    React.createElement('button', { className: 'btn-secondary', onClick: () => handleStartCall(false) }, '📞 Voice'),
+                    React.createElement('button', { className: 'btn-primary', onClick: () => handleStartCall(true) }, '📹 Video'),
+                    (canManage || activeRoom.creator_id === currentUser.id) && !activeRoom.isMainGroup && React.createElement(
+                      'button',
+                      { className: 'btn-danger', onClick: () => handleDeleteRoom(activeRoom) },
+                      '🗑'
+                    )
+                  )
+                ),
+
+                pinnedMessages.length > 0 && React.createElement(
+                  'div',
+                  { style: { marginTop: 8, padding: '6px 10px', borderRadius: 9, background: 'rgba(245,197,24,0.1)', border: '1px solid rgba(245,197,24,0.3)', fontSize: 12 } },
+                  '📌 Angepinnt: ' + pinnedMessages[pinnedMessages.length - 1].content
+                ),
+
+                React.createElement(
+                  'div',
+                  { className: 'custom-scroll', style: { flex: 1, padding: '14px 4px', display: 'flex', flexDirection: 'column', gap: 10 } },
+                  displayedMessages.map((m) => {
+                    const author = profilesMap[m.sender_id] || {};
+                    const isMine = m.sender_id === currentUser.id;
+                    const repliedMsg = m.reply_to_id ? messagesById[m.reply_to_id] : null;
+                    return React.createElement(
+                      'div',
+                      {
+                        key: m.id,
+                        onContextMenu: (e) => handleMessageContextMenu(e, m),
+                        style: { display: 'flex', gap: 9, alignSelf: isMine ? 'flex-end' : 'flex-start', maxWidth: '78%', flexDirection: isMine ? 'row-reverse' : 'row' }
+                      },
+                      React.createElement(AvatarBadge, { profile: author, size: 32 }),
+                      React.createElement(
+                        'div',
+                        { className: 'nested-box', style: { padding: '10px 13px', borderColor: m.is_pinned ? 'rgba(245,197,24,0.5)' : undefined } },
+                        repliedMsg && React.createElement('div', { className: 'reply-quote-bar' }, '↩️ ' + (repliedMsg.content || '').slice(0, 70)),
+                        React.createElement(
+                          'div',
+                          { style: { display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4, flexWrap: 'wrap' } },
+                          m.is_pinned && React.createElement('span', null, '📌'),
+                          React.createElement('span', { style: { fontWeight: 700, fontSize: 12.5, color: isMine ? '#fca5a5' : '#f5c518' } }, author.username || 'Mitglied'),
+                          author.role && React.createElement('span', { className: isManagementRole(author.role) ? 'badge-gold' : 'badge-green' }, author.role),
+                          React.createElement('span', { style: { fontSize: 10.5, color: 'var(--text-muted)' } }, formatTime(m.created_at)),
+                          m.edited_at && React.createElement('span', { style: { fontSize: 10, color: 'rgba(255,255,255,0.45)', fontStyle: 'italic' } }, '(bearbeitet)')
+                        ),
+                        React.createElement('div', { style: { fontSize: 13.5, lineHeight: 1.45, whiteSpace: 'pre-wrap' } }, m.content)
+                      )
+                    );
+                  }),
+                  typingUser && React.createElement('div', { style: { fontSize: 12, color: '#f5c518', fontStyle: 'italic' } }, `✍️ ${typingUser} tippt...`),
+                  React.createElement('div', { ref: bottomRef })
+                ),
+
+                React.createElement(
+                  'div',
+                  { style: { paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: 7 } },
+                  (replyToMsg || editingMsg) && React.createElement(
+                    'div',
+                    { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', borderRadius: 9, background: 'rgba(255,255,255,0.07)', borderLeft: '3px solid var(--accent)', fontSize: 12 } },
+                    React.createElement('span', null, editingMsg ? `✏️ Bearbeiten: ${editingMsg.content.slice(0, 60)}` : `↩️ Antwort an: ${replyToMsg.content.slice(0, 60)}`),
+                    React.createElement('button', { type: 'button', className: 'btn-secondary', style: { padding: '2px 7px', fontSize: 11 }, onClick: () => { setReplyToMsg(null); setEditingMsg(null); setMsgInput(''); } }, '✕')
+                  ),
+                  React.createElement(
+                    'div',
+                    { style: { display: 'flex', gap: 6, alignItems: 'center' } },
+                    QUICK_EMOJIS.map((em) =>
+                      React.createElement('button', { key: em, type: 'button', onClick: () => setMsgInput((prev) => prev + em), style: { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '2px 7px', cursor: 'pointer', fontSize: 13 } }, em)
+                    )
+                  ),
+                  React.createElement(
+                    'form',
+                    { onSubmit: handleSendMessage, style: { display: 'flex', gap: 10 } },
+                    React.createElement('input', { ref: inputRef, className: 'input-field', placeholder: editingMsg ? 'Nachricht bearbeiten...' : 'Nachricht schreiben...', value: msgInput, onChange: (e) => handleTypingInput(e.target.value) }),
+                    React.createElement('button', { type: 'submit', className: 'btn-primary' }, editingMsg ? 'Speichern' : 'Senden')
+                  )
+                )
+              )
+        ),
+
+        showCreateModal && React.createElement(
+          'div',
+          { className: 'modal-backdrop', onClick: () => setShowCreateModal(false) },
+          React.createElement(
+            'div',
+            { className: 'glass-card', style: { width: '100%', maxWidth: 430, padding: 24 }, onClick: (e) => e.stopPropagation() },
+            React.createElement('h3', { style: { fontSize: 17, fontWeight: 700, marginBottom: 12 } }, 'Neuen Chat / Gruppe starten'),
+            React.createElement(
+              'form',
+              { onSubmit: handleCreateRoom, style: { display: 'flex', flexDirection: 'column', gap: 12 } },
+              React.createElement('label', { style: { display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 } },
+                React.createElement('input', { type: 'checkbox', checked: isGroupMode, onChange: (e) => setIsGroupMode(e.target.checked) }),
+                'Als Gruppenraum anlegen'
+              ),
+              isGroupMode && React.createElement('input', { className: 'input-field', placeholder: 'Gruppenname', value: groupName, onChange: (e) => setGroupName(e.target.value) }),
+              React.createElement(
+                'div',
+                { className: 'custom-scroll', style: { maxHeight: 180, display: 'flex', flexDirection: 'column', gap: 6 } },
+                otherProfilesList.map((p) => React.createElement(
+                  'label',
+                  { key: p.id, className: 'nested-box', style: { padding: '8px 11px', display: 'flex', alignItems: 'center', gap: 9, cursor: 'pointer', fontSize: 13 } },
+                  React.createElement('input', {
+                    type: isGroupMode ? 'checkbox' : 'radio',
+                    name: 'dmPeer',
+                    checked: selectedMemberIds.includes(p.id),
+                    onChange: () => {
+                      if (isGroupMode) {
+                        setSelectedMemberIds((prev) => (prev.includes(p.id) ? prev.filter((id) => id !== p.id) : [...prev, p.id]));
+                      } else {
+                        setSelectedMemberIds([p.id]);
+                      }
+                    }
+                  }),
+                  React.createElement(AvatarBadge, { profile: p, size: 26 }),
+                  React.createElement('span', null, p.username)
+                ))
+              ),
+              React.createElement(
+                'div',
+                { style: { display: 'flex', justifyContent: 'flex-end', gap: 8 } },
+                React.createElement('button', { type: 'button', className: 'btn-secondary', onClick: () => setShowCreateModal(false) }, 'Abbrechen'),
+                React.createElement('button', { type: 'submit', className: 'btn-primary' }, 'Erstellen')
+              )
+            )
+          )
+        )
+      );
+    }
+
+    // =========================================================================
+    // 12. KALENDER
+    // =========================================================================
+    function CalendarModule({ currentUser, profilesMap, onToast }) {
+      const [events, setEvents] = useState([]);
+      const [cursorDate, setCursorDate] = useState(() => new Date());
+      const [selectedDayStr, setSelectedDayStr] = useState(() => new Date().toISOString().slice(0, 10));
+      const [title, setTitle] = useState('');
+      const [description, setDescription] = useState('');
+      const [eventDate, setEventDate] = useState(() => new Date().toISOString().slice(0, 10));
+
+      const loadEvents = async () => {
+        const { data, error } = await supabase.from('calendar_events').select('*').order('event_date', { ascending: true });
+        if (!error) setEvents(data || []);
+      };
+
+      useEffect(() => {
+        loadEvents();
+      }, []);
+
+      const normalizeDay = (ev) => String(ev.event_day || ev.event_date || '').slice(0, 10);
+
+      const handleCreateEvent = async (e) => {
+        e.preventDefault();
+        if (!title.trim()) return;
+        const { error } = await supabase.from('calendar_events').insert({
+          title: title.trim(),
+          description: description.trim() || null,
+          event_date: eventDate,
+          event_day: eventDate,
+          creator_id: currentUser.id
+        });
+        if (!error) {
+          soundEngine.play('calendar_event');
+          setTitle('');
+          setDescription('');
+          setSelectedDayStr(eventDate);
+          onToast('Termin gespeichert!');
+          loadEvents();
+        }
+      };
+
+      const handleDeleteEvent = async (id) => {
+        const { error } = await supabase.from('calendar_events').delete().eq('id', id);
+        if (!error) {
+          setEvents((prev) => prev.filter((ev) => ev.id !== id));
+          onToast('Termin gelöscht.');
+        }
+      };
+
+      const dayEvents = events.filter((ev) => normalizeDay(ev) === selectedDayStr);
+      const year = cursorDate.getFullYear();
+      const month = cursorDate.getMonth();
+      const startOffset = (new Date(year, month, 1).getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const cells = [];
+      for (let i = 0; i < startOffset; i++) cells.push(null);
+      for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, iso: `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}` });
+
+      return React.createElement(
+        'div',
+        { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 14 } },
+        React.createElement(
+          'div',
+          { className: 'glass-card', style: { padding: 18, display: 'flex', flexDirection: 'column', gap: 12 } },
+          React.createElement(
+            'div',
+            { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+            React.createElement('button', { className: 'btn-secondary', onClick: () => setCursorDate(new Date(year, month - 1, 1)) }, '‹'),
+            React.createElement('h2', { style: { fontSize: 16.5, fontWeight: 700 } }, cursorDate.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })),
+            React.createElement('button', { className: 'btn-secondary', onClick: () => setCursorDate(new Date(year, month + 1, 1)) }, '›')
+          ),
+          React.createElement(
+            'div',
+            { style: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6 } },
+            ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((wd) => React.createElement('div', { key: wd, style: { textAlign: 'center', fontSize: 11.5, color: 'var(--text-muted)' } }, wd)),
+            cells.map((c, i) => {
+              if (!c) return React.createElement('div', { key: 'e-' + i });
+              const evs = events.filter((e) => normalizeDay(e) === c.iso);
+              return React.createElement(
+                'button',
+                {
+                  key: c.iso,
+                  onClick: () => { setSelectedDayStr(c.iso); setEventDate(c.iso); },
+                  className: 'nested-box',
+                  style: { minHeight: 68, padding: 8, textAlign: 'left', color: '#fff', cursor: 'pointer', borderColor: c.iso === selectedDayStr ? 'var(--accent)' : undefined }
+                },
+                React.createElement('div', { style: { fontWeight: 700, fontSize: 13 } }, c.day),
+                evs.slice(0, 2).map((ev) => React.createElement('div', { key: ev.id, style: { fontSize: 10.5, color: '#f5c518', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }, '• ' + ev.title))
+              );
+            })
+          )
+        ),
+        React.createElement(
+          'div',
+          { style: { display: 'flex', flexDirection: 'column', gap: 14, minHeight: 0 } },
+          React.createElement(
+            'div',
+            { className: 'glass-card', style: { padding: 18 } },
+            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700, marginBottom: 10 } }, 'Termin anlegen'),
+            React.createElement(
+              'form',
+              { onSubmit: handleCreateEvent, style: { display: 'flex', flexDirection: 'column', gap: 9 } },
+              React.createElement('input', { className: 'input-field', placeholder: 'Titel', value: title, onChange: (e) => setTitle(e.target.value), required: true }),
+              React.createElement('input', { className: 'input-field', type: 'date', value: eventDate, onChange: (e) => setEventDate(e.target.value), required: true }),
+              React.createElement('textarea', { className: 'textarea-field', placeholder: 'Beschreibung', value: description, onChange: (e) => setDescription(e.target.value) }),
+              React.createElement('button', { type: 'submit', className: 'btn-primary' }, '+ Speichern')
+            )
+          ),
+          React.createElement(
+            'div',
+            { className: 'glass-card custom-scroll', style: { flex: 1, padding: 18 } },
+            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700, marginBottom: 10 } }, 'Termine · ' + selectedDayStr),
+            dayEvents.map((ev) => React.createElement(
+              'div',
+              { key: ev.id, className: 'nested-box', style: { padding: 11, marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+              React.createElement('div', null, React.createElement('div', { style: { fontWeight: 700 } }, ev.title), React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)' } }, ev.description || '')),
+              React.createElement('button', { className: 'btn-danger', onClick: () => handleDeleteEvent(ev.id) }, '✕')
+            ))
+          )
+        )
+      );
+    }
+
+    // =========================================================================
+    // 13. MEDIATHEK & ORDNER
+    // =========================================================================
+    function VaultModule({ currentUser, profilesMap, onToast }) {
+      const [items, setItems] = useState([]);
+      const [currentFolderId, setCurrentFolderId] = useState(null);
+      const [folderStack, setFolderStack] = useState([]);
+      const [newFolderName, setNewFolderName] = useState('');
+      const [noteTitle, setNoteTitle] = useState('');
+      const [noteText, setNoteText] = useState('');
+      const [uploading, setUploading] = useState(false);
+
+      const loadItems = async () => {
+        const { data, error } = await supabase.from('vault_items').select('*').order('created_at', { ascending: false });
+        if (!error) setItems(data || []);
+      };
+
+      useEffect(() => {
+        loadItems();
+      }, []);
+
+      const visibleItems = useMemo(
+        () => items.filter((it) => (currentFolderId === null ? !it.parent_id : it.parent_id === currentFolderId)),
+        [items, currentFolderId]
+      );
+
+      const handleCreateFolder = async (e) => {
+        e.preventDefault();
+        if (!newFolderName.trim()) return;
+        const { error } = await supabase.from('vault_items').insert({
+          title: newFolderName.trim(),
+          folder_name: newFolderName.trim(),
+          item_type: 'folder',
+          parent_id: currentFolderId,
+          uploader_id: currentUser.id
+        });
+        if (!error) {
+          setNewFolderName('');
+          onToast('Ordner erstellt!');
+          loadItems();
+        }
+      };
+
+      const handleCreateNote = async (e) => {
+        e.preventDefault();
+        if (!noteTitle.trim() || !noteText.trim()) return;
+        const { error } = await supabase.from('vault_items').insert({
+          title: noteTitle.trim(),
+          item_type: 'text',
+          parent_id: currentFolderId,
+          text_content: noteText.trim(),
+          uploader_id: currentUser.id
+        });
+        if (!error) {
+          setNoteTitle('');
+          setNoteText('');
+          onToast('Notiz gespeichert!');
+          loadItems();
+        }
+      };
+
+      const handleUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploading(true);
+        try {
+          const path = `${currentUser.id}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+          const { error: upErr } = await supabase.storage.from('vault').upload(path, file);
+          if (upErr) throw upErr;
+          const { data: pub } = supabase.storage.from('vault').getPublicUrl(path);
+          await supabase.from('vault_items').insert({
+            title: file.name,
+            media_url: pub.publicUrl,
+            item_type: 'media',
+            parent_id: currentFolderId,
+            uploader_id: currentUser.id
+          });
+          soundEngine.play('upload_success');
+          onToast('Datei hochgeladen!');
+          loadItems();
+        } catch (err) {
+          onToast('Upload-Fehler: ' + err.message);
+        } finally {
+          setUploading(false);
+          e.target.value = '';
+        }
+      };
+
+      return React.createElement(
+        'div',
+        { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 14 } },
+        React.createElement(
+          'div',
+          { className: 'glass-card', style: { padding: 18, display: 'flex', flexDirection: 'column', gap: 12 } },
+          React.createElement(
+            'div',
+            { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+            React.createElement('div', { style: { display: 'flex', gap: 6, alignItems: 'center' } },
+              React.createElement('button', { className: 'pill-tab', onClick: () => { setFolderStack([]); setCurrentFolderId(null); } }, '📁 Root'),
+              folderStack.map((f, i) => React.createElement('button', { key: f.id, className: 'pill-tab', onClick: () => { setFolderStack((p) => p.slice(0, i + 1)); setCurrentFolderId(f.id); } }, '/ ' + f.name))
+            ),
+            React.createElement('label', { className: 'btn-primary', style: { cursor: 'pointer' } }, uploading ? 'Lädt...' : '+ Datei', React.createElement('input', { type: 'file', style: { display: 'none' }, onChange: handleUpload }))
+          ),
+          React.createElement(
+            'div',
+            { className: 'custom-scroll grid-2', style: { flex: 1, alignContent: 'start' } },
+            visibleItems.map((it) => {
+              const kind = it.item_type || (it.media_url ? 'media' : 'text');
+              return React.createElement(
+                'div',
+                { key: it.id, className: 'nested-box', style: { padding: 12, display: 'flex', flexDirection: 'column', gap: 6 } },
+                kind === 'folder' && React.createElement('button', {
+                  onClick: () => { setFolderStack((p) => [...p, { id: it.id, name: it.folder_name || it.title }]); setCurrentFolderId(it.id); },
+                  style: { background: 'none', border: 'none', color: '#f5c518', fontWeight: 700, textAlign: 'left', cursor: 'pointer' }
+                }, '📁 ' + (it.folder_name || it.title)),
+                kind === 'media' && React.createElement(React.Fragment, null,
+                  /\.(png|jpe?g|gif|webp)$/i.test(it.media_url || '') && React.createElement('img', { src: it.media_url, alt: it.title, style: { width: '100%', height: 110, objectFit: 'cover', borderRadius: 8 } }),
+                  React.createElement('div', { style: { fontWeight: 600, fontSize: 12.5 } }, '📎 ' + it.title)
+                ),
+                kind === 'text' && React.createElement(React.Fragment, null,
+                  React.createElement('div', { style: { fontWeight: 700, color: '#f5c518' } }, '📝 ' + it.title),
+                  React.createElement('div', { style: { fontSize: 12, whiteSpace: 'pre-wrap' } }, it.text_content)
+                ),
+                React.createElement('div', { style: { fontSize: 11, color: 'var(--text-muted)' } }, profilesMap[it.uploader_id]?.username || 'Mitglied')
+              );
+            })
+          )
+        ),
+        React.createElement(
+          'div',
+          { style: { display: 'flex', flexDirection: 'column', gap: 14 } },
+          React.createElement(
+            'form',
+            { className: 'glass-card', style: { padding: 18, display: 'flex', gap: 8 }, onSubmit: handleCreateFolder },
+            React.createElement('input', { className: 'input-field', placeholder: 'Neuer Ordner', value: newFolderName, onChange: (e) => setNewFolderName(e.target.value) }),
+            React.createElement('button', { type: 'submit', className: 'btn-secondary' }, '+ Ordner')
+          ),
+          React.createElement(
+            'form',
+            { className: 'glass-card', style: { padding: 18, display: 'flex', flexDirection: 'column', gap: 9 }, onSubmit: handleCreateNote },
+            React.createElement('input', { className: 'input-field', placeholder: 'Notiz-Titel', value: noteTitle, onChange: (e) => setNoteTitle(e.target.value), required: true }),
+            React.createElement('textarea', { className: 'textarea-field', placeholder: 'Notiztext...', value: noteText, onChange: (e) => setNoteText(e.target.value), required: true }),
+            React.createElement('button', { type: 'submit', className: 'btn-primary' }, 'Notiz speichern')
+          )
+        )
+      );
+    }
+
+    // =========================================================================
+    // 14. PINNWAND MODUL (MIT RECHTSKLICK & MANAGEMENT)
+    // =========================================================================
+    function PinboardModule({ currentUser, currentProfile, profilesMap, onOpenContextMenu, onToast }) {
+      const [posts, setPosts] = useState([]);
+      const [title, setTitle] = useState('');
+      const [content, setContent] = useState('');
+      const [editingPostId, setEditingPostId] = useState(null);
+      const [openThreadId, setOpenThreadId] = useState(null);
+      const [replies, setReplies] = useState([]);
+      const [replyText, setReplyText] = useState('');
+
+      const canManage = isManagementRole(currentProfile?.role);
+
+      const loadPosts = async () => {
+        const { data, error } = await supabase.from('pinboard_posts').select('*').order('pinned', { ascending: false }).order('created_at', { ascending: false });
+        if (!error) setPosts(data || []);
+      };
+
+      const loadReplies = async (postId) => {
+        const { data } = await supabase.from('pinboard_replies').select('*').eq('post_id', postId).order('created_at', { ascending: true });
+        setReplies(data || []);
+      };
+
+      useEffect(() => {
+        loadPosts();
+      }, []);
+
+      useEffect(() => {
+        if (openThreadId) loadReplies(openThreadId);
+      }, [openThreadId]);
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!content.trim()) return;
+        if (editingPostId) {
+          const { error } = await supabase.from('pinboard_posts').update({ title: title.trim() || null, content: content.trim() }).eq('id', editingPostId);
+          if (!error) {
+            setEditingPostId(null);
+            setTitle('');
+            setContent('');
+            onToast('Beitrag aktualisiert!');
+            loadPosts();
+          }
+          return;
+        }
+        const { error } = await supabase.from('pinboard_posts').insert({
+          author_id: currentUser.id,
+          title: title.trim() || null,
+          content: content.trim(),
+          pinned: false,
+          reply_count: 0
+        });
+        if (!error) {
+          soundEngine.play('pinboard_post');
+          setTitle('');
+          setContent('');
+          onToast('Gepostet!');
+          loadPosts();
+        }
+      };
+
+      const togglePin = async (post) => {
+        await supabase.from('pinboard_posts').update({ pinned: !post.pinned }).eq('id', post.id);
+        loadPosts();
+      };
+
+      const deletePost = async (postId) => {
+        await supabase.from('pinboard_replies').delete().eq('post_id', postId);
+        const { error } = await supabase.from('pinboard_posts').delete().eq('id', postId);
+        if (!error) {
+          if (openThreadId === postId) setOpenThreadId(null);
+          onToast('Beitrag gelöscht.');
+          loadPosts();
+        }
+      };
+
+      const handlePostContextMenu = (e, post) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isMine = post.author_id === currentUser.id;
+        const canMod = isMine || canManage;
+        const items = [
+          { icon: '💬', label: 'Antworten', onClick: () => setOpenThreadId(post.id) },
+          { icon: '📌', label: post.pinned ? 'Pin lösen' : 'Anpinnen', onClick: () => togglePin(post) },
+          ...(canMod ? [{ icon: '✏️', label: 'Bearbeiten', onClick: () => { setEditingPostId(post.id); setTitle(post.title || ''); setContent(post.content || ''); } }] : []),
+          { icon: '📋', label: 'Kopieren', onClick: () => { navigator.clipboard?.writeText(post.content || ''); onToast('Kopiert!'); } },
+          ...(canMod ? [{ separator: true }, { icon: '🗑️', label: isMine ? 'Löschen' : 'Löschen (Management)', danger: true, onClick: () => deletePost(post.id) }] : [])
+        ];
+        onOpenContextMenu({ x: e.clientX, y: e.clientY, title: post.title || 'Pinnwand-Post', items });
+      };
+
+      const handleAddReply = async (e) => {
+        e.preventDefault();
+        if (!replyText.trim() || !openThreadId) return;
+        const post = posts.find((p) => p.id === openThreadId);
+        await supabase.from('pinboard_replies').insert({ post_id: openThreadId, author_id: currentUser.id, content: replyText.trim() });
+        await supabase.from('pinboard_posts').update({ reply_count: (post?.reply_count || 0) + 1 }).eq('id', openThreadId);
+        setReplyText('');
+        loadReplies(openThreadId);
+        loadPosts();
+      };
+
+      return React.createElement(
+        'div',
+        { style: { flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 14 } },
+        React.createElement(
+          'div',
+          { className: 'glass-card custom-scroll', style: { padding: 18, display: 'flex', flexDirection: 'column', gap: 10 } },
+          React.createElement('h2', { style: { fontSize: 16.5, fontWeight: 700, marginBottom: 4 } }, 'Pinnwand'),
+          posts.map((p) => {
+            const author = profilesMap[p.author_id] || {};
+            const isMine = p.author_id === currentUser.id;
+            return React.createElement(
+              'div',
+              {
+                key: p.id,
+                onContextMenu: (e) => handlePostContextMenu(e, p),
+                className: 'nested-box',
+                style: { padding: 14, borderColor: p.pinned ? 'rgba(245,197,24,0.45)' : undefined }
+              },
+              React.createElement(
+                'div',
+                { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 } },
+                React.createElement('div', { style: { display: 'flex', alignItems: 'center', gap: 8 } },
+                  React.createElement(AvatarBadge, { profile: author, size: 26 }),
+                  p.pinned && React.createElement('span', { className: 'badge-gold' }, '📌 PIN'),
+                  React.createElement('span', { style: { fontWeight: 700, fontSize: 13 } }, author.username || 'Mitglied')
+                ),
+                (isMine || canManage) && React.createElement('button', { className: 'btn-danger', onClick: () => deletePost(p.id) }, '✕')
+              ),
+              p.title && React.createElement('h4', { style: { fontSize: 14.5, fontWeight: 700, marginBottom: 4 } }, p.title),
+              React.createElement('p', { style: { fontSize: 13, whiteSpace: 'pre-wrap', marginBottom: 8 } }, p.content),
+              React.createElement('button', { className: 'btn-secondary', style: { padding: '4px 10px', fontSize: 11.5 }, onClick: () => setOpenThreadId(p.id) }, `💬 Antworten (${p.reply_count || 0})`)
+            );
+          })
+        ),
+        React.createElement(
+          'div',
+          { style: { display: 'flex', flexDirection: 'column', gap: 14, minHeight: 0 } },
+          React.createElement(
+            'form',
+            { className: 'glass-card', style: { padding: 18, display: 'flex', flexDirection: 'column', gap: 9 }, onSubmit: handleSubmit },
+            React.createElement('h3', { style: { fontSize: 15, fontWeight: 700 } }, editingPostId ? 'Post bearbeiten' : 'Neuer Post'),
+            React.createElement('input', { className: 'input-field', placeholder: 'Titel (optional)', value: title, onChange: (e) => setTitle(e.target.value) }),
+            React.createElement('textarea', { className: 'textarea-field', placeholder: 'Inhalt...', value: content, onChange: (e) => setContent(e.target.value), required: true }),
+            React.createElement('button', { type: 'submit', className: 'btn-primary' }, editingPostId ? 'Speichern' : 'Posten')
+          ),
+          openThreadId && React.createElement(
+            'div',
+            { className: 'glass-card', style: { padding: 18, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 } },
+            React.createElement('h3', { style: { fontSize: 14.5, fontWeight: 700, marginBottom: 8 } }, 'Antworten'),
+            React.createElement(
+              'div',
+              { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 8 } },
+              replies.map((r) => React.createElement('div', { key: r.id, className: 'nested-box', style: { padding: 9, fontSize: 12.5 } },
+                React.createElement('strong', { style: { color: '#f5c518' } }, (profilesMap[r.author_id]?.username || 'User') + ': '),
+                r.content
+              ))
+            ),
+            React.createElement(
+              'form',
+              { onSubmit: handleAddReply, style: { display: 'flex', gap: 8 } },
+              React.createElement('input', { className: 'input-field', placeholder: 'Antwort...', value: replyText, onChange: (e) => setReplyText(e.target.value) }),
+              React.createElement('button', { type: 'submit', className: 'btn-primary' }, 'Senden')
+            )
+          )
+        )
+      );
+    }
+
+    // =========================================================================
+    // 15. QUAPSSI KI TERMINAL
+    // =========================================================================
+    function QuapsSIModule({ currentUser, onToast }) {
+      const [messages, setMessages] = useState([]);
+      const [prompt, setPrompt] = useState('');
+      const [sending, setSending] = useState(false);
+
+      useEffect(() => {
+        supabase.from('qupas_si_messages').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: true }).then(({ data }) => setMessages(data || []));
+      }, [currentUser.id]);
+
+      const handleSend = async (e) => {
+        e.preventDefault();
+        if (!prompt.trim() || sending) return;
+        const q = prompt.trim();
+        setPrompt('');
+        setSending(true);
+        try {
+          const saved = await runQuapsSI(q, messages, currentUser.id);
+          setMessages((prev) => [...prev, saved]);
+        } catch (err) {
+          onToast(err.message);
+        } finally {
+          setSending(false);
+        }
+      };
+
+      return React.createElement(
+        'div',
+        { className: 'glass-card', style: { flex: 1, minHeight: 0, padding: 18, display: 'flex', flexDirection: 'column', gap: 12 } },
+        React.createElement('h2', { style: { fontSize: 17, fontWeight: 800 } }, 'Quaps', React.createElement('span', { className: 'gold-gradient-text' }, 'SI'), ' · KI-Terminal'),
+        React.createElement(
+          'div',
+          { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 10 } },
+          messages.map((m) => React.createElement(
+            React.Fragment,
+            { key: m.id },
+            React.createElement('div', { className: 'nested-box', style: { alignSelf: 'flex-end', maxWidth: '78%', padding: 11 } }, m.prompt),
+            React.createElement('div', { className: 'nested-box', style: { alignSelf: 'flex-start', maxWidth: '82%', padding: 12, borderColor: 'rgba(245,197,24,0.28)', whiteSpace: 'pre-wrap' } }, m.response)
+          ))
+        ),
+        React.createElement(
+          'form',
+          { onSubmit: handleSend, style: { display: 'flex', gap: 10 } },
+          React.createElement('input', { className: 'input-field', placeholder: 'Frag QuapsSI...', value: prompt, onChange: (e) => setPrompt(e.target.value), disabled: sending }),
+          React.createElement('button', { type: 'submit', className: 'btn-primary', disabled: sending }, sending ? 'Denkt...' : 'Senden')
+        )
+      );
+    }
+
+    // =========================================================================
+    // 16. DESIGN, 3 SOUNDPACKS & MEDIA STUDIO
+    // =========================================================================
+    function SettingsStudioModule({ currentUserId, design, onChangeDesign, onToast }) {
+      const [subTab, setSubTab] = useState('design');
+      const [soundSettings, setSoundSettings] = useState(() => soundEngine.load());
+      const [mediaPrefs, setMediaPrefs] = useState(() => getSavedMediaPrefs());
+      const [audioInputs, setAudioInputs] = useState([]);
+      const [videoInputs, setVideoInputs] = useState([]);
+      const [audioOutputs, setAudioOutputs] = useState([]);
+      const [micTesting, setMicTesting] = useState(false);
+      const [micLevel, setMicLevel] = useState(0);
+      const micStreamRef = useRef(null);
+      const micRafRef = useRef(null);
+      const micCtxRef = useRef(null);
+
+      useEffect(() => {
+        const unsub = soundEngine.subscribe((next) => setSoundSettings(next));
+        navigator.mediaDevices?.enumerateDevices?.().then((devs) => {
+          setAudioInputs(devs.filter((d) => d.kind === 'audioinput'));
+          setVideoInputs(devs.filter((d) => d.kind === 'videoinput'));
+          setAudioOutputs(devs.filter((d) => d.kind === 'audiooutput'));
+        }).catch(() => {});
+        return () => {
+          unsub();
+          cancelAnimationFrame(micRafRef.current);
+          micStreamRef.current?.getTracks().forEach((t) => t.stop());
+          micCtxRef.current?.close().catch(() => {});
+        };
+      }, []);
+
+      const updatePref = (patch) => {
+        const next = { ...mediaPrefs, ...patch };
+        setMediaPrefs(next);
+        saveMediaPrefs(next, currentUserId);
+      };
+
+      const toggleMicTest = async () => {
+        if (micTesting) {
+          cancelAnimationFrame(micRafRef.current);
+          micStreamRef.current?.getTracks().forEach((t) => t.stop());
+          micCtxRef.current?.close().catch(() => {});
+          setMicTesting(false);
+          setMicLevel(0);
+          return;
+        }
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          micStreamRef.current = stream;
+          const AC = window.AudioContext || window.webkitAudioContext;
+          const ctx = new AC();
+          micCtxRef.current = ctx;
+          const analyser = ctx.createAnalyser();
+          ctx.createMediaStreamSource(stream).connect(analyser);
+          const arr = new Uint8Array(analyser.frequencyBinCount);
+          setMicTesting(true);
+          const loop = () => {
+            analyser.getByteFrequencyData(arr);
+            const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
+            setMicLevel(Math.min(100, Math.round((avg / 128) * 100)));
+            micRafRef.current = requestAnimationFrame(loop);
+          };
+          loop();
+        } catch (err) {
+          onToast('Mikrofon-Fehler: ' + err.message);
+        }
+      };
+
+      return React.createElement(
+        'div',
+        { className: 'glass-card', style: { flex: 1, minHeight: 0, padding: 18, display: 'flex', flexDirection: 'column', gap: 14 } },
+        React.createElement(
+          'div',
+          { style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
+          React.createElement('button', { className: `pill-tab ${subTab === 'design' ? 'active' : ''}`, onClick: () => setSubTab('design') }, '🎨 Design'),
+          React.createElement('button', { className: `pill-tab ${subTab === 'sounds' ? 'active' : ''}`, onClick: () => setSubTab('sounds') }, '🔊 3 Soundpacks'),
+          React.createElement('button', { className: `pill-tab ${subTab === 'devices' ? 'active' : ''}`, onClick: () => setSubTab('devices') }, '🎙️ Audio & Media')
+        ),
+
+        subTab === 'design' && React.createElement(
+          'div',
+          { className: 'nested-box', style: { padding: 16, display: 'flex', flexDirection: 'column', gap: 14 } },
+          React.createElement('div', { style: { display: 'flex', gap: 10, flexWrap: 'wrap' } },
+            ACCENT_PRESETS.map((p) => React.createElement('button', {
+              key: p.hex,
+              type: 'button',
+              className: `swatch-btn ${design.accentHex === p.hex ? 'active' : ''}`,
+              style: { background: p.hex },
+              onClick: () => onChangeDesign({ ...design, accentHex: p.hex, accentHover: p.hover, accentGlow: p.glow })
+            }))
+          ),
+          React.createElement('div', { style: { display: 'flex', gap: 8 } },
+            ['night', 'cozy', 'cyber'].map((m) => React.createElement('button', {
+              key: m,
+              type: 'button',
+              className: `pill-tab ${design.bgMood === m ? 'active' : ''}`,
+              onClick: () => onChangeDesign({ ...design, bgMood: m })
+            }, m))
+          ),
+          React.createElement('div', null,
+            React.createElement('div', { style: { fontSize: 12, marginBottom: 4 } }, `Glass-Deckkraft: ${Math.round(design.glassOpacity * 100)}%`),
+            React.createElement('input', { type: 'range', min: 0.5, max: 0.98, step: 0.01, value: design.glassOpacity, onChange: (e) => onChangeDesign({ ...design, glassOpacity: parseFloat(e.target.value) }) })
+          )
+        ),
+
+        subTab === 'sounds' && React.createElement(
+          'div',
+          { className: 'custom-scroll', style: { flex: 1, display: 'flex', flexDirection: 'column', gap: 12 } },
+          React.createElement(
+            'div',
+            { style: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 } },
+            Object.entries(SOUNDPACKS).map(([k, info]) => React.createElement(
+              'div',
+              { key: k, className: 'nested-box', style: { padding: 13, borderColor: soundSettings.pack === k ? 'var(--accent)' : undefined } },
+              React.createElement('div', { style: { fontWeight: 800, marginBottom: 4 } }, info.name),
+              React.createElement('div', { style: { fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 } }, info.desc),
+              React.createElement('button', {
+                type: 'button',
+                className: soundSettings.pack === k ? 'btn-primary' : 'btn-secondary',
+                style: { padding: '5px 10px', fontSize: 12 },
+                onClick: () => { soundEngine.setPack(k); soundEngine.play('chat_message', true); onToast(`${info.name} aktiviert!`); }
+              }, soundSettings.pack === k ? 'Aktiv' : 'Aktivieren')
+            ))
+          ),
+          SOUND_EVENTS.map((ev) => React.createElement(
+            'div',
+            { key: ev.key, className: 'nested-box', style: { padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+            React.createElement('span', { style: { fontWeight: 600 } }, ev.label),
+            React.createElement('button', { className: 'btn-secondary', onClick: () => soundEngine.play(ev.key, true) }, '▶ Test')
+          ))
+        ),
+
+        subTab === 'devices' && React.createElement(
+          'div',
+          { className: 'nested-box', style: { padding: 16, display: 'flex', flexDirection: 'column', gap: 12 } },
+          React.createElement('select', { className: 'select-field', value: mediaPrefs.audioInputId || '', onChange: (e) => updatePref({ audioInputId: e.target.value }) },
+            React.createElement('option', { value: '' }, 'Standard-Mikrofon'),
+            audioInputs.map((d, i) => React.createElement('option', { key: d.deviceId || i, value: d.deviceId }, d.label || `Mikrofon ${i + 1}`))
+          ),
+          React.createElement('div', { className: 'vu-bar-bg' }, React.createElement('div', { className: 'vu-bar-fill', style: { width: `${micLevel}%` } })),
+          React.createElement('button', { className: 'btn-primary', style: { alignSelf: 'flex-start' }, onClick: toggleMicTest }, micTesting ? '⏹ Stopp' : '🎙️ Pegel testen')
+        )
+      );
+    }
+
+    // =========================================================================
+    // 17. ROOT APP
+    // =========================================================================
+    function App() {
+      const [session, setSession] = useState(null);
+      const [authChecked, setAuthChecked] = useState(false);
+      const [currentProfile, setCurrentProfile] = useState(null);
+      const [profilesMap, setProfilesMap] = useState({});
+      const [activeTab, setActiveTab] = useState('chat');
+      const [unreadChatCount, setUnreadChatCount] = useState(0);
+      const [showProfileModal, setShowProfileModal] = useState(false);
+      const [callState, setCallState] = useState(null);
+      const [toast, setToast] = useState(null);
+      const [design, setDesign] = useState(() => getSavedDesign());
+      const [contextMenu, setContextMenu] = useState(null);
+      const [overdrive, setOverdrive] = useState(false);
+      const [barrelRoll, setBarrelRoll] = useState(false);
+      const signalChannelRef = useRef(null);
+      const cloudSaveTimerRef = useRef(null);
+
+      useEffect(() => {
+        const closeMenu = () => setContextMenu(null);
+        const onEsc = (e) => { if (e.key === 'Escape') setContextMenu(null); };
+        window.addEventListener('click', closeMenu);
+        window.addEventListener('keydown', onEsc);
+        return () => {
+          window.removeEventListener('click', closeMenu);
+          window.removeEventListener('keydown', onEsc);
+        };
+      }, []);
+
+      const showToast = (msg) => {
+        setToast(msg);
+        setTimeout(() => setToast((prev) => (prev === msg ? null : prev)), 3500);
+      };
+
+      const handleChangeDesign = (nextDesign) => {
+        setDesign(nextDesign);
+        applyDesignToDom(nextDesign);
+        try { localStorage.setItem(DESIGN_KEY, JSON.stringify(nextDesign)); } catch {}
+        if (session?.user?.id) {
+          clearTimeout(cloudSaveTimerRef.current);
+          cloudSaveTimerRef.current = setTimeout(() => {
+            syncUserSettingsToCloud(session.user.id, { design_settings: nextDesign });
+          }, 400);
+        }
+      };
+
+      useEffect(() => {
+        applyDesignToDom(design);
+      }, [design]);
+
+      const loadAllProfiles = async () => {
+        const { data } = await supabase.from('profiles').select('*');
+        if (data) {
+          const map = {};
+          for (const p of data) map[p.id] = p;
+          setProfilesMap(map);
+          if (session?.user?.id && map[session.user.id]) {
+            const myProf = map[session.user.id];
+            setCurrentProfile(myProf);
+            if (myProf.design_settings && Object.keys(myProf.design_settings).length > 0) {
+              setDesign((prev) => ({ ...prev, ...myProf.design_settings }));
+            }
+            if (myProf.sound_settings && Object.keys(myProf.sound_settings).length > 0) {
+              soundEngine.hydrateFromCloud(myProf.sound_settings);
+            }
+            if (myProf.media_settings && Object.keys(myProf.media_settings).length > 0) {
+              saveMediaPrefs(myProf.media_settings, null);
+            }
+          }
+        }
+      };
+
+      useEffect(() => {
+        supabase.auth.getSession().then(({ data }) => {
+          setSession(data.session || null);
+          setAuthChecked(true);
+        });
+        const { data: sub } = supabase.auth.onAuthStateChange((_ev, s) => setSession(s));
+        return () => sub.subscription.unsubscribe();
+      }, []);
+
+      useEffect(() => {
+        if (!session?.user) {
+          setCurrentProfile(null);
+          soundEngine.setUserId(null);
+          return;
+        }
+        soundEngine.setUserId(session.user.id);
+        loadAllProfiles();
+
+        const sigChannel = supabase.channel('quaps-webrtc-signaling', { config: { broadcast: { self: false } } });
+        sigChannel.on('broadcast', { event: 'call-signal' }, ({ payload }) => {
+          if (!payload) return;
+          if (payload.targetUserId && payload.targetUserId !== session.user.id) return;
+          if (payload.type === 'call-invite') {
+            setCallState({
+              status: 'incoming',
+              roomId: payload.roomId,
+              roomName: payload.roomName,
+              isGroup: payload.isGroup,
+              isVideo: payload.isVideo,
+              peerUserId: payload.fromUserId,
+              peerName: payload.fromUsername
+            });
+          } else {
+            window.dispatchEvent(new CustomEvent('quaps-call-signal', { detail: payload }));
+          }
+        }).subscribe();
+        signalChannelRef.current = sigChannel;
+        return () => supabase.removeChannel(sigChannel);
+      }, [session?.user?.id]);
+
+      const canManageRoles = isManagementRole(currentProfile?.role);
+      const navItems = [
+        { id: 'chat', label: '💬 Direkt & Gruppen', badge: unreadChatCount > 0 ? unreadChatCount : null },
+        { id: 'pinboard', label: '📌 Pinnwand' },
+        { id: 'calendar', label: '📅 Kalender' },
+        { id: 'vault', label: '🗂️ Mediathek & Tresor' },
+        { id: 'quapssi', label: '🤖 QuapsSI KI' },
+        ...(canManageRoles ? [{ id: 'management', label: '👑 Management & Moderation' }] : []),
+        { id: 'sounds', label: '🎨 Design, Sounds & Media' }
+      ];
+
+      return React.createElement(
+        'div',
+        { className: `app-shell ${design.bgMood === 'cozy' ? 'theme-cozy' : design.bgMood === 'cyber' ? 'theme-cyber' : ''} ${overdrive ? 'overdrive-mode' : ''} ${barrelRoll ? 'barrel-roll' : ''}` },
+        React.createElement(
+          'header',
+          { className: 'top-bar' },
+          React.createElement(
+            'div',
+            { className: 'brand-badge' },
+            React.createElement('div', { className: 'brand-emblem' }, 'Q'),
+            React.createElement('span', null, 'QUAPS', React.createElement('span', { className: 'gold-gradient-text' }, 'ATTACK'))
+          ),
+          session?.user && React.createElement(
+            'div',
+            { style: { display: 'flex', alignItems: 'center', gap: 10, fontSize: 12.5 } },
+            React.createElement('span', { style: { fontWeight: 600 } }, currentProfile?.username || session.user.email),
+            currentProfile?.role && React.createElement('span', { className: canManageRoles ? 'badge-gold' : 'badge-green' }, currentProfile.role)
+          )
+        ),
+
+        !authChecked
+          ? React.createElement('div', { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' } }, 'Lädt...')
+          : !session?.user
+          ? React.createElement(AuthView, { onToast: showToast })
+          : React.createElement(
+              'div',
+              { className: 'main-layout' },
+              React.createElement(
+                'aside',
+                { className: 'sidebar glass-card' },
+                React.createElement(
+                  'div',
+                  { style: { display: 'flex', flexDirection: 'column', gap: 4 } },
+                  navItems.map((item) => React.createElement(
+                    'button',
+                    { key: item.id, className: `nav-btn ${activeTab === item.id ? 'active' : ''}`, onClick: () => setActiveTab(item.id) },
+                    React.createElement('span', null, item.label),
+                    item.badge && React.createElement('span', { className: 'badge-red' }, item.badge)
+                  ))
+                ),
+                React.createElement(
+                  'div',
+                  { className: 'nested-box', style: { padding: 12, display: 'flex', flexDirection: 'column', gap: 8 } },
+                  React.createElement(
+                    'div',
+                    { style: { display: 'flex', alignItems: 'center', gap: 10 } },
+                    React.createElement(AvatarBadge, { profile: currentProfile, size: 38 }),
+                    React.createElement('div', { style: { minWidth: 0, flex: 1 } },
+                      React.createElement('div', { style: { fontWeight: 700, fontSize: 13 } }, currentProfile?.username || 'Mitglied'),
+                      React.createElement('div', { style: { fontSize: 11.5, color: 'var(--text-muted)' } }, currentProfile?.custom_status_text || 'Online')
+                    )
+                  ),
+                  React.createElement(
+                    'div',
+                    { style: { display: 'flex', gap: 6 } },
+                    React.createElement('button', { className: 'btn-secondary', style: { flex: 1, padding: '6px 8px' }, onClick: () => setShowProfileModal(true) }, '✏️ Profil'),
+                    React.createElement('button', { className: 'btn-danger', onClick: async () => { await supabase.auth.signOut(); setSession(null); } }, 'Logout')
+                  )
+                )
+              ),
+              React.createElement(
+                'main',
+                { className: 'content-area' },
+                activeTab === 'chat' && React.createElement(ChatModule, {
+                  currentUser: session.user,
+                  currentProfile,
+                  profilesMap,
+                  signalChannel: signalChannelRef.current,
+                  setCallState,
+                  onUnreadChange: setUnreadChatCount,
+                  onOpenContextMenu: setContextMenu,
+                  onEasterEgg: (t) => {
+                    soundEngine.play('easter_egg', true);
+                    if (t === 'overdrive') setOverdrive((p) => !p);
+                    if (t === 'barrelroll') { setBarrelRoll(true); setTimeout(() => setBarrelRoll(false), 950); }
+                  },
+                  onToast: showToast
+                }),
+                activeTab === 'pinboard' && React.createElement(PinboardModule, { currentUser: session.user, currentProfile, profilesMap, onOpenContextMenu: setContextMenu, onToast: showToast }),
+                activeTab === 'calendar' && React.createElement(CalendarModule, { currentUser: session.user, profilesMap, onToast: showToast }),
+                activeTab === 'vault' && React.createElement(VaultModule, { currentUser: session.user, profilesMap, onToast: showToast }),
+                activeTab === 'quapssi' && React.createElement(QuapsSIModule, { currentUser: session.user, onToast: showToast }),
+                activeTab === 'management' && React.createElement(ManagementModule, { currentUser: session.user, currentProfile, profilesMap, onRefreshProfiles: loadAllProfiles, onToast: showToast }),
+                activeTab === 'sounds' && React.createElement(SettingsStudioModule, { currentUserId: session.user.id, design, onChangeDesign: handleChangeDesign, onToast: showToast })
+              )
+            ),
+
+        showProfileModal && currentProfile && React.createElement(ProfileModal, {
+          profile: currentProfile,
+          onClose: () => setShowProfileModal(false),
+          onSaved: (u) => { setCurrentProfile(u); setProfilesMap((prev) => ({ ...prev, [u.id]: u })); },
+          onToast: showToast
+        }),
+
+        callState && session?.user && React.createElement(CallOverlay, {
+          callState,
+          setCallState,
+          currentUser: session.user,
+          signalChannel: signalChannelRef.current,
+          onToast: showToast
+        }),
+
+        React.createElement(ContextMenuPopup, { menuState: contextMenu, onClose: () => setContextMenu(null) }),
+        toast && React.createElement('div', { className: 'toast-banner' }, toast)
+      );
+    }
+
+    createRoot(document.getElementById('root')).render(React.createElement(App));
+  </script>
+</body>
+</html>
